@@ -29,6 +29,11 @@ export default function Login() {
 
       const data = await res.json();
 
+      if(!res.ok){
+        setMessage(data.message || "Login failed");
+        return;
+      }
+
       if(data.token){
 
         localStorage.setItem("token",data.token);
@@ -46,7 +51,7 @@ export default function Login() {
 
     }catch(error){
 
-      setMessage("Network error");
+      setMessage(error.message);
 
     }
 
