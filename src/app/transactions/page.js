@@ -1,151 +1,115 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Transactions(){
 
-const [transactions,setTransactions]=useState([]);
-const [loading,setLoading]=useState(true);
-
-
-
-useEffect(()=>{
-
-const token=localStorage.getItem("token");
-const saved=localStorage.getItem("user");
-
-
-if(!token || !saved){
-window.location.href="/login";
-return;
-}
-
-
-const user=JSON.parse(saved);
-
-
-fetch(
-`https://alphabot-i7p2.onrender.com/wallet/transactions/${user.phone}`,
-{
-headers:{
-Authorization:`Bearer ${token}`
-}
-}
-)
-.then(res=>res.json())
-.then(data=>{
-
-setTransactions(data);
-setLoading(false);
-
-})
-.catch(()=>{
-
-setLoading(false);
-
-});
-
-
-},[]);
-
-
-
 return(
 
-<main className="min-h-screen bg-black text-white px-6 py-8">
+<main className="min-h-screen bg-black text-white px-5 py-8">
 
+
+<div className="max-w-md mx-auto">
+
+
+<div className="flex justify-between items-center">
+
+<div>
 
 <h1 className="text-3xl font-bold">
-Transactions
+Transactions 📜
 </h1>
 
-
 <p className="text-zinc-400 mt-2">
-Your wallet activity
+View your wallet activities
 </p>
 
+</div>
 
 
-<div className="mt-8 space-y-4">
+<Link
+href="/dashboard"
+className="text-yellow-400"
+>
+Home
+</Link>
 
 
-{loading && (
-
-<p className="text-zinc-400">
-Loading transactions...
-</p>
-
-)}
+</div>
 
 
 
-{!loading && transactions.length===0 && (
 
-<p className="text-zinc-400">
+
+<div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+
+
+<h2 className="text-xl font-bold">
+Recent Activity
+</h2>
+
+
+<div className="mt-5 space-y-4">
+
+
+<div className="flex justify-between bg-black rounded-xl p-4">
+
+<div>
+
+<p className="font-semibold">
 No transactions yet
 </p>
 
-)}
+<p className="text-zinc-500 text-sm">
+Your wallet activities will appear here
+</p>
+
+</div>
 
 
-
-{transactions.map((item)=>(
-
-
-<div
-key={item._id}
-className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5"
->
-
-
-<div className="flex justify-between">
-
-<h3 className="font-bold">
-
-{item.type}
-
-</h3>
-
-
-<span
-className={
-item.direction==="credit"
-?
-"text-green-400"
-:
-"text-red-400"
-}
->
-
-{item.direction==="credit"?"+":"-"}
-₦{item.amount}
-
+<span className="text-zinc-500">
+--
 </span>
 
 
 </div>
 
 
-
-<p className="text-zinc-400 text-sm mt-2">
-
-{item.description}
-
-</p>
-
-
-
-<p className="text-xs text-zinc-500 mt-2">
-
-{new Date(item.createdAt).toLocaleString()}
-
-</p>
+</div>
 
 
 </div>
 
 
-))}
+
+
+
+<div className="mt-6 bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+
+
+<h3 className="font-bold">
+Transaction Types
+</h3>
+
+
+<ul className="text-zinc-400 mt-3 space-y-2">
+
+<li>💰 Wallet funding</li>
+
+<li>📱 Airtime purchase</li>
+
+<li>🌐 Data purchase</li>
+
+<li>⚡ Bill payments</li>
+
+<li>🎁 Referral earnings</li>
+
+</ul>
+
+
+</div>
+
+
 
 
 </div>
@@ -153,6 +117,6 @@ item.direction==="credit"
 
 </main>
 
-)
+);
 
 }
