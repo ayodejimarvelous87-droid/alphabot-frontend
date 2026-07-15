@@ -1,0 +1,129 @@
+"use client";
+
+import { useState } from "react";
+
+export default function Login() {
+
+  const [phone,setPhone] = useState("");
+  const [password,setPassword] = useState("");
+  const [message,setMessage] = useState("");
+
+
+
+  const login = async()=>{
+
+    try{
+
+      const res = await fetch(
+        "https://alphabot-i7p2.onrender.com/users/login",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            phone,
+            password
+          })
+        }
+      );
+
+
+      const data = await res.json();
+
+
+      if(data.token){
+
+        localStorage.setItem(
+          "token",
+          data.token
+        );
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(data.user)
+        );
+
+
+        setMessage("Login successful");
+
+        window.location.href="/dashboard";
+
+      }else{
+
+        setMessage(data.message);
+
+      }
+
+
+    }catch(error){
+
+      setMessage("Network error");
+
+    }
+
+  };
+
+
+
+  return (
+
+    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+
+
+      <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+
+
+        <h1 className="text-3xl font-bold text-center">
+
+          Alpha<span className="text-yellow-400">Bot</span>
+
+        </h1>
+
+
+        <p className="text-center text-zinc-400 mt-2">
+          Login to your account
+        </p>
+
+
+
+        <input
+          className="w-full mt-8 p-3 rounded-xl bg-black border border-zinc-700"
+          placeholder="Phone number"
+          value={phone}
+          onChange={(e)=>setPhone(e.target.value)}
+        />
+
+
+
+        <input
+          className="w-full mt-4 p-3 rounded-xl bg-black border border-zinc-700"
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e)=>setPassword(e.target.value)}
+        />
+
+
+
+        <button
+          onClick={login}
+          className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold"
+        >
+          Login
+        </button>
+
+
+
+        <p className="text-center text-sm mt-4 text-zinc-400">
+          {message}
+        </p>
+
+
+      </div>
+
+
+    </main>
+
+  );
+}
