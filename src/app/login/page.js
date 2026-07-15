@@ -100,7 +100,7 @@ export default function Login() {
 
         <button
           onClick={login}
-          className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold"
+          className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition duration-150"
         >
           Login
         </button>
@@ -108,6 +108,21 @@ export default function Login() {
         <p className="text-center text-sm mt-4 text-zinc-400">
           {message}
         </p>
+
+        <div className="text-center mt-6 space-y-3 text-sm">
+
+          <a href="/forgot-password" className="text-yellow-400">
+            Forgot password?
+          </a>
+
+          <p className="text-zinc-400">
+            Don't have an account?
+            <a href="/register" className="text-yellow-400 ml-1">
+              Create account
+            </a>
+          </p>
+
+        </div>
 
       </div>
 

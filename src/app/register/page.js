@@ -125,13 +125,20 @@ export default function Register(){
 
         <button
           onClick={register}
-          className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold"
+          className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition duration-150"
         >
           Create Account
         </button>
 
         <p className="text-center text-sm mt-4 text-zinc-400">
           {message}
+        </p>
+
+        <p className="text-center text-sm mt-6 text-zinc-400">
+          Already have an account?
+          <a href="/login" className="text-yellow-400 ml-1">
+            Login
+          </a>
         </p>
 
       </div>

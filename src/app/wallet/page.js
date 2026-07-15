@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import BottomNav from "@/components/BottomNav";
 
 export default function Wallet(){
 
@@ -54,7 +55,7 @@ setMessage(error.message);
 
 return(
 
-<main className="min-h-screen bg-black text-white px-5 py-8">
+<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
 
 
 <div className="max-w-md mx-auto">
@@ -89,7 +90,7 @@ Wallet Balance
 
 <Link
 href="/transactions"
-className="bg-black text-white px-5 py-3 rounded-xl font-bold"
+className="bg-white text-black dark:bg-black dark:text-white px-5 py-3 rounded-xl font-bold"
 >
 History
 </Link>
@@ -111,7 +112,7 @@ Withdraw
 
 
 
-<div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
 
 
 <h2 className="text-xl font-bold">
@@ -127,7 +128,7 @@ Add money to continue using AlphaBot services.
 
 <input
 
-className="w-full mt-5 p-3 rounded-xl bg-black border border-zinc-700"
+className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700"
 
 placeholder="Enter amount"
 
@@ -164,7 +165,7 @@ Fund Wallet
 
 
 
-<div className="mt-6 bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 
 <h2 className="font-bold text-xl">
@@ -183,6 +184,8 @@ Your balance and transactions are protected.
 
 </div>
 
+
+<BottomNav />
 
 </main>
 

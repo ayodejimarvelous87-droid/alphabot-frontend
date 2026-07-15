@@ -2,11 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import BottomNav from "@/components/BottomNav";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Dashboard(){
 
 const [user,setUser]=useState(null);
 const [balance,setBalance]=useState(0);
+const [transactions,setTransactions]=useState([]);
+const [referralEarnings,setReferralEarnings]=useState(0);
+
+const {dark,toggleTheme}=useTheme();
 
 useEffect(()=>{
 
@@ -40,6 +46,42 @@ setBalance(wallet.balance);
 
 });
 
+
+fetch(
+`https://alphabot-i7p2.onrender.com/transactions/${data.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(list=>{
+
+if(Array.isArray(list)){
+setTransactions(list.slice(0,3));
+}
+
+});
+
+
+fetch(
+`https://alphabot-i7p2.onrender.com/referralEarnings/${data.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(ref=>{
+
+if(ref.totalEarnings !== undefined){
+setReferralEarnings(ref.totalEarnings);
+}
+
+});
+
 }
 
 },[]);
@@ -58,20 +100,20 @@ window.location.href="/login";
 
 
 const services=[
-["📱","Airtime"],
-["🌐","Data"],
-["⚡","Electricity"],
-["📺","TV"],
-["🎮","Betting"],
-["🎓","Exam PIN"],
-["💵","Airtime Cash"],
-["🏦","Bank"]
+["📱","Airtime","/airtime"],
+["🌐","Data","/data"],
+["⚡","Electricity","/electricity"],
+["📺","TV","/tv"],
+["🎮","Betting","/betting"],
+["🎓","Exam PIN","/exam-pin"],
+["💵","Airtime Cash","/airtime-cash"],
+["🏦","Bank","/bank"]
 ];
 
 
 return(
 
-<main className="min-h-screen bg-black text-white px-5 py-6 pb-24">
+<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-6 pb-24">
 
 
 <div className="flex justify-between items-center">
@@ -93,6 +135,13 @@ Good day 👋
 
 <button className="bg-zinc-900 rounded-full p-3">
 🔔
+</button>
+
+<button
+onClick={toggleTheme}
+className="bg-zinc-900 rounded-full p-3"
+>
+{dark ? "☀️" : "🌙"}
 </button>
 
 
@@ -162,9 +211,10 @@ Quick Actions
 
 {services.map((item)=>(
 
-<div
+<Link
+href={item[2]}
 key={item[1]}
-className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center"
+className="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 text-center active:scale-95 transition duration-150"
 >
 
 <div className="text-2xl">
@@ -175,18 +225,17 @@ className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center"
 {item[1]}
 </p>
 
-</div>
+</Link>
 
 ))}
 
-
 </div>
 
 
 
 
 
-<div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 
 <div className="flex justify-between">
@@ -207,9 +256,48 @@ View all
 </div>
 
 
+{transactions.length === 0 ? (
+
 <p className="text-zinc-400 mt-4">
 No transactions yet
 </p>
+
+) : (
+
+<div className="mt-4 space-y-3">
+
+{transactions.map((item,index)=>(
+
+<div
+key={index}
+className="bg-white dark:bg-black rounded-xl p-3 flex justify-between"
+>
+
+<div>
+
+<p className="font-semibold">
+{item.type || "Transaction"}
+</p>
+
+<p className="text-xs text-zinc-500">
+{item.status}
+</p>
+
+</div>
+
+
+<p className="text-yellow-400 font-bold">
+₦{item.amount}
+</p>
+
+
+</div>
+
+))}
+
+</div>
+
+)}
 
 
 </div>
@@ -218,7 +306,7 @@ No transactions yet
 
 
 
-<div className="mt-6 bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 
 <h2 className="font-bold text-xl">
@@ -232,7 +320,7 @@ Invite friends and earn rewards.
 
 
 <p className="text-yellow-400 text-2xl font-bold mt-3">
-₦0
+₦{referralEarnings}
 </p>
 
 
@@ -266,6 +354,8 @@ Open Referral →
 
 </div>
 
+
+<BottomNav />
 
 </main>
 
