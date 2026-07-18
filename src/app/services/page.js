@@ -13,14 +13,15 @@ const [loading,setLoading]=useState(true);
 const getServiceLink=(type)=>{
 
 const routes={
-"Airtime":"/airtime",
-"Data":"/data",
-"Electricity":"/electricity",
-"TV":"/tv",
-"Betting":"/betting",
-"Exam PIN":"/exam-pin",
-"Airtime Cash":"/airtime-cash",
-"Bank":"/bank"
+"airtime":"/airtime",
+"data":"/data",
+"electricity":"/electricity",
+"tv":"/tv",
+"betting":"/betting",
+"exam-pin":"/exam-pin",
+"airtime-cash":"/airtime-cash",
+"bank":"/bank",
+"mifi":"/data"
 };
 
 return routes[type] || "/services";
@@ -68,6 +69,26 @@ Choose any AlphaBot service
 
 
 <div className="grid grid-cols-2 gap-4 mt-8">
+
+
+<Link
+href="/arena"
+className="bg-yellow-400 text-black rounded-3xl p-5 hover:scale-105 active:scale-95 transition"
+>
+
+<div className="text-4xl">
+🏆
+</div>
+
+<h2 className="font-bold mt-4">
+Arena+
+</h2>
+
+<p className="text-xs mt-2">
+Football predictions & rewards
+</p>
+
+</Link>
 
 
 {loading ? (

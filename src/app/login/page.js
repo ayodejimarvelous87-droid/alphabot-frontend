@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import PhoneInput from "@/components/PhoneInput";
+import Toast from "@/components/Toast";
 
 export default function Login() {
 
@@ -8,10 +10,13 @@ export default function Login() {
   const [password,setPassword] = useState("");
   const [message,setMessage] = useState("");
   const [showPassword,setShowPassword] = useState(false);
+const [loading,setLoading] = useState(false);
 
   const login = async()=>{
 
     try{
+      setLoading(true);
+      setMessage("");
 
       const res = await fetch(
         "https://alphabot-i7p2.onrender.com/users/login",
@@ -31,6 +36,7 @@ export default function Login() {
 
       if(!res.ok){
         setMessage(data.message || "Login failed");
+          setLoading(false);
         return;
       }
 
@@ -39,6 +45,7 @@ export default function Login() {
         localStorage.setItem("token",data.token);
         localStorage.setItem("user",JSON.stringify(data.user));
 
+          setLoading(false);
         setMessage("Login successful");
 
         window.location.href="/dashboard";
@@ -46,12 +53,14 @@ export default function Login() {
       }else{
 
         setMessage(data.message);
+          setLoading(false);
 
       }
 
     }catch(error){
 
-      setMessage(error.message);
+        setLoading(false);
+        setMessage("Network error. Please try again");
 
     }
 
@@ -59,8 +68,9 @@ export default function Login() {
 
   return(
 
-    <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+    <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white flex items-center justify-center px-6">
 
+      <Toast message={message} type="error" />
       <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
 
         <h1 className="text-3xl font-bold text-center">
@@ -71,17 +81,17 @@ export default function Login() {
           Login to your account
         </p>
 
-        <input
-          className="w-full mt-8 p-3 rounded-xl bg-black border border-zinc-700"
-          placeholder="Phone number"
-          value={phone}
-          onChange={(e)=>setPhone(e.target.value)}
-        />
+        <div className="mt-8">
+          <PhoneInput
+            value={phone}
+            onChange={(value)=>setPhone(value)}
+          />
+        </div>
 
         <div className="relative mt-4">
 
           <input
-            className="w-full p-3 rounded-xl bg-black border border-zinc-700 pr-16"
+            className="w-full p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700 pr-16"
             placeholder="Password"
             type={showPassword ? "text" : "password"}
             value={password}
@@ -101,8 +111,8 @@ export default function Login() {
         <button
           onClick={login}
           className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition duration-150"
-        >
-          Login
+            disabled={loading} >
+            {loading ? "Logging in..." : "Login"}
         </button>
 
         <p className="text-center text-sm mt-4 text-zinc-400">

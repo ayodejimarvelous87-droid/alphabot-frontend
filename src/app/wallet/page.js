@@ -1,13 +1,135 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import Toast from "@/components/Toast";
 
 export default function Wallet(){
 
 const [amount,setAmount]=useState("");
+const [balance,setBalance]=useState(0);
+const [transactions,setTransactions]=useState([]);
 const [message,setMessage]=useState("");
+const [loading,setLoading]=useState(true);
+const [funding,setFunding]=useState(false);
+
+
+useEffect(()=>{
+
+const token=localStorage.getItem("token");
+const user=JSON.parse(localStorage.getItem("user"));
+
+
+if(!user) return;
+
+
+fetch(
+`https://alphabot-i7p2.onrender.com/wallet/balance/${user.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(data=>{
+
+if(data.balance !== undefined){
+
+setBalance(data.balance);
+
+}
+
+});
+
+
+
+fetch(
+`https://alphabot-i7p2.onrender.com/transactions/${user.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(data=>{
+
+if(Array.isArray(data)){
+
+setTransactions(data.slice(0,5));
+
+}
+
+  setLoading(false);
+});
+
+
+},[]);
+
+useEffect(()=>{
+
+let startY=0;
+
+const handleTouchStart=(e)=>{
+startY=e.touches[0].clientY;
+};
+
+const handleTouchEnd=(e)=>{
+const endY=e.changedTouches[0].clientY;
+
+if(endY-startY>100){
+refreshWallet();
+}
+};
+
+window.addEventListener("touchstart",handleTouchStart);
+window.addEventListener("touchend",handleTouchEnd);
+
+return()=>{
+window.removeEventListener("touchstart",handleTouchStart);
+window.removeEventListener("touchend",handleTouchEnd);
+};
+
+},[]);
+
+
+async function refreshWallet(){
+
+const token=localStorage.getItem("token");
+const user=JSON.parse(localStorage.getItem("user"));
+
+if(!user) return;
+
+try{
+
+const balanceRes=await fetch(`https://alphabot-i7p2.onrender.com/wallet/balance/${user.phone}`,{
+headers:{Authorization:`Bearer ${token}`}
+});
+
+const balanceData=await balanceRes.json();
+
+if(balanceData.balance !== undefined){
+setBalance(balanceData.balance);
+}
+
+const transactionRes=await fetch(`https://alphabot-i7p2.onrender.com/transactions/${user.phone}`,{
+headers:{Authorization:`Bearer ${token}`}
+});
+
+const transactionData=await transactionRes.json();
+
+if(Array.isArray(transactionData)){
+setTransactions(transactionData.slice(0,5));
+}
+
+}catch(error){
+setMessage("Unable to refresh wallet");
+}
+
+};
+
 
 
 
@@ -18,6 +140,8 @@ const user=JSON.parse(localStorage.getItem("user"));
 
 
 try{
+setFunding(true);
+setMessage("");
 
 const res=await fetch(
 "https://alphabot-i7p2.onrender.com/wallet/fund",
@@ -28,8 +152,10 @@ headers:{
 Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({
+
 phone:user.phone,
 amount:Number(amount)
+
 })
 }
 );
@@ -38,24 +164,45 @@ amount:Number(amount)
 const data=await res.json();
 
 
-setMessage(
-data.message || "Wallet funded successfully"
-);
+setMessage(data.message || "Wallet funded successfully");
 
 
+if(data.balance !== undefined){
+
+setBalance(data.balance);
+
+}
+
+
+setFunding(false);
 }catch(error){
 
-setMessage(error.message);
+setMessage("Connection error");
 
+setFunding(false);
 }
 
 };
 
 
 
+
+if(loading){
+return(
+<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
+<div className="max-w-md mx-auto animate-pulse">
+<div className="h-8 w-40 bg-zinc-300 dark:bg-zinc-800 rounded mb-6"></div>
+<div className="h-40 bg-zinc-300 dark:bg-zinc-800 rounded-3xl"></div>
+<div className="h-20 bg-zinc-300 dark:bg-zinc-800 rounded-2xl mt-6"></div>
+<div className="h-20 bg-zinc-300 dark:bg-zinc-800 rounded-2xl mt-4"></div>
+</div>
+</main>
+);
+}
+
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
+<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8 pb-24">
 
 
 <div className="max-w-md mx-auto">
@@ -65,10 +212,10 @@ return(
 My Wallet 💳
 </h1>
 
+
 <p className="text-zinc-400 mt-2">
 Manage your AlphaBot balance
 </p>
-
 
 
 
@@ -81,8 +228,9 @@ Wallet Balance
 
 
 <h2 className="text-4xl font-bold mt-3">
-₦0
+₦{balance.toLocaleString()}
 </h2>
+
 
 
 <div className="flex gap-3 mt-6">
@@ -90,7 +238,7 @@ Wallet Balance
 
 <Link
 href="/transactions"
-className="bg-white text-black dark:bg-black dark:text-white px-5 py-3 rounded-xl font-bold"
+className="bg-white text-black px-5 py-3 rounded-xl font-bold"
 >
 History
 </Link>
@@ -111,8 +259,7 @@ Withdraw
 
 
 
-
-<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
 
 
 <h2 className="text-xl font-bold">
@@ -120,15 +267,9 @@ Fund Wallet
 </h2>
 
 
-<p className="text-zinc-400 mt-2">
-Add money to continue using AlphaBot services.
-</p>
-
-
-
 <input
 
-className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700"
+className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
 
 placeholder="Enter amount"
 
@@ -142,21 +283,19 @@ onChange={(e)=>setAmount(e.target.value)}
 
 
 
-
 <button
 
 onClick={fundWallet}
 
 className="w-full mt-5 bg-yellow-400 text-black py-3 rounded-xl font-bold"
+disabled={funding} >
 
->
-Fund Wallet
+{funding ? "Processing..." : "Fund Wallet"}
 </button>
 
 
-<p className="text-center text-zinc-400 mt-4">
-{message}
-</p>
+
+<Toast message={message} type="success" />
 
 
 </div>
@@ -164,21 +303,65 @@ Fund Wallet
 
 
 
-
-<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
+<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
 
 
 <h2 className="font-bold text-xl">
-Wallet Security 🔒
+Recent Wallet Activity
 </h2>
 
 
-<p className="text-zinc-400 mt-2">
-Your balance and transactions are protected.
+{
+
+transactions.length === 0 ?
+
+<p className="text-zinc-400 mt-4">
+No transactions yet
+</p>
+
+:
+
+<div className="mt-4 space-y-3">
+
+{
+transactions.map((item,index)=>(
+
+<div
+key={index}
+className="bg-white dark:bg-black rounded-xl p-3 flex justify-between"
+>
+
+
+<div>
+
+<p className="font-semibold">
+{item.description || item.type}
+</p>
+
+<p className="text-xs text-zinc-500">
+{item.status}
+</p>
+
+</div>
+
+
+<p className="font-bold text-yellow-400">
+₦{item.amount}
 </p>
 
 
 </div>
+
+))
+}
+
+</div>
+
+}
+
+
+</div>
+
 
 
 
@@ -186,6 +369,7 @@ Your balance and transactions are protected.
 
 
 <BottomNav />
+
 
 </main>
 
