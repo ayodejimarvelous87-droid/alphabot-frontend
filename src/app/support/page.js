@@ -39,7 +39,7 @@ setLoading(true);
 try{
 
 const response = await fetch(
-"http://localhost:5000/ai/chat",
+"https://alphabot-1.onrender.com/ai/chat",
 {
 method:"POST",
 headers:{
