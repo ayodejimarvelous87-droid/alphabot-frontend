@@ -13,7 +13,7 @@ export default function AdminUsers(){
       const token = localStorage.getItem("adminToken");
 
       const res = await fetch(
-        "https://alphabot-2.onrender.com/admin/users",
+        "https://alphabot-main.onrender.com/admin/users",
         {
           headers:{
             Authorization:`Bearer ${token}`

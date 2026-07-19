@@ -23,7 +23,7 @@ const loadPlans = async()=>{
 try{
 
 const res = await fetch(
-"https://alphabot-2.onrender.com/data/plans"
+"https://alphabot-main.onrender.com/data/plans"
 );
 
 const data = await res.json();
@@ -126,7 +126,7 @@ localStorage.getItem("token");
 
 const res = await fetch(
 
-"https://alphabot-2.onrender.com/data/buy",
+"https://alphabot-main.onrender.com/data/buy",
 
 {
 

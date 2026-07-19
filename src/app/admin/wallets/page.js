@@ -16,7 +16,7 @@ export default function AdminWallets(){
     const token = localStorage.getItem("adminToken");
 
     const res = await fetch(
-      `https://alphabot-2.onrender.com/admin/wallet/${phone}`,
+      `https://alphabot-main.onrender.com/admin/wallet/${phone}`,
       {
         headers:{
           Authorization:`Bearer ${token}`
@@ -43,7 +43,7 @@ export default function AdminWallets(){
 
 
     const res = await fetch(
-      "https://alphabot-2.onrender.com/admin/wallet/add",
+      "https://alphabot-main.onrender.com/admin/wallet/add",
       {
         method:"POST",
         headers:{
@@ -76,7 +76,7 @@ export default function AdminWallets(){
 
 
     const res = await fetch(
-      "https://alphabot-2.onrender.com/admin/wallet/deduct",
+      "https://alphabot-main.onrender.com/admin/wallet/deduct",
       {
         method:"POST",
         headers:{

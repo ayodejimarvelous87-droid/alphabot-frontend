@@ -27,7 +27,7 @@ const token = localStorage.getItem("token");
 
 
 const res = await fetch(
-"https://alphabot-i7p2.onrender.com/tv/subscribe",
+"https://alphabot-main.onrender.com/tv/subscribe",
 {
 method:"POST",
 headers:{

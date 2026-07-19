@@ -26,7 +26,7 @@ const token=localStorage.getItem("token");
 
 
 const res=await fetch(
-"https://alphabot-i7p2.onrender.com/betting/fund",
+"https://alphabot-main.onrender.com/betting/fund",
 {
 method:"POST",
 headers:{

@@ -16,7 +16,7 @@ const loadBank = async()=>{
 try{
 
 const res = await fetch(
-"https://alphabot-i7p2.onrender.com/bank/"
+"https://alphabot-main.onrender.com/bank/"
 );
 
 

@@ -42,7 +42,7 @@ const data=JSON.parse(saved);
 
 setUser(data);
 
-fetch(`https://alphabot-2.onrender.com/users/profile/${data.phone}`,{
+fetch(`https://alphabot-main.onrender.com/users/profile/${data.phone}`,{
 headers:{
 Authorization:`Bearer ${token}`
 }
@@ -59,7 +59,7 @@ localStorage.setItem("user",JSON.stringify(profile));
 
 
 fetch(
-`https://alphabot-2.onrender.com/wallet/balance/${data.phone}`,
+`https://alphabot-main.onrender.com/wallet/balance/${data.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -83,7 +83,7 @@ setToast("Unable to load wallet balance");
 
 
 fetch(
-`https://alphabot-2.onrender.com/transactions/${data.phone}`,
+`https://alphabot-main.onrender.com/transactions/${data.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -112,7 +112,7 @@ setToast("Unable to load transactions");
 
 
 fetch(
-`https://alphabot-2.onrender.com/referral-earnings/${data.phone}`,
+`https://alphabot-main.onrender.com/referral-earnings/${data.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -136,7 +136,7 @@ setToast("Unable to load referral earnings");
 
 
 fetch(
-`https://alphabot-2.onrender.com/notifications/${data.phone}`,
+`https://alphabot-main.onrender.com/notifications/${data.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -182,7 +182,7 @@ const token = localStorage.getItem("token");
 
 if(!user || !token) return;
 
-fetch(`https://alphabot-2.onrender.com/notifications/${user.phone}`,{
+fetch(`https://alphabot-main.onrender.com/notifications/${user.phone}`,{
 headers:{
 Authorization:`Bearer ${token}`
 }

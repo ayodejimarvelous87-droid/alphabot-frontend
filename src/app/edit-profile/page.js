@@ -15,7 +15,7 @@ const saveProfile = async()=>{
 try{
 
 const res = await fetch(
-"https://alphabot-i7p2.onrender.com/users/profile/update",
+"https://alphabot-main.onrender.com/users/profile/update",
 {
 method:"PUT",
 headers:{

@@ -85,7 +85,7 @@ return routes[type] || "/services";
 
 useEffect(()=>{
 
-fetch("https://alphabot-2.onrender.com/products")
+fetch("https://alphabot-main.onrender.com/products")
 
 .then(res=>res.json())
 

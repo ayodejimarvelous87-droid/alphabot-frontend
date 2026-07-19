@@ -19,7 +19,7 @@ if(!user) return;
 
 
 fetch(
-`https://alphabot-i7p2.onrender.com/notifications/${user.phone}`,
+`https://alphabot-main.onrender.com/notifications/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -50,7 +50,7 @@ setLoading(false);
 const markRead = async(id)=>{
 
 await fetch(
-`https://alphabot-i7p2.onrender.com/notifications/read/${id}`,
+`https://alphabot-main.onrender.com/notifications/read/${id}`,
 {
 method:"PUT",
 headers:{
@@ -75,7 +75,7 @@ item
 const markAllRead=async()=>{
 
 await fetch(
-"https://alphabot-i7p2.onrender.com/notifications/read-all",
+"https://alphabot-main.onrender.com/notifications/read-all",
 {
 method:"PUT",
 headers:{

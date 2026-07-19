@@ -25,7 +25,7 @@ const token = localStorage.getItem("token");
 
 
 const res = await fetch(
-"https://alphabot-i7p2.onrender.com/exam-pin",
+"https://alphabot-main.onrender.com/exam-pin",
 {
 method:"POST",
 headers:{

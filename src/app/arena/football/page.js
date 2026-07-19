@@ -9,13 +9,15 @@ export default function FootballArena(){
 const [matches,setMatches]=useState([]);
 const [loading,setLoading]=useState(true);
 const [message,setMessage]=useState("");
+const [predictions,setPredictions]=useState([]);
+const [leaderboard,setLeaderboard]=useState([]);
 
 
 
 useEffect(()=>{
 
 fetch(
-"https://alphabot-i7p2.onrender.com/football/matches"
+"https://alphabot-main.onrender.com/football/matches"
 )
 
 .then(res=>res.json())
@@ -24,11 +26,31 @@ fetch(
 
 if(Array.isArray(data)){
 
-setMatches(
-data.filter(
-item=>item.status==="Not Started"
+setMatches(data.filter(
+item=>item.status==="Not Started" && new Date(item.matchDate)>new Date()
+));
+
+}
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(user){
+
+fetch(
+`https://alphabot-main.onrender.com/football/my-predictions/${user._id}`
 )
-);
+
+.then(res=>res.json())
+
+.then(data=>{
+
+if(Array.isArray(data)){
+
+setPredictions(data);
+
+}
+
+});
 
 }
 
@@ -42,8 +64,15 @@ setLoading(false);
 
 });
 
+fetch("https://alphabot-main.onrender.com/football/leaderboard")
+.then(res=>res.json())
+.then(data=>{
+if(Array.isArray(data)){
+setLeaderboard(data);
+}
+});
 
-},[]);
+},[]);;
 
 
 
@@ -70,7 +99,7 @@ try{
 
 const res = await fetch(
 
-"https://alphabot-i7p2.onrender.com/football/predict",
+"https://alphabot-main.onrender.com/football/predict",
 
 {
 
@@ -102,6 +131,14 @@ setMessage(
 data.message || "Prediction submitted"
 );
 
+setPredictions(prev=>[
+...prev,
+{
+matchId,
+choice
+}
+]);
+
 
 }catch(error){
 
@@ -114,6 +151,8 @@ setMessage("Prediction failed");
 
 
 
+
+const hasPredicted=(matchId)=>predictions.some(p=>p.matchId===matchId || p.matchId?._id===matchId);
 
 return(
 
@@ -205,6 +244,7 @@ VS
 
 <button
 onClick={()=>predict(match._id,"home")}
+disabled={hasPredicted(match._id)}
 className="bg-yellow-400 text-black rounded-xl py-3 font-bold"
 >
 🏠 Home
@@ -212,6 +252,7 @@ className="bg-yellow-400 text-black rounded-xl py-3 font-bold"
 
 
 <button
+disabled={hasPredicted(match._id)}
 onClick={()=>predict(match._id,"draw")}
 className="bg-zinc-800 text-white rounded-xl py-3 font-bold"
 >
@@ -222,6 +263,7 @@ className="bg-zinc-800 text-white rounded-xl py-3 font-bold"
 <button
 onClick={()=>predict(match._id,"away")}
 className="bg-black text-white rounded-xl py-3 font-bold"
+disabled={hasPredicted(match._id)}
 >
 ✈️ Away
 </button>
@@ -246,6 +288,32 @@ className="bg-black text-white rounded-xl py-3 font-bold"
 
 </div>
 
+
+
+<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
+
+<h2 className="text-xl font-bold mb-4">
+🏆 Football Leaderboard
+</h2>
+
+{leaderboard.map((player,index)=>(
+
+<div key={player._id || index}
+className="flex justify-between py-2 border-b border-zinc-300 dark:border-zinc-700">
+
+<span>
+#{index+1} {player.userName || "Player"}
+</span>
+
+<span className="font-bold">
+{player.points} pts
+</span>
+
+</div>
+
+))}
+
+</div>
 
 <BottomNav />
 

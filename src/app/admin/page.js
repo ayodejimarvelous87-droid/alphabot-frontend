@@ -23,7 +23,7 @@ try{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-2.onrender.com/admin/pricing-settings",
+"https://alphabot-main.onrender.com/admin/pricing-settings",
 {
 method:"PUT",
 headers:{
