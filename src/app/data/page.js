@@ -82,6 +82,10 @@ Object.keys(plans[network])
 
 
 const dataPlans =
+console.log("NETWORKS", networks);
+console.log("CURRENT NETWORK", network);
+console.log("CATEGORIES", categories);
+console.log("DATA PLANS", dataPlans);
 plans[network]?.[category]
 ?
 plans[network][category]
