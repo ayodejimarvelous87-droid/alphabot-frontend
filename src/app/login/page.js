@@ -19,7 +19,7 @@ const [loading,setLoading] = useState(false);
       setMessage("");
 
       const res = await fetch(
-        "https://alphabot-main.onrender.com/users/login",
+        "https://alphabot-1.onrender.com/users/login",
         {
           method:"POST",
           headers:{

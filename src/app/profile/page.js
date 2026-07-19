@@ -36,7 +36,7 @@ const localUser=JSON.parse(saved);
 
 
 const profileRes=await fetch(
-`https://alphabot-main.onrender.com/users/profile/${localUser.phone}`,
+`https://alphabot-1.onrender.com/users/profile/${localUser.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -62,7 +62,7 @@ JSON.stringify(profileData)
 
 
 const walletRes=await fetch(
-`https://alphabot-main.onrender.com/wallet/balance/${localUser.phone}`,
+`https://alphabot-1.onrender.com/wallet/balance/${localUser.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`

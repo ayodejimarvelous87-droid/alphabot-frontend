@@ -13,7 +13,7 @@ const [loading,setLoading]=useState(true);
 useEffect(()=>{
 
 fetch(
-"https://alphabot-main.onrender.com/football/leaderboard"
+"https://alphabot-1.onrender.com/football/leaderboard"
 )
 
 .then(res=>res.json())

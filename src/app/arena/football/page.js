@@ -17,7 +17,7 @@ const [leaderboard,setLeaderboard]=useState([]);
 useEffect(()=>{
 
 fetch(
-"https://alphabot-main.onrender.com/football/matches"
+"https://alphabot-1.onrender.com/football/matches"
 )
 
 .then(res=>res.json())
@@ -37,7 +37,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 if(user){
 
 fetch(
-`https://alphabot-main.onrender.com/football/my-predictions/${user._id}`
+`https://alphabot-1.onrender.com/football/my-predictions/${user._id}`
 )
 
 .then(res=>res.json())
@@ -64,7 +64,7 @@ setLoading(false);
 
 });
 
-fetch("https://alphabot-main.onrender.com/football/leaderboard")
+fetch("https://alphabot-1.onrender.com/football/leaderboard")
 .then(res=>res.json())
 .then(data=>{
 if(Array.isArray(data)){
@@ -99,7 +99,7 @@ try{
 
 const res = await fetch(
 
-"https://alphabot-main.onrender.com/football/predict",
+"https://alphabot-1.onrender.com/football/predict",
 
 {
 

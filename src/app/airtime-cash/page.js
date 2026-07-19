@@ -24,7 +24,7 @@ const token = localStorage.getItem("token");
 
 
 const res = await fetch(
-"https://alphabot-main.onrender.com/airtime-cash",
+"https://alphabot-1.onrender.com/airtime-cash",
 {
 method:"POST",
 headers:{

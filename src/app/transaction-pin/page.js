@@ -23,7 +23,7 @@ const token = localStorage.getItem("token");
 
 
 const res = await fetch(
-"https://alphabot-main.onrender.com/pin/set",
+"https://alphabot-1.onrender.com/pin/set",
 {
 method:"POST",
 headers:{

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API = "https://alphabot-main.onrender.com";
+const API = "https://alphabot-1.onrender.com";
 
 export default function RecurringPage() {
 

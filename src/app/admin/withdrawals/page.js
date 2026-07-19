@@ -14,7 +14,7 @@ export default function AdminWithdrawals(){
 
 
     const res = await fetch(
-      "https://alphabot-main.onrender.com/admin/withdrawal/withdrawals",
+      "https://alphabot-1.onrender.com/admin/withdrawal/withdrawals",
       {
         headers:{
           Authorization:`Bearer ${token}`
@@ -45,7 +45,7 @@ export default function AdminWithdrawals(){
 
 
     const res = await fetch(
-      `https://alphabot-main.onrender.com/admin/withdrawal/${type}/${id}`,
+      `https://alphabot-1.onrender.com/admin/withdrawal/${type}/${id}`,
       {
         method:"POST",
         headers:{

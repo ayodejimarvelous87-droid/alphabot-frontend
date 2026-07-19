@@ -19,7 +19,7 @@ if(!user) return;
 
 
 fetch(
-`https://alphabot-main.onrender.com/transactions/${user.phone}`,
+`https://alphabot-1.onrender.com/transactions/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`

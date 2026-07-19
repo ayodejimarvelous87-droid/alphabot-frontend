@@ -25,7 +25,7 @@ if(!user) return;
 
 
 fetch(
-`https://alphabot-main.onrender.com/wallet/balance/${user.phone}`,
+`https://alphabot-1.onrender.com/wallet/balance/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -46,7 +46,7 @@ setBalance(data.balance);
 
 
 fetch(
-`https://alphabot-main.onrender.com/transactions/${user.phone}`,
+`https://alphabot-1.onrender.com/transactions/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -104,7 +104,7 @@ if(!user) return;
 
 try{
 
-const balanceRes=await fetch(`https://alphabot-main.onrender.com/wallet/balance/${user.phone}`,{
+const balanceRes=await fetch(`https://alphabot-1.onrender.com/wallet/balance/${user.phone}`,{
 headers:{Authorization:`Bearer ${token}`}
 });
 
@@ -114,7 +114,7 @@ if(balanceData.balance !== undefined){
 setBalance(balanceData.balance);
 }
 
-const transactionRes=await fetch(`https://alphabot-main.onrender.com/transactions/${user.phone}`,{
+const transactionRes=await fetch(`https://alphabot-1.onrender.com/transactions/${user.phone}`,{
 headers:{Authorization:`Bearer ${token}`}
 });
 
@@ -144,7 +144,7 @@ setFunding(true);
 setMessage("");
 
 const res=await fetch(
-"https://alphabot-main.onrender.com/wallet/fund",
+"https://alphabot-1.onrender.com/wallet/fund",
 {
 method:"POST",
 headers:{

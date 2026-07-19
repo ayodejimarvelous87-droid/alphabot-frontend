@@ -28,7 +28,7 @@ export default function Register(){
     try{
 
       const res = await fetch(
-        "https://alphabot-main.onrender.com/users/register",
+        "https://alphabot-1.onrender.com/users/register",
         {
           method:"POST",
           headers:{

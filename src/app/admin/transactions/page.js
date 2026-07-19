@@ -15,7 +15,7 @@ export default function AdminTransactions(){
 
 
       const res = await fetch(
-        "https://alphabot-main.onrender.com/admin/transactions",
+        "https://alphabot-1.onrender.com/admin/transactions",
         {
           headers:{
             Authorization:`Bearer ${token}`
