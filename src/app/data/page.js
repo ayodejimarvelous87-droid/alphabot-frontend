@@ -1,80 +1,198 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 
 export default function Page(){
 
 const [phone,setPhone]=useState("");
-const [network,setNetwork]=useState("MTN");
-const [plan,setPlan]=useState("1GB");
-const [amount,setAmount]=useState(100);
+const [network,setNetwork]=useState("");
+const [category,setCategory]=useState("");
+const [plans,setPlans]=useState({});
+const [selectedPlan,setSelectedPlan]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 
 
-const plans={
-"500MB":50,
-"1GB":100,
-"2GB":200,
-"5GB":500
+useEffect(()=>{
+
+const loadPlans = async()=>{
+
+try{
+
+const res = await fetch(
+"https://alphabot-2.onrender.com/data/plans"
+);
+
+const data = await res.json();
+console.log("DATA_PLANS", data);
+
+const networks = data.networks || {};
+
+setPlans(networks);
+
+const firstNetwork = Object.keys(networks)[0];
+
+if(firstNetwork){
+
+setNetwork(firstNetwork);
+
+const firstCategory =
+Object.keys(networks[firstNetwork])
+.find(cat => networks[firstNetwork][cat].length > 0);
+
+if(firstCategory){
+setCategory(firstCategory);
+}
+
+}
+
+}catch(error){
+
+console.log(
+"Plans error:",
+error.message
+);
+
+}
+
 };
 
 
-const buyData=async()=>{
+loadPlans();
+
+},[]);
+
+
+
+const networks =
+Object.keys(plans);
+
+
+
+const categories =
+plans[network]
+?
+Object.keys(plans[network])
+:
+[];
+
+
+
+const dataPlans =
+plans[network]?.[category]
+?
+plans[network][category]
+:
+[];
+
+
+
+
+const buyData = async()=>{
+
+
+const selected =
+dataPlans.find(
+item=>item.variation_id == selectedPlan
+);
+
+
+if(!selected){
+
+setMessage(
+"Select a data plan"
+);
+
+return;
+
+}
+
 
 try{
 
 setLoading(true);
-setMessage("Processing...");
 
-const token=localStorage.getItem("token");
-
-
-const res=await fetch(
-"https://alphabot-i7p2.onrender.com/vtu/buy-data",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":`Bearer ${token}`
-},
-body:JSON.stringify({
-phone,
-network,
-plan,
-amount:Number(amount),
-pin
-})
-}
+setMessage(
+"Processing..."
 );
 
 
-const data=await res.json();
+const token =
+localStorage.getItem("token");
+
+
+const res = await fetch(
+
+"https://alphabot-2.onrender.com/data/buy",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json",
+
+"Authorization":
+`Bearer ${token}`
+
+},
+
+body:JSON.stringify({
+
+phone,
+
+network,
+
+plan:selected.variation_id,
+
+amount:Number(selected.reseller_price),
+
+pin
+
+})
+
+}
+
+);
+
+
+const result =
+await res.json();
+
 
 
 if(res.ok){
 
-setMessage(`✅ ${data.message}. Balance: ₦${data.newBalance}`);
+setMessage(
+"✅ Data purchase successful"
+);
 
 }else{
 
-setMessage(`❌ ${data.message}`);
+setMessage(
+"❌ " + result.message
+);
 
 }
 
 
 }catch(error){
 
-setMessage("❌ Connection error");
+setMessage(
+"❌ Connection error"
+);
+
 
 }finally{
 
 setLoading(false);
 
 }
+
 
 };
 
@@ -86,28 +204,98 @@ return(
 
 <div className="max-w-md mx-auto">
 
+
 <h1 className="text-3xl font-bold">
 🌐 Data
 </h1>
 
 <p className="text-zinc-400 mt-2">
-Buy internet data bundles instantly
+Choose your preferred data bundle
 </p>
 
 
-<div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+
+<div className="mt-8 bg-zinc-900 rounded-3xl p-6">
 
 
 <select
-className="w-full bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
+className="w-full p-3 rounded-xl bg-white text-black"
 value={network}
-onChange={(e)=>setNetwork(e.target.value)}
+onChange={(e)=>{
+
+setNetwork(e.target.value);
+setSelectedPlan("");
+
+setCategory(
+Object.keys(plans[e.target.value])[0]
+);
+
+}}
 >
 
-<option>MTN</option>
-<option>Airtel</option>
-<option>Glo</option>
-<option>9mobile</option>
+{networks.map(net=>(
+
+<option key={net}>
+{net}
+</option>
+
+))}
+
+</select>
+
+
+
+<select
+className="w-full mt-4 p-3 rounded-xl bg-white text-black"
+value={category}
+onChange={(e)=>{
+
+setCategory(e.target.value);
+setSelectedPlan("");
+
+}}
+
+>
+
+{categories.map(cat=>(
+
+<option key={cat} value={cat}>
+{cat}
+({plans[network][cat].length})
+</option>
+
+))}
+
+</select>
+
+
+
+
+<select
+className="w-full mt-4 p-3 rounded-xl bg-white text-black"
+value={selectedPlan}
+onChange={(e)=>setSelectedPlan(e.target.value)}
+>
+
+
+<option value="">
+Select Plan
+</option>
+
+
+{dataPlans.map(plan=>(
+
+<option
+key={plan.variation_id}
+value={plan.variation_id}
+>
+
+{plan.data_plan} - ₦{plan.reseller_price}
+
+</option>
+
+))}
+
 
 </select>
 
@@ -115,34 +303,13 @@ onChange={(e)=>setNetwork(e.target.value)}
 
 <PhoneInput
 value={phone}
-onChange={(value)=>setPhone(value)}
+onChange={setPhone}
 />
 
 
 
-<select
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
-value={plan}
-onChange={(e)=>{
-setPlan(e.target.value);
-setAmount(plans[e.target.value]);
-}}
->
-
-{
-Object.keys(plans).map(item=>(
-<option key={item}>
-{item} - ₦{plans[item]}
-</option>
-))
-}
-
-</select>
-
-
-
 <input
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
+className="w-full mt-4 p-3 rounded-xl bg-white text-black"
 placeholder="Transaction PIN"
 type="password"
 maxLength="4"
@@ -163,8 +330,7 @@ className="w-full mt-5 bg-yellow-400 text-black py-3 rounded-xl font-bold"
 </button>
 
 
-
-<p className="text-center mt-4 text-zinc-300 text-sm">
+<p className="text-center text-sm text-zinc-300 mt-4">
 {message}
 </p>
 

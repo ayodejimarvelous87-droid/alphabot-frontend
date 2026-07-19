@@ -1,41 +1,126 @@
 "use client";
 
+import {useState} from "react";
 import Link from "next/link";
 
 export default function AdminDashboard(){
 
-  return (
-    <div style={{padding:"30px"}}>
+const [pricing,setPricing]=useState({
+airtimeProfit:20,
+dataProfit:50,
+electricityProfit:50,
+tvProfit:50,
+examPinProfit:50,
+bettingProfit:20
+});
 
-      <h1>👑 AlphaBot Admin Panel</h1>
+const [message,setMessage]=useState("");
 
-      <p>Manage AlphaBot users, wallets, transactions and services.</p>
+const savePricing=async()=>{
+
+try{
+
+const token=localStorage.getItem("adminToken");
+
+const res=await fetch(
+"https://alphabot-2.onrender.com/admin/pricing-settings",
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify(pricing)
+}
+);
+
+const data=await res.json();
+
+setMessage(
+res.ok ? "✅ Saved" : "❌ "+data.message
+);
+
+}catch(error){
+
+setMessage("❌ Connection error");
+
+}
+
+};
 
 
-      <div style={{display:"grid",gap:"15px",marginTop:"30px"}}>
+return(
+<div style={{padding:"30px"}}>
 
-        <Link href="/admin/users">
-          👥 Users
-        </Link>
+<h1>👑 AlphaBot Admin Panel</h1>
 
-
-        <Link href="/admin/wallets">
-          💰 Wallet Management
-        </Link>
+<p>
+Manage AlphaBot users, wallets, transactions and services.
+</p>
 
 
-        <Link href="/admin/transactions">
-          📜 Transactions
-        </Link>
+<div style={{display:"grid",gap:"15px",marginTop:"30px"}}>
+
+<Link href="/admin/users">👥 Users</Link>
+
+<Link href="/admin/wallets">💰 Wallet Management</Link>
+
+<Link href="/admin/transactions">📜 Transactions</Link>
+
+<Link href="/admin/withdrawals">💸 Withdrawals</Link>
+
+</div>
 
 
-        <Link href="/admin/withdrawals">
-          💸 Withdrawals
-        </Link>
+<hr style={{margin:"30px 0"}}/>
 
 
-      </div>
+<h2>⚙️ Service Pricing</h2>
 
-    </div>
-  );
+{
+Object.keys(pricing).map(key=>(
+
+<div key={key} style={{marginTop:"10px"}}>
+
+<label>{key}</label>
+
+<input
+type="number"
+value={pricing[key]}
+onChange={(e)=>
+setPricing({
+...pricing,
+[key]:e.target.value
+})
+}
+style={{
+display:"block",
+padding:"8px",
+marginTop:"5px"
+}}
+/>
+
+</div>
+
+))
+}
+
+
+<button
+onClick={savePricing}
+style={{
+marginTop:"20px",
+padding:"10px 20px"
+}}
+>
+Save Pricing
+</button>
+
+
+<p>{message}</p>
+
+
+</div>
+);
+
 }

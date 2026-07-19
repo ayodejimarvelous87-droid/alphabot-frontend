@@ -16,7 +16,7 @@ export default function AdminLogin() {
     try {
 
       const res = await fetch(
-        "https://alphabot-i7p2.onrender.com/admin/login",
+        "https://alphabot-2.onrender.com/admin/login",
         {
           method:"POST",
           headers:{
