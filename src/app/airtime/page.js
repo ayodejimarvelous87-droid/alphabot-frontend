@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 
@@ -12,7 +12,30 @@ const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+  const [beneficiaries,setBeneficiaries]=useState([]);
 
+
+useEffect(()=>{
+const loadBeneficiaries=async()=>{
+try{
+const user=JSON.parse(localStorage.getItem("user"));
+if(!user?.phone)return;
+
+const res=await fetch(`https://alphabot-1.onrender.com/beneficiaries/${user.phone}`,{
+headers:{Authorization:"Bearer "+localStorage.getItem("token")}
+});
+
+const data=await res.json();
+setBeneficiaries(data);
+
+}catch(error){
+console.log(error);
+}
+};
+
+loadBeneficiaries();
+
+},[]);
 
 const buyAirtime = async()=>{
 
@@ -109,6 +132,7 @@ onChange={(e)=>setNetwork(e.target.value)}
 <PhoneInput
 value={phone}
 onChange={(value)=>setPhone(value)}
+beneficiaries={beneficiaries}
 />
 
 

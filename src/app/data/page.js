@@ -14,6 +14,35 @@ const [selectedPlan,setSelectedPlan]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+  const [beneficiaries,setBeneficiaries]=useState([]);
+
+useEffect(()=>{
+
+const loadBeneficiaries = async()=>{
+try{
+const user = JSON.parse(localStorage.getItem("user"));
+if(!user?.phone) return;
+
+const res = await fetch(
+`https://alphabot-1.onrender.com/beneficiaries/${user.phone}`,
+{
+headers:{
+Authorization:"Bearer "+localStorage.getItem("token")
+}
+}
+);
+
+const data = await res.json();
+setBeneficiaries(data);
+
+}catch(error){
+console.log(error);
+}
+};
+
+loadBeneficiaries();
+
+},[]);
 
 
 useEffect(()=>{
@@ -82,15 +111,16 @@ Object.keys(plans[network])
 
 
 const dataPlans =
-console.log("NETWORKS", networks);
-console.log("CURRENT NETWORK", network);
-console.log("CATEGORIES", categories);
-console.log("DATA PLANS", dataPlans);
 plans[network]?.[category]
 ?
 plans[network][category]
 :
 [];
+
+console.log("NETWORKS", networks);
+console.log("CURRENT NETWORK", network);
+console.log("CATEGORIES", categories);
+console.log("DATA PLANS", dataPlans);
 
 
 
@@ -287,7 +317,7 @@ Select Plan
 </option>
 
 
-{dataPlans.map(plan=>(
+{(dataPlans || []).map(plan=>(
 
 <option
 key={plan.variation_id}
@@ -308,6 +338,7 @@ value={plan.variation_id}
 <PhoneInput
 value={phone}
 onChange={setPhone}
+beneficiaries={beneficiaries}
 />
 
 

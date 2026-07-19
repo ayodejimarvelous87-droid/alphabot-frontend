@@ -26,9 +26,7 @@ fetch(
 
 if(Array.isArray(data)){
 
-setMatches(data.filter(
-item=>item.status==="Not Started" && new Date(item.matchDate)>new Date()
-));
+setMatches(data);
 
 }
 

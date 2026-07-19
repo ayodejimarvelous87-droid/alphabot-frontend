@@ -31,6 +31,7 @@ Authorization:`Bearer ${token}`
 
 if(Array.isArray(data)){
 setNotifications(data);
+console.log("NOTIFICATION DATES", data);
 }
 
 setLoading(false);
@@ -100,13 +101,16 @@ if(type==="referral") return "🎁";
 if(type==="warning") return "⚠️";
 return "🔔";
 };
-
 const getTime=(date)=>{
 if(!date) return "";
-const diff=Math.floor((Date.now()-new Date(date))/60000);
-if(diff < 1) return "Just now";
-if(diff === 1) return "1 minute ago";
-return `${diff} minutes ago`;
+return new Date(date).toLocaleString("en-NG",{
+day:"2-digit",
+month:"2-digit",
+year:"numeric",
+hour:"numeric",
+minute:"2-digit",
+hour12:true
+});
 };
 
 
