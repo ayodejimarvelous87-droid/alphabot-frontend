@@ -80,7 +80,7 @@ Object.keys(networks[firstNetwork])
 .find(cat => networks[firstNetwork][cat].length > 0);
 
 if(firstCategory){
-setCategory(firstCategory);
+setCategory("All Plans");
 }
 
 }
@@ -111,16 +111,15 @@ const actualNetwork = network;
 
 const categories =
 actualNetwork
-?
-Object.keys(plans[actualNetwork])
-:
-[];
+? ["All Plans", ...Object.keys(plans[actualNetwork])]
+: [];
 
 const dataPlans =
 actualNetwork
 ?
-Object.values(plans[actualNetwork])
-.flat()
+(category === "All Plans"
+? Object.values(plans[actualNetwork]).flat()
+: plans[actualNetwork]?.[category] || [])
 .sort((a,b)=>{
 const getSize = plan => {
 const text = (plan.size || plan.data_plan || plan.name || "").toUpperCase();
@@ -314,7 +313,7 @@ setSelectedPlan("");
 
 <option key={cat} value={cat}>
 {cat}
-({plans[network][cat].length})
+  ({cat === "All Plans" ? Object.values(plans[network] || {}).flat().length : (plans[network]?.[cat]?.length || 0)})
 </option>
 
 ))}
