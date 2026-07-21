@@ -24,10 +24,60 @@ const [oldPassword,setOldPassword]=useState("");
 const [newPassword,setNewPassword]=useState("");
 
 const [message,setMessage]=useState("");
+const [otp,setOtp]=useState("");
+const [verified,setVerified]=useState(false);
 
 
+
+
+const sendOTP=async()=>{
+try{
+const res=await fetch(`${API}/users/send-profile-otp`,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({phone:user.phone})
+});
+
+const data=await res.json();
+setMessage(data.message);
+
+}catch(error){
+setMessage("Failed to send OTP");
+}
+};
+
+
+const verifyOTP=async()=>{
+try{
+const res=await fetch(`${API}/users/verify-profile-otp`,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+phone:user.phone,
+otp
+})
+});
+
+const data=await res.json();
+
+if(res.ok){
+setVerified(true);
+setMessage("Profile verified successfully ✅");
+}else{
+setMessage(data.message);
+}
+
+}catch(error){
+setMessage("OTP verification failed");
+}
+};
 
 const saveProfile=async()=>{
+
+if(!verified){
+setMessage("Please verify your profile first");
+return;
+}
 
 try{
 
@@ -98,6 +148,8 @@ oldPassword,
 newPassword
 })
 }
+
+
 );
 
 
@@ -148,6 +200,28 @@ type="email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
 />
+
+<input
+className="w-full p-3 rounded-xl bg-white dark:bg-black border mb-3"
+placeholder="Profile OTP"
+value={otp}
+onChange={(e)=>setOtp(e.target.value)}
+/>
+
+<button
+onClick={sendOTP}
+className="w-full bg-black dark:bg-white dark:text-black text-white p-3 rounded-xl font-bold mb-3"
+>
+Send Verification OTP
+</button>
+
+<button
+onClick={verifyOTP}
+className="w-full bg-green-500 text-white p-3 rounded-xl font-bold mb-4"
+>
+Verify OTP
+</button>
+
 
 
 
