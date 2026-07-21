@@ -57,7 +57,6 @@ setPredictions(data);
 
 }
 
-setLoading(false);
 
 fetch("https://alphabot-1.onrender.com/football/leaderboard")
 .then(res=>res.json())
@@ -65,6 +64,7 @@ fetch("https://alphabot-1.onrender.com/football/leaderboard")
 if(Array.isArray(data)){
 setLeaderboard(data);
 }
+  setLoading(false);
 });
 
   },[]);
@@ -181,14 +181,22 @@ Predict matches and earn points.
 • Home = home team wins.<br/>
 • Draw = both teams finish equal.<br/>
 • Away = away team wins.<br/><br/>
-🏆 Scoring:<br/>
-• Correct prediction earns points.<br/>
-• Points increase your weekly rank.<br/>
-• Top players appear on the leaderboard.<br/><br/>
+🏆 Scoring System:<br/>
+• Correct win prediction = 2 points.<br/>
+• Correct draw prediction = 2 points.<br/>
+• Wrong prediction = 0 points.<br/>
+• Points determine your weekly leaderboard rank.<br/><br/>
+🎯 Competition Rules:<br/>
+• Maximum 20 predictions daily.<br/>
+• Minimum 20 predictions required to qualify.<br/>
+• Minimum 10 correct predictions required to qualify.<br/>
+• Top players are ranked by total points.<br/>
+• 1st place requires 200 points.<br/>
+• 2nd place requires 180 points.<br/><br/>
 ⚠️ Rules:<br/>
 • One prediction per match only.<br/>
 • Predictions close when the match starts.<br/>
-• Compete weekly for Arena rewards.
+• Rewards are paid every Sunday.
 </p>
 </div>
 )}
@@ -263,6 +271,14 @@ Your pick: {getPredictionChoice(match._id).toUpperCase()}
 {match.awayTeam}
 
 </h2>
+
+<div className="text-center mt-3 text-sm text-zinc-500">
+{match.status==="LIVE" && <p className="text-red-500 font-bold">🔴 LIVE</p>}
+<p>🕒 {new Date(match.matchDate).toLocaleString()}</p>
+{match.homeGoals !== null && match.awayGoals !== null && (
+<p className="text-xl font-bold mt-2">⚽ {match.homeGoals} - {match.awayGoals}</p>
+)}
+</div>
 
 
 

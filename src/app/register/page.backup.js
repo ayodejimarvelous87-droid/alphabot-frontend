@@ -15,9 +15,6 @@ export default function Register(){
 
   const [message,setMessage] = useState("");
   const [showPassword,setShowPassword] = useState(false);
-    const [otp,setOtp] = useState("");
-    const [otpSent,setOtpSent] = useState(false);
-    const [verified,setVerified] = useState(false);
 
   const update=(e)=>{
     setForm({
@@ -26,85 +23,44 @@ export default function Register(){
     });
   };
 
-    const sendOTP=async()=>{
+  const register=async()=>{
 
-      try{
+    try{
 
-        const res=await fetch(
-          "https://alphabot-1.onrender.com/users/send-registration-otp",
-          {
-            method:"POST",
-            headers:{
-              "Content-Type":"application/json"
-            },
-            body:JSON.stringify(form)
-          }
-        );
-
-        const data=await res.json();
-
-        if(res.ok){
-          setOtpSent(true);
-          setMessage("OTP sent to your email");
-        }else{
-          setMessage(data.message);
+      const res = await fetch(
+        "https://alphabot-1.onrender.com/users/register",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify(form)
         }
+      );
 
-      }catch(error){
-        setMessage("Failed to send OTP");
+      const data = await res.json();
+
+      if(res.ok){
+
+        setMessage("Registration successful");
+
+        setTimeout(()=>{
+          window.location.href="/login";
+        },1500);
+
+      }else{
+
+        setMessage(data.message);
+
       }
 
-    };
+    }catch(error){
 
+      setMessage("Network error");
 
-    const verifyOTP=async()=>{
+    }
 
-      try{
-
-        const res=await fetch(
-          "https://alphabot-1.onrender.com/users/verify-registration-otp",
-          {
-            method:"POST",
-            headers:{
-              "Content-Type":"application/json"
-            },
-            body:JSON.stringify({
-              phone:form.phone,
-              otp
-            })
-          }
-        );
-
-        const data=await res.json();
-
-        if(res.ok){
-          setVerified(true);
-          setMessage("Email verified successfully");
-        }else{
-          setMessage(data.message);
-        }
-
-      }catch(error){
-        setMessage("OTP verification failed");
-      }
-
-    };
-
-
-    const register=async()=>{
-
-      if(!verified){
-        setMessage("Verify OTP first");
-        return;
-      }
-
-      setMessage("Registration completed");
-
-      setTimeout(()=>{
-        window.location.href="/login";
-      },1500);
-
-    };
+  };
 
   return(
 
@@ -171,36 +127,12 @@ export default function Register(){
           onChange={update}
         />
 
-          {!otpSent ? (
-
-          <button
-            onClick={sendOTP}
-            className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition duration-150"
-          >
-            Send Verification OTP
-          </button>
-
-          ) : (
-
-          <div>
-
-          <input
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e)=>setOtp(e.target.value)}
-            className="w-full mt-4 p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
-          />
-
-          <button
-            onClick={verifyOTP}
-            className="w-full mt-4 bg-green-500 text-white py-3 rounded-xl font-bold"
-          >
-            Verify OTP & Create Account
-          </button>
-
-          </div>
-
-          )}
+        <button
+          onClick={register}
+          className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition duration-150"
+        >
+          Create Account
+        </button>
 
         <p className="text-center text-sm mt-4 text-zinc-400">
           {message}

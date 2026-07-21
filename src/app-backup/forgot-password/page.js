@@ -38,7 +38,7 @@ const data=await res.json();
 
 if(res.ok){
 
-setMessage("OTP sent to your phone");
+setMessage("OTP sent to your email");
 setStep(2);
 
 }else{

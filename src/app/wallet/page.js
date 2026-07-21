@@ -219,7 +219,7 @@ Manage your AlphaBot balance
 
 
 
-<div className="mt-8 bg-gradient-to-br from-yellow-300 to-yellow-600 text-black rounded-3xl p-6">
+  <div className="mt-8 bg-gradient-to-br from-yellow-300 to-yellow-600 text-black rounded-2xl p-4">
 
 
 <p className="font-semibold">
@@ -227,7 +227,7 @@ Wallet Balance
 </p>
 
 
-<h2 className="text-4xl font-bold mt-3">
+  <h2 className="text-2xl font-bold mt-2">
 ₦{balance.toLocaleString()}
 </h2>
 
@@ -278,7 +278,7 @@ Fund Wallet
 
 <input
 
-className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
+  className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-zinc-800 text-black dark:text-white placeholder:text-zinc-400 border border-zinc-700"
 
 placeholder="Enter amount"
 

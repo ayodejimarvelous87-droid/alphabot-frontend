@@ -183,6 +183,11 @@ Manage your AlphaBot account
 {user?.email || "No email"}
 </p>
 
+  <p className="mt-3 font-bold">
+  Account Status: {user?.emailVerified ? "✅ Verified" : "❌ Unverified"}
+  </p>
+
+
 
 </div>
 

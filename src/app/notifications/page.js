@@ -1,25 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 
 export default function Notifications(){
 
 const [notifications,setNotifications]=useState([]);
+const [user,setUser]=useState(null);
 const [loading,setLoading]=useState(true);
 
 
 useEffect(()=>{
 
-const user = JSON.parse(localStorage.getItem("user"));
+const savedUser = JSON.parse(localStorage.getItem("user"));
+setUser(savedUser);
+
 const token = localStorage.getItem("token");
 
-if(!user) return;
+if(!savedUser) return;
 
 
 fetch(
-`https://alphabot-1.onrender.com/notifications/${user.phone}`,
+`https://alphabot-1.onrender.com/notifications/${savedUser.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -31,7 +33,6 @@ Authorization:`Bearer ${token}`
 
 if(Array.isArray(data)){
 setNotifications(data);
-console.log("NOTIFICATION DATES", data);
 }
 
 setLoading(false);
@@ -48,7 +49,7 @@ setLoading(false);
 
 
 
-const markRead = async(id)=>{
+const markRead=async(id)=>{
 
 await fetch(
 `https://alphabot-1.onrender.com/notifications/read/${id}`,
@@ -73,10 +74,15 @@ item
 
 };
 
+
+
 const markAllRead=async()=>{
 
+if(!user) return;
+
+
 await fetch(
-"https://alphabot-1.onrender.com/notifications/read-all",
+`https://alphabot-1.onrender.com/notifications/read-all/${user.phone}`,
 {
 method:"PUT",
 headers:{
@@ -84,6 +90,7 @@ Authorization:`Bearer ${localStorage.getItem("token")}`
 }
 }
 );
+
 
 setNotifications(prev=>
 prev.map(item=>({...item,read:true}))
@@ -93,122 +100,97 @@ prev.map(item=>({...item,read:true}))
 
 
 
-
-
-const getIcon=(type)=>{
-if(type==="wallet") return "💰";
-if(type==="referral") return "🎁";
-if(type==="warning") return "⚠️";
-return "🔔";
-};
-const getTime=(date)=>{
-if(!date) return "";
-return new Date(date).toLocaleString("en-NG",{
-day:"2-digit",
-month:"2-digit",
-year:"numeric",
-hour:"numeric",
-minute:"2-digit",
-hour12:true
-});
-};
-
-
 return(
 
 <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8 pb-24">
 
 <div className="max-w-md mx-auto">
 
-<h1 className="text-3xl font-bold">
+<h1 className="text-3xl font-bold mb-2">
 🔔 Notifications
 </h1>
 
-<p className="text-zinc-500 mt-2">
-Your AlphaBot updates
+<p className="text-zinc-500 mb-6">
+Stay updated with AlphaBot activities.
 </p>
 
 <button
 onClick={markAllRead}
-className="mt-5 w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
+className="mb-6 bg-yellow-400 text-black font-bold px-5 py-3 rounded-2xl"
 >
-✅ Mark all as read
+Mark all read
 </button>
 
-
-
-<div className="mt-8 space-y-4">
-
-{loading ? (
-
+{loading && (
 <p className="text-zinc-400">
-Loading...
+Loading notifications...
 </p>
+)}
 
-) : notifications.length===0 ? (
-
-<div className="text-center bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
-<p className="text-3xl">🔔</p>
-<p className="font-bold mt-3">No notifications yet</p>
-<p className="text-zinc-400 mt-2 text-sm">We will keep you updated with AlphaBot news, rewards and offers.</p>
+{!loading && notifications.length===0 && (
+<div className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
+No notifications yet 🚀
 </div>
+)}
 
-) : (
+<div className="space-y-4">
 
-notifications.map((item)=>(
+{notifications.map(item=>(
 
 <div
 key={item._id}
 onClick={()=>markRead(item._id)}
-className={`bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-4 cursor-pointer ${
-item.read ? "" : "border border-yellow-400"
+className={`rounded-3xl p-5 cursor-pointer ${
+item.read
+?
+"bg-zinc-100 dark:bg-zinc-900"
+:
+"bg-yellow-50 dark:bg-zinc-800 border border-yellow-400"
 }`}
 >
 
-<h2 className="font-bold">
-{getIcon(item.category)} {item.title || "Notification"}
+<div className="flex justify-between items-start gap-3">
+
+<h2 className="font-bold text-lg">
+{item.title}
 </h2>
 
-<p className="text-zinc-500 mt-1">
+{!item.read && (
+<span className="text-xs bg-yellow-400 text-black px-2 py-1 rounded-full">
+NEW
+</span>
+)}
+
+</div>
+
+<p className="mt-3 text-sm leading-6">
 {item.message}
 </p>
 
-<p className="text-xs text-zinc-400 mt-2">
-🕒 {getTime(item.createdAt)}
-</p>
+<div className="flex justify-between mt-4 text-xs text-zinc-500">
 
+<span>
+{item.type}
+</span>
 
-
-{!item.read && (
-<p className="text-yellow-400 text-xs mt-2">
-Unread
-</p>
-)}
-
+<span>
+{new Date(item.createdAt).toLocaleString()}
+</span>
 
 </div>
 
-))
+</div>
 
-)}
+))}
 
 </div>
 
-
-<Link
-href="/dashboard"
-className="block text-center text-yellow-400 mt-8"
->
-← Dashboard
-</Link>
-
-
 </div>
 
-<BottomNav />
+<BottomNav/>
 
 </main>
 
 );
 
-}
+}}

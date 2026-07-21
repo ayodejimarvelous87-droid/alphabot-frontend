@@ -271,6 +271,7 @@ const services=[
 ["🏆","Arena+","/arena"],
 ["💬","Support","/support"],
 ["🏦","Bank","/bank"],
+  ["🏦","Bank Transfer","/transfer"],
 ["🔁","Recurring","/recurring"]
 
 ];
@@ -385,9 +386,9 @@ Available Balance
 
 <button
 onClick={()=>setShowBalance(!showBalance)}
-className="bg-black/10 rounded-full p-2 text-2xl hover:scale-110 transition"
+  className="bg-black/10 rounded-full px-3 py-1 text-sm font-semibold hover:scale-105 transition"
 >
-{showBalance ? "👁️" : "🙈"}
+  {showBalance ? "Hide" : "Show"}
 </button>
 
 </div>
@@ -424,10 +425,6 @@ AlphaBot Activity 📊
 
 <div className="grid grid-cols-2 gap-4 mt-5">
 
-<div className="bg-white dark:bg-black rounded-xl p-4">
-<p className="text-zinc-400 text-sm">Transactions</p>
-<p className="text-2xl font-bold mt-2">{transactions.length}</p>
-</div>
 
 <div className="bg-white dark:bg-black rounded-xl p-4">
 <p className="text-zinc-400 text-sm">Total Spent</p>
@@ -439,10 +436,6 @@ AlphaBot Activity 📊
 <p className="text-2xl font-bold mt-2 text-yellow-400">₦{referralEarnings.toLocaleString()}</p>
 </div>
 
-<div className="bg-white dark:bg-black rounded-xl p-4">
-<p className="text-zinc-400 text-sm">Activity</p>
-<p className="text-2xl font-bold mt-2">Active ✅</p>
-</div>
 
 </div>
 </div>

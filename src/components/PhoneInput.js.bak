@@ -28,8 +28,8 @@ return (
 type="tel"
 className="flex-1 min-w-0 p-3 rounded-r-xl bg-white dark:bg-black border"
 placeholder="Phone number"
-value={value.replace("+234","")}
-onChange={(e)=>onChange("+234"+e.target.value.replace(/\D/g,""))}
+value={value}
+onChange={(e)=>onChange(e.target.value)}
 />
 
 </div>
@@ -44,7 +44,7 @@ onChange={(e)=>onChange("+234"+e.target.value.replace(/\D/g,""))}
 <button
 key={index}
 type="button"
-onClick={()=>onChange(item.beneficiary_phone.startsWith("+234") ? item.beneficiary_phone : "+234"+item.beneficiary_phone)}
+onClick={()=>onChange(item.beneficiary_phone)}
 className="w-full text-left bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-4 border hover:border-yellow-400 transition"
 >
 

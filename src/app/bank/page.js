@@ -1,144 +1,198 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import {useState,useEffect} from "react";
+
+const API="https://alphabot-1.onrender.com";
 
 export default function Page(){
 
-const [bank,setBank]=useState(null);
-const [message,setMessage]=useState("Loading...");
+const user =
+typeof window !== "undefined"
+? JSON.parse(localStorage.getItem("user") || "{}")
+: {};
+
+const token =
+typeof window !== "undefined"
+? localStorage.getItem("token")
+: null;
 
 
-useEffect(()=>{
+const [bankName,setBankName]=useState("");
+const [accountNumber,setAccountNumber]=useState("");
+const [accountName,setAccountName]=useState("");
+const [beneficiaryId,setBeneficiaryId]=useState("");
+const [beneficiaries,setBeneficiaries]=useState([]);
+const [amount,setAmount]=useState("");
+const [pin,setPin]=useState("");
+const [message,setMessage]=useState("");
 
-const loadBank = async()=>{
+const loadBeneficiaries=async()=>{
 
-try{
+const res=await fetch(`${API}/transfer/beneficiaries/${user.phone}`,{
+headers:{
+Authorization:`Bearer ${token}`
+}
+});
 
-const res = await fetch(
-"https://alphabot-1.onrender.com/bank/"
-);
-
-
-const data = await res.json();
-
+const data=await res.json();
 
 if(res.ok){
-
-setBank(data);
-setMessage("");
-
-}else{
-
-setMessage(data.message);
-
-}
-
-
-}catch(error){
-
-setMessage("Connection error");
-
+setBeneficiaries(data);
 }
 
 };
 
 
-loadBank();
+useEffect(()=>{
+
+const load=async()=>{
+await loadBeneficiaries();
+};
+
+load();
 
 },[]);
 
 
 
+const saveBeneficiary=async()=>{
+
+const res=await fetch(`${API}/transfer/beneficiary`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+phone:user.phone,
+bankName,
+accountNumber,
+accountName
+})
+});
+
+const data=await res.json();
+
+setMessage(data.message);
+
+if(res.ok){
+setMessage("Bank account saved successfully");
+}
+
+};
+
+
+const sendMoney=async()=>{
+
+const res=await fetch(`${API}/transfer/send`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+phone:user.phone,
+beneficiaryId,
+amount,
+pin
+})
+});
+
+const data=await res.json();
+
+setMessage(data.message);
+
+};
+
+
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
+<main className="min-h-screen bg-white dark:bg-black text-black dark:text-white px-5 py-8">
 
 <div className="max-w-md mx-auto">
 
-
-<h1 className="text-3xl font-bold">
-🏦 Bank
+<h1 className="text-3xl font-bold mb-2">
+🏦 Bank Transfer
 </h1>
 
-
-<p className="text-zinc-400 mt-2">
-AlphaBot payment details
+<p className="text-zinc-400 mb-6">
+Send money to any bank
 </p>
 
 
+<input
+className="w-full p-3 border rounded-xl mb-3"
+placeholder="Bank name"
+value={bankName}
+onChange={(e)=>setBankName(e.target.value)}
+/>
 
-<div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+
+<input
+className="w-full p-3 border rounded-xl mb-3"
+placeholder="Account number"
+value={accountNumber}
+onChange={(e)=>setAccountNumber(e.target.value)}
+/>
 
 
-{bank ? (
+<input
+className="w-full p-3 border rounded-xl mb-4"
+placeholder="Account name"
+value={accountName}
+onChange={(e)=>setAccountName(e.target.value)}
+/>
 
-<div className="space-y-4">
 
+<button
+onClick={saveBeneficiary}
+className="w-full bg-blue-500 text-white p-3 rounded-xl font-bold mb-6"
+>
+Save Bank Account
+</button>
 
-<div>
-<p className="text-zinc-400 text-sm">
-Bank Name
-</p>
-<p className="font-bold text-xl">
-{bank.bankName}
-</p>
+<div className="mb-4">
+<p className="font-bold mb-2">Select Bank Account</p>
+{beneficiaries.map((b)=>(
+<button
+key={b._id}
+onClick={()=>setBeneficiaryId(b._id)}
+className={`w-full p-3 rounded-xl border mb-2 text-left ${beneficiaryId===b._id?"bg-yellow-400 text-black":""}`}
+>
+{b.bankName} - {b.accountNumber}<br/>
+{b.accountName}
+</button>
+))}
 </div>
 
-
-<div>
-<p className="text-zinc-400 text-sm">
-Account Number
-</p>
-<p className="font-bold text-xl">
-{bank.accountNumber}
-</p>
-</div>
+<input
+className="w-full p-3 border rounded-xl mb-3"
+placeholder="Amount"
+value={amount}
+onChange={(e)=>setAmount(e.target.value)}
+/>
 
 
-<div>
-<p className="text-zinc-400 text-sm">
-Account Name
-</p>
-<p className="font-bold text-xl">
-{bank.accountName}
-</p>
-</div>
+<input
+className="w-full p-3 border rounded-xl mb-4"
+placeholder="Transaction PIN"
+type="password"
+value={pin}
+onChange={(e)=>setPin(e.target.value)}
+/>
 
 
-<div>
-<p className="text-zinc-400 text-sm">
-Instructions
-</p>
-<p>
-{bank.instructions}
-</p>
-</div>
+<button
+onClick={sendMoney}
+className="w-full bg-yellow-400 text-black p-3 rounded-xl font-bold"
+>
+Send Money
+</button>
 
 
-</div>
-
-):(
-
-
-<p className="text-center text-zinc-400">
+<p className="text-center mt-5">
 {message}
 </p>
-
-
-)}
-
-
-</div>
-
-
-
-<Link
-href="/dashboard"
-className="block text-center text-yellow-400 mt-8"
->
-← Dashboard
-</Link>
 
 
 </div>
