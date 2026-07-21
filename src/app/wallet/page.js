@@ -144,7 +144,7 @@ setFunding(true);
 setMessage("");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/wallet/fund",
+"https://alphabot-1.onrender.com/funding/request",
 {
 method:"POST",
 headers:{
@@ -164,7 +164,7 @@ amount:Number(amount)
 const data=await res.json();
 
 
-setMessage(data.message || "Wallet funded successfully");
+setMessage(data.message || "Funding request submitted. Awaiting approval");
 
 
 if(data.balance !== undefined){
@@ -265,6 +265,15 @@ Withdraw
 <h2 className="text-xl font-bold">
 Fund Wallet
 </h2>
+
+<div className="mt-4 p-4 bg-yellow-100 rounded-xl text-black">
+<p className="font-bold">Send payment to:</p>
+<p>Bank: Moniepoint</p>
+<p>Account Number: 9037120624</p>
+<p>Account Name: Marvelous Oluwasegun Ayodeji</p>
+<p className="mt-2 text-sm">After payment, enter the amount sent and submit. Your wallet will be credited after confirmation.</p>
+</div>
+
 
 
 <input

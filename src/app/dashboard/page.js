@@ -265,6 +265,8 @@ const services=[
 ["📺","TV","/tv"],
 ["🎮","Betting","/betting"],
 ["🎓","Exam PIN","/exam-pin"],
+  ["💳","ePIN","/epin"],
+  ["👥","Beneficiary","/beneficiary"],
 ["💵","Airtime Cash","/airtime-cash"],
 ["🏆","Arena+","/arena"],
 ["💬","Support","/support"],
@@ -399,11 +401,12 @@ className="flex-1 text-center bg-black text-white px-5 py-3 rounded-xl font-bold
 💳 Fund
 </Link>
 
-<button
-className="flex-1 bg-white text-black px-5 py-3 rounded-xl font-bold hover:scale-105 transition"
+<Link
+href="/withdraw"
+className="flex-1 text-center bg-white text-black px-5 py-3 rounded-xl font-bold hover:scale-105 transition"
 >
 💸 Withdraw
-</button>
+</Link>
 
 </div>
 

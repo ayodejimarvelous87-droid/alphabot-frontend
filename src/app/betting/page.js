@@ -8,7 +8,6 @@ export default function Page(){
 
 const [phone,setPhone]=useState("");
 const [provider,setProvider]=useState("Bet9ja");
-const [customerId,setCustomerId]=useState("");
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
@@ -36,7 +35,6 @@ headers:{
 body:JSON.stringify({
 phone,
 provider,
-customerId,
 amount:Number(amount),
 pin
 })
@@ -114,12 +112,6 @@ onChange={(e)=>setProvider(e.target.value)}
 
 
 
-<input
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
-placeholder="Customer ID"
-value={customerId}
-onChange={(e)=>setCustomerId(e.target.value)}
-/>
 
 
 

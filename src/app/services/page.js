@@ -90,6 +90,21 @@ Football predictions & rewards
 
 </Link>
 
+<Link
+href="/tv"
+className="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 hover:border-yellow-400 active:scale-95 transition duration-150"
+>
+<div className="text-4xl">
+📺
+</div>
+<h2 className="font-bold mt-4">
+TV
+</h2>
+<p className="text-xs text-zinc-500 mt-2">
+DStv, GOtv & Startimes subscriptions
+</p>
+</Link>
+
 
 {loading ? (
 
@@ -99,7 +114,7 @@ Loading services...
 
 ) : (
 
-products.map((product)=>(
+(products.filter(product=>product.type!=="tv")).map((product)=>(
 
 <Link
 key={product._id}

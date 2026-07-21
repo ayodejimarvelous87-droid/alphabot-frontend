@@ -1,19 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import PhoneInput from "@/components/PhoneInput";
 
 export default function Page(){
 
-const [phone,setPhone]=useState("");
-const [provider,setProvider]=useState("DSTV");
+const [provider,setProvider]=useState("dstv");
 const [smartCardNumber,setSmartCardNumber]=useState("");
-const [tvPackage,setTvPackage]=useState("Basic");
+const [tvPackage,setTvPackage]=useState("");
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
+const [plans,setPlans]=useState([]);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+
+
+useEffect(()=>{
+
+const loadPlans = async()=>{
+
+try{
+
+const token = localStorage.getItem("token");
+
+const res = await fetch(
+"https://alphabot-1.onrender.com/tv/plans",
+{
+headers:{
+"Authorization":`Bearer ${token}`
+}
+}
+);
+
+const data = await res.json();
+
+if(data.success){
+setPlans(data.plans);
+        console.log("TV PLANS:", data.plans);
+}
+
+}catch(error){
+
+console.log(error);
+
+}
+
+};
+
+loadPlans();
+
+},[]);
+
 
 
 const subscribeTV = async()=>{
@@ -35,10 +72,9 @@ headers:{
 "Authorization":`Bearer ${token}`
 },
 body:JSON.stringify({
-phone,
 provider,
 smartCardNumber,
-package:tvPackage,
+variation_id:tvPackage,
 amount:Number(amount),
 pin
 })
@@ -73,6 +109,7 @@ setLoading(false);
 };
 
 
+
 return(
 
 <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
@@ -84,31 +121,35 @@ return(
 📺 TV
 </h1>
 
+
 <p className="text-zinc-400 mt-2">
 Renew your TV subscription
 </p>
 
 
+
 <div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
 
 
-<PhoneInput
-value={phone}
-onChange={(value)=>setPhone(value)}
-/>
+
 
 
 <select
 className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
 value={provider}
-onChange={(e)=>setProvider(e.target.value)}
+onChange={(e)=>{
+setProvider(e.target.value);
+setTvPackage("");
+setAmount("");
+}}
 >
 
-<option>DSTV</option>
-<option>GOTV</option>
-<option>Startimes</option>
+<option value="dstv">DStv</option>
+<option value="gotv">GOtv</option>
+<option value="startimes">Startimes</option>
 
 </select>
+
 
 
 <input
@@ -119,17 +160,46 @@ onChange={(e)=>setSmartCardNumber(e.target.value)}
 />
 
 
+
 <select
 className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
 value={tvPackage}
-onChange={(e)=>setTvPackage(e.target.value)}
+onChange={(e)=>{
+
+const selected = plans.find(
+p=>p.code === e.target.value
+);
+
+setTvPackage(e.target.value);
+
+if(selected){
+setAmount(selected.price);
+}
+
+}}
 >
 
-<option>Basic</option>
-<option>Standard</option>
-<option>Premium</option>
+<option value="">
+Select Package
+</option>
+
+{
+plans
+.filter(p=>p.provider === provider)
+.map(plan=>(
+
+<option
+key={plan.code}
+value={plan.code}
+>
+{plan.name} - ₦{plan.price}
+</option>
+
+))
+}
 
 </select>
+
 
 
 <input
@@ -139,6 +209,7 @@ type="number"
 value={amount}
 onChange={(e)=>setAmount(e.target.value)}
 />
+
 
 
 <input
@@ -151,6 +222,7 @@ onChange={(e)=>setPin(e.target.value)}
 />
 
 
+
 <button
 onClick={subscribeTV}
 disabled={loading}
@@ -160,12 +232,14 @@ className="w-full mt-5 bg-yellow-400 text-black py-3 rounded-xl font-bold"
 </button>
 
 
+
 <p className="text-center text-zinc-300 text-sm mt-4">
 {message}
 </p>
 
 
 </div>
+
 
 
 <Link

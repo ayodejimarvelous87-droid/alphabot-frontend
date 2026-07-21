@@ -1,10 +1,12 @@
 "use client";
 
 import { useState,useEffect } from "react";
+import {useSearchParams} from "next/navigation";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 
 export default function Airtime(){
+const searchParams = useSearchParams();
 
 const [phone,setPhone]=useState("");
 const [network,setNetwork]=useState("MTN");
@@ -16,6 +18,11 @@ const [loading,setLoading]=useState(false);
 
 
 useEffect(()=>{
+const savedPhone = searchParams.get("phone");
+
+if(savedPhone){
+setPhone(savedPhone);
+}
 const loadBeneficiaries=async()=>{
 try{
 const user=JSON.parse(localStorage.getItem("user"));
@@ -133,6 +140,7 @@ onChange={(e)=>setNetwork(e.target.value)}
 value={phone}
 onChange={(value)=>setPhone(value)}
 beneficiaries={beneficiaries}
+  service="airtime"
 />
 
 

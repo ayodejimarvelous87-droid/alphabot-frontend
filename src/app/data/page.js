@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {useSearchParams} from "next/navigation";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 
 export default function Page(){
+const searchParams = useSearchParams();
 
 const [phone,setPhone]=useState("");
 const [network,setNetwork]=useState("");
@@ -17,6 +19,11 @@ const [loading,setLoading]=useState(false);
   const [beneficiaries,setBeneficiaries]=useState([]);
 
 useEffect(()=>{
+const savedPhone = searchParams.get("phone");
+
+if(savedPhone){
+setPhone(savedPhone);
+}
 
 const loadBeneficiaries = async()=>{
 try{
@@ -96,24 +103,35 @@ loadPlans();
 
 
 
-const networks =
-Object.keys(plans);
+const networks = Object.keys(plans);
 
 
+
+const actualNetwork = network;
 
 const categories =
-plans[network]
+actualNetwork
 ?
-Object.keys(plans[network])
+Object.keys(plans[actualNetwork])
 :
 [];
 
-
-
 const dataPlans =
-plans[network]?.[category]
+actualNetwork
 ?
-plans[network][category]
+Object.values(plans[actualNetwork])
+.flat()
+.sort((a,b)=>{
+const getSize = plan => {
+const text = (plan.size || plan.data_plan || plan.name || "").toUpperCase();
+const value = parseFloat(text) || 0;
+if(text.includes("TB")) return value * 1024;
+if(text.includes("GB")) return value;
+if(text.includes("MB")) return value / 1024;
+return value;
+};
+return getSize(a) - getSize(b);
+})
 :
 [];
 
@@ -130,7 +148,8 @@ const buyData = async()=>{
 
 const selected =
 dataPlans.find(
-item=>item.variation_id == selectedPlan
+item =>
+(item.variation_id || item.package_id) == selectedPlan
 );
 
 
@@ -176,17 +195,14 @@ headers:{
 },
 
 body:JSON.stringify({
-
 phone,
-
 network,
-
-plan:selected.variation_id,
-
-amount:Number(selected.reseller_price),
-
-pin
-
+plan:selected.data_plan || selected.name,
+amount:Number(selected.display_price || selected.reseller_price || selected.price),
+pin,
+provider:selected.provider,
+variation_id:selected.variation_id,
+package_id:selected.package_id
 })
 
 }
@@ -257,14 +273,17 @@ className="w-full p-3 rounded-xl bg-white text-black"
 value={network}
 onChange={(e)=>{
 
+const selectedNetwork = e.target.value;
+
 setNetwork(e.target.value);
 setSelectedPlan("");
 
 setCategory(
-Object.keys(plans[e.target.value])[0]
+selectedNetwork ? Object.keys(plans[selectedNetwork])[0] : ""
 );
 
 }}
+
 >
 
 {networks.map(net=>(
@@ -320,11 +339,11 @@ Select Plan
 {(dataPlans || []).map(plan=>(
 
 <option
-key={plan.variation_id}
-value={plan.variation_id}
+key={plan.variation_id || plan.package_id || plan.id}
+value={plan.variation_id || plan.package_id || plan.id}
 >
 
-{plan.data_plan} - ₦{plan.reseller_price}
+{plan.data_plan || plan.name} - ₦{plan.display_price || plan.reseller_price || plan.price}
 
 </option>
 
@@ -339,6 +358,7 @@ value={plan.variation_id}
 value={phone}
 onChange={setPhone}
 beneficiaries={beneficiaries}
+  service="data"
 />
 
 

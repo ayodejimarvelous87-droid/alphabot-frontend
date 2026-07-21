@@ -1,191 +1,338 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect,useState} from "react";
 
-const API = "https://alphabot-1.onrender.com";
+const API="https://alphabot-i7p2.onrender.com";
 
-export default function RecurringPage() {
 
-  const [payments, setPayments] = useState([]);
-  const [service, setService] = useState("data");
-  const [amount, setAmount] = useState("");
-  const [frequency, setFrequency] = useState("daily");
-  const [loading, setLoading] = useState(false);
+export default function RecurringPage(){
 
-  const user =
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("user"))
-      : null;
+const [payments,setPayments]=useState([]);
+const [service,setService]=useState("data");
+const [amount,setAmount]=useState("");
+const [targetPhone,setTargetPhone]=useState("");
+const [frequency,setFrequency]=useState("daily");
+const [loading,setLoading]=useState(false);
+const [message,setMessage]=useState("");
 
-  const token =
-    typeof window !== "undefined"
-      ? localStorage.getItem("token")
-      : null;
 
+const user =
+typeof window !== "undefined"
+? JSON.parse(localStorage.getItem("user"))
+: null;
 
-  async function loadPayments(){
 
-    if(!user) return;
+const token =
+typeof window !== "undefined"
+? localStorage.getItem("token")
+: null;
 
-    const res = await fetch(
-      `${API}/recurring/${user.phone}`,
-      {
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
-      }
-    );
 
-    const data = await res.json();
 
-    setPayments(data || []);
-  }
+const loadPayments=async()=>{
 
+try{
 
-  useEffect(()=>{
-    loadPayments();
-  },[]);
+if(!user) return;
 
 
+const res=await fetch(
+`${API}/recurring/${user.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
 
-  async function createPayment(){
 
-    setLoading(true);
+const data=await res.json();
 
-    await fetch(
-      `${API}/recurring`,
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          Authorization:`Bearer ${token}`
-        },
-        body:JSON.stringify({
-          phone:user.phone,
-          service,
-          amount:Number(amount),
-          frequency
-        })
-      }
-    );
+setPayments(data || []);
 
 
-    setAmount("");
-    await loadPayments();
+}catch(error){
 
-    setLoading(false);
-  }
+console.log(error);
 
+}
 
+};
 
-  async function cancelPayment(id){
 
-    await fetch(
-      `${API}/recurring/${id}`,
-      {
-        method:"DELETE",
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
-      }
-    );
 
-    loadPayments();
-  }
+useEffect(()=>{
 
+const init = async()=>{
+await loadPayments();
+};
 
+init();
 
-  return (
-    <div style={{padding:"20px"}}>
+},[]);
 
-      <h1>🔁 Recurring Payments</h1>
 
 
-      <div>
+const createPayment=async()=>{
 
-        <h3>Create Schedule</h3>
 
+if(!targetPhone || !amount){
 
-        <select
-          value={service}
-          onChange={e=>setService(e.target.value)}
-        >
-          <option value="data">DATA</option>
-          <option value="airtime">AIRTIME</option>
-        </select>
+setMessage("Enter phone number and amount");
+return;
 
+}
 
-        <br/><br/>
 
+try{
 
-        <input
-          placeholder="Amount"
-          value={amount}
-          onChange={e=>setAmount(e.target.value)}
-        />
+setLoading(true);
 
 
-        <br/><br/>
+const res=await fetch(
+`${API}/recurring`,
+{
 
+method:"POST",
 
-        <select
-          value={frequency}
-          onChange={e=>setFrequency(e.target.value)}
-        >
-          <option value="daily">DAILY</option>
-          <option value="weekly">WEEKLY</option>
-          <option value="monthly">MONTHLY</option>
-        </select>
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
 
+body:JSON.stringify({
 
-        <br/><br/>
+phone:user.phone,
 
+targetPhone,
 
-        <button onClick={createPayment}>
-          {loading ? "Creating..." : "Activate"}
-        </button>
+service,
 
+amount:Number(amount),
 
-      </div>
+frequency
 
+})
 
+}
 
-      <hr/>
+);
 
 
-      <h3>My Active Payments</h3>
+const data=await res.json();
 
 
-      {
-        payments.length === 0
-        ?
-        <p>No recurring payments.</p>
-        :
-        payments.map(item=>(
+if(!res.ok){
 
-          <div key={item._id}>
+throw new Error(data.message || "Failed");
 
-            <p>
-              {item.service.toUpperCase()}
-              {" - "}
-              ₦{item.amount}
-              {" - "}
-              {item.frequency}
-            </p>
+}
 
 
-            <button
-              onClick={()=>cancelPayment(item._id)}
-            >
-              Cancel
-            </button>
+setMessage("✅ Recurring payment activated");
 
-          </div>
+setAmount("");
 
-        ))
-      }
+loadPayments();
 
 
-    </div>
-  );
+
+}catch(error){
+
+setMessage(error.message);
+
+
+}finally{
+
+setLoading(false);
+
+}
+
+
+};
+
+
+
+const cancelPayment=async(id)=>{
+
+
+await fetch(
+`${API}/recurring/${id}`,
+{
+method:"DELETE",
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
+
+
+loadPayments();
+
+
+};
+
+
+
+return(
+
+<main className="min-h-screen bg-white dark:bg-black text-black dark:text-white p-5 pb-24">
+
+
+<h1 className="text-3xl font-bold mb-6">
+🔁 Recurring Payments
+</h1>
+
+
+
+<div className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5 space-y-4">
+
+
+<select
+className="w-full p-4 rounded-xl border"
+value={service}
+onChange={e=>setService(e.target.value)}
+>
+
+<option value="data">
+🌐 Data
+</option>
+
+<option value="airtime">
+📱 Airtime
+</option>
+
+</select>
+
+
+
+<input
+className="w-full p-4 rounded-xl border"
+placeholder="Phone number to subscribe"
+type="tel"
+value={targetPhone}
+onChange={e=>setTargetPhone(e.target.value)}
+/>
+
+<input
+className="w-full p-4 rounded-xl border"
+placeholder="Amount"
+type="number"
+value={amount}
+onChange={e=>setAmount(e.target.value)}
+/>
+
+
+
+<select
+
+className="w-full p-4 rounded-xl border"
+
+value={frequency}
+
+onChange={e=>setFrequency(e.target.value)}
+
+>
+
+
+<option value="daily">
+Daily
+</option>
+
+
+<option value="weekly">
+Weekly
+</option>
+
+
+<option value="monthly">
+Monthly
+</option>
+
+
+</select>
+
+
+
+<button
+
+onClick={createPayment}
+
+disabled={loading}
+
+className="w-full bg-black text-white dark:bg-white dark:text-black p-4 rounded-2xl font-bold"
+
+>
+
+{loading ? "Activating..." : "Activate Schedule"}
+
+</button>
+
+
+</div>
+
+
+
+<p className="mt-4 font-semibold">
+{message}
+</p>
+
+
+
+<h2 className="text-xl font-bold mt-8">
+Active Payments
+</h2>
+
+
+
+<div className="space-y-3 mt-4">
+
+{
+
+payments.map(item=>(
+
+<div
+
+key={item._id}
+
+className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-4"
+
+>
+
+<p className="font-bold">
+{item.service.toUpperCase()}
+</p>
+
+<p>
+₦{item.amount} - {item.frequency}
+</p>
+
+
+<button
+
+onClick={()=>cancelPayment(item._id)}
+
+className="mt-3 bg-red-600 text-white px-4 py-2 rounded-xl"
+
+>
+
+Cancel
+
+</button>
+
+
+</div>
+
+))
+
+}
+
+
+</div>
+
+
+</main>
+
+)
+
 }

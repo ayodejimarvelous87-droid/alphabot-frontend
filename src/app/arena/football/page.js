@@ -11,6 +11,7 @@ const [loading,setLoading]=useState(true);
 const [message,setMessage]=useState("");
 const [predictions,setPredictions]=useState([]);
 const [leaderboard,setLeaderboard]=useState([]);
+  const [showRules,setShowRules]=useState(false);
 
 
 
@@ -23,12 +24,16 @@ fetch(
 .then(res=>res.json())
 
 .then(data=>{
-
 if(Array.isArray(data)){
-
+console.log("FRONTEND MATCH COUNT:", data.length);
 setMatches(data);
-
+}else{
+console.log("INVALID DATA:", data);
 }
+
+  }).catch(()=>{
+  setLoading(false);
+  });
 
 const user = JSON.parse(localStorage.getItem("user"));
 
@@ -54,14 +59,6 @@ setPredictions(data);
 
 setLoading(false);
 
-})
-
-.catch(()=>{
-
-setLoading(false);
-
-});
-
 fetch("https://alphabot-1.onrender.com/football/leaderboard")
 .then(res=>res.json())
 .then(data=>{
@@ -70,8 +67,7 @@ setLeaderboard(data);
 }
 });
 
-},[]);;
-
+  },[]);
 
 
 const predict = async(matchId,choice)=>{
@@ -124,18 +120,19 @@ choice
 
 const data = await res.json();
 
+setMessage(data.message || "Prediction submitted");
 
-setMessage(
-data.message || "Prediction submitted"
-);
+setTimeout(()=>{
+setMessage("");
+},3000);
 
-setPredictions(prev=>[
-...prev,
-{
-matchId,
-choice
+const updated = await fetch(`https://alphabot-1.onrender.com/football/my-predictions/${user._id}`);
+
+const refreshed = await updated.json();
+
+if(Array.isArray(refreshed)){
+setPredictions(refreshed);
 }
-]);
 
 
 }catch(error){
@@ -151,6 +148,11 @@ setMessage("Prediction failed");
 
 
 const hasPredicted=(matchId)=>predictions.some(p=>p.matchId===matchId || p.matchId?._id===matchId);
+
+const getPredictionChoice=(matchId)=>{
+const p=predictions.find(x=>x.matchId===matchId || x.matchId?._id===matchId);
+return p?.choice;
+};
 
 return(
 
@@ -168,6 +170,28 @@ return(
 <p className="text-zinc-400 mt-2">
 Predict matches and earn points.
 </p>
+
+<button onClick={()=>setShowRules(!showRules)} className="mt-4 bg-yellow-400 text-black px-4 py-2 rounded-xl font-bold">📖 How to Play</button>
+
+{showRules && (
+<div className="mt-4 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
+<h2 className="text-xl font-bold mb-3">⚽ Arena+ Football Rules</h2>
+<p className="text-sm leading-6">
+• Predict the winner before kickoff.<br/>
+• Home = home team wins.<br/>
+• Draw = both teams finish equal.<br/>
+• Away = away team wins.<br/><br/>
+🏆 Scoring:<br/>
+• Correct prediction earns points.<br/>
+• Points increase your weekly rank.<br/>
+• Top players appear on the leaderboard.<br/><br/>
+⚠️ Rules:<br/>
+• One prediction per match only.<br/>
+• Predictions close when the match starts.<br/>
+• Compete weekly for Arena rewards.
+</p>
+</div>
+)}
 
 
 
@@ -230,6 +254,12 @@ className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5"
 VS
 </span>
 
+{hasPredicted(match._id) && (
+<p className="text-center mt-3 text-blue-500 font-bold">
+Your pick: {getPredictionChoice(match._id).toUpperCase()}
+</p>
+)}
+
 {match.awayTeam}
 
 </h2>
@@ -243,27 +273,30 @@ VS
 <button
 onClick={()=>predict(match._id,"home")}
 disabled={hasPredicted(match._id)}
-className="bg-yellow-400 text-black rounded-xl py-3 font-bold"
+style={{opacity:hasPredicted(match._id)?0.7:1}}
+className={hasPredicted(match._id) && getPredictionChoice(match._id)==="home" ? "bg-blue-500 text-white rounded-xl py-3 font-bold" : "bg-yellow-400 text-black rounded-xl py-3 font-bold"}
 >
-🏠 Home
+{hasPredicted(match._id) && getPredictionChoice(match._id)==="home" ? "✅ Picked" : "🏠 Home"}
 </button>
 
 
 <button
 disabled={hasPredicted(match._id)}
+style={{opacity:hasPredicted(match._id)?0.7:1}}
 onClick={()=>predict(match._id,"draw")}
-className="bg-zinc-800 text-white rounded-xl py-3 font-bold"
+className={hasPredicted(match._id) && getPredictionChoice(match._id)==="draw" ? "bg-blue-500 text-white rounded-xl py-3 font-bold" : "bg-zinc-800 text-white rounded-xl py-3 font-bold"}
 >
-🤝 Draw
+{hasPredicted(match._id) && getPredictionChoice(match._id)==="draw" ? "✅ Picked" : "🤝 Draw"}
 </button>
 
 
 <button
 onClick={()=>predict(match._id,"away")}
-className="bg-black text-white rounded-xl py-3 font-bold"
+className={hasPredicted(match._id) && getPredictionChoice(match._id)==="away" ? "bg-blue-500 text-white rounded-xl py-3 font-bold" : "bg-black text-white rounded-xl py-3 font-bold"}
 disabled={hasPredicted(match._id)}
+style={{opacity:hasPredicted(match._id)?0.7:1}}
 >
-✈️ Away
+{hasPredicted(match._id) && getPredictionChoice(match._id)==="away" ? "✅ Picked" : "✈️ Away"}
 </button>
 
 
@@ -296,19 +329,10 @@ disabled={hasPredicted(match._id)}
 
 {leaderboard.map((player,index)=>(
 
-<div key={player._id || index}
-className="flex justify-between py-2 border-b border-zinc-300 dark:border-zinc-700">
-
-<span>
-#{index+1} {player.userName || "Player"}
-</span>
-
-<span className="font-bold">
-{player.points} pts
-</span>
-
+<div key={player._id || index} className="flex justify-between py-2 border-b border-zinc-300 dark:border-zinc-700">
+<p>#{index+1} {player.name}</p>
+<p>{player.points || 0} pts</p>
 </div>
-
 ))}
 
 </div>
