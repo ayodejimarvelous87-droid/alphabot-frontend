@@ -132,15 +132,34 @@ actualNetwork
 ? Object.values(plans[actualNetwork]).flat()
 : plans[actualNetwork]?.[category] || [])
 .sort((a,b)=>{
-return Number(a.display_price || a.price || 0) - Number(b.display_price || b.price || 0);
+
+const getSize = plan => {
+
+const text = (
+plan.size ||
+plan.data_plan ||
+plan.name ||
+""
+).toUpperCase();
+
+const value = parseFloat(text) || 0;
+
+if(text.includes("TB")) return value * 1024;
+
+if(text.includes("GB")) return value;
+
+if(text.includes("MB")) return value / 1024;
+
+return value;
+
+};
+
+return getSize(a) - getSize(b);
+
 })
 :
 [];
 
-console.log("NETWORKS", networks);
-console.log("CURRENT NETWORK", network);
-console.log("CATEGORIES", categories);
-console.log("DATA PLANS", dataPlans);
 
 
 

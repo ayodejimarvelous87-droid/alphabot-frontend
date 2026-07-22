@@ -13,6 +13,8 @@ const [predictions,setPredictions]=useState([]);
 const [leaderboard,setLeaderboard]=useState([]);
   const [showRules,setShowRules]=useState(false);
 
+const currentWeek = Math.ceil((((new Date()-new Date(new Date().getFullYear(),0,1))/86400000+1)/7));
+
 
 
 useEffect(()=>{
@@ -25,7 +27,6 @@ fetch(
 
 .then(data=>{
 if(Array.isArray(data)){
-console.log("FRONTEND MATCH COUNT:", data.length);
 setMatches(data);
 }else{
 console.log("INVALID DATA:", data);
@@ -67,6 +68,18 @@ setLeaderboard(data);
   setLoading(false);
 });
 
+
+const refreshMatches = setInterval(()=>{
+fetch("https://alphabot-1.onrender.com/football/matches")
+.then(res=>res.json())
+.then(data=>{
+if(Array.isArray(data)){
+setMatches(data);
+}
+});
+},60000);
+
+return ()=>clearInterval(refreshMatches);
   },[]);
 
 
@@ -165,6 +178,10 @@ return(
 <h1 className="text-3xl font-bold">
 ⚽ Arena+ Football
 </h1>
+
+<p className="text-center text-zinc-500 mt-2">
+Week {currentWeek} Football Predictions
+</p>
 
 
 <p className="text-zinc-400 mt-2">
