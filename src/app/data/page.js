@@ -64,10 +64,17 @@ const res = await fetch(
 
 const data = await res.json();
 console.log("DATA_PLANS", data);
+console.log("NETWORK KEYS", Object.keys(data.networks || {}));
+console.log("MTN CATEGORIES", Object.keys(data.networks?.MTN || {}));
+console.log("MTN AWOOF COUNT", data.networks?.MTN?.Awoof?.length);
 
 const networks = data.networks || {};
+console.log("FRONTEND RECEIVED NETWORKS:", Object.keys(networks));
+console.log("MTN CATEGORIES:", Object.keys(networks.MTN || {}));
+console.log("MTN Awoof CHECK:", networks.MTN?.Awoof);
 
 setPlans(networks);
+console.log("FRONTEND NETWORK KEYS:", Object.keys(networks)); console.log("FRONTEND MTN CATS:", Object.keys(networks.MTN || {}));
 
 const firstNetwork = Object.keys(networks)[0];
 
@@ -111,7 +118,11 @@ const actualNetwork = network;
 
 const categories =
 actualNetwork
-? ["All Plans", ...Object.keys(plans[actualNetwork])]
+? [
+"All Plans",
+...Object.keys(plans[actualNetwork]).filter(cat=>cat !== "All Plans" && cat !== "Standard" && cat !== "Awoof" && cat !== "Gifting" && cat !== "SME" && cat !== "SME 2"),
+...["SME","SME 2","Awoof","Gifting","Standard"].filter(cat=>plans[actualNetwork]?.[cat]),
+]
 : [];
 
 const dataPlans =
@@ -121,15 +132,7 @@ actualNetwork
 ? Object.values(plans[actualNetwork]).flat()
 : plans[actualNetwork]?.[category] || [])
 .sort((a,b)=>{
-const getSize = plan => {
-const text = (plan.size || plan.data_plan || plan.name || "").toUpperCase();
-const value = parseFloat(text) || 0;
-if(text.includes("TB")) return value * 1024;
-if(text.includes("GB")) return value;
-if(text.includes("MB")) return value / 1024;
-return value;
-};
-return getSize(a) - getSize(b);
+return Number(a.display_price || a.price || 0) - Number(b.display_price || b.price || 0);
 })
 :
 [];
@@ -278,7 +281,7 @@ setNetwork(e.target.value);
 setSelectedPlan("");
 
 setCategory(
-selectedNetwork ? Object.keys(plans[selectedNetwork])[0] : ""
+selectedNetwork ? "All Plans" : ""
 );
 
 }}
