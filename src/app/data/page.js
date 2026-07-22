@@ -364,7 +364,7 @@ key={plan.variation_id || plan.package_id || plan.id}
 value={plan.variation_id || plan.package_id || plan.id}
 >
 
-{plan.data_plan || plan.name} - ₦{plan.display_price || plan.reseller_price || plan.price}
+{plan.data_plan || plan.name} - ₦{plan.display_price || plan.reseller_price || plan.price} ({plan.validity || plan.day + " Days"})
 
 </option>
 
