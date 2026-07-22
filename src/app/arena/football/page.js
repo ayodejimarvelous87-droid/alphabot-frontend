@@ -273,7 +273,7 @@ Your pick: {getPredictionChoice(match._id).toUpperCase()}
 </h2>
 
 <div className="text-center mt-3 text-sm text-zinc-500">
-{match.status==="LIVE" && <p className="text-red-500 font-bold">🔴 LIVE</p>}
+{match.status==="IN_PLAY" && <p className="text-red-500 font-bold">🔴 LIVE</p>}
 <p>🕒 {new Date(match.matchDate).toLocaleString()}</p>
 {match.homeGoals !== null && match.awayGoals !== null && (
 <p className="text-xl font-bold mt-2">⚽ {match.homeGoals} - {match.awayGoals}</p>
@@ -343,13 +343,24 @@ style={{opacity:hasPredicted(match._id)?0.7:1}}
 🏆 Football Leaderboard
 </h2>
 
-{leaderboard.map((player,index)=>(
+{leaderboard.length === 0 ? (
+
+<p className="text-center text-zinc-500">
+No predictions yet this week. Be the first player!
+</p>
+
+) : (
+
+leaderboard.map((player,index)=>(
 
 <div key={player._id || index} className="flex justify-between py-2 border-b border-zinc-300 dark:border-zinc-700">
-<p>#{index+1} {player.name}</p>
+<p>#{index+1} {player.userName}</p>
 <p>{player.points || 0} pts</p>
 </div>
-))}
+
+))
+
+)}
 
 </div>
 
