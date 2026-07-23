@@ -18,9 +18,8 @@ const [loading,setLoading] = useState(false);
       setLoading(true);
       setMessage("");
 
-        console.log("LOGIN DATA:", {phone, password});
       const res = await fetch(
-        "https://alphabot-1.onrender.com/users/login",
+        "https://alphabot-i7p2.onrender.com/users/login",
         {
           method:"POST",
           headers:{
