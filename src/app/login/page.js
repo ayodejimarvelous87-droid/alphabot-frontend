@@ -60,7 +60,7 @@ const [loading,setLoading] = useState(false);
     }catch(error){
 
         setLoading(false);
-        setMessage("Network error. Please try again");
+        console.log("LOGIN ERROR:", error); setMessage(error.message);
 
     }
 
