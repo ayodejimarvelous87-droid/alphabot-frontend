@@ -31,7 +31,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 if(!user?.phone) return;
 
 const res = await fetch(
-`https://alphabot-i7p2.onrender.com/beneficiaries/${user.phone}`,
+`https://alphabot-1.onrender.com/beneficiaries/${user.phone}`,
 {
 headers:{
 Authorization:"Bearer "+localStorage.getItem("token")
@@ -59,7 +59,7 @@ const loadPlans = async()=>{
 try{
 
 const res = await fetch(
-"https://alphabot-i7p2.onrender.com/data/plans"
+"https://alphabot-1.onrender.com/data/plans"
 );
 
 const data = await res.json();
@@ -200,7 +200,7 @@ localStorage.getItem("token");
 
 const res = await fetch(
 
-"https://alphabot-i7p2.onrender.com/data/buy",
+"https://alphabot-1.onrender.com/data/buy",
 
 {
 
