@@ -13,6 +13,7 @@ const [otpSent,setOtpSent] = useState(false);
 
 
 const sendOTP = async()=>{
+setMessage("Sending OTP...");
 try{
 
 const user = JSON.parse(localStorage.getItem("user"));
