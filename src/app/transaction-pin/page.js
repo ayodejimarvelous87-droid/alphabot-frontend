@@ -69,7 +69,6 @@ headers:{
 "Authorization":`Bearer ${token}`
 },
 body:JSON.stringify({
-phone:user.phone,
 pin,
 otp
 })
