@@ -1,9 +1,10 @@
 "use client";
 
 import {useEffect,useState} from "react";
+import Link from "next/link";
+import BottomNav from "@/components/BottomNav";
 
-const API="https://alphabot-i7p2.onrender.com";
-
+const API="https://alphabot-1.onrender.com";
 
 export default function RecurringPage(){
 
@@ -15,12 +16,10 @@ const [frequency,setFrequency]=useState("daily");
 const [loading,setLoading]=useState(false);
 const [message,setMessage]=useState("");
 
-
 const user =
 typeof window !== "undefined"
-? JSON.parse(localStorage.getItem("user"))
-: null;
-
+? JSON.parse(localStorage.getItem("user") || "{}")
+: {};
 
 const token =
 typeof window !== "undefined"
@@ -28,13 +27,11 @@ typeof window !== "undefined"
 : null;
 
 
-
 const loadPayments=async()=>{
 
 try{
 
-if(!user) return;
-
+if(!user.phone) return;
 
 const res=await fetch(
 `${API}/recurring/${user.phone}`,
@@ -45,11 +42,9 @@ Authorization:`Bearer ${token}`
 }
 );
 
-
 const data=await res.json();
 
 setPayments(data || []);
-
 
 }catch(error){
 
@@ -60,14 +55,9 @@ console.log(error);
 };
 
 
-
 useEffect(()=>{
 
-const init = async()=>{
-await loadPayments();
-};
-
-init();
+loadPayments();
 
 },[]);
 
@@ -75,10 +65,9 @@ init();
 
 const createPayment=async()=>{
 
-
 if(!targetPhone || !amount){
 
-setMessage("Enter phone number and amount");
+setMessage("❌ Enter phone number and amount");
 return;
 
 }
@@ -87,35 +76,25 @@ return;
 try{
 
 setLoading(true);
+setMessage("Processing...");
 
 
 const res=await fetch(
 `${API}/recurring`,
 {
-
 method:"POST",
-
 headers:{
 "Content-Type":"application/json",
 Authorization:`Bearer ${token}`
 },
-
 body:JSON.stringify({
-
 phone:user.phone,
-
 targetPhone,
-
 service,
-
 amount:Number(amount),
-
 frequency
-
 })
-
 }
-
 );
 
 
@@ -124,7 +103,9 @@ const data=await res.json();
 
 if(!res.ok){
 
-throw new Error(data.message || "Failed");
+setMessage("❌ "+(data.message || "Failed"));
+
+return;
 
 }
 
@@ -136,11 +117,9 @@ setAmount("");
 loadPayments();
 
 
-
 }catch(error){
 
-setMessage(error.message);
-
+setMessage("❌ Connection error");
 
 }finally{
 
@@ -148,13 +127,13 @@ setLoading(false);
 
 }
 
-
 };
 
 
 
 const cancelPayment=async(id)=>{
 
+try{
 
 await fetch(
 `${API}/recurring/${id}`,
@@ -166,9 +145,16 @@ Authorization:`Bearer ${token}`
 }
 );
 
+setMessage("✅ Payment cancelled");
 
 loadPayments();
 
+
+}catch(error){
+
+setMessage("❌ Error cancelling payment");
+
+}
 
 };
 
@@ -176,22 +162,35 @@ loadPayments();
 
 return(
 
-<main className="min-h-screen bg-white dark:bg-black text-black dark:text-white p-5 pb-24">
+<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
+
+<div className="max-w-md mx-auto space-y-5">
 
 
-<h1 className="text-3xl font-bold mb-6">
+<h1 className="text-3xl font-black">
 🔁 Recurring Payments
 </h1>
 
 
+<p className="text-zinc-400">
+Automate your airtime and data subscriptions
+</p>
 
-<div className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5 space-y-4">
 
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-4">
+
+
+<div>
+
+<p className="text-xs text-zinc-500 mb-2">
+Service
+</p>
 
 <select
-className="w-full p-4 rounded-xl border"
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 value={service}
-onChange={e=>setService(e.target.value)}
+onChange={(e)=>setService(e.target.value)}
 >
 
 <option value="data">
@@ -204,64 +203,56 @@ onChange={e=>setService(e.target.value)}
 
 </select>
 
+</div>
+
 
 
 <input
-className="w-full p-4 rounded-xl border"
-placeholder="Phone number to subscribe"
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+placeholder="Phone number"
 type="tel"
 value={targetPhone}
-onChange={e=>setTargetPhone(e.target.value)}
+onChange={(e)=>setTargetPhone(e.target.value)}
 />
 
+
+
 <input
-className="w-full p-4 rounded-xl border"
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 placeholder="Amount"
 type="number"
 value={amount}
-onChange={e=>setAmount(e.target.value)}
+onChange={(e)=>setAmount(e.target.value)}
 />
 
 
 
 <select
-
-className="w-full p-4 rounded-xl border"
-
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 value={frequency}
-
-onChange={e=>setFrequency(e.target.value)}
-
+onChange={(e)=>setFrequency(e.target.value)}
 >
-
 
 <option value="daily">
 Daily
 </option>
 
-
 <option value="weekly">
 Weekly
 </option>
 
-
 <option value="monthly">
 Monthly
 </option>
-
 
 </select>
 
 
 
 <button
-
 onClick={createPayment}
-
 disabled={loading}
-
-className="w-full bg-black text-white dark:bg-white dark:text-black p-4 rounded-2xl font-bold"
-
+className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 >
 
 {loading ? "Activating..." : "Activate Schedule"}
@@ -269,51 +260,45 @@ className="w-full bg-black text-white dark:bg-white dark:text-black p-4 rounded-
 </button>
 
 
-</div>
-
-
-
-<p className="mt-4 font-semibold">
+<p className="text-center text-sm text-zinc-400">
 {message}
 </p>
 
 
+</div>
 
-<h2 className="text-xl font-bold mt-8">
+
+
+
+<h2 className="text-xl font-bold">
 Active Payments
 </h2>
 
 
 
-<div className="space-y-3 mt-4">
+<div className="space-y-3">
 
 {
 
 payments.map(item=>(
 
 <div
-
 key={item._id}
-
-className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-4"
-
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
 >
 
 <p className="font-bold">
 {item.service.toUpperCase()}
 </p>
 
-<p>
-₦{item.amount} - {item.frequency}
+<p className="text-zinc-400 mt-1">
+₦{item.amount} • {item.frequency}
 </p>
 
 
 <button
-
 onClick={()=>cancelPayment(item._id)}
-
 className="mt-3 bg-red-600 text-white px-4 py-2 rounded-xl"
-
 >
 
 Cancel
@@ -331,8 +316,22 @@ Cancel
 </div>
 
 
+
+<Link
+href="/dashboard"
+className="block text-center text-yellow-400 mt-6"
+>
+← Dashboard
+</Link>
+
+
+</div>
+
+
+<BottomNav />
+
 </main>
 
-)
+);
 
 }

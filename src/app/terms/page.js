@@ -76,6 +76,15 @@ services when necessary.
 
 
 
+<h2 className="text-xl font-bold mt-8">
+5. Support
+</h2>
+
+<p className="text-zinc-400 mt-3 leading-7">
+For questions or issues regarding AlphaBot services, contact:
+ayodejimarvelous679@gmail.com
+</p>
+
 </div>
 
 

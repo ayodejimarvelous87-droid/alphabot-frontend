@@ -2,6 +2,7 @@
 
 import {useEffect,useState} from "react";
 import Link from "next/link";
+import BottomNav from "@/components/BottomNav";
 
 export default function Beneficiary(){
 
@@ -141,6 +142,19 @@ setLoading(false);
 
 
 
+const deleteBeneficiary=async(id)=>{
+try{
+await fetch(`${API}/beneficiary/${id}`,{
+method:"DELETE",
+headers:{Authorization:`Bearer ${localStorage.getItem("token")}`}
+});
+loadBeneficiaries();
+setMessage("✅ Beneficiary deleted");
+}catch(error){
+setMessage("❌ Delete failed");
+}
+};
+
 return(
 
 <main className="min-h-screen bg-white dark:bg-black text-black dark:text-white px-5 py-8 pb-24">
@@ -278,6 +292,13 @@ className="block mt-5 text-center bg-yellow-400 text-black py-3 rounded-2xl font
 Buy Again 🚀
 </Link>
 
+<button
+onClick={()=>deleteBeneficiary(item._id)}
+className="w-full mt-3 bg-red-600 text-white py-3 rounded-2xl font-bold"
+>
+Delete Beneficiary
+</button>
+
 </div>
 
 
@@ -303,6 +324,7 @@ className="block text-center text-yellow-400 mt-10"
 </div>
 
 
+<BottomNav />
 </main>
 
 )

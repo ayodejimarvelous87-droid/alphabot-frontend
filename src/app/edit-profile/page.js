@@ -276,79 +276,175 @@ setMessage("Password change failed");
 
 return(
 
-<main className="min-h-screen bg-white dark:bg-black text-black dark:text-white px-5 py-8 pb-24">
+<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
 <div className="max-w-md mx-auto space-y-5">
 
-<h1 className="text-3xl font-bold">
-✏️ Edit Profile
+
+{/* HEADER */}
+
+<div>
+
+<h1 className="text-3xl font-black">
+⚙️ Account Settings
 </h1>
 
-<p className="text-zinc-500">
-Manage your AlphaBot account settings.
+<p className="text-zinc-400 mt-2">
+Manage your AlphaBot profile and security
+</p>
+
+</div>
+
+
+
+
+{/* PROFILE IDENTITY */}
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+
+
+<div className="flex items-center gap-4">
+
+
+<div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-white to-zinc-500 text-black flex items-center justify-center text-3xl font-black">
+
+{user?.name?.charAt(0) || "A"}
+
+</div>
+
+
+<div>
+
+<h2 className="text-xl font-bold">
+{user?.name || "AlphaBot User"}
+</h2>
+
+<p className="text-sm text-zinc-400">
+{user?.phone}
+</p>
+
+<p className="text-xs text-zinc-500 mt-1">
+{user?.email || "No email added"}
+</p>
+
+</div>
+
+
+</div>
+
+
+
+<div className="mt-5 pt-4 border-t border-zinc-800">
+
+<p className="text-xs text-zinc-500">
+Account Verification
 </p>
 
 
-<div className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
+<p className="mt-2 font-bold text-green-400">
+{user?.emailVerified
+? "✓ Verified Account"
+: "⏳ Verification Required"}
+</p>
 
-<h2 className="text-xl font-bold mb-4">
-👤 Profile Information
+
+</div>
+
+
+</div>
+
+
+
+
+
+{/* PROFILE INFORMATION */}
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+
+
+<h2 className="text-lg font-bold mb-5">
+👤 Personal Information
 </h2>
 
+
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border mb-3"
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
 placeholder="Full name"
 value={name}
 onChange={(e)=>setName(e.target.value)}
 />
 
+
+
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border mb-3"
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
 placeholder="Email address"
 type="email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
 />
 
+
+
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border mb-3"
-placeholder="Profile verification OTP"
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
+placeholder="Verification OTP"
 value={otp}
 onChange={(e)=>setOtp(e.target.value)}
 />
 
+
+
 <button
 onClick={sendOTP}
-className="w-full bg-black dark:bg-white dark:text-black text-white p-4 rounded-2xl font-bold mb-3"
+className="w-full bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold mb-3"
 >
-Send OTP
+Send Verification OTP
 </button>
+
+
 
 <button
 onClick={verifyOTP}
-className="w-full bg-green-500 text-white p-4 rounded-2xl font-bold mb-3"
+className="w-full bg-green-500 text-black rounded-2xl py-4 font-bold mb-3"
 >
 Verify Profile
 </button>
 
+
+
 <button
 onClick={saveProfile}
-className="w-full bg-yellow-400 text-black p-4 rounded-2xl font-bold"
+className="w-full bg-white text-black rounded-2xl py-4 font-bold"
 >
 Save Changes
 </button>
 
+
 </div>
 
 
-<div className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
 
-<h2 className="text-xl font-bold mb-4">
-💳 Transaction PIN
+
+
+{/* TRANSACTION PIN */}
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+
+
+<h2 className="text-lg font-bold mb-2">
+🔐 Transaction Security
 </h2>
 
+
+<p className="text-sm text-zinc-400 mb-5">
+Protect payments with your transaction PIN
+</p>
+
+
+
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border mb-3"
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
 placeholder="4 digit PIN"
 type="password"
 maxLength="4"
@@ -356,67 +452,97 @@ value={pin}
 onChange={(e)=>setPin(e.target.value)}
 />
 
+
+
 <button
 onClick={sendPinOTP}
-className="w-full bg-blue-600 text-white p-4 rounded-2xl font-bold mb-3"
+className="w-full bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold mb-3"
 >
 Send PIN OTP
 </button>
 
+
+
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border mb-3"
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
 placeholder="PIN OTP"
 value={pinOtp}
 onChange={(e)=>setPinOtp(e.target.value)}
 />
 
+
+
 <button
 onClick={createTransactionPin}
-className="w-full bg-yellow-400 text-black p-4 rounded-2xl font-bold"
+className="w-full bg-white text-black rounded-2xl py-4 font-bold"
 >
-{hasPin ? "Change PIN" : "Create PIN"}
+{hasPin ? "Change Transaction PIN" : "Create Transaction PIN"}
 </button>
+
 
 </div>
 
 
-<div className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
 
-<h2 className="text-xl font-bold mb-4">
-🔐 Password
+
+
+{/* PASSWORD */}
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+
+
+<h2 className="text-lg font-bold mb-5">
+🛡️ Password Protection
 </h2>
 
+
+
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border mb-3"
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
 placeholder="Old password"
 type="password"
 value={oldPassword}
 onChange={(e)=>setOldPassword(e.target.value)}
 />
 
+
+
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border mb-3"
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
 placeholder="New password"
 type="password"
 value={newPassword}
 onChange={(e)=>setNewPassword(e.target.value)}
 />
 
+
+
 <button
 onClick={changePassword}
-className="w-full bg-black dark:bg-white dark:text-black text-white p-4 rounded-2xl font-bold"
+className="w-full bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold"
 >
-Change Password
+Update Password
 </button>
 
+
 </div>
 
+
+
+
+
+{/* MESSAGE */}
 
 {message && (
-<div className="bg-yellow-400 text-black rounded-2xl p-4 text-center font-bold">
+
+<div className="bg-white text-black rounded-2xl p-4 text-center font-bold">
+
 {message}
+
 </div>
+
 )}
+
 
 
 </div>
@@ -424,5 +550,8 @@ Change Password
 </main>
 
 );
+
+
+
 
 }

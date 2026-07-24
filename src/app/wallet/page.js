@@ -13,6 +13,8 @@ const [transactions,setTransactions]=useState([]);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(true);
 const [funding,setFunding]=useState(false);
+const toastType = message.startsWith("❌") || message.includes("error") || message.includes("valid") || message.includes("expired") ? "error" : "success";
+
 
 
 useEffect(()=>{
@@ -21,7 +23,12 @@ const token=localStorage.getItem("token");
 const user=JSON.parse(localStorage.getItem("user"));
 
 
-if(!user) return;
+  if(!user){
+    setMessage("User session expired");
+    return;
+  }
+
+
 
 
 fetch(
@@ -100,7 +107,12 @@ async function refreshWallet(){
 const token=localStorage.getItem("token");
 const user=JSON.parse(localStorage.getItem("user"));
 
-if(!user) return;
+
+  if(!user){
+    setMessage("User session expired");
+    return;
+  }
+
 
 try{
 
@@ -139,12 +151,18 @@ const token=localStorage.getItem("token");
 const user=JSON.parse(localStorage.getItem("user"));
 
 
+  if(!user){
+    setMessage("User session expired");
+    return;
+  }
+
+
 try{
 setFunding(true);
 setMessage("");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/funding/request",
+"https://alphabot-1.onrender.com/wallet/fund",
 {
 method:"POST",
 headers:{
@@ -164,16 +182,20 @@ amount:Number(amount)
 const data=await res.json();
 
 
-setMessage(data.message || "Funding request submitted. Awaiting approval");
+setMessage(data.message || "Wallet funded successfully");
 
-
-if(data.balance !== undefined){
-
-setBalance(data.balance);
-
+if(!res.ok){
+  setFunding(false);
+  return;
 }
 
+if(data.balance !== undefined){
+  setBalance(data.balance);
+}
 
+await refreshWallet();
+
+setAmount("");
 setFunding(false);
 }catch(error){
 
@@ -244,11 +266,12 @@ History
 </Link>
 
 
-<button
+<Link
+href="/withdraw"
 className="bg-white px-5 py-3 rounded-xl font-bold"
 >
 Withdraw
-</button>
+</Link>
 
 
 </div>
@@ -267,11 +290,9 @@ Fund Wallet
 </h2>
 
 <div className="mt-4 p-4 bg-yellow-100 rounded-xl text-black">
-<p className="font-bold">Send payment to:</p>
-<p>Bank: Moniepoint</p>
-<p>Account Number: 9037120624</p>
-<p>Account Name: Marvelous Oluwasegun Ayodeji</p>
-<p className="mt-2 text-sm">After payment, enter the amount sent and submit. Your wallet will be credited after confirmation.</p>
+<p className="font-bold">Wallet Funding Account</p>
+<p className="mt-2">Transfer funds to your AlphaBot account.</p>
+<p className="mt-2 text-sm">Your wallet balance will be updated after payment confirmation.</p>
 </div>
 
 
@@ -296,15 +317,19 @@ onChange={(e)=>setAmount(e.target.value)}
 
 onClick={fundWallet}
 
-className="w-full mt-5 bg-yellow-400 text-black py-3 rounded-xl font-bold"
-disabled={funding} >
+className={`w-full mt-5 py-3 rounded-xl font-bold ${
+funding || !amount || Number(amount) <= 0
+? "bg-zinc-400 text-zinc-700 cursor-not-allowed"
+: "bg-yellow-400 text-black"
+}`}
+disabled={funding || !amount || Number(amount) <= 0} >
 
 {funding ? "Processing..." : "Fund Wallet"}
 </button>
 
 
 
-<Toast message={message} type="success" />
+<Toast message={message} type={toastType} />
 
 
 </div>

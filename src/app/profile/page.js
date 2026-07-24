@@ -15,27 +15,22 @@ const [toast,setToast]=useState("");
 
 useEffect(()=>{
 
-const loadProfile=async()=>{
+const load=async()=>{
 
 try{
 
 const saved=localStorage.getItem("user");
 const token=localStorage.getItem("token");
 
-
 if(!saved){
-
 window.location.href="/login";
 return;
-
 }
-
 
 const localUser=JSON.parse(saved);
 
 
-
-const profileRes=await fetch(
+const profile=await fetch(
 `https://alphabot-1.onrender.com/users/profile/${localUser.phone}`,
 {
 headers:{
@@ -44,24 +39,16 @@ Authorization:`Bearer ${token}`
 }
 );
 
+const data=await profile.json();
 
-const profileData=await profileRes.json();
-
-
-if(profileRes.ok){
-
-setUser(profileData);
-
-localStorage.setItem(
-"user",
-JSON.stringify(profileData)
-);
-
+if(profile.ok){
+setUser(data);
+localStorage.setItem("user",JSON.stringify(data));
 }
 
 
 
-const walletRes=await fetch(
+const wallet=await fetch(
 `https://alphabot-1.onrender.com/wallet/balance/${localUser.phone}`,
 {
 headers:{
@@ -71,20 +58,16 @@ Authorization:`Bearer ${token}`
 );
 
 
-const walletData=await walletRes.json();
+const walletData=await wallet.json();
 
-
-if(walletRes.ok){
-
+if(wallet.ok){
 setBalance(walletData.balance || 0);
-
 }
 
 
+}catch(e){
 
-}catch(err){
-
-console.log(err);
+console.log(e);
 setError("Failed to load profile");
 
 }finally{
@@ -96,18 +79,13 @@ setLoading(false);
 };
 
 
-loadProfile();
-
+load();
 
 },[]);
 
 
 
 const logout=()=>{
-
-const confirmLogout=window.confirm("Are you sure you want to logout?");
-
-if(!confirmLogout) return;
 
 localStorage.removeItem("token");
 localStorage.removeItem("user");
@@ -121,21 +99,10 @@ window.location.href="/login";
 if(loading){
 
 return(
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
-<div className="max-w-md mx-auto animate-pulse">
-<div className="h-8 w-32 bg-zinc-300 dark:bg-zinc-800 rounded mb-6"></div>
-<div className="bg-zinc-300 dark:bg-zinc-800 rounded-3xl p-6">
-<div className="w-20 h-20 bg-zinc-400 dark:bg-zinc-700 rounded-full"></div>
-<div className="h-6 w-40 bg-zinc-400 dark:bg-zinc-700 rounded mt-5"></div>
-<div className="h-4 w-32 bg-zinc-400 dark:bg-zinc-700 rounded mt-3"></div>
-</div>
-<div className="grid grid-cols-2 gap-4 mt-6">
-<div className="h-24 bg-zinc-300 dark:bg-zinc-800 rounded-2xl"></div>
-<div className="h-24 bg-zinc-300 dark:bg-zinc-800 rounded-2xl"></div>
-</div>
-</div>
+<main className="min-h-screen bg-[#050505] text-white p-6">
+<p className="text-zinc-400">Loading profile...</p>
 </main>
-);
+)
 
 }
 
@@ -143,80 +110,121 @@ return(
 
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8 pb-24">
-<Toast message={toast} type="error" />
+<main className="min-h-screen bg-[#050505] text-white px-6 py-6 pb-24">
 
-<div className="max-w-md mx-auto">
+<Toast message={toast} type="error"/>
 
 
-<h1 className="text-3xl font-bold">
-Profile 👤
-</h1>
+<div className="max-w-md mx-auto space-y-5">
 
-<p className="text-zinc-400 mt-2">
-Manage your AlphaBot account
+
+{/* HEADER */}
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase tracking-widest">
+AlphaBot Account
 </p>
 
+<h1 className="text-3xl font-black mt-2">
+Profile
+</h1>
+
+</div>
 
 
-<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
+
+{/* PROFILE CARD */}
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
 
 
-<div className="w-20 h-20 rounded-full bg-yellow-400 text-black flex items-center justify-center text-3xl font-bold">
+<div className="flex items-center gap-4">
+
+
+<div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-white to-zinc-500 text-black flex items-center justify-center text-3xl font-black">
 
 {user?.name?.charAt(0) || "A"}
 
 </div>
 
 
-<h2 className="text-2xl font-bold mt-5">
-{user?.name || "User"}
+<div>
+
+<h2 className="text-xl font-bold">
+{user?.name || "AlphaBot User"}
 </h2>
 
 
-<p className="text-zinc-400 mt-2">
+<p className="text-zinc-400 text-sm mt-1">
 {user?.phone}
 </p>
 
 
-<p className="text-zinc-400">
+<p className="text-zinc-500 text-sm">
 {user?.email || "No email"}
 </p>
 
-  <p className="mt-3 font-bold">
-  Account Status: {user?.emailVerified ? "✅ Verified" : "❌ Unverified"}
-  </p>
 
+</div>
 
 
 </div>
 
 
 
-<div className="mt-6 grid grid-cols-2 gap-4">
+<div className="mt-5 pt-4 border-t border-zinc-800">
 
 
-<div className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-5">
+<p className="text-sm text-zinc-400">
+Account Status
+</p>
 
-<p className="text-zinc-400 text-sm">
+
+<p className="mt-2 font-bold">
+{user?.emailVerified 
+? "✓ Verified Account"
+: "Pending Verification"}
+</p>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+{/* STATS */}
+
+
+<div className="grid grid-cols-2 gap-4">
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5">
+
+<p className="text-xs text-zinc-500">
 Wallet Balance
 </p>
 
-<h2 className="text-xl font-bold text-yellow-400 mt-2">
-₦{balance}
+<h2 className="text-xl font-bold mt-2">
+₦{Number(balance).toLocaleString()}
 </h2>
 
 </div>
 
 
-<div className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-5">
 
-<p className="text-zinc-400 text-sm">
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5">
+
+<p className="text-xs text-zinc-500">
 Referral Earnings
 </p>
 
-<h2 className="text-xl font-bold text-yellow-400 mt-2">
-₦{user?.referralEarnings || 0}
+<h2 className="text-xl font-bold mt-2">
+₦{Number(user?.referralEarnings || 0).toLocaleString()}
 </h2>
 
 </div>
@@ -226,104 +234,142 @@ Referral Earnings
 
 
 
-<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
 
 
-<h2 className="text-xl font-bold">
+{/* INFORMATION */}
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+
+
+<h2 className="font-bold">
 Account Information
 </h2>
 
-<p className="text-zinc-400 mt-4">
-Verification Status:
-</p>
 
-<p className="font-bold text-green-400">
-{user?.verified ? "✅ Verified" : "⏳ Not Verified"}
-</p>
+<div className="mt-5 space-y-4 text-sm">
 
 
+<div className="flex justify-between">
+<span className="text-zinc-500">
+Referral Code
+</span>
 
-<p className="text-zinc-400 mt-4">
-Referral Code:
-</p>
-
-
-<p className="font-bold">
+<span className="font-bold">
 {user?.referralCode || "None"}
-</p>
+</span>
+
+</div>
 
 
 
-<p className="text-zinc-400 mt-4">
-Account Created:
-</p>
+<div className="flex justify-between">
+<span className="text-zinc-500">
+Joined
+</span>
 
-
-<p>
+<span>
 {user?.createdAt
 ? new Date(user.createdAt).toDateString()
-: "Unknown"}
-</p>
+:"Unknown"}
+</span>
+
+</div>
+
+
+</div>
 
 
 </div>
 
 
 
-<div className="mt-6">
 
 
-<Link
-href="/wallet"
-className="block bg-zinc-100 dark:bg-zinc-900 rounded-xl p-4"
->
-💰 Wallet
-</Link>
+{/* MENU */}
 
-
-<Link
-href="/transactions"
-className="block bg-zinc-100 dark:bg-zinc-900 rounded-xl p-4 mt-3"
->
-📜 Transactions
-</Link>
+<div className="space-y-3">
 
 
 <Link
 href="/referral"
-className="block bg-zinc-100 dark:bg-zinc-900 rounded-xl p-4 mt-3"
+className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
 >
-🎁 Referral
+🎁 Invite & Earn
+</Link>
+
+
+<Link
+href="/transaction-pin"
+className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+>
+🔐 Transaction PIN
+</Link>
+
+
+<Link
+href="/ai"
+className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+>
+🤖 AI Assistant
+</Link>
+
+
+<Link
+href="/support"
+className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+>
+🆘 Support
+</Link>
+
+
+<Link
+href="/terms"
+className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+>
+📄 Terms & Conditions
+</Link>
+
+
+<Link
+href="/privacy"
+className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+>
+🔒 Privacy Policy
 </Link>
 
 
 </div>
+
+
 
 
 
 
 <Link
 href="/edit-profile"
-className="block w-full text-center mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold hover:scale-105 transition"
+className="block text-center bg-white text-black rounded-xl py-3 font-bold"
 >
-✏️ Edit Profile
+Edit Profile
 </Link>
+
+
 
 <button
 onClick={logout}
-className="w-full mt-4 bg-red-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition"
+className="w-full bg-[#18181B] border border-red-900 text-red-400 rounded-xl py-3 font-bold"
 >
-🚪 Logout
+Logout
 </button>
 
 
-{error && (
 
-<p className="text-red-400 text-center mt-4">
+{error && (
+<p className="text-red-400 text-center">
 {error}
 </p>
-
 )}
+
 
 
 </div>
@@ -331,8 +377,9 @@ className="w-full mt-4 bg-red-600 text-white py-3 rounded-xl font-bold hover:sca
 
 <BottomNav />
 
+
 </main>
 
-);
+)
 
 }

@@ -13,7 +13,7 @@ const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(true);
 const [balance,setBalance]=useState(0);
 const [showBalance,setShowBalance]=useState(true);
-const [transactions,setTransactions]=useState([]);
+const [transactionCount,setTransactionCount]=useState(0);
 const [totalSpent,setTotalSpent]=useState(0);
 const [referralEarnings,setReferralEarnings]=useState(0);
 const [notifications,setNotifications]=useState([]);
@@ -95,7 +95,7 @@ Authorization:`Bearer ${token}`
 
 if(Array.isArray(list)){
 
-setTransactions(list.slice(0,5));
+setTransactionCount(list.length);
 
 setTotalSpent(
 list.reduce((sum,item)=>sum + Number(item.amount || 0),0)
@@ -106,7 +106,7 @@ list.reduce((sum,item)=>sum + Number(item.amount || 0),0)
 
 })
 .catch(()=>{
-setToast("Unable to load transactions");
+setToast("Unable to load transaction summary");
 });
 
 
@@ -263,16 +263,17 @@ const services=[
 ["🌐","Data","/data"],
 ["⚡","Electricity","/electricity"],
 ["📺","TV","/tv"],
+["💵","Airtime Cash","/airtime-cash"],
+["💸","Withdraw","/withdraw"],
+["🏦","Bank Transfer","/transfer"],
+["🤖","AI Assistant","/ai"],
+["👥","Beneficiary","/beneficiary"],
+["🔁","Recurring","/recurring"],
 ["🎮","Betting","/betting"],
 ["🎓","Exam PIN","/exam-pin"],
-  ["💳","ePIN","/epin"],
-  ["👥","Beneficiary","/beneficiary"],
-["💵","Airtime Cash","/airtime-cash"],
+["💳","ePIN","/epin"],
 ["🏆","Arena+","/arena"],
 ["💬","Support","/support"],
-["🏦","Bank","/bank"],
-  ["🏦","Bank Transfer","/transfer"],
-["🔁","Recurring","/recurring"]
 
 ];
 
@@ -283,7 +284,7 @@ const services=[
 
 if(loading){
 return(
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-6">
+<main className="min-h-screen bg-white text-black dark:bg-[#0A0A0A] dark:text-white px-4 py-4 pb-24 overflow-x-hidden">
 <div className="max-w-md mx-auto animate-pulse">
 <div className="h-6 w-32 bg-zinc-300 dark:bg-zinc-800 rounded mb-4"></div>
 <div className="h-10 w-48 bg-zinc-300 dark:bg-zinc-800 rounded mb-8"></div>
@@ -301,374 +302,348 @@ return(
 
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-6 pb-24">
+<main className="min-h-screen bg-white text-black dark:bg-[#0A0A0A] dark:text-white px-4 py-4 pb-24 overflow-x-hidden">
 
 <Toast message={toast} type="error" />
 
 
 
-<div className="flex justify-between items-center">
 
+{/* MEGAZORD HEADER */}
 
+<header className="flex justify-between items-center">
 
 <div className="flex items-center gap-3">
+
+<div className="w-11 h-11 rounded-full bg-gradient-to-br from-white to-zinc-300 flex items-center justify-center shadow-xl shadow-white/10">
+
+<span className="text-xl font-black text-black">
+A
+</span>
+
+</div>
+
+
 <div>
-<p className="text-zinc-400 text-sm">
+
+<p className="text-xs text-zinc-600 dark:text-zinc-500">
 {getGreeting()}
 </p>
 
-<h1 className="text-3xl font-bold">
+
+<h1 className="text-lg font-bold">
 {user?.name || "User"}
 </h1>
-</div>
 
 </div>
 
-<div className="flex gap-3 items-center">
+</div>
+
+
+
+<div className="flex gap-2">
+
+
+<Link
+href="/transactions"
+className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 transition"
+>
+💳
+</Link>
+
+
 
 <Link
 href="/notifications"
-className="bg-zinc-900 dark:bg-zinc-800 rounded-full p-3 relative hover:scale-105 transition"
+className="relative bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 transition"
 >
+
 🔔
+
 {unreadCount > 0 && (
-<span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 font-bold animate-bounce">
+<span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 font-bold">
 {unreadCount}
 </span>
 )}
+
 </Link>
+
+
 
 <button
 onClick={toggleTheme}
-className="bg-zinc-900 dark:bg-zinc-800 rounded-full p-3 hover:scale-105 transition"
+className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3"
 >
 {dark ? "☀️" : "🌙"}
 </button>
 
-<button
-onClick={logout}
-className="border border-zinc-700 rounded-xl px-3 hover:scale-105 transition"
->
-Exit
-</button>
-
-
-</div>
 
 </div>
 
 
+</header>
 
 
-<div className="mt-8 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 text-black rounded-3xl p-6 shadow-xl overflow-hidden relative">
 
-<div className="flex justify-between items-start">
+{/* MEGAZORD WALLET */}
+
+
+<section className="mt-6 relative overflow-hidden bg-[#1A1A1E] border border-zinc-800 rounded-3xl p-4 shadow-xl shadow-black/30">
+
+
+<div className="absolute -right-10 -top-10 w-40 h-40 bg-white/5 blur-3xl rounded-full pointer-events-none"/>
+
+
+
+<div className="flex justify-between items-center relative">
+
+
 <div>
-<p className="font-semibold text-sm opacity-70">
+
+<p className="text-xs text-zinc-600 dark:text-zinc-500">
 💳 AlphaBot Wallet
 </p>
 
-<p className="mt-2 font-bold">
+
+<p className="font-bold mt-1">
 Available Balance
 </p>
+
+
 </div>
 
-<div className="text-4xl opacity-20">
-₦
-</div>
+
+<div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-white to-zinc-300 flex items-center justify-center shadow-xl shadow-white/10">
+<span className="font-black text-black">
+A
+</span>
 </div>
 
-<div className="flex items-center justify-between mt-5">
 
-<h2 className="text-4xl font-bold">
+</div>
+
+
+
+<div className="flex items-center justify-between gap-3 mt-5">
+
+
+<h2 className="text-2xl sm:text-3xl font-black text-white dark:text-white drop-shadow-lg truncate">
+
 {showBalance ? `₦${balance.toLocaleString()}` : "₦••••••"}
+
 </h2>
+
+
 
 <button
 onClick={()=>setShowBalance(!showBalance)}
-  className="bg-black/10 rounded-full px-3 py-1 text-sm font-semibold hover:scale-105 transition"
+className="bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl text-sm font-bold text-white"
 >
-  {showBalance ? "Hide" : "Show"}
+
+{showBalance ? "Hide" : "Show"}
+
 </button>
+
 
 </div>
 
-<div className="flex gap-3 mt-7">
+
+
+<div className="grid grid-cols-2 gap-3 mt-5">
+
 
 <Link
 href="/wallet"
-className="flex-1 text-center bg-black text-white px-5 py-3 rounded-xl font-bold hover:scale-105 transition"
+className="min-w-0 text-center bg-white text-black py-3 rounded-xl font-bold hover:scale-105 hover:shadow-lg hover:shadow-white/10 transition truncate"
 >
 💳 Fund
 </Link>
 
+
+
 <Link
 href="/withdraw"
-className="flex-1 text-center bg-white text-black px-5 py-3 rounded-xl font-bold hover:scale-105 transition"
+className="min-w-0 text-center bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 py-3 rounded-xl font-bold text-white hover:scale-105 transition truncate"
 >
 💸 Withdraw
 </Link>
 
-</div>
 
 </div>
 
 
+</section>
 
 
 
-
-<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
-<h2 className="font-bold text-xl">
-AlphaBot Activity 📊
-</h2>
-
-<div className="grid grid-cols-2 gap-4 mt-5">
-
-
-<div className="bg-white dark:bg-black rounded-xl p-4">
-<p className="text-zinc-400 text-sm">Total Spent</p>
-  <p className="text-xl sm:text-2xl font-bold mt-2 text-yellow-400 break-all">₦{totalSpent.toLocaleString()}</p>
-</div>
-
-<div className="bg-white dark:bg-black rounded-xl p-4">
-<p className="text-zinc-400 text-sm">Referral Earnings</p>
-<p className="text-2xl font-bold mt-2 text-yellow-400">₦{referralEarnings.toLocaleString()}</p>
-</div>
-
-
-</div>
-</div>
-
-<h2 className="text-xl font-bold mt-10">
+<h2 className="text-base font-bold mt-4">
 Quick Actions
 </h2>
 
 
+<div className="grid grid-cols-4 gap-2 mt-3">
 
-<div className="grid grid-cols-4 gap-3 mt-5">
-
-
-{services.map((item)=>(
+{services.slice(0,8).map((item)=>(
 
 <Link
 href={item[2]}
 key={item[1]}
-className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 text-center hover:scale-105 hover:shadow-lg transition duration-200 active:scale-95"
+className="h-14 min-w-0 bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl flex flex-col items-center justify-center hover:scale-105 transition active:scale-95 overflow-hidden"
 >
 
-<div className="w-11 h-11 mx-auto rounded-full bg-yellow-400/20 flex items-center justify-center">
-<span className="text-2xl">
+
+<div className="w-7 h-7 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+
+<span className="text-lg truncate grayscale-[20%]">
 {item[0]}
 </span>
+
 </div>
 
-<p className="text-xs mt-3 font-semibold">
+
+<p className="text-[9px] mt-1 font-semibold text-center text-zinc-900 dark:text-white leading-tight truncate max-w-full px-1">
+{item[1]}
+</p>
+
+
+</Link>
+
+))}
+
+</div>
+
+
+
+<div className="mt-2 text-center">
+
+<Link
+href="/services"
+className="text-yellow-400 font-semibold text-sm"
+>
+View all services →
+</Link>
+</div>
+
+
+
+{/* ALPHABOT AI CARD */}
+
+<section className="mt-2 relative overflow-hidden bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-3">
+
+<div className="absolute -right-10 -top-10 w-40 h-40 bg-yellow-400/10 blur-3xl rounded-full"/>
+
+
+<div className="flex justify-between items-start relative">
+
+<div>
+
+<div className="flex items-center gap-2">
+
+<span className="text-lg">
+🤖
+</span>
+
+<p className="text-xs font-bold text-yellow-500">
+ALPHABOT AI
+</p>
+
+</div>
+
+
+<h2 className="text-base font-black mt-2">
+Smart Assistant
+</h2>
+
+
+<p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+Manage payments, ask questions and control AlphaBot services faster.
+</p>
+
+
+</div>
+
+
+<div className="w-7 h-7 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+
+<span className="text-xl">
+AI
+</span>
+
+</div>
+
+
+</div>
+
+
+
+<Link
+href="/ai"
+className="block mt-3 w-full text-center bg-black text-white dark:bg-white dark:text-black rounded-xl py-2 font-bold text-xs hover:scale-[1.02] transition"
+>
+
+Open AI Assistant
+
+</Link>
+
+
+</section>
+
+
+
+
+
+
+
+{/* MEGAZORD POPULAR SERVICES */}
+
+<section className="mt-3">
+
+<div className="flex justify-between items-center mb-3">
+
+<h2 className="font-bold text-base">
+Popular
+</h2>
+
+<Link
+href="/services"
+className="text-yellow-500 text-xs font-semibold"
+>
+View all →
+</Link>
+
+</div>
+
+
+<div className="grid grid-cols-4 gap-2">
+
+{[
+["⚡","Power"],
+["📺","TV"],
+["🔁","Repeat"],
+["🏆","Arena"]
+].map((item)=>(
+
+<Link
+href="/services"
+key={item[1]}
+className="h-16 bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl flex flex-col items-center justify-center hover:scale-105 transition"
+>
+
+<div className="text-xl">
+{item[0]}
+</div>
+
+<p className="text-[9px] mt-1 font-semibold truncate text-zinc-900 dark:text-white">
 {item[1]}
 </p>
 
 </Link>
 
-
-
-))}
-
-
-</div>
-
-
-
-
-<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
-
-
-<div className="flex justify-between">
-
-<h2 className="font-bold text-xl">
-Recent Transactions
-</h2>
-
-
-<Link
-href="/transactions"
-className="text-yellow-400 text-sm"
->
-View all
-</Link>
-
-
-</div>
-
-
-
-{transactions.length === 0 ? (
-
-<p className="text-zinc-400 mt-4">
-No transactions yet 🚀
-<br/>
-Start by funding your wallet.
-</p>
-
-) : (
-
-<div className="mt-4 space-y-3">
-
-
-{transactions.map((item,index)=>(
-
-<div
-key={index}
-className="bg-white dark:bg-black rounded-2xl p-4 flex items-center justify-between border border-zinc-200 dark:border-zinc-800 hover:shadow-md transition"
->
-
-<div className="flex items-center gap-3">
-
-<div className="w-10 h-10 rounded-full bg-yellow-400/20 flex items-center justify-center">
-💳
-</div>
-
-<div>
-<p className="font-semibold">
-{item.type || item.service || "Transaction"}
-</p>
-
-<p className="text-xs text-zinc-500 mt-1">
-{item.status || "Completed"} ✅
-</p>
-
-</div>
-
-</div>
-
-<p className="text-yellow-400 font-bold">
-₦{item.amount}
-</p>
-
-</div>
-
-))}
-
-
-
-
-</div>
-
-)}
-
-
-<div className="mt-6 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-900 dark:to-black rounded-3xl p-5 border border-zinc-200 dark:border-zinc-800">
-
-<div className="flex justify-between items-start">
-
-<div>
-<h2 className="font-bold text-xl">
-🎁 Referral Rewards
-</h2>
-
-<p className="text-zinc-400 mt-2 text-sm">
-Invite friends and earn AlphaBot rewards.
-</p>
-</div>
-
-<div className="text-3xl">
-💰
-</div>
-
-</div>
-
-<p className="text-yellow-400 text-3xl font-bold mt-5">
-₦{referralEarnings.toLocaleString()}
-</p>
-
-<Link
-href="/referral"
-className="inline-block mt-5 bg-yellow-400 text-black px-5 py-3 rounded-xl font-bold hover:scale-105 transition"
->
-Open Referral →
-</Link>
-
-</div>
-
-
-
-
-
-<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
-
-<div className="flex justify-between items-center">
-<h2 className="font-bold text-xl">
-🔔 Notifications
-</h2>
-
-<Link
-href="/notifications"
-className="text-yellow-400 text-sm font-semibold"
->
-View all
-</Link>
-</div>
-
-{notifications.length === 0 ? (
-
-<div className="text-center bg-white dark:bg-black rounded-2xl p-5 mt-4">
-<p className="text-3xl">🔕</p>
-<p className="font-semibold mt-2">No notifications yet</p>
-<p className="text-zinc-400 text-sm mt-1">
-AlphaBot updates and rewards will appear here.
-</p>
-</div>
-
-) : (
-
-<div className="mt-4 space-y-3">
-
-{notifications.map((item,index)=>(
-
-<div
-key={index}
-className="bg-white dark:bg-black rounded-2xl p-4 flex gap-3 items-start border border-zinc-200 dark:border-zinc-800"
->
-
-<div className="text-2xl">🔔</div>
-
-<div className="flex-1">
-<p className="font-semibold">
-{item.title || "Notification"}
-</p>
-
-<p className="text-sm text-zinc-400 mt-1">
-{item.message}
-</p>
-
-{!item.read && (
-<span className="inline-block text-xs text-yellow-400 mt-2 font-bold">
-NEW
-</span>
-)}
-
-</div>
-
-</div>
-
 ))}
 
 </div>
 
-)}
-
-</div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
+</section>
 
 
 <BottomNav />

@@ -3,49 +3,85 @@
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 
-
 export default function Arena(){
 
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-6 pb-24">
-
+<main className="min-h-screen bg-[#050505] text-white px-6 py-6 pb-24">
 
 <div className="max-w-md mx-auto">
 
 
-<h1 className="text-3xl font-bold">
-🏆 Arena+
+{/* HEADER */}
+
+<div className="flex items-center gap-3">
+
+<div className="w-11 h-11 rounded-xl bg-[#18181B] border border-zinc-700 flex items-center justify-center">
+
+<span className="text-xl font-black bg-gradient-to-br from-white to-zinc-400 bg-clip-text text-transparent">
+A+
+</span>
+
+</div>
+
+
+<div>
+
+<h1 className="text-2xl font-black">
+Arena+
 </h1>
 
+<p className="text-xs text-zinc-500">
+AlphaBot Competition Zone
+</p>
 
-<p className="text-zinc-400 mt-2">
-Compete, predict and earn rewards.
+</div>
+
+
+</div>
+
+
+
+
+
+{/* HERO */}
+
+
+<div className="mt-8 bg-[#18181B] border border-zinc-800 rounded-3xl p-6 shadow-xl">
+
+
+<p className="text-yellow-400 text-sm font-bold">
+🏆 Compete & Win
 </p>
 
 
+<h2 className="text-3xl font-black mt-3 leading-tight">
 
+Predict.
+<br/>
 
+<span className="bg-gradient-to-r from-white via-zinc-300 to-zinc-500 bg-clip-text text-transparent">
+Earn Rewards.
+</span>
 
-<div className="mt-8 bg-gradient-to-br from-yellow-300 via-yellow-400 to-yellow-600 rounded-3xl p-6 text-black shadow-xl">
-
-
-<h2 className="text-2xl font-bold">
-⚽ Football Predictions
 </h2>
 
 
-<p className="mt-3 opacity-80">
-Predict matches, earn points and win weekly rewards.
+<p className="text-zinc-400 mt-4 text-sm leading-relaxed">
+
+Join football predictions, collect points, climb the leaderboard and compete with other players.
+
 </p>
 
 
 
 <Link
 href="/arena/football"
-className="inline-block mt-6 bg-black text-white px-5 py-3 rounded-xl font-bold hover:scale-105 transition"
+className="inline-block mt-6 bg-yellow-400 text-black px-6 py-3 rounded-xl font-bold hover:scale-105 transition"
 >
-Enter Arena →
+
+⚽ Enter Arena →
+
 </Link>
 
 
@@ -55,28 +91,33 @@ Enter Arena →
 
 
 
+{/* FEATURES */}
+
+
 <div className="mt-6 grid grid-cols-2 gap-4">
 
 
 
 <Link
 href="/arena/leaderboard"
-className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-5 hover:scale-105 transition"
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:border-zinc-500 transition"
 >
 
 
-<p className="text-3xl">
+<div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center text-xl">
+
 🏆
-</p>
+
+</div>
 
 
-<h3 className="font-bold mt-3">
+<h3 className="font-bold mt-4">
 Leaderboard
 </h3>
 
 
-<p className="text-sm text-zinc-400 mt-1">
-See top players
+<p className="text-xs text-zinc-400 mt-2">
+See top players and rankings
 </p>
 
 
@@ -88,22 +129,24 @@ See top players
 
 <Link
 href="/arena/rewards"
-className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-5 hover:scale-105 transition"
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:border-zinc-500 transition"
 >
 
 
-<p className="text-3xl">
+<div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center text-xl">
+
 🎁
-</p>
+
+</div>
 
 
-<h3 className="font-bold mt-3">
+<h3 className="font-bold mt-4">
 Rewards
 </h3>
 
 
-<p className="text-sm text-zinc-400 mt-1">
-Claim your wins
+<p className="text-xs text-zinc-400 mt-2">
+Claim your competition wins
 </p>
 
 
@@ -117,23 +160,34 @@ Claim your wins
 
 
 
-<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
+
+{/* COMING SOON */}
 
 
-<h2 className="font-bold text-xl">
+<div className="mt-6 bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
+
+
+<h2 className="text-xl font-bold">
 🔥 Coming Soon
 </h2>
 
 
-<ul className="mt-4 space-y-3 text-zinc-400">
+<div className="mt-4 space-y-3 text-zinc-400 text-sm">
 
-<li>🎮 Mini Games</li>
+<p>
+🎮 Mini Games
+</p>
 
-<li>🔎 Alpha Search</li>
+<p>
+🔎 Alpha Search
+</p>
 
-<li>🏅 More competitions</li>
+<p>
+🏅 More Competitions
+</p>
 
-</ul>
+
+</div>
 
 
 </div>
@@ -141,7 +195,6 @@ Claim your wins
 
 
 </div>
-
 
 
 <BottomNav />

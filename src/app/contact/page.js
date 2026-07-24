@@ -31,7 +31,7 @@ Email
 </p>
 
 <p className="font-bold mt-1">
-support@alphabot.com
+ayodejimarvelous679@gmail.com
 </p>
 
 

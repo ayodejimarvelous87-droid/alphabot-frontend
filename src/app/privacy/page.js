@@ -74,7 +74,7 @@ Contact
 
 <p className="text-zinc-400 mt-3 leading-7">
 
-For privacy questions, please contact AlphaBot support.
+For privacy questions, please contact ayodejimarvelous679@gmail.com.
 
 </p>
 

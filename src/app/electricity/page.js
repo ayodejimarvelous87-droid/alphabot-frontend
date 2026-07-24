@@ -75,23 +75,35 @@ setLoading(false);
 
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
+<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
-<div className="max-w-md mx-auto">
+<div className="max-w-md mx-auto space-y-5">
 
 
-<h1 className="text-3xl font-bold">
+<div>
+
+<h1 className="text-3xl font-black">
 ⚡ Electricity
 </h1>
 
-
 <p className="text-zinc-400 mt-2">
-Pay electricity bills easily
+Pay your electricity bills securely
 </p>
 
+</div>
 
 
-<div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-5">
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Phone Number
+</p>
 
 
 <PhoneInput
@@ -99,12 +111,27 @@ value={phone}
 onChange={(value)=>setPhone(value)}
 />
 
+</div>
+
+
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Distribution Company
+</p>
 
 
 <select
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
+
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
 value={disco}
+
 onChange={(e)=>setDisco(e.target.value)}
+
 >
 
 <option>IKEDC</option>
@@ -115,80 +142,180 @@ onChange={(e)=>setDisco(e.target.value)}
 </select>
 
 
-
-<input
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
-placeholder="Meter number"
-value={meterNumber}
-onChange={(e)=>setMeterNumber(e.target.value)}
-/>
+</div>
 
 
 
-<select
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
-value={meterType}
-onChange={(e)=>setMeterType(e.target.value)}
->
-
-<option value="prepaid">
-Prepaid
-</option>
-
-<option value="postpaid">
-Postpaid
-</option>
-
-</select>
 
 
+<div>
 
-<input
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
-placeholder="Amount"
-type="number"
-value={amount}
-onChange={(e)=>setAmount(e.target.value)}
-/>
-
-
-
-<input
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
-placeholder="Transaction PIN"
-type="password"
-maxLength="4"
-value={pin}
-onChange={(e)=>setPin(e.target.value)}
-/>
-
-
-
-<button
-onClick={payElectricity}
-disabled={loading}
-className="w-full mt-5 bg-yellow-400 text-black py-3 rounded-xl font-bold"
->
-
-{loading ? "Processing..." : "Pay Electricity"}
-
-</button>
-
-
-<p className="text-center text-zinc-300 text-sm mt-4">
-{message}
+<p className="text-xs text-zinc-500 uppercase">
+Meter Number
 </p>
+
+
+<input
+
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
+placeholder="Enter meter number"
+
+value={meterNumber}
+
+onChange={(e)=>setMeterNumber(e.target.value)}
+
+/>
 
 
 </div>
 
 
-<Link
-href="/dashboard"
-className="block text-center text-yellow-400 mt-8"
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Meter Type
+</p>
+
+
+<select
+
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
+value={meterType}
+
+onChange={(e)=>setMeterType(e.target.value)}
+
 >
+
+
+<option value="prepaid">
+Prepaid
+</option>
+
+
+<option value="postpaid">
+Postpaid
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Amount
+</p>
+
+
+<input
+
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
+placeholder="Amount"
+
+type="number"
+
+value={amount}
+
+onChange={(e)=>setAmount(e.target.value)}
+
+/>
+
+
+</div>
+
+
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Transaction PIN
+</p>
+
+
+<input
+
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
+placeholder="4 digit PIN"
+
+type="password"
+
+maxLength="4"
+
+value={pin}
+
+onChange={(e)=>setPin(e.target.value)}
+
+/>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<button
+
+onClick={payElectricity}
+
+disabled={loading}
+
+className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
+
+>
+
+{loading ? "Processing..." : "⚡ Pay Electricity"}
+
+</button>
+
+
+
+
+
+{message && (
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4 text-center">
+
+{message}
+
+</div>
+
+)}
+
+
+
+
+
+<Link
+
+href="/dashboard"
+
+className="block text-center text-zinc-400 mt-6"
+
+>
+
 ← Dashboard
+
 </Link>
+
 
 
 </div>
@@ -196,5 +323,6 @@ className="block text-center text-yellow-400 mt-8"
 </main>
 
 );
+
 
 }

@@ -102,29 +102,45 @@ setLoading(false);
 
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
+<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
-<div className="max-w-md mx-auto">
+<div className="max-w-md mx-auto space-y-5">
 
 
-<h1 className="text-3xl font-bold">
+<div>
+
+<h1 className="text-3xl font-black">
 📱 Airtime
 </h1>
 
-
 <p className="text-zinc-400 mt-2">
-Buy airtime instantly
+Instant airtime recharge for all networks
+</p>
+
+</div>
+
+
+
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-5">
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Network Provider
 </p>
 
 
-
-<div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
-
-
 <select
-className="w-full bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
+
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
 value={network}
+
 onChange={(e)=>setNetwork(e.target.value)}
+
 >
 
 <option>MTN</option>
@@ -135,64 +151,143 @@ onChange={(e)=>setNetwork(e.target.value)}
 </select>
 
 
+</div>
+
+
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Receiver
+</p>
+
 
 <PhoneInput
+
 value={phone}
-onChange={(value)=>setPhone(value)}
+
+onChange={setPhone}
+
 beneficiaries={beneficiaries}
-  service="airtime"
+
+service="airtime"
+
 />
-
-
-
-<input
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
-placeholder="Amount"
-type="number"
-value={amount}
-onChange={(e)=>setAmount(e.target.value)}
-/>
-
-
-
-<input
-className="w-full mt-4 bg-white text-black dark:bg-black dark:text-white border border-zinc-700 rounded-xl p-3"
-placeholder="Transaction PIN"
-type="password"
-maxLength="4"
-value={pin}
-onChange={(e)=>setPin(e.target.value)}
-/>
-
-
-
-<button
-onClick={buyAirtime}
-disabled={loading}
-className="w-full mt-5 bg-yellow-400 text-black py-3 rounded-xl font-bold"
->
-
-{loading ? "Processing..." : "Buy Airtime"}
-
-</button>
-
-
-
-<p className="text-center mt-4 text-zinc-300 text-sm">
-{message}
-</p>
 
 
 </div>
 
 
 
-<Link
-href="/dashboard"
-className="block text-center text-yellow-400 mt-8"
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Amount
+</p>
+
+
+<input
+
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
+placeholder="Enter amount"
+
+type="number"
+
+value={amount}
+
+onChange={(e)=>setAmount(e.target.value)}
+
+/>
+
+
+</div>
+
+
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Transaction PIN
+</p>
+
+
+<input
+
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
+placeholder="4 digit PIN"
+
+type="password"
+
+maxLength="4"
+
+value={pin}
+
+onChange={(e)=>setPin(e.target.value)}
+
+/>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<button
+
+onClick={buyAirtime}
+
+disabled={loading}
+
+className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
+
 >
+
+{loading ? "Processing..." : "⚡ Buy Airtime"}
+
+</button>
+
+
+
+
+
+{message && (
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4 text-center text-sm">
+
+{message}
+
+</div>
+
+)}
+
+
+
+
+
+<Link
+
+href="/dashboard"
+
+className="block text-center text-zinc-400 mt-6"
+
+>
+
 ← Dashboard
+
 </Link>
+
 
 
 </div>
@@ -200,5 +295,6 @@ className="block text-center text-yellow-400 mt-8"
 </main>
 
 );
+
 
 }

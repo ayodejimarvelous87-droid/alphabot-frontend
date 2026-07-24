@@ -41,38 +41,54 @@ setLoading(false);
 
 
 
-return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-6 pb-24">
+  return(
 
+<main className="min-h-screen bg-[#050505] text-white px-6 py-6 pb-24">
 
 <div className="max-w-md mx-auto">
 
 
-<h1 className="text-3xl font-bold">
-🏆 Arena+ Leaderboard
+{/* HEADER */}
+
+<div>
+
+<p className="text-yellow-400 text-sm font-bold">
+🏆 AlphaBot Arena+
+</p>
+
+
+<h1 className="text-3xl font-black mt-2">
+Leaderboard
 </h1>
 
 
-<p className="text-zinc-400 mt-2">
+<p className="text-zinc-400 mt-2 text-sm">
 Top football predictors this week.
 </p>
+
+
+</div>
+
 
 
 
 {loading ? (
 
-<p className="mt-8">
+<p className="mt-8 text-zinc-400">
 Loading leaderboard...
 </p>
 
+
 ) : players.length===0 ? (
 
-<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
+
+<div className="mt-8 bg-[#18181B] border border-zinc-800 rounded-3xl p-5 text-center">
 
 No players yet ⚽
 
 </div>
+
 
 ) : (
 
@@ -85,30 +101,31 @@ No players yet ⚽
 
 <div
 key={player._id}
-className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-5 flex justify-between items-center"
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 flex justify-between items-center"
 >
 
 
-<div>
+<div className="flex items-center gap-3">
 
-<p className="font-bold">
+
+<div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
 
 {index===0 ? "🥇" : index===1 ? "🥈" : index===2 ? "🥉" : "🏅"}
 
-{" "}
+</div>
 
+
+<p className="font-bold">
 {player.userName || "Player"}
-
 </p>
 
 
 </div>
 
 
-<p className="text-yellow-400 font-bold">
 
-{player.points} pts
-
+<p className="text-yellow-400 font-black">
+{player.points || 0} pts
 </p>
 
 
@@ -124,7 +141,6 @@ className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-5 flex justify-between ite
 )}
 
 
-
 </div>
 
 
@@ -136,3 +152,4 @@ className="bg-zinc-100 dark:bg-zinc-900 rounded-2xl p-5 flex justify-between ite
 );
 
 }
+

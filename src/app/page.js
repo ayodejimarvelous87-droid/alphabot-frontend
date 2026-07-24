@@ -2,168 +2,200 @@ import Link from "next/link";
 
 export default function Home(){
 
-return(
+  const services = [
+    {
+      name:"Airtime",
+      desc:"Mobile top-up for all networks",
+      icon:"📱"
+    },
+    {
+      name:"Data",
+      desc:"Fast internet bundles instantly",
+      icon:"⚡"
+    },
+    {
+      name:"Wallet",
+      desc:"Secure digital payments",
+      icon:"◈"
+    },
+    {
+      name:"Bills",
+      desc:"Electricity, TV and more",
+      icon:"▣"
+    }
+  ];
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
 
+  return(
+    <main className="min-h-screen bg-[#050505] text-white">
 
-<nav className="flex justify-between items-center px-6 py-5 border-b border-zinc-800">
+      {/* NAVBAR */}
+      <nav className="flex justify-between items-center px-6 py-5 border-b border-zinc-800">
 
-<h1 className="text-2xl font-bold">
-Alpha<span className="text-yellow-400">Bot</span>
-</h1>
+        <div className="flex items-center gap-3">
 
+          <div className="w-10 h-10 rounded-xl bg-[#18181B] border border-zinc-700 flex items-center justify-center">
+            <span className="text-xl font-black bg-gradient-to-br from-white to-zinc-400 bg-clip-text text-transparent">
+              A
+            </span>
+          </div>
 
-<div className="flex gap-5 text-sm text-zinc-300">
+          <h1 className="text-xl font-bold">
+            AlphaBot
+          </h1>
 
-<Link href="/about">
-About
-</Link>
+        </div>
 
-<Link href="/contact">
-Contact
-</Link>
 
-<Link href="/login">
-Login
-</Link>
+        <div className="hidden md:flex gap-6 text-sm text-zinc-400">
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
+          <Link href="/login">Login</Link>
+        </div>
 
-</div>
 
+      </nav>
 
-</nav>
 
 
+      {/* HERO */}
+      <section className="px-6 pt-20 pb-14 text-center max-w-4xl mx-auto">
 
 
-<section className="px-6 py-24 text-center">
+        <h2 className="text-5xl md:text-6xl font-black leading-tight">
 
+          Smart Digital
+          <br/>
 
-<h2 className="text-5xl font-bold">
-Smart Digital Payments
-<br/>
-Made Simple
-</h2>
+          <span className="bg-gradient-to-r from-white via-zinc-300 to-zinc-500 bg-clip-text text-transparent">
+            Payments Made Simple
+          </span>
 
+        </h2>
 
 
-<p className="text-zinc-400 mt-6 max-w-xl mx-auto">
+        <p className="mt-6 text-zinc-400 max-w-xl mx-auto leading-relaxed">
 
-AlphaBot provides wallet, airtime, data and digital
-payment solutions in one secure platform.
+          AlphaBot provides wallet, airtime, data and digital payment solutions in one secure platform.
 
-</p>
+        </p>
 
 
 
-<div className="mt-8 flex justify-center gap-4">
+        <div className="flex justify-center gap-4 mt-9">
 
 
-<Link
-href="/register"
-className="bg-yellow-400 text-black px-8 py-3 rounded-full font-bold"
->
-Get Started
-</Link>
+          <Link
+          href="/register"
+          className="bg-white text-black px-8 py-3.5 rounded-xl font-bold hover:scale-105 transition"
+          >
+            Get Started
+          </Link>
 
 
-<Link
-href="/login"
-className="border border-zinc-700 px-8 py-3 rounded-full"
->
-Login
-</Link>
+          <Link
+          href="/login"
+          className="bg-[#18181B] border border-zinc-700 text-zinc-300 px-8 py-3.5 rounded-xl font-bold hover:border-zinc-400 transition"
+          >
+            Login
+          </Link>
 
 
-</div>
+        </div>
 
 
-</section>
+      </section>
 
 
 
 
-<section className="px-6 pb-20">
 
-<h3 className="text-2xl font-bold mb-6">
-Our Services
-</h3>
+      {/* SERVICES */}
+      <section className="px-6 pb-16 max-w-5xl mx-auto">
 
 
+        <h3 className="text-2xl font-bold mb-6">
+          Everything you need
+        </h3>
 
-<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
 
-{[
-"Airtime",
-"Data",
-"Wallet",
-"Bills"
-].map(service=>(
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
 
-<div
-key={service}
-className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center"
->
+          {
+            services.map((service)=>(
+              <div
+              key={service.name}
+              className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:border-zinc-500 transition"
+              >
 
-{service}
+                <div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center text-xl mb-4">
+                  {service.icon}
+                </div>
 
-</div>
 
+                <h4 className="font-bold">
+                  {service.name}
+                </h4>
 
-))}
 
+                <p className="text-xs text-zinc-400 mt-2">
+                  {service.desc}
+                </p>
 
-</div>
 
+              </div>
+            ))
+          }
 
-</section>
 
+        </div>
 
 
+      </section>
 
-<footer className="border-t border-zinc-800 px-6 py-8 text-zinc-400">
 
 
-<div className="flex flex-wrap gap-5 justify-center text-sm">
 
 
-<Link href="/about">
-About
-</Link>
+      {/* TRUST SECTION */}
+      <section className="px-6 pb-20 max-w-5xl mx-auto">
 
 
-<Link href="/contact">
-Contact
-</Link>
+        <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 text-center">
 
 
-<Link href="/terms">
-Terms
-</Link>
+          <h3 className="text-xl font-bold">
 
+            Built for simple and secure payments
 
-<Link href="/privacy">
-Privacy
-</Link>
+          </h3>
 
 
-</div>
+          <p className="text-zinc-400 mt-3 text-sm">
 
+            Manage your digital services with speed, security and intelligence.
 
+          </p>
 
-<p className="text-center mt-6 text-xs">
-© {new Date().getFullYear()} AlphaBot. All rights reserved.
-</p>
 
+        </div>
 
-</footer>
 
+      </section>
 
 
-</main>
 
-)
 
+      <footer className="border-t border-zinc-800 py-8 text-center text-xs text-zinc-500">
+
+        © {new Date().getFullYear()} AlphaBot. All rights reserved.
+
+      </footer>
+
+
+
+    </main>
+  )
 }

@@ -170,7 +170,7 @@ const buyData = async()=>{
 const selected =
 dataPlans.find(
 item =>
-(item.variation_id || item.package_id || item.id || item.plan_id) == selectedPlan
+(item.variation_id || item.package_id || item.id || item.plan.id || index) == selectedPlan
 );
 
 
@@ -271,40 +271,44 @@ setLoading(false);
 
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
+<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
-<div className="max-w-md mx-auto">
+<div className="max-w-md mx-auto space-y-5">
 
 
-<h1 className="text-3xl font-bold">
-🌐 Data
+<div>
+<h1 className="text-3xl font-black">
+🌐 Buy Data
 </h1>
 
 <p className="text-zinc-400 mt-2">
-Choose your preferred data bundle
+Fast internet bundles with instant delivery
+</p>
+</div>
+
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-5">
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Network
 </p>
 
-
-
-<div className="mt-8 bg-zinc-900 rounded-3xl p-6">
-
-
 <select
-className="w-full p-3 rounded-xl bg-white text-black"
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
 value={network}
 onChange={(e)=>{
 
-const selectedNetwork = e.target.value;
+const selectedNetwork=e.target.value;
 
-setNetwork(e.target.value);
+setNetwork(selectedNetwork);
 setSelectedPlan("");
-
-setCategory(
-selectedNetwork ? "All Plans" : ""
-);
+setCategory(selectedNetwork ? "All Plans" : "");
 
 }}
-
 >
 
 {networks.map(net=>(
@@ -317,10 +321,19 @@ selectedNetwork ? "All Plans" : ""
 
 </select>
 
+</div>
 
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Category
+</p>
 
 <select
-className="w-full mt-4 p-3 rounded-xl bg-white text-black"
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
 value={category}
 onChange={(e)=>{
 
@@ -328,98 +341,184 @@ setCategory(e.target.value);
 setSelectedPlan("");
 
 }}
-
 >
 
 {categories.map(cat=>(
 
-<option key={cat} value={cat}>
+<option key={cat}>
+
 {cat}
-  ({cat === "All Plans" ? Object.values(plans[network] || {}).flat().length : (plans[network]?.[cat]?.length || 0)})
+
+({cat==="All Plans"
+?
+Object.values(plans[network] || {}).flat().length
+:
+(plans[network]?.[cat]?.length || 0)
+})
+
 </option>
 
 ))}
 
 </select>
 
+</div>
 
+
+
+
+<div>
+
+<p className="text-xs text-zinc-500 uppercase">
+Data Plan
+</p>
 
 
 <select
-className="w-full mt-4 p-3 rounded-xl bg-white text-black"
+className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
 value={selectedPlan}
 onChange={(e)=>setSelectedPlan(e.target.value)}
 >
 
-
 <option value="">
-Select Plan
+Select Bundle
 </option>
 
 
-{(dataPlans || []).map(plan=>(
+{dataPlans.map((plan,index)=>(
 
 <option
-key={plan.variation_id || plan.package_id || plan.id}
-value={plan.variation_id || plan.package_id || plan.id}
+key={
+plan.variation_id ||
+plan.package_id ||
+plan.id || index
+}
+value={
+plan.variation_id ||
+plan.package_id ||
+plan.id || index
+}
 >
 
-{plan.data_plan || plan.name} - ₦{plan.display_price || plan.reseller_price || plan.price} ({plan.validity || plan.day + " Days"})
+{plan.data_plan || plan.name}
+
+- ₦{plan.display_price ||
+plan.reseller_price ||
+plan.price}
+
+({plan.validity || plan.day+" Days"})
 
 </option>
 
 ))}
 
-
 </select>
 
+</div>
+
+
+</div>
+
+
+
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+
+<h2 className="font-bold mb-3">
+📱 Receiver
+</h2>
 
 
 <PhoneInput
 value={phone}
 onChange={setPhone}
 beneficiaries={beneficiaries}
-  service="data"
+service="data"
 />
-
-
-
-<input
-className="w-full mt-4 p-3 rounded-xl bg-white text-black"
-placeholder="Transaction PIN"
-type="password"
-maxLength="4"
-value={pin}
-onChange={(e)=>setPin(e.target.value)}
-/>
-
-
-
-<button
-onClick={buyData}
-disabled={loading}
-className="w-full mt-5 bg-yellow-400 text-black py-3 rounded-xl font-bold"
->
-
-{loading ? "Processing..." : "Buy Data"}
-
-</button>
-
-
-<p className="text-center text-sm text-zinc-300 mt-4">
-{message}
-</p>
 
 
 </div>
 
 
-<Link
-href="/dashboard"
-className="block text-center text-yellow-400 mt-8"
+
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+
+
+<p className="text-xs text-zinc-500 uppercase">
+Transaction PIN
+</p>
+
+
+<input
+
+className="w-full mt-3 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+
+placeholder="Enter 4 digit PIN"
+
+type="password"
+
+maxLength="4"
+
+value={pin}
+
+onChange={(e)=>setPin(e.target.value)}
+
+/>
+
+
+</div>
+
+
+
+
+
+<button
+
+onClick={buyData}
+
+disabled={loading}
+
+className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
+
 >
+
+{loading ? "Processing..." : "⚡ Buy Data"}
+
+</button>
+
+
+
+
+
+{message && (
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4 text-center">
+
+{message}
+
+</div>
+
+)}
+
+
+
+
+
+<Link
+
+href="/dashboard"
+
+className="block text-center text-zinc-400 mt-6"
+
+>
+
 ← Dashboard
+
 </Link>
+
 
 
 </div>
@@ -427,5 +526,6 @@ className="block text-center text-yellow-400 mt-8"
 </main>
 
 );
+
 
 }

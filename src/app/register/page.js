@@ -1,6 +1,16 @@
+
+
+
+
+
+
+
+
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 import PhoneInput from "@/components/PhoneInput";
 
 export default function Register(){
@@ -15,9 +25,11 @@ export default function Register(){
 
   const [message,setMessage] = useState("");
   const [showPassword,setShowPassword] = useState(false);
-    const [otp,setOtp] = useState("");
-    const [otpSent,setOtpSent] = useState(false);
-    const [verified,setVerified] = useState(false);
+  const [otp,setOtp] = useState("");
+  const [otpSent,setOtpSent] = useState(false);
+  const [verified,setVerified] = useState(false);
+  const [loading,setLoading] = useState(false);
+
 
   const update=(e)=>{
     setForm({
@@ -26,194 +38,442 @@ export default function Register(){
     });
   };
 
-    const sendOTP=async()=>{
 
-      try{
+  const sendOTP=async()=>{
 
-        const res=await fetch(
-          "https://alphabot-1.onrender.com/users/send-registration-otp",
-          {
-            method:"POST",
-            headers:{
-              "Content-Type":"application/json"
-            },
-            body:JSON.stringify(form)
-          }
-        );
+    if(!form.name || !form.phone || !form.email || !form.password){
+      setMessage("Please fill all required fields");
+      return;
+    }
 
-        const data=await res.json();
+    setLoading(true);
+    setMessage("");
 
-        if(res.ok){
-          setOtpSent(true);
-          setMessage("OTP sent to your email");
-        }else{
-          setMessage(data.message);
+    try{
+
+      const res=await fetch(
+        "https://alphabot-1.onrender.com/users/send-registration-otp",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify(form)
         }
+      );
 
-      }catch(error){
-        setMessage("Failed to send OTP");
+      const data=await res.json();
+
+      if(res.ok){
+        setOtpSent(true);
+        setMessage("OTP sent to your email");
+      }else{
+        setMessage(data.message);
       }
 
-    };
+    }catch(error){
+      setMessage("Failed to send OTP");
+    }
+
+    setLoading(false);
+
+  };
 
 
-    const verifyOTP=async()=>{
+  const verifyOTP=async()=>{
 
-      try{
+    setLoading(true);
+    setMessage("");
 
-        const res=await fetch(
-          "https://alphabot-1.onrender.com/users/verify-registration-otp",
-          {
-            method:"POST",
-            headers:{
-              "Content-Type":"application/json"
-            },
-            body:JSON.stringify({
-              phone:form.phone,
-              otp
-            })
-          }
-        );
+    try{
 
-        const data=await res.json();
-
-        if(res.ok){
-          setVerified(true);
-          setMessage("Email verified successfully");
-        }else{
-          setMessage(data.message);
+      const res=await fetch(
+        "https://alphabot-1.onrender.com/users/verify-registration-otp",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify({
+            phone:form.phone,
+            otp
+          })
         }
+      );
 
-      }catch(error){
-        setMessage("OTP verification failed");
+      const data=await res.json();
+
+      if(res.ok){
+
+        setVerified(true);
+        setMessage("Email verified successfully");
+
+      }else{
+
+        setMessage(data.message);
+
       }
 
-    };
+
+    }catch(error){
+
+      setMessage("OTP verification failed");
+
+    }
+
+    setLoading(false);
+
+  };
 
 
-    const register=async()=>{
+  const register=async()=>{
 
-      if(!verified){
-        setMessage("Verify OTP first");
-        return;
-      }
+    if(!verified){
 
-      setMessage("Registration completed");
+      setMessage("Verify OTP first");
+      return;
 
-      setTimeout(()=>{
-        window.location.href="/login";
-      },1500);
+    }
 
-    };
+    setMessage("Registration completed");
+
+    setTimeout(()=>{
+
+      window.location.href="/login";
+
+    },1500);
+
+  };
+
+
+  const inputStyle =
+  "w-full mt-4 p-3.5 rounded-xl bg-[#050505] text-white border border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-500";
+
 
   return(
 
-    <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white flex items-center justify-center px-6">
+    <main className="
+    min-h-screen 
+    bg-[#050505] 
+    text-white 
+    flex 
+    items-center 
+    justify-center 
+    px-6 
+    py-10
+    ">
 
-      <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
 
-        <h1 className="text-3xl font-bold text-center">
-          Alpha<span className="text-yellow-400">Bot</span>
+      <div className="
+      w-full 
+      max-w-md 
+      bg-gradient-to-b 
+      from-[#18181B] 
+      to-[#101012]
+      border 
+      border-zinc-800
+      rounded-3xl 
+      p-8
+      shadow-[0_20px_50px_rgba(0,0,0,0.5)]
+      ">
+
+
+        {/* LOGO */}
+
+        <div className="flex justify-center mb-6">
+
+          <div className="
+          w-14 
+          h-14 
+          rounded-2xl 
+          bg-black 
+          border 
+          border-zinc-700
+          flex 
+          items-center 
+          justify-center
+          shadow-inner
+          ">
+
+            <span className="
+            text-3xl 
+            font-black
+            bg-gradient-to-br 
+            from-white 
+            to-zinc-400
+            bg-clip-text 
+            text-transparent
+            ">
+              A
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <h1 className="
+        text-3xl 
+        font-bold 
+        text-center
+        ">
+          Create Account
         </h1>
 
-        <p className="text-center text-zinc-400 mt-2">
-          Create your account
+
+        <p className="
+        text-center 
+        text-zinc-400 
+        mt-2 
+        text-sm
+        ">
+          Join AlphaBot and manage your digital payments securely.
         </p>
+
+
+        <p className="
+        text-center
+        text-xs
+        text-zinc-500
+        mt-2
+        ">
+          Secure wallet • Fast payments • Digital services
+        </p>
+
+
 
         <input
           name="name"
           placeholder="Full name"
-          className="w-full mt-6 p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
+          className={inputStyle}
           onChange={update}
         />
 
+
         <div className="mt-4">
+
           <PhoneInput
             value={form.phone}
-            onChange={(value)=>setForm({
-              ...form,
-              phone:value
-            })}
+            onChange={(value)=>
+              setForm({
+                ...form,
+                phone:value
+              })
+            }
           />
+
         </div>
+
 
         <input
           name="email"
-          placeholder="Email"
-          className="w-full mt-4 p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
+          type="email"
+          placeholder="Email address"
+          className={inputStyle}
           onChange={update}
         />
 
-        <div className="relative mt-4">
+
+
+        <div className="relative">
 
           <input
             name="password"
             placeholder="Password"
-            type={showPassword ? "text" : "password"}
-            className="w-full p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700 pr-16"
+            type={showPassword ? "text":"password"}
+            className={`${inputStyle} pr-14`}
             onChange={update}
           />
+
 
           <button
             type="button"
             onClick={()=>setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xl"
+            className="
+            absolute 
+            right-4 
+            top-8 
+            text-zinc-400
+            "
           >
-            {showPassword ? "🙈" : "👁️"}
+
+            {
+              showPassword
+              ?
+              <EyeOff size={18}/>
+              :
+              <Eye size={18}/>
+            }
+
           </button>
 
+
+          <p className="
+          text-xs 
+          text-zinc-500 
+          mt-1
+          ml-1
+          ">
+            Minimum 8 characters recommended
+          </p>
+
+
         </div>
+
+
+
 
         <input
           name="referralCode"
           placeholder="Referral code (optional)"
-          className="w-full mt-4 p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
+          className={inputStyle}
           onChange={update}
         />
 
-          {!otpSent ? (
+
+
+
+        {!otpSent ? (
+
 
           <button
-            onClick={sendOTP}
-            className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition duration-150"
+          onClick={sendOTP}
+          disabled={loading}
+          className="
+          w-full
+          mt-6
+          bg-white
+          text-black
+          py-3.5
+          rounded-xl
+          font-bold
+          hover:scale-[1.02]
+          transition
+          disabled:opacity-50
+          "
           >
-            Send Verification OTP
+
+          {
+            loading
+            ?
+            "Sending..."
+            :
+            "Send Verification OTP"
+          }
+
           </button>
 
-          ) : (
+
+
+        ) : (
+
 
           <div>
 
-          <input
-            placeholder="Enter OTP"
+
+            <input
+            placeholder="Enter 6-digit OTP"
             value={otp}
             onChange={(e)=>setOtp(e.target.value)}
-            className="w-full mt-4 p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
-          />
+            className={inputStyle}
+            />
 
-          <button
+
+
+            <button
             onClick={verifyOTP}
-            className="w-full mt-4 bg-green-500 text-white py-3 rounded-xl font-bold"
-          >
-            Verify OTP & Create Account
-          </button>
+            disabled={loading}
+            className="
+            w-full
+            mt-4
+            bg-white
+            text-black
+            py-3.5
+            rounded-xl
+            font-bold
+            hover:scale-[1.02]
+            transition
+            "
+            >
+
+            {
+              loading
+              ?
+              "Verifying..."
+              :
+              "Verify OTP"
+            }
+
+
+            </button>
+
+
 
           </div>
 
-          )}
 
-        <p className="text-center text-sm mt-4 text-zinc-400">
+        )}
+
+
+
+        {
+          verified &&
+          <button
+          onClick={register}
+          className="
+          w-full
+          mt-4
+          bg-zinc-200
+          text-black
+          py-3.5
+          rounded-xl
+          font-bold
+          "
+          >
+            Create Account
+          </button>
+        }
+
+
+
+
+        <p className="
+        text-center 
+        text-sm 
+        mt-5 
+        text-zinc-400
+        ">
           {message}
         </p>
 
-        <p className="text-center text-sm mt-6 text-zinc-400">
+
+
+
+        <p className="
+        text-center 
+        text-sm 
+        mt-6 
+        text-zinc-400
+        ">
+
           Already have an account?
-          <a href="/login" className="text-yellow-400 ml-1">
+
+          <Link
+          href="/login"
+          className="
+          text-white
+          ml-1
+          font-semibold
+          "
+          >
             Login
-          </a>
+          </Link>
+
         </p>
 
+
       </div>
+
 
     </main>
 

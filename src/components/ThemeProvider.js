@@ -6,76 +6,78 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
 
-  const [dark, setDark] = useState(true);
-  const [loaded, setLoaded] = useState(false);
+const [dark,setDark] = useState(false);
+const [loaded,setLoaded] = useState(false);
 
 
-  useEffect(() => {
+useEffect(()=>{
 
-    const saved = localStorage.getItem("theme");
-
-    if(saved === "light"){
-
-      setDark(false);
-      document.documentElement.classList.remove("dark");
-
-    }else{
-
-      setDark(true);
-      document.documentElement.classList.add("dark");
-
-    }
-
-    setLoaded(true);
-
-  }, []);
+const saved = localStorage.getItem("theme");
 
 
+if(saved){
 
-  const toggleTheme = () => {
+const isDark = saved === "dark";
 
-    const newMode = !dark;
+setDark(isDark);
 
-    setDark(newMode);
+document.documentElement.classList.toggle("dark",isDark);
 
+}else{
 
-    if(newMode){
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-      localStorage.setItem("theme","dark");
-      document.documentElement.classList.add("dark");
+setDark(prefersDark);
 
-    }else{
+document.documentElement.classList.toggle("dark",prefersDark);
 
-      localStorage.setItem("theme","light");
-      document.documentElement.classList.remove("dark");
-
-    }
-
-  };
+}
 
 
-  if(!loaded){
-
-    return null;
-
-  }
+setLoaded(true);
 
 
-  return (
+},[]);
 
-    <ThemeContext.Provider value={{dark,toggleTheme}}>
 
-      {children}
 
-    </ThemeContext.Provider>
+const toggleTheme=()=>{
 
-  );
+const newMode=!dark;
+
+setDark(newMode);
+
+localStorage.setItem(
+"theme",
+newMode ? "dark" : "light"
+);
+
+document.documentElement.classList.toggle(
+"dark",
+newMode
+);
+
+};
+
+
+
+if(!loaded){
+return null;
+}
+
+
+return(
+<ThemeContext.Provider value={{dark,toggleTheme}}>
+{children}
+</ThemeContext.Provider>
+);
+
 
 }
 
 
 export function useTheme(){
 
-  return useContext(ThemeContext);
+return useContext(ThemeContext);
 
 }
