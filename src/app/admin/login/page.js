@@ -1,105 +1,114 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 
-export default function AdminLogin() {
+export default function AdminLogin(){
 
-  const router = useRouter();
+const router = useRouter();
 
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [error,setError] = useState("");
+const [username,setUsername]=useState("");
+const [password,setPassword]=useState("");
+const [error,setError]=useState("");
 
-  const login = async () => {
+const login=async()=>{
 
-    try {
+try{
 
-      const res = await fetch(
-        "https://alphabot-1.onrender.com/admin/login",
-        {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
-            email,
-            password
-          })
-        }
-      );
-
-
-      const data = await res.json();
+const res=await fetch(
+"https://alphabot-1.onrender.com/admin/login",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+username,
+password
+})
+}
+);
 
 
-      if(!res.ok){
-        setError(data.message || "Login failed");
-        return;
-      }
+const data=await res.json();
 
 
-      localStorage.setItem(
-        "adminToken",
-        data.token
-      );
+if(!res.ok){
+
+setError(data.message || "Login failed");
+return;
+
+}
 
 
-      router.push("/admin");
-
-    } catch(err){
-
-      setError("Server error");
-
-    }
-
-  };
+localStorage.setItem(
+"adminToken",
+data.token
+);
 
 
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-
-      <div className="p-6 border rounded w-80">
-
-        <h1 className="text-xl font-bold mb-4">
-          👑 AlphaBot Admin Login
-        </h1>
+router.push("/admin");
 
 
-        {error && (
-          <p className="text-red-500">
-            {error}
-          </p>
-        )}
+}catch(error){
+
+setError("Server error");
+
+}
+
+};
 
 
-        <input
-          className="border p-2 w-full mb-2"
-          placeholder="Email"
-          value={email}
-          onChange={(e)=>setEmail(e.target.value)}
-        />
+return(
+
+<div className="min-h-screen flex items-center justify-center bg-black text-white">
 
 
-        <input
-          className="border p-2 w-full mb-2"
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(e)=>setPassword(e.target.value)}
-        />
+<div className="bg-zinc-900 p-6 rounded-3xl w-80">
 
 
-        <button
-          className="bg-black text-white p-2 w-full"
-          onClick={login}
-        >
-          Login
-        </button>
+<h1 className="text-2xl font-bold mb-5">
+👑 AlphaBot Admin Login
+</h1>
 
 
-      </div>
+{error && (
+<p className="text-red-400 mb-3">
+{error}
+</p>
+)}
 
-    </div>
-  );
+
+<input
+className="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-3"
+placeholder="Username"
+value={username}
+onChange={(e)=>setUsername(e.target.value)}
+/>
+
+
+<input
+className="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-4"
+placeholder="Password"
+type="password"
+value={password}
+onChange={(e)=>setPassword(e.target.value)}
+/>
+
+
+<button
+onClick={login}
+className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
+>
+Login
+</button>
+
+
+</div>
+
+
+</div>
+
+);
+
 }
