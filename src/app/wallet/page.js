@@ -12,7 +12,8 @@ const [balance,setBalance]=useState(0);
 const [transactions,setTransactions]=useState([]);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(true);
-const [funding,setFunding]=useState(false);
+const [manualFunding,setManualFunding]=useState(false);
+const [flutterFunding,setFlutterFunding]=useState(false);
 const toastType = message.startsWith("❌") || message.includes("error") || message.includes("valid") || message.includes("expired") ? "error" : "success";
 
 
@@ -145,74 +146,13 @@ setMessage("Unable to refresh wallet");
 
 
 
-const fundWallet=async()=>{
-
-const token=localStorage.getItem("token");
-const user=JSON.parse(localStorage.getItem("user"));
-
-
-  if(!user){
-    setMessage("User session expired");
-    return;
-  }
-
-
-try{
-setFunding(true);
-setMessage("");
-
-const res=await fetch(
-"https://alphabot-1.onrender.com/wallet/fund",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-Authorization:`Bearer ${token}`
-},
-body:JSON.stringify({
-
-phone:user.phone,
-amount:Number(amount)
-
-})
-}
-);
-
-
-const data=await res.json();
-
-
-setMessage(data.message || "Wallet funded successfully");
-
-if(!res.ok){
-  setFunding(false);
-  return;
-}
-
-if(data.balance !== undefined){
-  setBalance(data.balance);
-}
-
-await refreshWallet();
-
-setAmount("");
-setFunding(false);
-}catch(error){
-
-setMessage("Connection error");
-
-setFunding(false);
-}
-
-};
-
 const fundWithFlutterwave = async()=>{
 
 const token=localStorage.getItem("token");
 
 try{
 
-setFunding(true);
+setFlutterFunding(true);
 setMessage("");
 
 const res = await fetch(
@@ -233,7 +173,7 @@ const data = await res.json();
 
 if(!res.ok){
 setMessage(data.message || "Flutterwave payment failed");
-setFunding(false);
+setFlutterFunding(false);
 return;
 }
 
@@ -243,12 +183,12 @@ return;
 }
 
 setMessage("Unable to open payment page");
-setFunding(false);
+setFlutterFunding(false);
 
 }catch(error){
 
 setMessage("Connection error");
-setFunding(false);
+setFlutterFunding(false);
 
 }
 
@@ -271,7 +211,7 @@ return;
 
 try{
 
-setFunding(true);
+setManualFunding(true);
 setMessage("");
 
 const res = await fetch(
@@ -298,12 +238,12 @@ if(res.ok){
 setAmount("");
 }
 
-setFunding(false);
+setManualFunding(false);
 
 }catch(error){
 
 setMessage("Connection error");
-setFunding(false);
+setManualFunding(false);
 
 }
 
@@ -430,9 +370,9 @@ Didn't get approval within 5 minutes? Contact us on WhatsApp for assistance.
 
 <button
 onClick={requestManualFunding}
-disabled={funding || !amount || Number(amount)<=0}
+disabled={manualFunding || !amount || Number(amount)<=0}
 className="w-full mt-4 py-3 rounded-xl font-bold bg-yellow-400 text-black active:scale-95 transition disabled:opacity-50">
-{funding ? "Processing..." : "Continue Manual Funding"}
+{manualFunding ? "Processing..." : "Continue Manual Funding"}
 </button>
 
 </div>
@@ -449,9 +389,9 @@ Wallet is credited automatically after successful payment.
 
 <button
 onClick={fundWithFlutterwave}
-disabled={funding || !amount || Number(amount)<=0}
+disabled={flutterFunding || !amount || Number(amount)<=0}
 className="w-full mt-4 py-3 rounded-xl font-bold bg-blue-500 text-white active:scale-95 transition disabled:opacity-50">
-{funding ? "Processing..." : "Pay with Flutterwave"}
+{flutterFunding ? "Processing..." : "Pay with Flutterwave"}
 </button>
 
 </div>
@@ -466,64 +406,7 @@ className="w-full mt-4 py-3 rounded-xl font-bold bg-blue-500 text-white active:s
 
 
 
-<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
 
-
-<h2 className="font-bold text-xl">
-Recent Wallet Activity
-</h2>
-
-
-{
-
-transactions.length === 0 ?
-
-<p className="text-zinc-400 mt-4">
-No transactions yet
-</p>
-
-:
-
-<div className="mt-4 space-y-3">
-
-{
-transactions.map((item,index)=>(
-
-<div
-key={index}
-className="bg-white dark:bg-black rounded-xl p-3 flex justify-between"
->
-
-
-<div>
-
-<p className="font-semibold">
-{item.description || item.type}
-</p>
-
-<p className="text-xs text-zinc-500">
-{item.status}
-</p>
-
-</div>
-
-
-<p className="font-bold text-yellow-400">
-₦{item.amount}
-</p>
-
-
-</div>
-
-))
-}
-
-</div>
-
-}
-
-
-</div>
 
 
 
