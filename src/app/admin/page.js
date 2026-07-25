@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {useEffect,useState} from "react";
+import { requestNotificationPermission } from "@/firebase";
 import {
 LineChart,
 Line,
@@ -75,6 +76,29 @@ setMessage("Connection error");
 
 
 load();
+
+requestNotificationPermission().then(async(token)=>{
+
+  console.log("Firebase notification token:", token);
+
+  if(token){
+
+    await fetch(
+      "http://localhost:5000/notifications/register-token",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          token
+        })
+      }
+    );
+
+  }
+
+});
 
 },[]);
 

@@ -389,17 +389,6 @@ Withdraw
 Fund Wallet
 </h2>
 
-<div className="mt-4 p-4 bg-yellow-100 rounded-xl text-black">
-<p className="font-bold">Manual Funding</p>
-<p className="mt-2 text-sm">Below ₦2,000 - No Flutterwave charges.</p>
-<p className="mt-2 text-sm">Send payment manually and wait for approval.</p>
-</div>
-
-<div className="mt-5 p-4 bg-blue-100 rounded-xl text-black">
-<p className="font-bold">Flutterwave Instant Funding</p>
-<p className="mt-2 text-sm">₦2,000 and above - Automatic wallet credit.</p>
-</div>
-
 <input
 className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-zinc-800 text-black dark:text-white placeholder:text-zinc-400 border border-zinc-700"
 placeholder="Enter amount"
@@ -408,18 +397,54 @@ value={amount}
 onChange={(e)=>setAmount(e.target.value)}
 />
 
+<div className="mt-5 p-4 bg-yellow-100 rounded-xl text-black">
+<p className="font-bold">🏦 Manual Funding</p>
+<p className="mt-2 text-sm">
+Transfer funds to AlphaBot account.
+</p>
+
+<div className="mt-3 p-3 bg-white rounded-xl">
+<p className="font-bold">Account Details</p>
+<p>Bank: Moniepoint</p>
+<p>Account Number: 9037120624</p>
+<p>Name: Marvelous Oluwasegun Ayodeji</p>
+</div>
+
+<p className="mt-3 text-sm">
+Your wallet will be credited after admin approval.
+</p>
+
+<p className="mt-2 text-sm font-semibold">
+Didn't get approval within 5 minutes? Contact us on WhatsApp for assistance.
+</p>
+
 <button
-onClick={Number(amount) >= 2000 ? fundWithFlutterwave : requestManualFunding}
-className={`w-full mt-5 py-3 rounded-xl font-bold ${
-funding || !amount || Number(amount) <= 0
-? "bg-zinc-400 text-zinc-700 cursor-not-allowed"
-: "bg-yellow-400 text-black"
-}`}
-disabled={funding || !amount || Number(amount) <= 0}>
-
-{funding ? "Processing..." : Number(amount) >= 2000 ? "Pay with Flutterwave" : "Request Manual Funding"}
-
+onClick={requestManualFunding}
+disabled={funding || !amount || Number(amount)<=0}
+className="w-full mt-4 py-3 rounded-xl font-bold bg-yellow-400 text-black">
+{funding ? "Processing..." : "Continue Manual Funding"}
 </button>
+
+</div>
+
+
+<div className="mt-5 p-4 bg-blue-100 rounded-xl text-black">
+<p className="font-bold">⚡ Flutterwave Instant Payment</p>
+<p className="mt-2 text-sm">
+Pay securely through Flutterwave.
+</p>
+<p className="mt-2 text-sm">
+Wallet is credited automatically after successful payment.
+</p>
+
+<button
+onClick={fundWithFlutterwave}
+disabled={funding || !amount || Number(amount)<=0}
+className="w-full mt-4 py-3 rounded-xl font-bold bg-blue-500 text-white">
+{funding ? "Processing..." : "Pay with Flutterwave"}
+</button>
+
+</div>
 
 
 
