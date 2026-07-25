@@ -24,16 +24,16 @@ const navItems = [
 
 return(
 
-<div className="fixed bottom-4 left-4 right-4 z-50">
+<div className="fixed bottom-3 left-3 right-3 z-50">
 
 <nav className="
 max-w-md mx-auto
 bg-white/90 dark:bg-[#1A1A1E]/90
 backdrop-blur-xl
 border border-zinc-200 dark:border-zinc-800
-rounded-3xl
+rounded-2xl
 shadow-2xl
-px-3 py-2
+px-2 py-1.5
 flex justify-around items-center
 ">
 
@@ -48,8 +48,8 @@ href={item[0]}
 
 className={`
 flex flex-col items-center justify-center
-gap-1 px-2 sm:px-3 py-2 rounded-2xl min-w-0
-text-[11px]
+gap-0.5 px-1.5 py-1 rounded-xl
+text-[10px]
 transition-all duration-200
 
 ${
@@ -69,8 +69,7 @@ pathname === item[0]
 
 >
 
-
-<div className="text-xl">
+<div className="text-base">
 
 {item[1]}
 

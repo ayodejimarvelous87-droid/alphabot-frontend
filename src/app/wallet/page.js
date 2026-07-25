@@ -14,6 +14,7 @@ const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(true);
 const [manualFunding,setManualFunding]=useState(false);
 const [flutterFunding,setFlutterFunding]=useState(false);
+const [paymentMethod,setPaymentMethod]=useState("instant");
 const toastType = message.startsWith("❌") || message.includes("error") || message.includes("valid") || message.includes("expired") ? "error" : "success";
 
 
@@ -262,34 +263,42 @@ return(
 );
 }
 
+
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8 pb-24">
+<main className="min-h-screen bg-white text-black dark:bg-[#0A0A0A] dark:text-white px-4 py-8 pb-24">
+
+<div className="max-w-md mx-auto space-y-6">
 
 
-<div className="max-w-md mx-auto">
+<header>
 
-
-<h1 className="text-3xl font-bold">
+<h1 className="text-3xl font-black">
 My Wallet 💳
 </h1>
 
-
-<p className="text-zinc-400 mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 mt-1">
 Manage your AlphaBot balance
 </p>
 
+</header>
 
 
-  <div className="mt-8 bg-gradient-to-br from-yellow-300 to-yellow-600 text-black rounded-2xl p-4">
 
 
-<p className="font-semibold">
-Wallet Balance
+<section className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-zinc-800 rounded-3xl p-6 shadow-2xl text-white">
+
+<p className="text-xs text-zinc-400">
+💳 AlphaBot Premium Wallet
 </p>
 
 
-  <h2 className="text-2xl font-bold mt-2">
+<p className="mt-4 text-sm text-zinc-400">
+Available Balance
+</p>
+
+
+<h2 className="text-3xl font-black mt-1">
 ₦{balance.toLocaleString()}
 </h2>
 
@@ -297,10 +306,9 @@ Wallet Balance
 
 <div className="flex gap-3 mt-6">
 
-
 <Link
 href="/transactions"
-className="bg-white text-black px-5 py-3 rounded-xl font-bold"
+className="flex-1 text-center bg-zinc-800 text-white py-3 rounded-xl font-bold border border-zinc-700 active:scale-95 transition"
 >
 History
 </Link>
@@ -308,107 +316,187 @@ History
 
 <Link
 href="/withdraw"
-className="bg-white px-5 py-3 rounded-xl font-bold"
+className="flex-1 text-center bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition"
 >
 Withdraw
 </Link>
 
-
 </div>
 
 
-</div>
+</section>
 
 
 
 
-<div className="mt-8 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
+<section className="bg-zinc-100 dark:bg-[#121214] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 
 <h2 className="text-xl font-bold">
 Fund Wallet
 </h2>
 
-<label className="block mt-5 font-semibold text-sm">
+
+<p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+Add money instantly or through bank transfer
+</p>
+
+
+
+<label className="block mt-5 text-xs font-bold text-zinc-500 uppercase">
 Funding Amount (₦)
 </label>
 
+
 <input
-className="w-full mt-2 p-3 rounded-xl bg-white dark:bg-zinc-800 text-black dark:text-white placeholder:text-zinc-400 border border-zinc-700"
-placeholder="Enter amount e.g 5000"
+
+className="w-full mt-2 p-3.5 rounded-xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-800 text-black dark:text-white"
+
+placeholder="Enter amount"
+
 type="number"
+
 value={amount}
+
 onChange={(e)=>setAmount(e.target.value)}
+
 />
 
+
+
 {(!amount || Number(amount)<=0) && (
-<p className="mt-2 text-sm text-red-500">
+
+<p className="text-sm text-red-500 mt-2">
 Enter a valid amount to continue
 </p>
+
 )}
 
-<div className="mt-5 p-4 bg-yellow-100 rounded-xl text-black">
-<p className="font-bold">🏦 Manual Funding</p>
-<p className="mt-2 text-sm">
-Transfer funds to AlphaBot account.
-</p>
 
-<div className="mt-3 p-3 bg-white rounded-xl">
-<p className="font-bold">Account Details</p>
-<p>Bank: Moniepoint</p>
-<p>Account Number: 9037120624</p>
-<p>Name: Marvelous Oluwasegun Ayodeji</p>
-</div>
 
-<p className="mt-3 text-sm">
-Your wallet will be credited after admin approval.
-</p>
 
-<p className="mt-2 text-sm font-semibold">
-Didn't get approval within 5 minutes? Contact us on WhatsApp for assistance.
-</p>
+<div className="grid grid-cols-2 mt-5 p-1 bg-zinc-200 dark:bg-black rounded-xl">
+
 
 <button
-onClick={requestManualFunding}
-disabled={manualFunding || !amount || Number(amount)<=0}
-className="w-full mt-4 py-3 rounded-xl font-bold bg-yellow-400 text-black active:scale-95 transition disabled:opacity-50">
-{manualFunding ? "Processing..." : "Continue Manual Funding"}
+onClick={()=>setPaymentMethod("instant")}
+className={`py-3 rounded-xl text-sm font-bold ${
+paymentMethod==="instant"
+?"bg-white dark:bg-zinc-800 shadow"
+:"text-zinc-500"
+}`}
+>
+⚡ Instant Pay
 </button>
 
+
+
+<button
+onClick={()=>setPaymentMethod("manual")}
+className={`py-3 rounded-xl text-sm font-bold ${
+paymentMethod==="manual"
+?"bg-white dark:bg-zinc-800 shadow"
+:"text-zinc-500"
+}`}
+>
+🏦 Bank Transfer
+</button>
+
+
 </div>
 
 
-<div className="mt-5 p-4 bg-blue-100 rounded-xl text-black">
-<p className="font-bold">⚡ Flutterwave Instant Payment</p>
-<p className="mt-2 text-sm">
-Pay securely through Flutterwave.
-</p>
-<p className="mt-2 text-sm">
-Wallet is credited automatically after successful payment.
+
+
+
+{paymentMethod==="instant" ? (
+
+<div className="mt-5 bg-black rounded-2xl p-4 text-white">
+
+<p className="font-bold">
+⚡ Flutterwave
 </p>
 
+
+<p className="text-sm text-zinc-400 mt-2">
+Secure payment and automatic wallet credit.
+</p>
+
+
 <button
+
 onClick={fundWithFlutterwave}
+
 disabled={flutterFunding || !amount || Number(amount)<=0}
-className="w-full mt-4 py-3 rounded-xl font-bold bg-blue-500 text-white active:scale-95 transition disabled:opacity-50">
+
+className="w-full mt-4 py-3 rounded-xl bg-white text-black font-bold disabled:opacity-50 active:scale-95 transition"
+
+>
+
 {flutterFunding ? "Processing..." : "Pay with Flutterwave"}
+
 </button>
 
+
 </div>
+
+
+) : (
+
+
+<div className="mt-5 bg-black rounded-2xl p-4 text-white">
+
+
+<p className="font-bold">
+🏦 Manual Funding
+</p>
+
+
+
+<div className="mt-3 bg-[#1A1A1E] rounded-xl p-3 text-sm">
+
+<p>Bank: Moniepoint</p>
+
+<p>Account Number: 9037120624</p>
+
+<p>Name: Marvelous Oluwasegun Ayodeji</p>
+
+</div>
+
+
+
+<p className="text-xs text-zinc-400 mt-3">
+Wallet will be credited after approval.
+</p>
+
+
+
+<button
+
+onClick={requestManualFunding}
+
+disabled={manualFunding || !amount || Number(amount)<=0}
+
+className="w-full mt-4 py-3 rounded-xl bg-yellow-400 text-black font-bold disabled:opacity-50 active:scale-95 transition"
+
+>
+
+{manualFunding ? "Processing..." : "Confirm Manual Transfer"}
+
+</button>
+
+
+</div>
+
+
+)}
 
 
 
 <Toast message={message} type={toastType} />
 
 
-</div>
-
-
-
-
-
-
-
+</section>
 
 
 </div>

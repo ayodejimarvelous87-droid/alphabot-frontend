@@ -25,8 +25,15 @@ const [beneficiaries,setBeneficiaries]=useState([]);
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 
+const [banks,setBanks]=useState([]);
+const [bankCode,setBankCode]=useState("");
+const [verified,setVerified]=useState(false);
+const [verifying,setVerifying]=useState(false);
+
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+
+const [transferSettings,setTransferSettings]=useState(null);
 
 
 
@@ -63,16 +70,144 @@ console.log(error);
 };
 
 
+const loadBanks=async()=>{
+
+try{
+
+const res=await fetch(
+`${API}/bank`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
+
+
+const data=await res.json();
+
+
+if(res.ok){
+
+setBanks(data.data || []);
+
+}
+
+
+}catch(error){
+
+console.log(error);
+
+}
+
+};
+
+
+
+
+const loadTransferSettings=async()=>{
+
+try{
+
+const res=await fetch(
+`${API}/transfer/settings`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
+
+
+const data=await res.json();
+
+
+if(res.ok){
+
+setTransferSettings(data);
+
+}
+
+
+}catch(error){
+
+console.log(error);
+
+}
+
+};
 
 
 useEffect(()=>{
 
 loadBeneficiaries();
+loadBanks();
+loadTransferSettings();
 
 },[]);
 
 
 
+
+
+
+const verifyAccount=async()=>{
+
+try{
+
+setVerifying(true);
+
+
+const res=await fetch(
+`${API}/bank/verify`,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+
+body:JSON.stringify({
+
+accountNumber,
+bankCode
+
+})
+
+}
+);
+
+
+const data=await res.json();
+
+
+if(res.ok){
+
+setAccountName(
+data.data.account_name
+);
+
+setVerified(true);
+setMessage("✅ Account verified");
+
+}else{
+
+setMessage("❌ "+data.message);
+
+}
+
+
+}catch(error){
+
+setMessage("❌ Verification failed");
+
+}finally{
+
+setVerifying(false);
+
+}
+
+};
 
 
 
@@ -93,6 +228,7 @@ body:JSON.stringify({
 
 phone:user.phone,
 bankName,
+bankCode,
 accountNumber,
 accountName
 
@@ -213,6 +349,42 @@ Send money securely to any bank account
 </p>
 
 
+{
+transferSettings && transferSettings.promoActive && (
+
+<div className="bg-yellow-400 text-black rounded-2xl p-4 font-bold">
+🎉 {transferSettings.promoMessage || "FREE TRANSFER TODAY 🚀"}
+</div>
+
+)
+
+}
+
+
+{
+transferSettings && !transferSettings.promoActive && transferSettings.feeEnabled && (
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4 text-zinc-300">
+Transfer fee: ₦{transferSettings.transferFee}
+</div>
+
+)
+
+}
+
+
+{
+transferSettings && !transferSettings.feeEnabled && (
+
+<div className="bg-green-600 rounded-2xl p-4 font-bold">
+🚀 No transfer fee currently
+</div>
+
+)
+
+}
+
+
 
 
 <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-4">
@@ -223,12 +395,42 @@ Save Beneficiary
 </h2>
 
 
-<input
+<select
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-placeholder="Bank name"
-value={bankName}
-onChange={(e)=>setBankName(e.target.value)}
-/>
+value={bankCode}
+onChange={(e)=>{
+
+const selected = banks.find(
+bank=>bank.code===e.target.value
+);
+
+setBankCode(e.target.value);
+setBankName(selected?.name || "");
+setVerified(false);
+setAccountName("");
+
+}}
+>
+
+<option value="">
+Select Bank
+</option>
+
+
+{
+banks.map(bank=>(
+
+<option
+key={bank.code}
+value={bank.code}
+>
+{bank.name}
+</option>
+
+))
+}
+
+</select>
 
 
 <input
@@ -237,6 +439,28 @@ placeholder="Account number"
 value={accountNumber}
 onChange={(e)=>setAccountNumber(e.target.value)}
 />
+
+
+
+<button
+onClick={verifyAccount}
+disabled={
+verifying ||
+!bankCode ||
+accountNumber.length < 10
+}
+className="w-full bg-blue-600 py-3 rounded-xl font-bold"
+>
+
+{
+verifying
+?
+"Verifying..."
+:
+"Verify Account"
+}
+
+</button>
 
 
 <input
@@ -250,7 +474,8 @@ onChange={(e)=>setAccountName(e.target.value)}
 
 <button
 onClick={saveBeneficiary}
-className="w-full bg-blue-600 py-3 rounded-xl font-bold"
+disabled={!verified}
+className="w-full bg-blue-600 py-3 rounded-xl font-bold disabled:bg-zinc-700 disabled:text-zinc-400"
 >
 Save Bank Account
 </button>

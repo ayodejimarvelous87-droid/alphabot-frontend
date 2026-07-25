@@ -1,34 +1,44 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import BottomNav from "@/components/BottomNav";
+import Toast from "@/components/Toast";
 
 export default function Notifications(){
 
 const [notifications,setNotifications]=useState([]);
-const [user,setUser]=useState(null);
+const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(true);
+const [activeFilter,setActiveFilter]=useState("all");
+
 
 
 useEffect(()=>{
 
-const savedUser = JSON.parse(localStorage.getItem("user"));
-setUser(savedUser);
+const token=localStorage.getItem("token");
+const user=JSON.parse(localStorage.getItem("user"));
 
-const token = localStorage.getItem("token");
 
-if(!savedUser) return;
+if(!user){
+
+setMessage("User session expired");
+setLoading(false);
+return;
+
+}
 
 
 fetch(
-`https://alphabot-1.onrender.com/notifications/${savedUser.phone}`,
+`https://alphabot-1.onrender.com/notifications/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
 }
 }
 )
+
 .then(res=>res.json())
+
 .then(data=>{
 
 if(Array.isArray(data)){
@@ -38,8 +48,10 @@ setNotifications(data);
 setLoading(false);
 
 })
+
 .catch(()=>{
 
+setMessage("Unable to load notifications");
 setLoading(false);
 
 });
@@ -49,52 +61,84 @@ setLoading(false);
 
 
 
-const markRead=async(id)=>{
+
+const markRead = async(id)=>{
+
+const token=localStorage.getItem("token");
+
+
+setNotifications(prev=>
+
+prev.map(item=>
+
+item._id===id
+
+?
+
+{...item,read:true}
+
+:
+
+item
+
+)
+
+);
+
+
+
+try{
 
 await fetch(
 `https://alphabot-1.onrender.com/notifications/read/${id}`,
 {
-method:"PUT",
+method:"PATCH",
 headers:{
-Authorization:`Bearer ${localStorage.getItem("token")}`
+Authorization:`Bearer ${token}`
 }
 }
 );
 
 
-setNotifications(prev=>
-prev.map(item=>
-item._id===id
-?
-{...item,read:true}
-:
-item
-)
-);
+}catch(error){
+
+setMessage("Failed to update notification");
+
+}
+
 
 };
 
 
 
-const markAllRead=async()=>{
 
-if(!user) return;
+const filteredNotifications=useMemo(()=>{
 
+return notifications.filter(item=>{
 
-await fetch(
-`https://alphabot-1.onrender.com/notifications/read-all/${user.phone}`,
-{
-method:"PUT",
-headers:{
-Authorization:`Bearer ${localStorage.getItem("token")}`
-}
-}
-);
+if(activeFilter==="all") return true;
+
+if(activeFilter==="unread") return !item.read;
+
+return item.type===activeFilter;
+
+});
 
 
-setNotifications(prev=>
-prev.map(item=>({...item,read:true}))
-);
+},[notifications,activeFilter]);
+
+
+
+
+const icons={
+
+wallet:"💳",
+
+payment:"⚡",
+
+reward:"🏆",
+
+default:"🔔"
 
 };
 
@@ -102,92 +146,377 @@ prev.map(item=>({...item,read:true}))
 
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8 pb-24">
+<main className="
+min-h-screen
+bg-white text-black
+dark:bg-[#0A0A0A] dark:text-white
+px-4 py-8 pb-28
+">
+
 
 <div className="max-w-md mx-auto">
 
-<h1 className="text-3xl font-bold mb-2">
-🔔 Notifications
+
+<header className="mb-6">
+
+
+<div className="flex justify-between items-center">
+
+
+<h1 className="text-3xl font-black">
+Notifications 🔔
 </h1>
 
-<p className="text-zinc-500 mb-6">
-Stay updated with AlphaBot activities.
+
+<span className="
+text-xs
+font-bold
+px-3 py-1
+rounded-full
+bg-yellow-400
+text-black
+">
+
+{notifications.filter(n=>!n.read).length} Unread
+
+</span>
+
+
+</div>
+
+
+
+<p className="text-zinc-500 dark:text-zinc-400 mt-2">
+Stay updated with your AlphaBot activities
 </p>
+
+
+</header>
+
+
+
+
+
+{!loading && notifications.length>0 && (
+
+<div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar">
+
+
+{
+[
+["all","All"],
+["unread","Unread"],
+["wallet","Wallet"],
+["payment","Payments"],
+["reward","Rewards"]
+
+].map(tab=>(
+
 
 <button
-onClick={markAllRead}
-className="mb-6 bg-yellow-400 text-black font-bold px-5 py-3 rounded-2xl"
+
+key={tab[0]}
+
+onClick={()=>setActiveFilter(tab[0])}
+
+className={`
+px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap
+
+${
+activeFilter===tab[0]
+
+?
+
+"bg-yellow-400 text-black"
+
+:
+
+"bg-zinc-100 dark:bg-[#1A1A1E] text-zinc-500 border border-zinc-800"
+
+}
+
+`}
+
 >
-Mark all read
+
+{tab[1]}
+
 </button>
 
-{loading && (
-<p className="text-zinc-400">
-Loading notifications...
-</p>
-)}
 
-{!loading && notifications.length===0 && (
-<div className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
-No notifications yet 🚀
+))
+
+}
+
+
 </div>
+
 )}
 
-<div className="space-y-4">
 
-{notifications.map(item=>(
+
+
+
+
+{loading ? (
+
+
+<div className="space-y-3">
+
+{
+[1,2,3].map(i=>(
 
 <div
-key={item._id}
-onClick={()=>markRead(item._id)}
-className={`rounded-3xl p-5 cursor-pointer ${
-item.read
-?
-"bg-zinc-100 dark:bg-zinc-900"
-:
-"bg-yellow-50 dark:bg-zinc-800 border border-yellow-400"
-}`}
->
+key={i}
+className="
+h-28
+rounded-3xl
+bg-zinc-200
+dark:bg-[#1A1A1E]
+animate-pulse
+"
+/>
 
-<div className="flex justify-between items-start gap-3">
+))
 
-<h2 className="font-bold text-lg">
-{item.title}
-</h2>
-
-{!item.read && (
-<span className="text-xs bg-yellow-400 text-black px-2 py-1 rounded-full">
-NEW
-</span>
-)}
+}
 
 </div>
 
-<p className="mt-3 text-sm leading-6">
-{item.message}
+
+
+) : filteredNotifications.length===0 ? (
+
+
+<div className="
+mt-5
+bg-zinc-100
+dark:bg-[#121214]
+border border-zinc-200
+dark:border-zinc-800
+rounded-3xl
+p-10
+text-center
+">
+
+
+<div className="text-4xl">
+🔔
+</div>
+
+
+<p className="font-bold mt-3">
+No notifications yet
 </p>
 
-<div className="flex justify-between mt-4 text-xs text-zinc-500">
 
-<span>
-{item.type}
+<p className="text-sm text-zinc-500 mt-2">
+We will notify you about wallet, services and rewards.
+</p>
+
+
+</div>
+
+
+
+) : (
+
+
+
+<div className="space-y-3">
+
+
+{
+filteredNotifications.map(item=>(
+
+
+<div
+
+key={item._id}
+
+className={`
+relative
+overflow-hidden
+rounded-3xl
+p-4
+border
+
+${
+item.read
+
+?
+
+"bg-[#1A1A1E] border-zinc-800"
+
+:
+
+"bg-[#1A1A1E] border-yellow-400/40 shadow-lg shadow-yellow-400/5"
+
+}
+
+`}
+
+>
+
+
+{!item.read && (
+
+<div className="
+absolute
+left-0
+top-0
+bottom-0
+w-1
+bg-yellow-400
+"/>
+
+)}
+
+
+
+<div className="flex gap-3">
+
+
+<div className="
+w-10 h-10
+rounded-2xl
+bg-yellow-400/10
+flex items-center justify-center
+text-xl
+">
+
+{icons[item.type] || icons.default}
+
+</div>
+
+
+
+
+<div className="flex-1">
+
+
+<div className="flex justify-between gap-2">
+
+
+<h2 className="font-bold text-sm">
+
+{item.title || "AlphaBot Update"}
+
+</h2>
+
+
+
+{!item.read && (
+
+<span className="
+text-[10px]
+font-bold
+text-yellow-400
+">
+
+NEW
+
 </span>
 
-<span>
+)}
+
+
+</div>
+
+
+
+
+<p className="
+text-sm
+text-zinc-400
+mt-2
+">
+
+{item.message}
+
+</p>
+
+
+
+
+<div className="
+flex justify-between
+items-center
+mt-4
+pt-3
+border-t
+border-zinc-800
+">
+
+
+<span className="text-xs text-zinc-500">
+
 {new Date(item.createdAt).toLocaleString()}
+
 </span>
 
-</div>
+
+
+{!item.read && (
+
+<button
+
+onClick={()=>markRead(item._id)}
+
+className="
+text-xs
+bg-yellow-400
+text-black
+px-3 py-2
+rounded-xl
+font-bold
+"
+
+>
+
+Read
+
+</button>
+
+)}
+
 
 </div>
 
-))}
+
 
 </div>
 
+
 </div>
+
+
+
+</div>
+
+
+))
+
+}
+
+
+
+</div>
+
+
+)}
+
+
+
+
+<Toast message={message} type="error"/>
+
+
+</div>
+
 
 <BottomNav/>
+
 
 </main>
 

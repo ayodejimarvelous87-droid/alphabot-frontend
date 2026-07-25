@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {useSearchParams} from "next/navigation";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
+import ServiceLayout from "@/components/ServiceLayout";
 
 export default function Page(){
 const searchParams = useSearchParams();
@@ -271,24 +272,21 @@ setLoading(false);
 
 return(
 
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
+<ServiceLayout
+icon="🌐"
+title="Buy Data"
+subtitle="Fast internet bundles with instant delivery"
+message={message}
+>
 
-<div className="max-w-md mx-auto space-y-5">
-
-
-<div>
-<h1 className="text-3xl font-black">
-🌐 Buy Data
-</h1>
-
-<p className="text-zinc-400 mt-2">
-Fast internet bundles with instant delivery
-</p>
-</div>
+<div className="max-w-md mx-auto space-y-3">
 
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-5">
+
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-3 space-y-2">
 
 
 <div>
@@ -298,7 +296,7 @@ Network
 </p>
 
 <select
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-4 rounded-xl bg-[#050505] border border-zinc-800 text-white"
 value={network}
 onChange={(e)=>{
 
@@ -333,7 +331,7 @@ Category
 </p>
 
 <select
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-4 rounded-xl bg-[#050505] border border-zinc-800 text-white"
 value={category}
 onChange={(e)=>{
 
@@ -375,7 +373,7 @@ Data Plan
 
 
 <select
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-4 rounded-xl bg-[#050505] border border-zinc-800 text-white"
 value={selectedPlan}
 onChange={(e)=>setSelectedPlan(e.target.value)}
 >
@@ -423,7 +421,7 @@ plan.price}
 
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-3">
 
 <h2 className="font-bold mb-3">
 📱 Receiver
@@ -444,7 +442,7 @@ service="data"
 
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-3">
 
 
 <p className="text-xs text-zinc-500 uppercase">
@@ -454,7 +452,7 @@ Transaction PIN
 
 <input
 
-className="w-full mt-3 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-3 p-4 rounded-xl bg-[#050505] border border-zinc-800 text-white"
 
 placeholder="Enter 4 digit PIN"
 
@@ -481,7 +479,7 @@ onClick={buyData}
 
 disabled={loading}
 
-className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
+className="w-full bg-white text-black py-3 rounded-2xl font-black text-lg"
 
 >
 
@@ -495,7 +493,7 @@ className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
 
 {message && (
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4 text-center">
+<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-3 text-center">
 
 {message}
 
@@ -511,7 +509,7 @@ className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
 
 href="/dashboard"
 
-className="block text-center text-zinc-400 mt-6"
+className="block text-center text-zinc-400 mt-3"
 
 >
 
@@ -523,7 +521,7 @@ className="block text-center text-zinc-400 mt-6"
 
 </div>
 
-</main>
+</ServiceLayout>
 
 );
 
