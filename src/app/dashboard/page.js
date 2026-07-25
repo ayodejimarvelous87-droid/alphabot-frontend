@@ -162,6 +162,7 @@ setLoading(false);
 })
 .catch(()=>{
 setToast("Unable to load notifications");
+  setLoading(false);
 });
 
 

@@ -389,13 +389,23 @@ Withdraw
 Fund Wallet
 </h2>
 
+<label className="block mt-5 font-semibold text-sm">
+Funding Amount (₦)
+</label>
+
 <input
-className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-zinc-800 text-black dark:text-white placeholder:text-zinc-400 border border-zinc-700"
-placeholder="Enter amount"
+className="w-full mt-2 p-3 rounded-xl bg-white dark:bg-zinc-800 text-black dark:text-white placeholder:text-zinc-400 border border-zinc-700"
+placeholder="Enter amount e.g 5000"
 type="number"
 value={amount}
 onChange={(e)=>setAmount(e.target.value)}
 />
+
+{(!amount || Number(amount)<=0) && (
+<p className="mt-2 text-sm text-red-500">
+Enter a valid amount to continue
+</p>
+)}
 
 <div className="mt-5 p-4 bg-yellow-100 rounded-xl text-black">
 <p className="font-bold">🏦 Manual Funding</p>
@@ -421,7 +431,7 @@ Didn't get approval within 5 minutes? Contact us on WhatsApp for assistance.
 <button
 onClick={requestManualFunding}
 disabled={funding || !amount || Number(amount)<=0}
-className="w-full mt-4 py-3 rounded-xl font-bold bg-yellow-400 text-black">
+className="w-full mt-4 py-3 rounded-xl font-bold bg-yellow-400 text-black active:scale-95 transition disabled:opacity-50">
 {funding ? "Processing..." : "Continue Manual Funding"}
 </button>
 
@@ -440,7 +450,7 @@ Wallet is credited automatically after successful payment.
 <button
 onClick={fundWithFlutterwave}
 disabled={funding || !amount || Number(amount)<=0}
-className="w-full mt-4 py-3 rounded-xl font-bold bg-blue-500 text-white">
+className="w-full mt-4 py-3 rounded-xl font-bold bg-blue-500 text-white active:scale-95 transition disabled:opacity-50">
 {funding ? "Processing..." : "Pay with Flutterwave"}
 </button>
 
