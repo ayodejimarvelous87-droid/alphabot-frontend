@@ -1,0 +1,140 @@
+"use client";
+
+import {useEffect,useState} from "react";
+
+export default function AdminSettings(){
+
+const [settings,setSettings]=useState({
+maintenanceMode:false,
+announcement:"",
+referralPercentage:1
+});
+
+const [message,setMessage]=useState("");
+
+
+const loadSettings=async()=>{
+
+const token=localStorage.getItem("adminToken");
+
+const res=await fetch(
+"https://alphabot-1.onrender.com/settings",
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
+
+const data=await res.json();
+
+setSettings({
+maintenanceMode:data.maintenanceMode || false,
+announcement:data.announcement || "",
+referralPercentage:data.referralPercentage || 1
+});
+
+};
+
+
+useEffect(()=>{
+loadSettings();
+},[]);
+
+
+
+const saveSettings=async()=>{
+
+const token=localStorage.getItem("adminToken");
+
+const res=await fetch(
+"https://alphabot-1.onrender.com/admin/system-settings",
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify(settings)
+}
+);
+
+
+const data=await res.json();
+
+setMessage(
+res.ok ? "✅ Settings updated" : data.message
+);
+
+};
+
+
+
+return(
+<div className="p-6">
+
+<h1 className="text-2xl font-bold">
+⚙️ System Settings
+</h1>
+
+
+<p className="mt-3">
+{message}
+</p>
+
+
+<div className="mt-5 space-y-4">
+
+
+<label className="flex gap-3">
+<input
+type="checkbox"
+checked={settings.maintenanceMode}
+onChange={(e)=>setSettings({
+...settings,
+maintenanceMode:e.target.checked
+})}
+/>
+
+Maintenance Mode
+</label>
+
+
+<textarea
+className="border rounded-xl p-3 w-full"
+placeholder="Announcement message"
+value={settings.announcement}
+onChange={(e)=>setSettings({
+...settings,
+announcement:e.target.value
+})}
+/>
+
+
+<input
+className="border rounded-xl p-3 w-full"
+type="number"
+placeholder="Referral percentage"
+value={settings.referralPercentage}
+onChange={(e)=>setSettings({
+...settings,
+referralPercentage:e.target.value
+})}
+/>
+
+
+<button
+className="bg-black text-white px-5 py-3 rounded-xl"
+onClick={saveSettings}
+>
+Save Settings
+</button>
+
+
+</div>
+
+
+</div>
+);
+
+}

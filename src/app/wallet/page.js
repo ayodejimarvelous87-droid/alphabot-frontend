@@ -206,8 +206,108 @@ setFunding(false);
 
 };
 
+const fundWithFlutterwave = async()=>{
+
+const token=localStorage.getItem("token");
+
+try{
+
+setFunding(true);
+setMessage("");
+
+const res = await fetch(
+"https://alphabot-1.onrender.com/flutterwave/pay",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+amount:Number(amount)
+})
+}
+);
+
+const data = await res.json();
+
+if(!res.ok){
+setMessage(data.message || "Flutterwave payment failed");
+setFunding(false);
+return;
+}
+
+if(data.data && data.data.link){
+window.location.href = data.data.link;
+return;
+}
+
+setMessage("Unable to open payment page");
+setFunding(false);
+
+}catch(error){
+
+setMessage("Connection error");
+setFunding(false);
+
+}
+
+};
 
 
+
+
+
+
+const requestManualFunding = async()=>{
+
+const token=localStorage.getItem("token");
+const user=JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+setMessage("User session expired");
+return;
+}
+
+try{
+
+setFunding(true);
+setMessage("");
+
+const res = await fetch(
+"https://alphabot-1.onrender.com/funding/request",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+phone:user.phone,
+amount:Number(amount),
+reference:null
+})
+}
+);
+
+const data = await res.json();
+
+setMessage(data.message || "Funding request submitted");
+
+if(res.ok){
+setAmount("");
+}
+
+setFunding(false);
+
+}catch(error){
+
+setMessage("Connection error");
+setFunding(false);
+
+}
+
+};
 
 if(loading){
 return(
@@ -290,41 +390,35 @@ Fund Wallet
 </h2>
 
 <div className="mt-4 p-4 bg-yellow-100 rounded-xl text-black">
-<p className="font-bold">Wallet Funding Account</p>
-<p className="mt-2">Transfer funds to your AlphaBot account.</p>
-<p className="mt-2 text-sm">Your wallet balance will be updated after payment confirmation.</p>
+<p className="font-bold">Manual Funding</p>
+<p className="mt-2 text-sm">Below ₦2,000 - No Flutterwave charges.</p>
+<p className="mt-2 text-sm">Send payment manually and wait for approval.</p>
 </div>
 
-
+<div className="mt-5 p-4 bg-blue-100 rounded-xl text-black">
+<p className="font-bold">Flutterwave Instant Funding</p>
+<p className="mt-2 text-sm">₦2,000 and above - Automatic wallet credit.</p>
+</div>
 
 <input
-
-  className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-zinc-800 text-black dark:text-white placeholder:text-zinc-400 border border-zinc-700"
-
+className="w-full mt-5 p-3 rounded-xl bg-white dark:bg-zinc-800 text-black dark:text-white placeholder:text-zinc-400 border border-zinc-700"
 placeholder="Enter amount"
-
 type="number"
-
 value={amount}
-
 onChange={(e)=>setAmount(e.target.value)}
-
 />
 
-
-
 <button
-
-onClick={fundWallet}
-
+onClick={Number(amount) >= 2000 ? fundWithFlutterwave : requestManualFunding}
 className={`w-full mt-5 py-3 rounded-xl font-bold ${
 funding || !amount || Number(amount) <= 0
 ? "bg-zinc-400 text-zinc-700 cursor-not-allowed"
 : "bg-yellow-400 text-black"
 }`}
-disabled={funding || !amount || Number(amount) <= 0} >
+disabled={funding || !amount || Number(amount) <= 0}>
 
-{funding ? "Processing..." : "Fund Wallet"}
+{funding ? "Processing..." : Number(amount) >= 2000 ? "Pay with Flutterwave" : "Request Manual Funding"}
+
 </button>
 
 

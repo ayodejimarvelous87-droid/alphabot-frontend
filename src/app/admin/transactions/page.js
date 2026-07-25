@@ -1,88 +1,151 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect,useState} from "react";
 
 export default function AdminTransactions(){
 
-  const [transactions,setTransactions] = useState([]);
+const [transactions,setTransactions]=useState([]);
+const [search,setSearch]=useState("");
+const [type,setType]=useState("");
 
 
-  useEffect(()=>{
+useEffect(()=>{
 
-    const loadTransactions = async()=>{
+const load=async()=>{
 
-      const token = localStorage.getItem("adminToken");
+const token=localStorage.getItem("adminToken");
 
+const res=await fetch(
+"https://alphabot-1.onrender.com/admin/transactions",
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
 
-      const res = await fetch(
-        "https://alphabot-1.onrender.com/admin/transactions",
-        {
-          headers:{
-            Authorization:`Bearer ${token}`
-          }
-        }
-      );
+const data=await res.json();
 
+setTransactions(data);
 
-      const data = await res.json();
+};
 
-      setTransactions(data);
+load();
 
-    };
-
-
-    loadTransactions();
-
-  },[]);
+},[]);
 
 
 
-  return (
+const filtered=transactions.filter(tx=>
 
-    <div style={{padding:"30px"}}>
+(tx.phone||"").includes(search)
 
-      <h1>📜 Transactions</h1>
+&&
 
+(type==="" || tx.type===type)
 
-      {transactions.map((tx)=>(
-
-        <div
-          key={tx._id}
-          style={{
-            border:"1px solid #ccc",
-            padding:"15px",
-            margin:"10px 0"
-          }}
-        >
-
-          <p>
-            Phone: {tx.phone}
-          </p>
-
-          <p>
-            Type: {tx.type}
-          </p>
-
-          <p>
-            Amount: ₦{tx.amount}
-          </p>
-
-          <p>
-            Status: {tx.status}
-          </p>
-
-          <p>
-            Reference: {tx.reference || "N/A"}
-          </p>
+);
 
 
-        </div>
 
-      ))}
+return(
+
+<div className="p-6">
+
+<h1 className="text-2xl font-bold">
+📜 Transactions
+</h1>
 
 
-    </div>
+<input
+className="border p-2 mt-4"
+placeholder="Search phone"
+value={search}
+onChange={(e)=>setSearch(e.target.value)}
+/>
 
-  );
+
+<select
+className="border p-2 ml-2"
+value={type}
+onChange={(e)=>setType(e.target.value)}
+>
+
+<option value="">
+All Types
+</option>
+
+<option value="credit">
+Credit
+</option>
+
+<option value="debit">
+Debit
+</option>
+
+<option value="admin_credit">
+Admin Credit
+</option>
+
+<option value="admin_debit">
+Admin Debit
+</option>
+
+</select>
+
+
+
+<div className="mt-5">
+
+{filtered.map(tx=>(
+
+<div
+key={tx._id}
+className="border rounded-xl p-4 mb-3"
+>
+
+<a
+href={`/admin/users/${tx.phone}`}
+className="underline"
+>
+👤 {tx.userName || "Unknown User"}
+</a>
+
+<p>
+📱 {tx.phone}
+</p>
+
+<p>
+Type: {tx.type}
+</p>
+
+<p>
+Amount: ₦{tx.amount}
+</p>
+
+<p>
+Status: {tx.status || "completed"}
+</p>
+
+<p>
+Date: {
+tx.createdAt
+? new Date(tx.createdAt).toLocaleString()
+:"Unknown"
+}
+</p>
+
+
+</div>
+
+))}
+
+
+</div>
+
+
+</div>
+
+);
 
 }

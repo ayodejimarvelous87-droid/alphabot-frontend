@@ -2,18 +2,18 @@
 
 import {useEffect,useState} from "react";
 
-export default function AdminWithdrawals(){
+export default function AdminFunding(){
 
-const [withdrawals,setWithdrawals]=useState([]);
+const [requests,setRequests]=useState([]);
 const [message,setMessage]=useState("");
 
 
-const loadWithdrawals=async()=>{
+const loadRequests=async()=>{
 
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/withdrawal",
+"https://alphabot-1.onrender.com/funding/requests",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -23,14 +23,13 @@ Authorization:`Bearer ${token}`
 
 const data=await res.json();
 
-setWithdrawals(data);
+setRequests(data);
 
 };
 
 
-
 useEffect(()=>{
-loadWithdrawals();
+loadRequests();
 },[]);
 
 
@@ -39,11 +38,10 @@ const action=async(id,type)=>{
 
 const token=localStorage.getItem("adminToken");
 
-
 const res=await fetch(
-`https://alphabot-1.onrender.com/admin/${type}/${id}`,
+`https://alphabot-1.onrender.com/funding/${type}/${id}`,
 {
-method:"POST",
+method:"PUT",
 headers:{
 Authorization:`Bearer ${token}`
 }
@@ -54,61 +52,57 @@ Authorization:`Bearer ${token}`
 const data=await res.json();
 
 setMessage(
-res.ok ? `✅ ${type}` : data.message
+res.ok ? `✅ ${data.message}` : data.message
 );
 
-loadWithdrawals();
+
+loadRequests();
 
 };
 
 
 
 return(
-
 <div className="p-6">
 
 <h1 className="text-2xl font-bold">
-💸 Withdrawals
+💰 Funding Requests
 </h1>
 
 
-<p>{message}</p>
+<p className="mt-3">
+{message}
+</p>
 
 
 <div className="mt-5 space-y-4">
 
-
-{withdrawals.map(item=>(
+{requests.map(item=>(
 
 <div
 key={item._id}
 className="border rounded-xl p-4"
 >
 
-
 <p>
-Phone: {item.phone}
+📱 Phone: {item.phone}
 </p>
 
-
 <p>
-Amount: ₦{item.amount}
+💵 Amount: ₦{item.amount}
 </p>
 
+<p>
+🔖 Reference: {item.reference || "None"}
+</p>
 
 <p>
 Status: {item.status}
 </p>
 
 
-<p>
-Bank: {item.bankName || "N/A"}
-</p>
-
-
-
 <button
-className="bg-black text-white px-4 py-2 mr-2 rounded"
+className="bg-black text-white px-4 py-2 rounded mr-2"
 onClick={()=>action(item._id,"approve")}
 >
 Approve
@@ -127,12 +121,10 @@ Reject
 
 ))}
 
-
 </div>
 
 
 </div>
-
 );
 
 }
