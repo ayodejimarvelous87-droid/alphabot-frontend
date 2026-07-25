@@ -144,9 +144,9 @@ onChange={(e)=>setNetwork(e.target.value)}
 >
 
 <option>MTN</option>
-<option>Airtel</option>
-<option>Glo</option>
-<option>9mobile</option>
+<option>AIRTEL</option>
+<option>GLO</option>
+<option>9MOBILE</option>
 
 </select>
 

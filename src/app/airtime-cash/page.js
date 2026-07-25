@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
+
 
 export default function Page(){
 
@@ -11,6 +12,56 @@ const [network,setNetwork]=useState("MTN");
 const [amount,setAmount]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+const [requests,setRequests]=useState([]);
+
+
+
+const loadRequests=async()=>{
+
+try{
+
+const user=JSON.parse(localStorage.getItem("user"));
+
+if(!user?.phone) return;
+
+
+const res=await fetch(
+
+`https://alphabot-1.onrender.com/airtime-cash/${user.phone}`,
+
+{
+headers:{
+Authorization:
+`Bearer ${localStorage.getItem("token")}`
+}
+}
+
+);
+
+
+const data=await res.json();
+
+if(Array.isArray(data)){
+setRequests(data);
+}
+
+
+}catch(error){
+
+console.log(error);
+
+}
+
+};
+
+
+
+useEffect(()=>{
+
+loadRequests();
+
+},[]);
+
 
 
 
@@ -49,6 +100,10 @@ if(res.ok){
 
 setMessage(`✅ ${data.message}`);
 
+setAmount("");
+
+loadRequests();
+
 }else{
 
 setMessage(`❌ ${data.message}`);
@@ -74,7 +129,6 @@ return(
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
-
 <div className="max-w-md mx-auto space-y-5">
 
 
@@ -86,6 +140,7 @@ return(
 <p className="text-zinc-400">
 Convert unused airtime into cash
 </p>
+
 
 
 
@@ -122,9 +177,9 @@ onChange={(e)=>setNetwork(e.target.value)}
 >
 
 <option>MTN</option>
-<option>Airtel</option>
-<option>Glo</option>
-<option>9mobile</option>
+<option>AIRTEL</option>
+<option>GLO</option>
+<option>9MOBILE</option>
 
 </select>
 
@@ -134,30 +189,41 @@ onChange={(e)=>setNetwork(e.target.value)}
 
 
 <input
+
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+
 placeholder="Airtime amount"
+
 type="number"
+
 value={amount}
+
 onChange={(e)=>setAmount(e.target.value)}
+
 />
 
 
 
 
 <button
+
 onClick={requestCash}
+
 disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold hover:scale-105 transition"
+
+className="w-full bg-white text-black py-3 rounded-xl font-bold"
+
 >
 
 {
 loading
-?"Processing..."
-:"Submit Request"
+?
+"Processing..."
+:
+"Submit Request"
 }
 
 </button>
-
 
 
 
@@ -165,6 +231,57 @@ loading
 {message}
 </p>
 
+
+</div>
+
+
+
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
+
+<h2 className="font-bold text-lg mb-4">
+📄 My Airtime Cash Requests
+</h2>
+
+
+{
+requests.length === 0
+?
+<p className="text-zinc-500 text-sm">
+No requests yet
+</p>
+:
+requests.map((item)=>(
+
+<div
+key={item._id}
+className="border-b border-zinc-800 py-3"
+>
+
+<p>
+{item.network} - ₦{item.amount}
+</p>
+
+<p className="text-sm text-zinc-400">
+Cash Amount: ₦{item.cashAmount}
+</p>
+
+<p className="text-sm">
+Status: {
+item.status === "approved"
+?
+"✅ Approved"
+:
+"⏳ Pending"
+}
+</p>
+
+
+</div>
+
+))
+
+}
 
 
 </div>
@@ -180,9 +297,7 @@ className="block text-center text-zinc-400 mt-6"
 </Link>
 
 
-
 </div>
-
 
 </main>
 
