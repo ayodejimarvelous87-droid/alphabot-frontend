@@ -86,9 +86,7 @@ setCategory("All Plans");
 
 }catch(error){
 
-"Plans error:",
-error.message
-);
+console.log("Plans error:", error.message);
 
 }
 
