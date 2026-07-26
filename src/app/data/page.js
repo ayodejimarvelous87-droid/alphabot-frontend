@@ -44,7 +44,6 @@ const data = await res.json();
 setBeneficiaries(data);
 
 }catch(error){
-console.log(error);
 }
 };
 
@@ -64,18 +63,10 @@ const res = await fetch(
 );
 
 const data = await res.json();
-console.log("DATA_PLANS", data);
-console.log("NETWORK KEYS", Object.keys(data.networks || {}));
-console.log("MTN CATEGORIES", Object.keys(data.networks?.MTN || {}));
-console.log("MTN AWOOF COUNT", data.networks?.MTN?.Awoof?.length);
 
 const networks = data.networks || {};
-console.log("FRONTEND RECEIVED NETWORKS:", Object.keys(networks));
-console.log("MTN CATEGORIES:", Object.keys(networks.MTN || {}));
-console.log("MTN Awoof CHECK:", networks.MTN?.Awoof);
 
 setPlans(networks);
-console.log("FRONTEND NETWORK KEYS:", Object.keys(networks)); console.log("FRONTEND MTN CATS:", Object.keys(networks.MTN || {}));
 
 const firstNetwork = Object.keys(networks)[0];
 
@@ -95,7 +86,6 @@ setCategory("All Plans");
 
 }catch(error){
 
-console.log(
 "Plans error:",
 error.message
 );
@@ -125,9 +115,6 @@ actualNetwork
 ]
 : [];
 
-console.log("CLICK CATEGORY:", category, Object.keys(plans[actualNetwork] || {}));
-console.log("SELECTED CATEGORY:", category);
-console.log("AVAILABLE CATEGORIES:", Object.keys(plans[actualNetwork] || {}));
 
 const dataPlans =
 actualNetwork
@@ -346,7 +333,7 @@ setSelectedPlan("");
 
 {categories.map(cat=>(
 
-<option key={cat}>
+<option key={cat} value={cat}>
 
 {cat}
 
