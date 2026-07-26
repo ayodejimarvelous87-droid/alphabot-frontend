@@ -82,6 +82,16 @@ settings.recurringFee || 0
 }
 
 
+if(service==="airtime-cash"){
+
+payload={
+airtimeCashProfit:
+settings.airtimeCashProfit || 0
+};
+
+}
+
+
 
 const res=await fetch(
 `https://alphabot-1.onrender.com/admin/services/${service}`,
@@ -224,6 +234,27 @@ className="border rounded px-4 py-2 mt-3"
 onClick={()=>save("recurring")}
 >
 Save Recurring
+</button>
+
+</div>
+
+
+<div className="border rounded-xl p-5 mt-5">
+
+<h2 className="font-bold">
+💳 Airtime Cash
+</h2>
+
+{field(
+"airtimeCashProfit",
+"AlphaBot Profit (%)"
+)}
+
+<button
+className="border rounded px-4 py-2 mt-3"
+onClick={()=>save("airtime-cash")}
+>
+Save Airtime Cash
 </button>
 
 </div>

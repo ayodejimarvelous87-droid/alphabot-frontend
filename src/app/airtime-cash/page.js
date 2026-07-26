@@ -1,19 +1,26 @@
 "use client";
 
-import { useState,useEffect } from "react";
+import {useEffect,useState} from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
-
 
 export default function Page(){
 
 const [phone,setPhone]=useState("");
 const [network,setNetwork]=useState("MTN");
 const [amount,setAmount]=useState("");
+const [otp,setOtp]=useState("");
+const [sessionId,setSessionId]=useState("");
+const [otpSent,setOtpSent]=useState(false);
+const [otpVerified,setOtpVerified]=useState(false);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [requests,setRequests]=useState([]);
 
+
+const token=()=>{
+return localStorage.getItem("token");
+};
 
 
 const loadRequests=async()=>{
@@ -26,16 +33,12 @@ if(!user?.phone) return;
 
 
 const res=await fetch(
-
 `https://alphabot-1.onrender.com/airtime-cash/${user.phone}`,
-
 {
 headers:{
-Authorization:
-`Bearer ${localStorage.getItem("token")}`
+Authorization:`Bearer ${token()}`
 }
 }
-
 );
 
 
@@ -55,7 +58,6 @@ console.log(error);
 };
 
 
-
 useEffect(()=>{
 
 loadRequests();
@@ -64,31 +66,30 @@ loadRequests();
 
 
 
-
-const requestCash=async()=>{
+const generateOTP=async()=>{
 
 try{
 
 setLoading(true);
-setMessage("Processing...");
-
-
-const token=localStorage.getItem("token");
+setMessage("Sending OTP...");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/airtime-cash",
+"https://alphabot-1.onrender.com/airtime-cash/generate-otp",
 {
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-Authorization:`Bearer ${token}`
+Authorization:`Bearer ${token()}`
 },
 body:JSON.stringify({
-phone,
-network,
-amount:Number(amount)
+
+networkName:network,
+
+sender:phone
+
 })
+
 }
 );
 
@@ -98,11 +99,140 @@ const data=await res.json();
 
 if(res.ok){
 
-setMessage(`✅ ${data.message}`);
+setOtpSent(true);
+
+setMessage("✅ OTP sent to your airtime line");
+
+}else{
+
+setMessage(`❌ ${data.message}`);
+
+}
+
+
+}catch(error){
+
+setMessage("❌ Connection error");
+
+}finally{
+
+setLoading(false);
+
+}
+
+};
+
+
+
+const verifyOTP=async()=>{
+
+try{
+
+setLoading(true);
+setMessage("Verifying OTP...");
+
+
+const res=await fetch(
+"https://alphabot-1.onrender.com/airtime-cash/verify-otp",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token()}`
+},
+body:JSON.stringify({
+
+networkName:network,
+
+sender:phone,
+
+otp
+
+})
+
+}
+);
+
+
+const data=await res.json();
+
+
+if(res.ok){
+
+setSessionId(
+data.data.sessionId
+);
+
+setOtpVerified(true);
+
+setMessage("✅ OTP verified");
+
+}else{
+
+setMessage(`❌ ${data.message}`);
+
+}
+
+
+}catch(error){
+
+setMessage("❌ Connection error");
+
+}finally{
+
+setLoading(false);
+
+}
+
+};
+
+
+
+const convert=async()=>{
+
+try{
+
+setLoading(true);
+setMessage("Converting airtime...");
+
+
+const res=await fetch(
+"https://alphabot-1.onrender.com/airtime-cash/convert",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token()}`
+},
+body:JSON.stringify({
+
+phone,
+
+networkName:network,
+
+amount:Number(amount),
+
+sessionId
+
+})
+
+}
+);
+
+
+const data=await res.json();
+
+
+if(res.ok){
+
+setMessage(
+`✅ ${data.message}. Received ₦${data.cashAmount}`
+);
 
 setAmount("");
 
 loadRequests();
+
 
 }else{
 
@@ -143,29 +273,22 @@ Convert unused airtime into cash
 
 
 
-
 <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-4">
 
 
-<div>
-
-<p className="text-xs text-zinc-500 mb-2">
+<p className="text-xs text-zinc-500">
 Phone Number
 </p>
+
 
 <PhoneInput
 value={phone}
 onChange={(value)=>setPhone(value)}
 />
 
-</div>
 
 
-
-
-<div>
-
-<p className="text-xs text-zinc-500 mb-2">
+<p className="text-xs text-zinc-500">
 Network Provider
 </p>
 
@@ -183,47 +306,79 @@ onChange={(e)=>setNetwork(e.target.value)}
 
 </select>
 
-</div>
+
+
+{
+!otpSent &&
+
+<button
+onClick={generateOTP}
+disabled={loading}
+className="w-full bg-white text-black py-3 rounded-xl font-bold"
+>
+Generate OTP
+</button>
+
+}
 
 
 
+{
+otpSent && !otpVerified &&
+
+<>
 
 <input
-
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-
-placeholder="Airtime amount"
-
-type="number"
-
-value={amount}
-
-onChange={(e)=>setAmount(e.target.value)}
-
+placeholder="Enter OTP"
+value={otp}
+onChange={(e)=>setOtp(e.target.value)}
 />
 
 
+<button
+onClick={verifyOTP}
+disabled={loading}
+className="w-full bg-white text-black py-3 rounded-xl font-bold"
+>
+Verify OTP
+</button>
+
+</>
+
+}
+
+
+
+{
+otpVerified &&
+
+<>
+
+<input
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+placeholder="Airtime amount"
+type="number"
+value={amount}
+onChange={(e)=>setAmount(e.target.value)}
+/>
+
+<p className="text-xs text-yellow-400">
+⚠️ Minimum airtime conversion amount is ₦50
+</p>
 
 
 <button
-
-onClick={requestCash}
-
+onClick={convert}
 disabled={loading}
-
 className="w-full bg-white text-black py-3 rounded-xl font-bold"
-
 >
-
-{
-loading
-?
-"Processing..."
-:
-"Submit Request"
-}
-
+Convert Airtime
 </button>
+
+</>
+
+}
 
 
 
@@ -236,7 +391,6 @@ loading
 
 
 
-
 <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
 
 <h2 className="font-bold text-lg mb-4">
@@ -245,12 +399,16 @@ loading
 
 
 {
-requests.length === 0
+requests.length===0
+
 ?
+
 <p className="text-zinc-500 text-sm">
 No requests yet
 </p>
+
 :
+
 requests.map((item)=>(
 
 <div
@@ -266,16 +424,9 @@ className="border-b border-zinc-800 py-3"
 Cash Amount: ₦{item.cashAmount}
 </p>
 
-<p className="text-sm">
-Status: {
-item.status === "approved"
-?
-"✅ Approved"
-:
-"⏳ Pending"
-}
+<p>
+Status: {item.status==="approved" ? "✅ Approved":"⏳ Pending"}
 </p>
-
 
 </div>
 
@@ -285,8 +436,6 @@ item.status === "approved"
 
 
 </div>
-
-
 
 
 <Link
