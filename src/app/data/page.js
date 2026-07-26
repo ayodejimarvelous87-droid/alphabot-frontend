@@ -125,6 +125,9 @@ actualNetwork
 ]
 : [];
 
+console.log("SELECTED CATEGORY:", category);
+console.log("AVAILABLE CATEGORIES:", Object.keys(plans[actualNetwork] || {}));
+
 const dataPlans =
 actualNetwork
 ?
