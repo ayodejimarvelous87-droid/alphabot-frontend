@@ -125,6 +125,7 @@ actualNetwork
 ]
 : [];
 
+console.log("CLICK CATEGORY:", category, Object.keys(plans[actualNetwork] || {}));
 console.log("SELECTED CATEGORY:", category);
 console.log("AVAILABLE CATEGORIES:", Object.keys(plans[actualNetwork] || {}));
 
