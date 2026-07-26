@@ -1,10 +1,20 @@
 "use client";
 
-import {useState} from "react";
+import {useState,useEffect} from "react";
 
 export default function EPin(){
 
 const [phone,setPhone]=useState("");
+
+useEffect(()=>{
+const savedUser = localStorage.getItem("user");
+
+if(savedUser){
+const user = JSON.parse(savedUser);
+setPhone(user.phone);
+}
+
+},[]);
 const [network,setNetwork]=useState("mtn");
 const [amount,setAmount]=useState("");
 const [quantity,setQuantity]=useState(1);
@@ -50,7 +60,7 @@ throw new Error(data.message || "Purchase failed");
 }
 
 
-setMessage("✅ ePIN purchased successfully");
+setMessage("✅ Recharge PIN purchased successfully");
 
 setEpinResult(data.epin);
 
@@ -73,7 +83,7 @@ return(
 <div className="max-w-md mx-auto space-y-4">
 
 <h1 className="text-3xl font-bold">
-💳 ePIN
+💳 Recharge PIN
 </h1>
 
 
@@ -123,7 +133,7 @@ disabled={loading}
 onClick={buyEPin}
 className="w-full bg-yellow-400 p-3 rounded font-bold"
 >
-{loading?"Processing...":"Buy ePIN"}
+{loading?"Processing...":"Buy Recharge PIN"}
 </button>
 
 
