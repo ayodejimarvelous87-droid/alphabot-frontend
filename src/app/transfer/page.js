@@ -106,7 +106,7 @@ setMessage(
 
 }else{
 
-setMessage("❌ "+data.message);
+setMessage("❌ "+(typeof data.message==="object" ? JSON.stringify(data.message) : data.message));
 
 }
 
@@ -172,7 +172,7 @@ setMessage("✅ Transfer successful");
 
 }else{
 
-setMessage("❌ "+data.message);
+setMessage("❌ "+(typeof data.message==="object" ? JSON.stringify(data.message) : data.message));
 
 }
 
