@@ -299,6 +299,20 @@ className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:borde
 </Link>
 
 
+<Link
+href="/transaction-pin"
+className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+>
+🔐 Transaction PIN
+</Link>
+
+
+<Link
+href="/ai"
+className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+>
+🤖 AI Assistant
+</Link>
 
 
 <Link

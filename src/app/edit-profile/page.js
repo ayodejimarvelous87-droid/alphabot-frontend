@@ -298,6 +298,13 @@ Manage your AlphaBot profile and security
 
 
 
+{message && (
+<div className="bg-white text-black rounded-2xl p-4 text-center font-bold mb-4">
+{message}
+</div>
+)}
+
+
 {/* PROFILE IDENTITY */}
 
 <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
@@ -531,17 +538,6 @@ Update Password
 
 
 
-{/* MESSAGE */}
-
-{message && (
-
-<div className="bg-white text-black rounded-2xl p-4 text-center font-bold">
-
-{message}
-
-</div>
-
-)}
 
 
 

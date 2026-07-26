@@ -278,7 +278,7 @@ const services=[
 ["🔁","Recurring","/recurring"],
 ["🎮","Betting","/betting"],
 ["🎓","Exam PIN","/exam-pin"],
-["💳","Recharge PIN","/epin"],
+["💳","Recharge PIN","/recharge-pin"],
 ["🏆","Arena+","/arena"],
 ["💬","Support","/support"],
 
