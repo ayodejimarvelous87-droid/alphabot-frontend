@@ -9,12 +9,13 @@ export default function Withdraw(){
 
 const [phone,setPhone]=useState("");
 const [amount,setAmount]=useState("");
-const [banks,setBanks]=useState([]);
-const [bankCode,setBankCode]=useState("");
 const [bankName,setBankName]=useState("");
+const [bankCode,setBankCode]=useState("");
 
 const [accountNumber,setAccountNumber]=useState("");
 const [accountName,setAccountName]=useState("");
+
+const [savedAccount,setSavedAccount]=useState(false);
 
 const [verifying,setVerifying]=useState(false);
 const [verified,setVerified]=useState(false);
@@ -62,11 +63,8 @@ setBalance(data.balance);
 
 });
 
-}
-
-
 fetch(
-"https://alphabot-1.onrender.com/bank",
+`https://alphabot-1.onrender.com/users/withdraw-account/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${localStorage.getItem("token")}`
@@ -76,10 +74,20 @@ Authorization:`Bearer ${localStorage.getItem("token")}`
 .then(res=>res.json())
 .then(data=>{
 
-setBanks(data.data || []);
+if(data.withdrawAccountNumber){
+setBankName(data.withdrawBankName);
+setBankCode(data.withdrawBankCode);
+setAccountNumber(data.withdrawAccountNumber);
+setAccountName(data.withdrawAccountName);
+setSavedAccount(true);
+setVerified(true);
+}
 
-})
-.catch(()=>{});
+});
+
+
+}
+
 
 
 fetch("https://alphabot-1.onrender.com/settings")
@@ -196,10 +204,6 @@ Authorization:
 },
 body:JSON.stringify({
 phone,
-bankName,
-bankCode,
-accountNumber,
-accountName,
 amount:Number(amount),
 pin
 })
@@ -317,87 +321,37 @@ Total Deduction
 
 
 
-<select
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-value={bankCode}
-onChange={(e)=>{
+<div className="bg-[#050505] border border-zinc-800 rounded-2xl p-4">
 
-const code = e.target.value;
-
-setBankCode(code);
-
-const bank = banks.find(
-b => b.code === code
-);
-
-setBankName(bank?.name || "");
-
-setVerified(false);
-setAccountName("");
-
-}}
->
-
-<option value="">
-Select Bank
-</option>
-
-{banks.map(bank=>(
-
-<option
-key={bank.code}
-value={bank.code}
->
-{bank.name}
-</option>
-
-))}
-
-</select>
-
-
-
-
-<input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-placeholder="Account number"
-type="number"
-value={accountNumber}
-onChange={(e)=>{
-
-const value=e.target.value;
-
-setAccountNumber(value);
-
-if(value.length===10 && bankCode){
-verifyAccount();
-}
-
-}}
-/>
-
-
-<input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-zinc-400"
-placeholder="Account name"
-value={
-verifying
-?
-"Verifying..."
-:
-accountName
-}
-readOnly
-/>
-
-
-{verified && (
-
-<p className="text-green-400 text-sm">
-✅ Account verified
+<p className="text-xs text-zinc-500">
+Withdrawal Account
 </p>
 
-)}
+<h3 className="font-bold mt-2">
+{bankName || "No account saved"}
+</h3>
+
+<p className="text-sm text-zinc-400 mt-1">
+{accountName || "Save your personal bank account first"}
+</p>
+
+<p className="text-sm text-zinc-400">
+{accountNumber || ""}
+</p>
+
+<a
+href="/withdraw-account"
+className="block mt-4 text-center bg-white text-black rounded-xl py-3 font-bold"
+>
+Change Withdrawal Account
+</a>
+
+</div>
+
+
+
+
+
 
 
 
@@ -420,10 +374,6 @@ disabled={
 loading ||
 !amount ||
 Number(amount)<=0 ||
-!bankName ||
-!accountNumber ||
-!accountName ||
-!verified ||
 !pin
 }
 className="w-full bg-white text-black py-3 rounded-xl font-bold disabled:bg-zinc-700 disabled:text-zinc-400"
@@ -433,10 +383,6 @@ className="w-full bg-white text-black py-3 rounded-xl font-bold disabled:bg-zinc
 loading
 ?
 "Processing..."
-:
-!verified
-?
-"Verify Account First"
 :
 "Withdraw Funds"
 }

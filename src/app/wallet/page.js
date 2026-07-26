@@ -286,29 +286,29 @@ Manage your AlphaBot balance
 
 
 
-<section className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-zinc-800 rounded-3xl p-6 shadow-2xl text-white">
+<section className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-zinc-800 rounded-2xl p-4 shadow-xl text-white">
 
 <p className="text-xs text-zinc-400">
 💳 AlphaBot Premium Wallet
 </p>
 
 
-<p className="mt-4 text-sm text-zinc-400">
+<p className="mt-2 text-sm text-zinc-400">
 Available Balance
 </p>
 
 
-<h2 className="text-3xl font-black mt-1">
+<h2 className="text-2xl font-black mt-1">
 ₦{balance.toLocaleString()}
 </h2>
 
 
 
-<div className="flex gap-3 mt-6">
+<div className="flex gap-3 mt-4">
 
 <Link
 href="/transactions"
-className="flex-1 text-center bg-zinc-800 text-white py-3 rounded-xl font-bold border border-zinc-700 active:scale-95 transition"
+className="flex-1 text-center bg-zinc-800 text-white py-2.5 rounded-xl font-bold border border-zinc-700 active:scale-95 transition"
 >
 History
 </Link>
@@ -316,7 +316,7 @@ History
 
 <Link
 href="/withdraw"
-className="flex-1 text-center bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition"
+className="flex-1 text-center bg-yellow-400 text-black py-2.5 rounded-xl font-bold active:scale-95 transition"
 >
 Withdraw
 </Link>

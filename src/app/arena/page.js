@@ -7,7 +7,7 @@ export default function Arena(){
 
 return(
 
-<main className="min-h-screen bg-[#050505] text-white px-6 py-6 pb-24">
+<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white px-6 py-6 pb-24">
 
 <div className="max-w-md mx-auto">
 
@@ -16,7 +16,7 @@ return(
 
 <div className="flex items-center gap-3">
 
-<div className="w-11 h-11 rounded-xl bg-[#18181B] border border-zinc-700 flex items-center justify-center">
+<div className="w-11 h-11 rounded-xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-700 flex items-center justify-center">
 
 <span className="text-xl font-black bg-gradient-to-br from-white to-zinc-400 bg-clip-text text-transparent">
 A+
@@ -31,7 +31,7 @@ A+
 Arena+
 </h1>
 
-<p className="text-xs text-zinc-500">
+<p className="text-xs text-zinc-500 dark:text-zinc-500">
 AlphaBot Competition Zone
 </p>
 
@@ -47,7 +47,7 @@ AlphaBot Competition Zone
 {/* HERO */}
 
 
-<div className="mt-8 bg-[#18181B] border border-zinc-800 rounded-3xl p-6 shadow-xl">
+<div className="mt-8 bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-xl">
 
 
 <p className="text-yellow-400 text-sm font-bold">
@@ -67,7 +67,7 @@ Earn Rewards.
 </h2>
 
 
-<p className="text-zinc-400 mt-4 text-sm leading-relaxed">
+<p className="text-zinc-600 dark:text-zinc-400 mt-4 text-sm leading-relaxed">
 
 Join football predictions, collect points, climb the leaderboard and compete with other players.
 
@@ -100,11 +100,11 @@ className="inline-block mt-6 bg-yellow-400 text-black px-6 py-3 rounded-xl font-
 
 <Link
 href="/arena/leaderboard"
-className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:border-zinc-500 transition"
+className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 hover:border-zinc-500 transition"
 >
 
 
-<div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center text-xl">
+<div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-xl">
 
 🏆
 
@@ -116,7 +116,7 @@ Leaderboard
 </h3>
 
 
-<p className="text-xs text-zinc-400 mt-2">
+<p className="text-xs text-zinc-600 dark:text-zinc-400 mt-2">
 See top players and rankings
 </p>
 
@@ -129,11 +129,11 @@ See top players and rankings
 
 <Link
 href="/arena/rewards"
-className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:border-zinc-500 transition"
+className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 hover:border-zinc-500 transition"
 >
 
 
-<div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center text-xl">
+<div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-xl">
 
 🎁
 
@@ -145,7 +145,7 @@ Rewards
 </h3>
 
 
-<p className="text-xs text-zinc-400 mt-2">
+<p className="text-xs text-zinc-600 dark:text-zinc-400 mt-2">
 Claim your competition wins
 </p>
 
@@ -164,7 +164,7 @@ Claim your competition wins
 {/* COMING SOON */}
 
 
-<div className="mt-6 bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
+<div className="mt-6 bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 
 <h2 className="text-xl font-bold">
@@ -172,7 +172,7 @@ Claim your competition wins
 </h2>
 
 
-<div className="mt-4 space-y-3 text-zinc-400 text-sm">
+<div className="mt-4 space-y-3 text-zinc-600 dark:text-zinc-400 text-sm">
 
 <p>
 🎮 Mini Games

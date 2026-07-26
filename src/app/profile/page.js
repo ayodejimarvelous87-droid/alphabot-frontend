@@ -99,8 +99,8 @@ window.location.href="/login";
 if(loading){
 
 return(
-<main className="min-h-screen bg-[#050505] text-white p-6">
-<p className="text-zinc-400">Loading profile...</p>
+<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white p-6">
+<p className="text-zinc-600 dark:text-zinc-400">Loading profile...</p>
 </main>
 )
 
@@ -110,7 +110,7 @@ return(
 
 return(
 
-<main className="min-h-screen bg-[#050505] text-white px-6 py-6 pb-24">
+<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white px-6 py-6 pb-24">
 
 <Toast message={toast} type="error"/>
 
@@ -136,7 +136,7 @@ Profile
 
 {/* PROFILE CARD */}
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
 
 
 <div className="flex items-center gap-4">
@@ -156,7 +156,7 @@ Profile
 </h2>
 
 
-<p className="text-zinc-400 text-sm mt-1">
+<p className="text-zinc-600 dark:text-zinc-400 text-sm mt-1">
 {user?.phone}
 </p>
 
@@ -173,10 +173,10 @@ Profile
 
 
 
-<div className="mt-5 pt-4 border-t border-zinc-800">
+<div className="mt-5 pt-4 border-t border-zinc-200 dark:border-zinc-800">
 
 
-<p className="text-sm text-zinc-400">
+<p className="text-sm text-zinc-600 dark:text-zinc-400">
 Account Status
 </p>
 
@@ -203,7 +203,7 @@ Account Status
 <div className="grid grid-cols-2 gap-4">
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5">
+<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
 
 <p className="text-xs text-zinc-500">
 Wallet Balance
@@ -217,7 +217,7 @@ Wallet Balance
 
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5">
+<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
 
 <p className="text-xs text-zinc-500">
 Referral Earnings
@@ -239,7 +239,7 @@ Referral Earnings
 {/* INFORMATION */}
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
 
 
 <h2 className="font-bold">
@@ -293,7 +293,7 @@ Joined
 
 <Link
 href="/referral"
-className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
 >
 🎁 Invite & Earn
 </Link>
@@ -301,7 +301,7 @@ className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:borde
 
 <Link
 href="/transaction-pin"
-className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
 >
 🔐 Transaction PIN
 </Link>
@@ -309,7 +309,7 @@ className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:borde
 
 <Link
 href="/ai"
-className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
 >
 🤖 AI Assistant
 </Link>
@@ -317,7 +317,7 @@ className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:borde
 
 <Link
 href="/support"
-className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
 >
 🆘 Support
 </Link>
@@ -325,7 +325,7 @@ className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:borde
 
 <Link
 href="/terms"
-className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
 >
 📄 Terms & Conditions
 </Link>
@@ -333,7 +333,7 @@ className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:borde
 
 <Link
 href="/privacy"
-className="block bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
 >
 🔒 Privacy Policy
 </Link>
@@ -357,7 +357,7 @@ Edit Profile
 
 <button
 onClick={logout}
-className="w-full bg-[#18181B] border border-red-900 text-red-400 rounded-xl py-3 font-bold"
+className="w-full bg-zinc-100 dark:bg-[#18181B] border border-red-900 text-red-400 rounded-xl py-3 font-bold"
 >
 Logout
 </button>

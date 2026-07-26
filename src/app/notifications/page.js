@@ -110,6 +110,42 @@ setMessage("Failed to update notification");
 };
 
 
+const markAllRead = async()=>{
+
+const token = localStorage.getItem("token");
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user) return;
+
+setNotifications(prev=>
+prev.map(item=>({
+...item,
+read:true
+}))
+);
+
+try{
+
+await fetch(
+`https://alphabot-1.onrender.com/notifications/read-all/${user.phone}`,
+{
+method:"PATCH",
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
+
+}catch(error){
+
+setMessage("Failed to mark all as read");
+
+}
+
+};
+
+
+
 
 
 const filteredNotifications=useMemo(()=>{
@@ -189,6 +225,30 @@ text-black
 <p className="text-zinc-500 dark:text-zinc-400 mt-2">
 Stay updated with your AlphaBot activities
 </p>
+
+{
+notifications.some(n=>!n.read) && (
+
+<button
+onClick={markAllRead}
+className="
+mt-4
+text-sm
+bg-yellow-400
+text-black
+px-4
+py-2
+rounded-xl
+font-bold
+"
+>
+
+Mark All as Read
+
+</button>
+
+)
+}
 
 
 </header>

@@ -1,23 +1,46 @@
 "use client";
 
-import {useState} from "react";
+import {useState,useEffect} from "react";
 import Link from "next/link";
 
 export default function Transfer(){
 
-const banks=[
-"Access Bank",
-"GTBank",
-"First Bank",
-"UBA",
-"Zenith Bank",
-"Moniepoint",
-"Opay",
-"Kuda Bank"
-];
+const [banks,setBanks]=useState([]);
+
+useEffect(()=>{
+
+const loadBanks=async()=>{
+
+try{
+
+const res=await fetch(
+"https://alphabot-1.onrender.com/bank",
+{
+headers:{
+Authorization:`Bearer ${localStorage.getItem("token")}`
+}
+}
+);
+
+const data=await res.json();
+
+setBanks(data.data || []);
+
+}catch(error){
+
+console.log(error);
+
+}
+
+};
+
+loadBanks();
+
+},[]);
 
 
 const [bank,setBank]=useState("");
+const [searchBank,setSearchBank]=useState("");
 const [accountNumber,setAccountNumber]=useState("");
 const [accountName,setAccountName]=useState("");
 const [amount,setAmount]=useState("");
@@ -26,7 +49,7 @@ const [message,setMessage]=useState("");
 const [verified,setVerified]=useState(false);
 
 
-const verifyAccount=()=>{
+const verifyAccount=async()=>{
 
 if(!bank || accountNumber.length < 10){
 
@@ -35,9 +58,47 @@ return;
 
 }
 
-setAccountName("Account Holder");
+try{
+
+const res=await fetch(
+"https://alphabot-1.onrender.com/bank/verify",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${localStorage.getItem("token")}`
+},
+body:JSON.stringify({
+accountNumber,
+bankCode:bank
+})
+}
+);
+
+const data=await res.json();
+
+if(res.ok){
+
+setAccountName(
+data.data?.account_name || data.account_name || "Unknown"
+);
 setVerified(true);
-setMessage("✅ Account verified");
+setMessage(
+"✅ Account verified: " +
+(data.data?.account_name || data.account_name)
+);
+
+}else{
+
+setMessage("❌ "+data.message);
+
+}
+
+}catch(error){
+
+setMessage("❌ Verification failed");
+
+}
 
 };
 
@@ -99,6 +160,19 @@ Select Bank
 </p>
 
 
+<input
+
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 mb-3"
+
+placeholder="Search bank..."
+
+value={searchBank}
+
+onChange={(e)=>setSearchBank(e.target.value)}
+
+/>
+
+
 <select
 
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
@@ -114,10 +188,14 @@ Choose bank
 </option>
 
 {
-banks.map(item=>(
+banks
+.filter(item =>
+item.name.toLowerCase().includes(searchBank.toLowerCase())
+)
+.map(item=>(
 
-<option key={item}>
-{item}
+<option key={item.code + item.name} value={item.code}>
+{item.name}
 </option>
 
 ))

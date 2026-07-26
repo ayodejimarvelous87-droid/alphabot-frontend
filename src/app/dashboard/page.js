@@ -12,7 +12,13 @@ const [user,setUser]=useState(null);
 const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(true);
 const [balance,setBalance]=useState(0);
-const [showBalance,setShowBalance]=useState(true);
+const [showBalance,setShowBalance]=useState(()=>{
+return localStorage.getItem("showBalance") !== "false";
+});
+useEffect(()=>{
+localStorage.setItem("showBalance", showBalance);
+},[showBalance]);
+
 const [transactionCount,setTransactionCount]=useState(0);
 const [totalSpent,setTotalSpent]=useState(0);
 const [referralEarnings,setReferralEarnings]=useState(0);
@@ -618,14 +624,14 @@ View all →
 <div className="grid grid-cols-4 gap-2">
 
 {[
-["⚡","Power"],
-["📺","TV"],
-["🔁","Repeat"],
-["🏆","Arena"]
+["⚡","Power","/electricity"],
+["📺","TV","/tv"],
+["🔁","Repeat","/recurring"],
+["🏆","Arena","/arena"]
 ].map((item)=>(
 
 <Link
-href="/services"
+href={item[2]}
 key={item[1]}
 className="h-16 bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl flex flex-col items-center justify-center hover:scale-105 transition"
 >
