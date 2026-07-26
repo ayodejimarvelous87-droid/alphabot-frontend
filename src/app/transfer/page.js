@@ -39,6 +39,7 @@ loadBanks();
 },[]);
 
 
+const [phone,setPhone]=useState("");
 const [bank,setBank]=useState("");
 const [searchBank,setSearchBank]=useState("");
 const [accountNumber,setAccountNumber]=useState("");
@@ -115,7 +116,7 @@ Number(amount)<=0 ||
 
 
 
-const transfer=()=>{
+const transfer=async()=>{
 
 if(disabled){
 
@@ -124,7 +125,47 @@ return;
 
 }
 
+try{
+
 setMessage("Processing transfer...");
+
+const res = await fetch(
+"https://alphabot-1.onrender.com/transfer/send",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${localStorage.getItem("token")}`
+},
+body:JSON.stringify({
+phone,
+bankName:banks.find(item=>item.code===bank)?.name,
+bankCode:bank,
+accountNumber,
+accountName,
+amount:Number(amount),
+pin
+})
+}
+);
+
+const data = await res.json();
+
+if(res.ok){
+
+setMessage("✅ Transfer successful");
+
+}else{
+
+setMessage("❌ "+data.message);
+
+}
+
+}catch(error){
+
+setMessage("❌ Connection error");
+
+}
 
 };
 
