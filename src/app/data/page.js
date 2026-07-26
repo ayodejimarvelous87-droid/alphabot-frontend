@@ -121,8 +121,7 @@ const categories =
 actualNetwork
 ? [
 "All Plans",
-...Object.keys(plans[actualNetwork]).filter(cat=>cat !== "All Plans" && cat !== "Standard" && cat !== "Awoof" && cat !== "Gifting" && cat !== "SME" && cat !== "SME 2"),
-...["SME","SME 2","Awoof","Gifting","Standard"].filter(cat=>plans[actualNetwork]?.[cat]),
+...Object.keys(plans[actualNetwork]).filter(cat=>cat !== "All Plans")
 ]
 : [];
 
