@@ -18,6 +18,8 @@ const routes={
 "tv":"/tv",
 "betting":"/betting",
 "exam-pin":"/exam-pin",
+  "epin":"/recharge-pin",
+  "recharge-pin":"/recharge-pin",
 "airtime-cash":"/airtime-cash",
 "bank":"/bank",
 "transfer":"/transfer",
