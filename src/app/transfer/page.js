@@ -40,6 +40,21 @@ loadBanks();
 
 
 const [phone,setPhone]=useState("");
+
+useEffect(()=>{
+
+const savedUser = localStorage.getItem("user");
+
+if(savedUser){
+
+const user = JSON.parse(savedUser);
+
+setPhone(user.phone);
+
+}
+
+},[]);
+
 const [bank,setBank]=useState("");
 const [searchBank,setSearchBank]=useState("");
 const [accountNumber,setAccountNumber]=useState("");
