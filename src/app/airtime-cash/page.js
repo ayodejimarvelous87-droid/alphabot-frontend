@@ -355,6 +355,13 @@ otpVerified &&
 
 <>
 
+<div className="bg-yellow-400/10 border border-yellow-400/30 rounded-xl p-3 text-sm text-yellow-300">
+⚠️ Please enter your SIM airtime transfer PIN.
+<br/>
+This is your network airtime PIN, not your AlphaBot transaction PIN.
+</div>
+
+
 <input
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 placeholder="Airtime amount"

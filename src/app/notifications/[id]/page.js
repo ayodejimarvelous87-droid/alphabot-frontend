@@ -87,7 +87,7 @@ export default function NotificationDetails(){
 
         <h1 className="text-2xl font-bold">
           {data.title}
-        </h2>
+        </h1>
 
 
         <p>
@@ -128,6 +128,15 @@ export default function NotificationDetails(){
               <p>
                 Description: {transaction.description}
               </p>
+
+
+              <Link
+                href={`/receipt/${transaction._id}`}
+                className="block text-center mt-4 bg-yellow-400 text-black py-3 rounded-xl font-bold"
+              >
+                🧾 View Receipt
+              </Link>
+
 
             </div>
 
