@@ -14,7 +14,7 @@ export default function NotificationDetails(){
 
   useEffect(()=>{
 
-    const load = async()=>{
+    async function load(){
 
       try{
 
@@ -36,7 +36,7 @@ export default function NotificationDetails(){
 
       }
 
-    };
+    }
 
 
     if(id){
@@ -49,7 +49,7 @@ export default function NotificationDetails(){
   if(loading){
 
     return (
-      <div className="p-6">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
         Loading notification...
       </div>
     );
@@ -60,7 +60,7 @@ export default function NotificationDetails(){
   if(!data){
 
     return (
-      <div className="p-6">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
         Notification not found.
       </div>
     );
@@ -71,83 +71,149 @@ export default function NotificationDetails(){
   const transaction = data.transactionId;
 
 
+  const icon =
+    data.type === "success"
+    ? "✅"
+    : data.type === "warning"
+    ? "⚠️"
+    : "🔔";
+
+
   return (
 
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen bg-black text-white p-5">
 
-      <Link
-        href="/notifications"
-        className="text-blue-600"
-      >
-        ← Back
-      </Link>
+      <div className="max-w-xl mx-auto">
 
 
-      <div className="mt-6 rounded-xl border p-5 space-y-4">
-
-        <h1 className="text-2xl font-bold">
-          {data.title}
-        </h1>
-
-
-        <p>
-          {data.message}
-        </p>
+        <Link
+          href="/notifications"
+          className="text-yellow-400 font-bold"
+        >
+          ← Back to Notifications
+        </Link>
 
 
-        <p>
-          Date: {new Date(data.createdAt).toLocaleString()}
-        </p>
+        <div className="mt-6 rounded-3xl bg-[#121214] border border-zinc-800 p-6 shadow-xl">
 
 
-        {
-          transaction && (
+          <div className="text-center">
 
-            <div className="border-t pt-4 space-y-2">
+            <div className="mx-auto w-20 h-20 rounded-full bg-yellow-400 flex items-center justify-center text-4xl shadow-lg shadow-yellow-400/30">
 
-              <h2 className="font-bold">
-                Transaction Details
-              </h2>
-
-              <p>
-                Amount: ₦{transaction.amount}
-              </p>
-
-              <p>
-                Status: {transaction.status}
-              </p>
-
-              <p>
-                Reference: {transaction.reference}
-              </p>
-
-              <p>
-                Flutterwave ID: {transaction.flutterwaveId}
-              </p>
-
-              <p>
-                Description: {transaction.description}
-              </p>
-
-
-              <Link
-                href={`/receipt/${transaction._id}`}
-                className="block text-center mt-4 bg-yellow-400 text-black py-3 rounded-xl font-bold"
-              >
-                🧾 View Receipt
-              </Link>
-
+              {icon}
 
             </div>
 
-          )
-        }
+
+            <h1 className="mt-5 text-3xl font-extrabold">
+              {data.title}
+            </h1>
+
+
+            <p className="mt-3 text-zinc-400">
+              {data.message}
+            </p>
+
+
+            <p className="mt-4 text-sm text-zinc-500">
+              {new Date(data.createdAt).toLocaleString()}
+            </p>
+
+
+          </div>
+
+
+
+          {
+            transaction && (
+
+              <div className="mt-8 rounded-3xl bg-black border border-zinc-800 p-5">
+
+
+                <h2 className="text-xl font-bold mb-5">
+                  Transaction Details
+                </h2>
+
+
+                <div className="space-y-4">
+
+
+                  <Detail
+                    title="Amount"
+                    value={`₦${Number(transaction.amount).toLocaleString()}`}
+                  />
+
+
+                  <Detail
+                    title="Status"
+                    value={transaction.status}
+                  />
+
+
+                  <Detail
+                    title="Reference"
+                    value={transaction.reference}
+                  />
+
+
+                  <Detail
+                    title="Description"
+                    value={transaction.description}
+                  />
+
+
+                </div>
+
+
+
+                <Link
+                  href={`/receipt/${transaction._id}`}
+                  className="block text-center mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold"
+                >
+                  🧾 View Receipt
+                </Link>
+
+
+              </div>
+
+            )
+
+          }
+
+
+        </div>
 
 
       </div>
 
+
     </div>
 
   );
+
+}
+
+
+
+function Detail({title,value}){
+
+return (
+
+<div className="flex justify-between gap-4 border-b border-zinc-800 pb-3">
+
+<span className="text-zinc-400">
+{title}
+</span>
+
+
+<span className="text-right font-bold break-all">
+{value || "-"}
+</span>
+
+
+</div>
+
+);
 
 }
