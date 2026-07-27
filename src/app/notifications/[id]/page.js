@@ -2,21 +2,22 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-export default function NotificationDetails(){
+export default function NotificationDetails() {
 
   const { id } = useParams();
+  const router = useRouter();
 
-  const [data,setData] = useState(null);
-  const [loading,setLoading] = useState(true);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    async function load(){
+    async function load() {
 
-      try{
+      try {
 
         const res = await fetch(
           `https://alphabot-1.onrender.com/notifications/detail/${id}`
@@ -26,11 +27,11 @@ export default function NotificationDetails(){
 
         setData(result);
 
-      }catch(error){
+      } catch (error) {
 
         console.log(error);
 
-      }finally{
+      } finally {
 
         setLoading(false);
 
@@ -43,149 +44,408 @@ export default function NotificationDetails(){
       load();
     }
 
-  },[id]);
+  }, [id]);
+
 
 
   if(loading){
 
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        Loading notification...
+      <div className="
+      min-h-screen
+      bg-[#050505]
+      flex
+      items-center
+      justify-center
+      ">
+
+        <div className="
+        animate-spin
+        rounded-full
+        h-8
+        w-8
+        border-4
+        border-zinc-700
+        border-t-white
+        "></div>
+
       </div>
     );
 
   }
+
 
 
   if(!data){
 
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        Notification not found.
+      <div className="
+      min-h-screen
+      bg-[#050505]
+      text-white
+      flex
+      flex-col
+      items-center
+      justify-center
+      p-5
+      text-center
+      ">
+
+        <p className="text-zinc-400 mb-4">
+          Notification not found
+        </p>
+
+
+        <button
+        onClick={()=>router.back()}
+        className="text-white font-bold"
+        >
+          Go Back
+        </button>
+
+
       </div>
     );
 
   }
 
 
+
   const transaction = data.transactionId;
 
 
-  const icon =
-    data.type === "success"
-    ? "✅"
-    : data.type === "warning"
-    ? "⚠️"
-    : "🔔";
+  const isSuccess =
+    transaction?.status?.toLowerCase() === "successful" ||
+    transaction?.status?.toLowerCase() === "success" ||
+    data.type === "success";
+
+
+  const isCredit =
+    transaction?.direction === "credit";
+
 
 
   return (
 
-    <div className="min-h-screen bg-black text-white p-5">
+    <div className="
+    min-h-screen
+    bg-[#050505]
+    text-white
+    font-sans
+    antialiased
+    pb-10
+    ">
 
-      <div className="max-w-xl mx-auto">
 
 
-        <Link
-          href="/notifications"
-          className="text-yellow-400 font-bold"
+      {/* Header */}
+
+      <header className="
+      h-14
+      flex
+      items-center
+      px-5
+      border-b
+      border-zinc-800
+      bg-[#050505]
+      ">
+
+        <button
+        onClick={()=>router.back()}
+        className="text-zinc-300"
         >
-          ← Back to Notifications
-        </Link>
+          ←
+        </button>
 
 
-        <div className="mt-6 rounded-3xl bg-[#121214] border border-zinc-800 p-6 shadow-xl">
+        <h1 className="
+        absolute
+        left-1/2
+        -translate-x-1/2
+        font-semibold
+        ">
+          Details
+        </h1>
 
 
-          <div className="text-center">
-
-            <div className="mx-auto w-20 h-20 rounded-full bg-yellow-400 flex items-center justify-center text-4xl shadow-lg shadow-yellow-400/30">
-
-              {icon}
-
-            </div>
+      </header>
 
 
-            <h1 className="mt-5 text-3xl font-extrabold">
-              {data.title}
-            </h1>
 
 
-            <p className="mt-3 text-zinc-400">
-              {data.message}
-            </p>
+
+      <main className="
+      max-w-md
+      mx-auto
+      px-5
+      mt-6
+      ">
 
 
-            <p className="mt-4 text-sm text-zinc-500">
-              {new Date(data.createdAt).toLocaleString()}
-            </p>
+
+
+        {/* AlphaBot Logo */}
+
+        <div className="flex justify-center mb-5">
+
+          <div className="
+          w-14
+          h-14
+          rounded-2xl
+          bg-black
+          border
+          border-zinc-700
+          flex
+          items-center
+          justify-center
+          shadow-inner
+          ">
+
+            <span className="
+            text-3xl
+            font-black
+            bg-gradient-to-br
+            from-white
+            to-zinc-400
+            bg-clip-text
+            text-transparent
+            ">
+              A
+            </span>
+
+          </div>
+
+        </div>
+
+
+
+
+
+
+        {/* Status */}
+
+        <div className="
+        flex
+        flex-col
+        items-center
+        text-center
+        my-6
+        ">
+
+
+          <div className={`
+          w-16
+          h-16
+          rounded-full
+          flex
+          items-center
+          justify-center
+          mb-3
+          ${isSuccess
+          ? "bg-green-500/10"
+          : "bg-red-500/10"}
+          `}>
+
+
+            <span className={`
+            text-4xl
+            ${isSuccess
+            ? "text-green-400"
+            : "text-red-400"}
+            `}>
+
+              {isSuccess ? "✓" : "!"}
+
+            </span>
 
 
           </div>
 
 
 
+
+
           {
-            transaction && (
+            transaction?.amount ? (
 
-              <div className="mt-8 rounded-3xl bg-black border border-zinc-800 p-5">
+              <h2 className="
+              text-3xl
+              font-bold
+              tracking-tight
+              font-mono
+              ">
 
+                {isCredit ? "+" : "-"}
+                ₦
+                {Number(transaction.amount).toLocaleString(undefined,{
+                  minimumFractionDigits:2,
+                  maximumFractionDigits:2
+                })}
 
-                <h2 className="text-xl font-bold mb-5">
-                  Transaction Details
-                </h2>
+              </h2>
 
+            ) : (
 
-                <div className="space-y-4">
-
-
-                  <Detail
-                    title="Amount"
-                    value={`₦${Number(transaction.amount).toLocaleString()}`}
-                  />
-
-
-                  <Detail
-                    title="Status"
-                    value={transaction.status}
-                  />
-
-
-                  <Detail
-                    title="Reference"
-                    value={transaction.reference}
-                  />
-
-
-                  <Detail
-                    title="Description"
-                    value={transaction.description}
-                  />
-
-
-                </div>
-
-
-
-                <Link
-                  href={`/receipt/${transaction._id}`}
-                  className="block text-center mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold"
-                >
-                  🧾 View Receipt
-                </Link>
-
-
-              </div>
+              <h2 className="
+              text-xl
+              font-bold
+              ">
+                {data.title}
+              </h2>
 
             )
 
           }
 
 
+
+          <p className={`
+          mt-2
+          text-xs
+          font-semibold
+          px-3
+          py-1
+          rounded-full
+          ${isSuccess
+          ? "bg-green-500/10 text-green-400"
+          : "bg-red-500/10 text-red-400"}
+          `}>
+
+            {transaction?.status || data.type || "Notification"}
+
+          </p>
+
+
         </div>
 
 
-      </div>
+
+
+
+
+
+        {/* Details Card */}
+
+        <div className="
+        bg-gradient-to-b
+        from-[#18181B]
+        to-[#101012]
+        rounded-3xl
+        p-5
+        border
+        border-zinc-800
+        shadow-[0_20px_50px_rgba(0,0,0,0.5)]
+        ">
+
+
+
+          {!transaction && (
+
+            <div className="
+            pb-4
+            border-b
+            border-zinc-800
+            ">
+
+              <h3 className="font-bold">
+                {data.title}
+              </h3>
+
+
+              <p className="
+              text-sm
+              text-zinc-400
+              mt-2
+              ">
+                {data.message}
+              </p>
+
+            </div>
+
+          )}
+
+
+
+
+
+
+          <div className="
+          mt-4
+          space-y-4
+          ">
+
+
+            {transaction && (
+
+              <>
+
+
+              <DetailRow
+              title="Remarks"
+              value={transaction.description || data.message}
+              />
+
+
+              <DetailRow
+              title="Transaction Ref"
+              value={transaction.reference}
+              copy
+              />
+
+
+              </>
+
+            )}
+
+
+
+
+            <DetailRow
+            title="Transaction Time"
+            value={
+              new Date(data.createdAt).toLocaleString()
+            }
+            />
+
+
+          </div>
+
+
+        </div>
+
+
+
+
+
+
+
+        {transaction && (
+
+          <Link
+          href={`/receipt/${transaction._id}`}
+          className="
+          flex
+          items-center
+          justify-center
+          w-full
+          mt-6
+          bg-white
+          text-black
+          py-3.5
+          rounded-full
+          font-semibold
+          "
+          >
+
+            🧾 View Receipt
+
+          </Link>
+
+        )}
+
+
+
+      </main>
 
 
     </div>
@@ -196,24 +456,72 @@ export default function NotificationDetails(){
 
 
 
-function Detail({title,value}){
 
-return (
-
-<div className="flex justify-between gap-4 border-b border-zinc-800 pb-3">
-
-<span className="text-zinc-400">
-{title}
-</span>
+function DetailRow({title,value,copy=false}){
 
 
-<span className="text-right font-bold break-all">
-{value || "-"}
-</span>
+  function handleCopy(){
+
+    navigator.clipboard.writeText(value);
+
+  }
 
 
-</div>
+  return (
 
-);
+    <div className="
+    flex
+    justify-between
+    items-start
+    gap-4
+    ">
+
+
+      <span className="
+      text-zinc-500
+      text-sm
+      ">
+        {title}
+      </span>
+
+
+
+      <div className="
+      flex
+      items-center
+      gap-2
+      text-right
+      ">
+
+        <span className="
+        text-sm
+        font-medium
+        break-all
+        ">
+          {value || "-"}
+        </span>
+
+
+
+        {copy && (
+
+          <button
+          onClick={handleCopy}
+          className="
+          text-zinc-300
+          text-xs
+          "
+          >
+            Copy
+          </button>
+
+        )}
+
+      </div>
+
+
+    </div>
+
+  );
 
 }
