@@ -149,8 +149,12 @@ Date: ${new Date(receipt.createdAt).toLocaleString()}
 
         const data = await res.json();
 
+        console.log("RECEIPT RESPONSE:", data);
+
         if (res.ok) {
           setReceipt(data.receipt);
+        } else {
+          alert(data.message || "Receipt loading failed");
         }
 
       } catch (err) {
