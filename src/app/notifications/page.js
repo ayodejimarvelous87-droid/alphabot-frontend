@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useEffect, useMemo, useState } from "react";
 import BottomNav from "@/components/BottomNav";
 import Toast from "@/components/Toast";
@@ -390,7 +392,9 @@ We will notify you about wallet, services and rewards.
 filteredNotifications.map(item=>(
 
 
-<div
+<Link
+
+href={`/notifications/${item._id}`}
 
 key={item._id}
 
@@ -552,7 +556,7 @@ Read
 
 
 
-</div>
+</Link>
 
 
 ))
