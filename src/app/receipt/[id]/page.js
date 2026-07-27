@@ -139,7 +139,7 @@ Date: ${new Date(receipt.createdAt).toLocaleString()}
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          `https://alphabot-1.onrender.com/receipt/${id}`,
+          `https://alphabot-1.onrender.com/receipts/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
