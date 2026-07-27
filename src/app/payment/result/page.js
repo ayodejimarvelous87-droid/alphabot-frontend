@@ -73,7 +73,7 @@ export default function PaymentResult(){
           setSuccess(true);
 
           setMessage(
-            "Payment successful! Your wallet has been funded."
+            "Payment verified successfully. Your wallet is up to date."
           );
 
         }else{
@@ -122,7 +122,7 @@ export default function PaymentResult(){
 
 
         <Link
-          href="/dashboard/wallet"
+          href="/dashboard"
           className="px-5 py-3 rounded bg-blue-600 text-white inline-block"
         >
           Back to Wallet
