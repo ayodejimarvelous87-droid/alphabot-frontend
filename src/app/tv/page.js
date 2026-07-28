@@ -5,13 +5,14 @@ import Link from "next/link";
 
 export default function Page(){
 
-const [provider,setProvider]=useState("dstv");
+const [provider,setProvider]=useState("");
 const [smartCardNumber,setSmartCardNumber]=useState("");
 const [tvPackage,setTvPackage]=useState("");
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 
 const [plans,setPlans]=useState([]);
+const [providers,setProviders]=useState([]);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 
@@ -41,6 +42,8 @@ const data=await res.json();
 if(data.success){
 
 setPlans(data.plans);
+setProviders([...new Set(data.plans.map(item=>item.provider))]);
+setProvider(data.plans[0]?.provider || "");
 
 }
 
@@ -178,19 +181,13 @@ setAmount("");
 >
 
 
-<option value="dstv">
-DStv
+{providers.map((item)=>(
+<option key={item} value={item}>
+{item.toUpperCase()}
 </option>
+))}
 
 
-<option value="gotv">
-GOtv
-</option>
-
-
-<option value="startimes">
-Startimes
-</option>
 
 
 </select>

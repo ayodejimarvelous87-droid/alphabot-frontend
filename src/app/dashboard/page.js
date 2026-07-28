@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { requestNotificationPermission } from "@/firebase";
 import BottomNav from "@/components/BottomNav";
 import Toast from "@/components/Toast";
 import { useTheme } from "@/components/ThemeProvider";
@@ -54,10 +55,32 @@ Authorization:`Bearer ${token}`
 }
 })
 .then(res=>res.json())
-.then(profile=>{
+.then(async(profile)=>{
 if(profile && !profile.message){
 setUser(profile);
 localStorage.setItem("user",JSON.stringify(profile));
+
+const fcmToken = await requestNotificationPermission();
+
+if(fcmToken){
+
+await fetch(
+"https://alphabot-1.onrender.com/notifications/register-token",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:"Bearer "+token
+},
+body:JSON.stringify({
+token:fcmToken,
+phone:profile.phone
+})
+}
+);
+
+}
+
 }
 });
 
@@ -278,7 +301,7 @@ const services=[
 ["🔁","Recurring","/recurring"],
 ["🎮","Betting","/betting"],
 ["🎓","Exam PIN","/exam-pin"],
-["💳","Recharge PIN","/recharge-pin"],
+["💳","ePIN","/recharge-pin"],
 ["🏆","Arena+","/arena"],
 ["💬","Support","/support"],
 

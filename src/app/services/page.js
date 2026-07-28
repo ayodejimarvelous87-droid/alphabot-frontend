@@ -18,15 +18,15 @@ const routes={
 "tv":"/tv",
 "betting":"/betting",
 "exam-pin":"/exam-pin",
+  
   "epin":"/recharge-pin",
-  "recharge-pin":"/recharge-pin",
 "airtime-cash":"/airtime-cash",
 "bank":"/bank",
 "transfer":"/transfer",
 "withdraw":"/withdraw",
 "recurring":"/recurring",
+"beneficiary":"/beneficiary",
 "ai":"/ai",
-"mifi":"/data"
 };
 
 return routes[type] || "/services";
@@ -52,17 +52,16 @@ const getDisplayName=(product)=>{
 if(product.type==="airtime") return "Airtime";
 if(product.type==="data") return "Data Plan";
 if(product.type==="airtime-cash") return "Airtime Cash";
-if(product.type==="mifi") return "MiFi";
 if(product.type==="bank") return "Bank Transfer";
 return product.name;
 };
 const getIcon=(product)=>{
 if(product.type==="airtime") return "📞";
 if(product.type==="data") return "📶";
-if(product.type==="mifi") return "📡";
 if(product.type==="tv") return "📺";
 if(product.type==="electricity") return "💡";
-if(product.type==="exam-pin" || product.type==="epin" || product.type==="recharge-pin") return "🎓";
+if(product.type==="exam-pin") return "🎓";
+if(product.type==="epin") return "🎫";
 if(product.type==="betting") return "🎯";
 if(product.type==="airtime-cash") return "💵";
 if(product.type==="bank") return "🏦";
@@ -110,7 +109,7 @@ Services 🛠️
 📱 Mobile
 </h2>
 <div className="grid grid-cols-2 gap-3 mt-3">
-{products.filter(p=>["airtime","data","mifi"].includes(p.type)).map(p=>(
+{products.filter(p=>["airtime","data"].includes(p.type)).map(p=>(
 <ServiceCard key={p._id} icon={getIcon(p)} title={getDisplayName(p)} link={getServiceLink(p.type)} desc={p.network || "Mobile service"} />
 ))}
 </div>
@@ -132,18 +131,20 @@ Services 🛠️
 🎓 Pins
 </h2>
 <div className="grid-cols-2 grid gap-3 mt-3">
-{products.filter(p=>["exam-pin","epin","recharge-pin","waec","jamb","neco"].includes(p.type)).map(p=>(
+{products.filter(p=>["exam-pin","epin"].includes(p.type)).map(p=>(
 <ServiceCard key={p._id} icon={getIcon(p)} title={getDisplayName(p)} link={getServiceLink(p.type)} desc="PIN service" />
 ))}
 </div>
 </section>
+
+
 
 <section className="mt-5">
 <h2 className="bg-white dark:bg-[#1A1A1E] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2 text-sm font-bold">
 🧾 Bills
 </h2>
 <div className="grid-cols-2 grid gap-3 mt-3">
-{products.filter(p=>!["airtime","data","mifi","tv","electricity","exam-pin","epin","recharge-pin","waec","jamb","neco","bank"].includes(p.type)).map(p=>(
+{products.filter(p=>!["airtime","data","tv","electricity","exam-pin","epin","waec","jamb","neco","bank"].includes(p.type)).map(p=>(
 <ServiceCard key={p._id} icon={getIcon(p)} title={getDisplayName(p)} link={getServiceLink(p.type)} desc={p.type} />
 ))}
 </div>
@@ -169,6 +170,31 @@ Services 🛠️
 </div>
 </section>
 
+
+
+<section className="mt-5">
+<h2 className="bg-white dark:bg-[#1A1A1E] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2 text-sm font-bold">
+⚙️ Account Services
+</h2>
+
+<div className="grid grid-cols-2 gap-3 mt-3">
+
+<ServiceCard
+icon="👥"
+title="Beneficiary"
+link="/beneficiary"
+desc="Manage saved users"
+/>
+
+<ServiceCard
+icon="🔁"
+title="Recurring Payments"
+link="/recurring"
+desc="Automatic payments"
+/>
+
+</div>
+</section>
 
 {loading && (
 <p className="text-zinc-500 mt-5">

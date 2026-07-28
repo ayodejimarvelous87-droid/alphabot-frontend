@@ -189,7 +189,7 @@ onChange={setPhone}
 
 beneficiaries={beneficiaries}
 
-service="recharge-pin"
+service="epin"
 
 />
 
