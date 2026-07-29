@@ -84,7 +84,7 @@ requestNotificationPermission().then(async(token)=>{
   if(token){
 
     await fetch(
-      "http://localhost:5000/notifications/register-token",
+      "https://alphabot-1.onrender.com/notifications/register-token",
       {
         method:"POST",
         headers:{
@@ -119,9 +119,9 @@ Manage AlphaBot operations and monitor business performance.
 </p>
 
 
-<p className="text-red-500">
+<div className="bg-yellow-100 text-yellow-800 border border-yellow-300 rounded-xl p-3">
 {message}
-</p>
+</div>
 
 
 
