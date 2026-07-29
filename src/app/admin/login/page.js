@@ -10,7 +10,6 @@ const router = useRouter();
 const [username,setUsername]=useState("");
 const [password,setPassword]=useState("");
 const [otp,setOtp]=useState("");
-
 const [step,setStep]=useState(1);
 const [error,setError]=useState("");
 const [loading,setLoading]=useState(false);
@@ -20,9 +19,8 @@ const login=async()=>{
 
 if(loading) return;
 
-setError("");
 setLoading(true);
-
+setError("");
 
 try{
 
@@ -67,18 +65,14 @@ localStorage.setItem(
 data.token
 );
 
-
 router.push("/admin");
 
 
 }catch(error){
 
-setError(
-"Unable to connect to the server. Please try again."
-);
+setError("Server error");
 
 }
-
 
 setLoading(false);
 
@@ -86,14 +80,13 @@ setLoading(false);
 
 
 
+
 const verifyOTP=async()=>{
 
 if(loading) return;
 
-
-setError("");
 setLoading(true);
-
+setError("");
 
 try{
 
@@ -117,7 +110,7 @@ const data=await res.json();
 
 if(!res.ok){
 
-setError(data.message || "OTP verification failed");
+setError(data.message || "Invalid OTP");
 setLoading(false);
 return;
 
@@ -135,9 +128,7 @@ router.push("/admin");
 
 }catch(error){
 
-setError(
-"Unable to verify OTP. Try again."
-);
+setError("Server error");
 
 }
 
@@ -151,6 +142,7 @@ setLoading(false);
 return(
 
 <div className="min-h-screen flex items-center justify-center bg-black text-white">
+
 
 <div className="bg-zinc-900 p-6 rounded-3xl w-80">
 
@@ -177,7 +169,6 @@ className="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-3"
 placeholder="Username"
 value={username}
 onChange={(e)=>setUsername(e.target.value)}
-disabled={loading}
 />
 
 
@@ -187,18 +178,13 @@ placeholder="Password"
 type="password"
 value={password}
 onChange={(e)=>setPassword(e.target.value)}
-disabled={loading}
 />
 
 
 <button
 onClick={login}
 disabled={loading}
-className={`w-full py-3 rounded-xl font-bold transition ${
-loading
-?"bg-yellow-700 scale-95"
-:"bg-yellow-400 text-black hover:scale-105 active:scale-95"
-}`}
+className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 >
 {loading ? "Checking..." : "Continue"}
 </button>
@@ -213,29 +199,23 @@ loading
 
 <>
 
-<p className="text-sm text-zinc-400 mb-4">
-OTP sent to your admin email.
+<p className="text-sm text-zinc-400 mb-3">
+OTP sent to admin email
 </p>
 
 
 <input
 className="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-4"
-placeholder="Enter 6 digit OTP"
+placeholder="Enter OTP"
 value={otp}
 onChange={(e)=>setOtp(e.target.value)}
-maxLength="6"
-disabled={loading}
 />
 
 
 <button
 onClick={verifyOTP}
 disabled={loading}
-className={`w-full py-3 rounded-xl font-bold transition ${
-loading
-?"bg-yellow-700 scale-95"
-:"bg-yellow-400 text-black hover:scale-105 active:scale-95"
-}`}
+className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 >
 {loading ? "Verifying..." : "Verify OTP"}
 </button>
@@ -246,6 +226,7 @@ loading
 
 
 </div>
+
 
 </div>
 
