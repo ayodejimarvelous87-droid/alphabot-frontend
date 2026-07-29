@@ -108,7 +108,7 @@ Phone: {wallet.phone}
 
 
 <p className="text-xl">
-Balance: ₦{wallet.balance}
+Balance: ₦{Number(wallet.balance || 0).toLocaleString()}
 </p>
 
 
@@ -138,7 +138,11 @@ Add Funds
 
 <button
 className="bg-red-600 text-white px-4 py-2 mt-3 rounded"
-onClick={()=>action("deduct")}
+onClick={()=>{
+if(confirm("Are you sure you want to deduct this amount?")){
+action("deduct");
+}
+}}
 >
 Deduct Funds
 </button>

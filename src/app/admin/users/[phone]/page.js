@@ -146,7 +146,7 @@ Status: {data.user.status}
 </h2>
 
 <p>
-💰 Balance: ₦{data.wallet?.balance || 0}
+💰 Balance: ₦{Number(data.wallet?.balance || 0).toLocaleString()}
 </p>
 
 <p>
