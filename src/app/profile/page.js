@@ -200,7 +200,7 @@ Account Status
 {/* STATS */}
 
 
-<div className="grid grid-cols-2 gap-4">
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
 
 <div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
@@ -209,8 +209,8 @@ Account Status
 Wallet Balance
 </p>
 
-<h2 className="text-xl font-bold mt-2">
-₦{Number(balance).toLocaleString()}
+<h2 className="text-2xl sm:text-3xl font-black mt-2 break-all">
+₦{Number(balance).toLocaleString("en-US")}
 </h2>
 
 </div>
@@ -223,8 +223,8 @@ Wallet Balance
 Referral Earnings
 </p>
 
-<h2 className="text-xl font-bold mt-2">
-₦{Number(user?.referralEarnings || 0).toLocaleString()}
+<h2 className="text-2xl sm:text-3xl font-black mt-2 break-all">
+₦{Number(user?.referralEarnings || 0).toLocaleString("en-US")}
 </h2>
 
 </div>
