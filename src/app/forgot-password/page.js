@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import PhoneInput from "@/components/PhoneInput";
 
 export default function ForgotPassword(){
 
-const [phone,setPhone]=useState("");
+const [email,setEmail]=useState("");
 const [otp,setOtp]=useState("");
 const [newPassword,setNewPassword]=useState("");
 const [step,setStep]=useState(1);
@@ -14,9 +13,9 @@ const [loading,setLoading]=useState(false);
 
 
 const sendOTP=async()=>{
-console.log("SEND OTP CLICKED", phone);
 
 try{
+
 setLoading(true);
 
 const res=await fetch(
@@ -27,7 +26,7 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-phone
+email
 })
 }
 );
@@ -50,11 +49,12 @@ setMessage(data.message || "Failed to send OTP");
 
 }catch(error){
 
-console.log(error);
-setMessage(error.message);
+setMessage("Network error");
 
 }finally{
+
 setLoading(false);
+
 }
 
 };
@@ -64,6 +64,7 @@ setLoading(false);
 const verifyOTP=async()=>{
 
 try{
+
 setLoading(true);
 
 const res=await fetch(
@@ -74,7 +75,7 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-phone,
+email,
 otp,
 newPassword
 })
@@ -90,7 +91,9 @@ if(res.ok){
 setMessage("Password reset successful");
 
 setTimeout(()=>{
+
 window.location.href="/login";
+
 },1500);
 
 
@@ -106,7 +109,9 @@ setMessage(data.message || "Reset failed");
 setMessage("Network error");
 
 }finally{
+
 setLoading(false);
+
 }
 
 };
@@ -116,7 +121,6 @@ setLoading(false);
 return(
 
 <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white flex items-center justify-center px-6">
-
 
 <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
 
@@ -136,12 +140,13 @@ Reset your password
 
 <>
 
-<div className="mt-8">
-<PhoneInput
-value={phone}
-onChange={(value)=>setPhone(value)}
+<input
+className="w-full mt-8 p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
+type="email"
+placeholder="Email address"
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
 />
-</div>
 
 
 <button
@@ -207,7 +212,6 @@ className="block text-center text-yellow-400 mt-6"
 
 
 </div>
-
 
 </main>
 
