@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Toast from "@/components/Toast";
 
 const API="https://alphabot-1.onrender.com";
 
@@ -298,11 +299,10 @@ Manage your AlphaBot profile and security
 
 
 
-{message && (
-<div className="bg-white text-black rounded-2xl p-4 text-center font-bold mb-4">
-{message}
-</div>
-)}
+<Toast 
+message={message} 
+type={message.toLowerCase().includes("failed") || message.toLowerCase().includes("error") ? "error" : "success"} 
+/>
 
 
 {/* PROFILE IDENTITY */}

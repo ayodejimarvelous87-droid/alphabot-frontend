@@ -200,6 +200,12 @@ value={otp}
 onChange={(e)=>setOtp(e.target.value)}
 />
 
+{countdown > 0 && (
+<p className="text-center text-zinc-400 mt-3">
+Resend code available in {countdown}s
+</p>
+)}
+
 
 <input
 className="w-full mt-4 p-3 rounded-xl bg-white text-black dark:bg-black dark:text-white border border-zinc-700"
