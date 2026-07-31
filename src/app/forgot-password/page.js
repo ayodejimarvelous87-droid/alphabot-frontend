@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ForgotPassword(){
 
@@ -10,6 +10,21 @@ const [newPassword,setNewPassword]=useState("");
 const [step,setStep]=useState(1);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+const [countdown,setCountdown]=useState(0);
+
+useEffect(()=>{
+
+if(countdown <= 0) return;
+
+const timer = setInterval(()=>{
+
+setCountdown((prev)=>prev - 1);
+
+},1000);
+
+return ()=>clearInterval(timer);
+
+},[countdown]);
 
 
 const sendOTP=async()=>{
@@ -38,6 +53,7 @@ const data=await res.json();
 if(res.ok){
 
 setMessage("OTP sent to your email");
+setCountdown(60);
 setStep(2);
 
 }else{
@@ -62,6 +78,16 @@ setLoading(false);
 
 
 const verifyOTP=async()=>{
+
+if(!otp || !newPassword){
+setMessage("OTP and new password are required");
+return;
+}
+
+if(newPassword.length < 6){
+setMessage("Password must be at least 6 characters");
+return;
+}
 
 try{
 
@@ -151,10 +177,10 @@ onChange={(e)=>setEmail(e.target.value)}
 
 <button
 onClick={sendOTP}
-disabled={loading}
+disabled={loading || countdown > 0}
 className="w-full mt-6 bg-yellow-400 text-black py-3 rounded-xl font-bold active:scale-95 transition duration-150 disabled:opacity-50"
 >
-{loading ? "Sending OTP..." : "Send OTP"}
+{loading ? "Sending OTP..." : countdown > 0 ? `Resend code in ${countdown}s` : "Send OTP"}
 </button>
 
 </>
