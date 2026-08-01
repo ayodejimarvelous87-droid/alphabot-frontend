@@ -7,7 +7,11 @@ export default function AdminUserDetails(){
 
 const params = useParams();
 
-const phone = params.phone;
+const phone = decodeURIComponent(params.phone);
+
+
+
+
 
 const [data,setData] = useState(null);
 const [message,setMessage] = useState("");
@@ -57,10 +61,12 @@ load();
 
 const walletAction = async(type)=>{
 
+
+      
 const token = localStorage.getItem("adminToken");
 
 const res = await fetch(
-`https://alphabot-1.onrender.com/admin/wallet/${type}`,
+`http://localhost:5000/admin/wallet/${type}`,
 {
 method:"POST",
 headers:{
