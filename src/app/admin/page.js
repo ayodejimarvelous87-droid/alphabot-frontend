@@ -318,12 +318,7 @@ className="border rounded-xl p-5"
 
 
 
-<Link
-href="/admin/wallets"
-className="border rounded-xl p-5"
->
-💰 Wallet Control
-</Link>
+
 
 
 
