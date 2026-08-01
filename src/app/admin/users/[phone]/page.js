@@ -11,6 +11,8 @@ const phone = params.phone;
 
 const [data,setData] = useState(null);
 const [message,setMessage] = useState("");
+const [amount,setAmount] = useState("");
+
 
 
 useEffect(()=>{
@@ -50,6 +52,44 @@ load();
 }
 
 },[phone]);
+
+
+
+const walletAction = async(type)=>{
+
+const token = localStorage.getItem("adminToken");
+
+const res = await fetch(
+`https://alphabot-1.onrender.com/admin/wallet/${type}`,
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+phone,
+amount,})
+}
+);
+
+
+const result = await res.json();
+
+
+setMessage(result.message || "Done");
+
+
+if(result.wallet){
+
+setData({
+...data,
+wallet:result.wallet
+});
+
+}
+
+};
 
 
 
@@ -172,6 +212,50 @@ Status: {data.user.status}
 </div>
 
 
+
+
+
+<div className="border rounded-xl p-5 mt-5">
+
+<h2 className="font-bold text-xl">
+💰 Wallet Management
+</h2>
+
+<p>
+Current Balance: ₦{Number(data.wallet?.balance || 0).toLocaleString()}
+</p>
+
+
+<input
+className="border p-2 block mt-3 w-full"
+placeholder="Amount"
+value={amount}
+onChange={(e)=>setAmount(e.target.value)}
+/>
+
+
+
+<button
+className="bg-green-600 text-white px-4 py-2 mt-3 mr-2 rounded"
+onClick={()=>walletAction("add")}
+>
+Add Funds
+</button>
+
+
+<button
+className="bg-red-600 text-white px-4 py-2 mt-3 rounded"
+onClick={()=>{
+if(confirm("Deduct this amount?")){
+walletAction("deduct");
+}
+}}
+>
+Deduct Funds
+</button>
+
+
+</div>
 
 
 
