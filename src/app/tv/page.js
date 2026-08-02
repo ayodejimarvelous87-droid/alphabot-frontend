@@ -349,7 +349,7 @@ onClick={subscribeTV}
 
 disabled={loading}
 
-className="w-full bg-white text-black rounded-xl py-3 font-bold disabled:bg-zinc-700 disabled:text-zinc-400"
+className="w-full bg-white text-black rounded-xl py-3 font-bold disabled:bg-zinc-700 disabled:text-zinc-400 active:scale-95 transition"
 
 >
 

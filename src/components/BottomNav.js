@@ -50,7 +50,7 @@ className={`
 flex flex-col items-center justify-center
 gap-0.5 px-1.5 py-1 rounded-xl
 text-[10px]
-transition-all duration-200
+transition-all duration-200 active:scale-95
 
 ${
 pathname === item[0]

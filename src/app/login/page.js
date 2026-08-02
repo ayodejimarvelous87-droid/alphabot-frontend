@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
-import Toast from "@/components/Toast";
 
 export default function Login(){
 
@@ -94,7 +93,6 @@ export default function Login(){
     py-10
     ">
 
-      <Toast message={message} type="error"/>
 
 
       <div className="

@@ -171,7 +171,7 @@ onChange={(e)=>setPin(e.target.value)}
 <button
 onClick={fundBetting}
 disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold hover:scale-105 transition"
+className="w-full bg-white text-black py-3 rounded-xl font-bold hover:scale-105 active:scale-95 transition"
 >
 
 {

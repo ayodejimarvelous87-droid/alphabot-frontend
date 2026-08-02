@@ -6,7 +6,7 @@ if(!message) return null;
 
 return(
 <div
-className={`fixed top-5 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl text-white shadow-lg ${
+className={`fixed top-5 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl text-white shadow-lg animate-in fade-in slide-in-from-top-3 ${
 type==="error"
 ? "bg-red-500"
 : type==="success"

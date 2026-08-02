@@ -380,7 +380,7 @@ Enter a valid amount to continue
 
 <button
 onClick={()=>setPaymentMethod("instant")}
-className={`py-3 rounded-xl text-sm font-bold ${
+className={`py-3 rounded-xl text-sm font-bold active:scale-95 transition ${
 paymentMethod==="instant"
 ?"bg-white dark:bg-zinc-800 shadow"
 :"text-zinc-500"
@@ -393,7 +393,7 @@ paymentMethod==="instant"
 
 <button
 onClick={()=>setPaymentMethod("manual")}
-className={`py-3 rounded-xl text-sm font-bold ${
+className={`py-3 rounded-xl text-sm font-bold active:scale-95 transition ${
 paymentMethod==="manual"
 ?"bg-white dark:bg-zinc-800 shadow"
 :"text-zinc-500"

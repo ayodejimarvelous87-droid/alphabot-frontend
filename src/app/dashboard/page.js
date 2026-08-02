@@ -376,7 +376,7 @@ A
 
 <Link
 href="/transactions"
-className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 transition"
+className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 active:scale-95 transition"
 >
 💳
 </Link>
@@ -385,7 +385,7 @@ className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 tr
 
 <Link
 href="/notifications"
-className="relative bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 transition"
+className="relative bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 active:scale-95 transition"
 >
 
 🔔
@@ -402,7 +402,7 @@ className="relative bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:sca
 
 <button
 onClick={toggleTheme}
-className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3"
+className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 active:scale-95 transition"
 >
 {dark ? "☀️" : "🌙"}
 </button>
@@ -484,7 +484,7 @@ className="bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 px-4 py-2 rounded
 
 <Link
 href="/wallet"
-className="min-w-0 text-center bg-white text-black py-3 rounded-xl font-bold hover:scale-105 hover:shadow-lg hover:shadow-white/10 transition truncate"
+className="min-w-0 text-center bg-white text-black py-3 rounded-xl font-bold hover:scale-105 hover:shadow-lg hover:shadow-white/10 active:scale-95 transition truncate"
 >
 💳 Fund
 </Link>
@@ -493,7 +493,7 @@ className="min-w-0 text-center bg-white text-black py-3 rounded-xl font-bold hov
 
 <Link
 href="/withdraw"
-className="min-w-0 text-center bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 py-3 rounded-xl font-bold text-white hover:scale-105 transition truncate"
+className="min-w-0 text-center bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 py-3 rounded-xl font-bold text-white hover:scale-105 active:scale-95 transition truncate"
 >
 💸 Withdraw
 </Link>

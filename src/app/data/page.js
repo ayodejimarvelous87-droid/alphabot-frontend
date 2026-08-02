@@ -467,7 +467,7 @@ onClick={buyData}
 
 disabled={loading}
 
-className="w-full bg-white text-black py-3 rounded-2xl font-black text-lg"
+className="w-full bg-white text-black py-3 rounded-2xl font-black text-lg active:scale-95 transition"
 
 >
 
