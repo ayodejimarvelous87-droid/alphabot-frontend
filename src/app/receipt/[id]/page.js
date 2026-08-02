@@ -291,6 +291,31 @@ className="max-w-xl mx-auto rounded-3xl bg-[#121214] border border-zinc-800 p-6"
           />
 
           <Row
+            title="Network"
+            value={
+              receipt.network ||
+              receipt.providerResponse?.data?.service_name ||
+              "-"
+            }
+          />
+
+          <Row
+            title="Provider Order ID"
+            value={
+              receipt.providerResponse?.data?.order_id ||
+              "-"
+            }
+          />
+
+          <Row
+            title="Wallet Charged"
+            value={`₦${Number(
+              receipt.providerResponse?.data?.amount_charged ||
+              receipt.amount
+            ).toLocaleString()}`}
+          />
+
+          <Row
             title="Payment Method"
             value="AlphaBot Wallet"
           />
