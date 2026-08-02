@@ -60,7 +60,8 @@ const res = await fetch(
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":`Bearer ${token}`
+"Authorization":`Bearer ${token}`,
+"idempotency-key": crypto.randomUUID()
 },
 body:JSON.stringify({
 phone,

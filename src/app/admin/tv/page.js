@@ -87,7 +87,7 @@ return(
 <p>{message}</p>
 
 
-{plans.map((plan,index)=>(
+{Array.isArray(plans) && plans.map((plan,index)=>(
 
 <div
 key={plan._id || index}

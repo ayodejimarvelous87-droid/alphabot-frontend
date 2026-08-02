@@ -170,9 +170,9 @@ setMessage(data.message || "Failed");
 
 
 return(
-<div className="p-6">
+<div className="min-h-screen bg-[#090d16] text-white p-4 md:p-6 space-y-6">
 
-<h1 className="text-2xl font-bold">
+<h1 className="text-3xl font-bold text-white">
 👥 AlphaBot Users
 </h1>
 
@@ -182,7 +182,7 @@ Total Users: {users.length}
 </p>
 
 <input
-className="border rounded-xl p-3 w-full mt-5"
+className="bg-[#111827] border border-zinc-800 rounded-xl p-3 w-full mt-5 text-white placeholder-zinc-500"
 placeholder="Search by name or phone"
 value={search}
 onChange={(e)=>setSearch(e.target.value)}
@@ -201,7 +201,7 @@ onChange={(e)=>setSearch(e.target.value)}
 
 <div
 key={user._id}
-className="border rounded-xl p-4"
+className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg"
 >
 
 
@@ -217,7 +217,7 @@ className="border rounded-xl p-4"
 
 <a
 href={`/admin/users/${user.phone}`}
-className="border rounded-lg px-3 py-2 inline-block mt-3"
+className="bg-blue-600 hover:bg-blue-700 rounded-lg px-3 py-2 inline-block mt-3 text-white"
 >
 👤 View Profile
 </a>
@@ -228,22 +228,31 @@ className="border rounded-lg px-3 py-2 inline-block mt-3"
 </p>
 
 
-<p>
-Role: {user.role || "user"}
-</p>
+<div className="flex gap-2 mt-3 flex-wrap">
+
+<span className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-700">
+👤 {user.role || "user"}
+</span>
+
+<span className={`px-3 py-1 rounded-full text-sm ${
+(user.status || "active") === "suspended"
+? "bg-red-100 text-red-700"
+: "bg-green-100 text-green-700"
+}`}>
+{(user.status || "active") === "suspended"
+? "🔴 Suspended"
+: "🟢 Active"}
+</span>
+
+</div>
 
 
-<p>
+<p className="text-sm text-zinc-500 mt-3">
 Joined: {
 user.createdAt
 ? new Date(user.createdAt).toDateString()
 :"Unknown"
 }
-</p>
-
-
-<p>
-Status: {user.status || "active"}
 </p>
 
 
@@ -254,7 +263,7 @@ Status: {user.status || "active"}
 
 <button
 onClick={()=>updateUserStatus(user.phone,"activate")}
-className="border rounded-lg px-3 py-2"
+className="rounded-xl px-4 py-2 transition hover:scale-105 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700"
 >
 🟢 Activate
 </button>
@@ -263,7 +272,7 @@ className="border rounded-lg px-3 py-2"
 
 <button
 onClick={()=>updateUserStatus(user.phone,"suspend")}
-className="border rounded-lg px-3 py-2"
+className="rounded-xl px-4 py-2 transition hover:scale-105 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700"
 >
 🔴 Suspend
 </button>
@@ -279,7 +288,7 @@ className="border rounded-lg px-3 py-2"
 
 <button
 onClick={()=>changeUserRole(user.phone,"demote")}
-className="border rounded-lg px-3 py-2"
+className="rounded-xl px-4 py-2 transition hover:scale-105 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700"
 >
 ⬇️ Demote Admin
 </button>
@@ -288,7 +297,7 @@ className="border rounded-lg px-3 py-2"
 
 <button
 onClick={()=>changeUserRole(user.phone,"upgrade")}
-className="border rounded-lg px-3 py-2"
+className="rounded-xl px-4 py-2 transition hover:scale-105 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700"
 >
 ⬆️ Make Admin
 </button>
@@ -301,7 +310,7 @@ className="border rounded-lg px-3 py-2"
 
 <button
 onClick={()=>deleteUserAccount(user.phone)}
-className="border rounded-lg px-3 py-2"
+className="rounded-xl px-4 py-2 transition hover:scale-105 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700"
 >
 🗑️ Delete User
 </button>

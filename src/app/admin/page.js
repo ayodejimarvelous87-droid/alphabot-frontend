@@ -128,7 +128,7 @@ Manage AlphaBot operations and monitor business performance.
 <div className="grid gap-4 md:grid-cols-3">
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
 <h2>👥 Total Users</h2>
 <p className="text-2xl font-bold">
 {data.totalUsers}
@@ -136,7 +136,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
 <h2>💰 Wallet Balance</h2>
 <p className="text-2xl font-bold">
 ₦{data.walletBalance}
@@ -144,7 +144,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
 <h2>💳 Today's Sales</h2>
 <p className="text-2xl font-bold">
 ₦{data.todaySales}
@@ -152,7 +152,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
 <h2>📈 Today's Profit</h2>
 <p className="text-2xl font-bold">
 ₦{data.todayProfit}
@@ -160,7 +160,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
 <h2>📅 Monthly Profit</h2>
 <p className="text-2xl font-bold">
 ₦{data.monthProfit}
@@ -168,7 +168,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
 <h2>🏆 Best Service</h2>
 <p className="text-2xl font-bold">
 {data.bestService}
@@ -183,7 +183,7 @@ Manage AlphaBot operations and monitor business performance.
 <div className="grid gap-6 mt-6">
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-xl p-5 shadow-lg">
 
 <h2 className="font-bold mb-4">
 📊 7 Day Sales Trend
@@ -212,7 +212,7 @@ dataKey="amount"
 
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-xl p-5 shadow-lg">
 
 <h2 className="font-bold mb-4">
 📈 7 Day Profit Trend
@@ -241,7 +241,7 @@ dataKey="amount"
 
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-xl p-5 shadow-lg">
 
 <h2 className="font-bold mb-4">
 🏆 Service Performance
@@ -272,7 +272,7 @@ dataKey="amount"
 
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#111827] border border-zinc-800 rounded-xl p-5 shadow-lg">
 
 <h2 className="font-bold mb-3">
 📜 Recent Transactions
@@ -283,7 +283,7 @@ dataKey="amount"
 
 <div
 key={item._id}
-className="border rounded p-3 mt-2"
+className="bg-[#0b1220] border border-zinc-800 rounded p-3 mt-2"
 >
 
 <p>
@@ -303,154 +303,6 @@ className="border rounded p-3 mt-2"
 
 
 
-
-
-<div className="grid gap-4 mt-8">
-
-
-
-<Link
-href="/admin/users"
-className="border rounded-xl p-5"
->
-👥 Users Management
-</Link>
-
-
-
-
-
-
-
-<Link
-href="/admin/transactions"
-className="border rounded-xl p-5"
->
-📜 Transactions
-</Link>
-
-
-
-<Link
-href="/admin/withdrawals"
-className="border rounded-xl p-5"
->
-💸 Withdrawals
-</Link>
-
-<Link
-href="/admin/orders"
-className="border rounded-xl p-5"
->
-📦 Orders Management
-</Link>
-
-
-<Link
-href="/admin/funding"
-className="border rounded-xl p-5"
->
-💰 Funding Requests
-</Link>
-
-
-<Link
-href="/admin/notifications"
-className="border rounded-xl p-5"
->
-📢 Broadcast Messages
-</Link>
-
-<Link
-href="/admin/settings"
-className="border rounded-xl p-5"
->
-⚙️ System Settings
-</Link>
-
-<Link
-href="/admin/football"
-className="border rounded-xl p-5"
->
-⚽ Football Rewards
-</Link>
-
-
-
-
-
-<div className="border rounded-xl p-5">
-
-<h2 className="font-bold mb-3">
-⚙️ Service Management
-</h2>
-
-
-<div className="grid gap-3">
-
-
-<Link
-href="/admin/products"
-className="border rounded-xl p-4"
->
-📶 Data Plans & Products
-</Link>
-
-
-<Link
-href="/admin/airtime"
-className="border rounded-xl p-4"
->
-📱 Airtime Pricing
-</Link>
-
-<Link
-href="/admin/electricity"
-className="border rounded-xl p-4"
->
-⚡ Electricity
-</Link>
-
-
-<Link
-href="/admin/tv"
-className="border rounded-xl p-4"
->
-📺 TV Subscription
-</Link>
-
-
-<Link
-href="/admin/betting"
-className="border rounded-xl p-4"
->
-🎲 Betting
-</Link>
-
-
-<Link
-href="/admin/recurring"
-className="border rounded-xl p-4"
->
-🔁 Recurring Services
-</Link>
-
-
-
-<Link
-href="/admin/profits"
-className="border rounded-xl p-4"
->
-📈 Revenue & Profit
-</Link>
-
-
-</div>
-
-</div>
-
-
-</div>
 
 
 </div>

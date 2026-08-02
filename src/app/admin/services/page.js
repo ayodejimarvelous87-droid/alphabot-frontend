@@ -125,7 +125,7 @@ const field=(name,label)=>(
 </label>
 
 <input
-className="border p-2 rounded w-full"
+className="bg-zinc-50 border rounded-xl p-3 w-full outline-none"
 type="number"
 value={settings[name] || ""}
 onChange={(e)=>
@@ -143,16 +143,74 @@ setSettings({
 
 return(
 
-<div className="p-6">
+<div className="p-6 space-y-6">
 
-<h1 className="text-2xl font-bold">
+<h1 className="text-3xl font-bold">
 ⚙️ Service Management
 </h1>
 
 <p>{message}</p>
 
+<div className="grid md:grid-cols-3 gap-4 mt-6">
 
-<div className="border rounded-xl p-5 mt-5">
+<a href="/admin/airtime"
+className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+📱 Airtime
+<p className="text-sm text-zinc-500">
+Manage airtime pricing
+</p>
+</a>
+
+
+<a href="/admin/products"
+className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+📶 Data
+<p className="text-sm text-zinc-500">
+Manage data plans
+</p>
+</a>
+
+
+<a href="/admin/electricity"
+className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+⚡ Electricity
+<p className="text-sm text-zinc-500">
+Manage electricity settings
+</p>
+</a>
+
+
+<a href="/admin/tv"
+className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+📺 TV Subscription
+<p className="text-sm text-zinc-500">
+Manage TV services
+</p>
+</a>
+
+
+<a href="/admin/betting"
+className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+🎲 Betting
+<p className="text-sm text-zinc-500">
+Manage betting
+</p>
+</a>
+
+
+<a href="/admin/recurring"
+className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+🔁 Recurring
+<p className="text-sm text-zinc-500">
+Manage recurring services
+</p>
+</a>
+
+</div>
+
+
+
+<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 ⚡ Electricity
@@ -164,7 +222,7 @@ return(
 )}
 
 <button
-className="border rounded px-4 py-2 mt-3"
+className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
 onClick={()=>save("electricity")}
 >
 Save Electricity
@@ -174,7 +232,7 @@ Save Electricity
 
 
 
-<div className="border rounded-xl p-5 mt-5">
+<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 📺 TV Subscription
@@ -186,7 +244,7 @@ Save Electricity
 )}
 
 <button
-className="border rounded px-4 py-2 mt-3"
+className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
 onClick={()=>save("tv")}
 >
 Save TV
@@ -196,7 +254,7 @@ Save TV
 
 
 
-<div className="border rounded-xl p-5 mt-5">
+<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 🎲 Betting
@@ -208,7 +266,7 @@ Save TV
 )}
 
 <button
-className="border rounded px-4 py-2 mt-3"
+className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
 onClick={()=>save("betting")}
 >
 Save Betting
@@ -218,7 +276,7 @@ Save Betting
 
 
 
-<div className="border rounded-xl p-5 mt-5">
+<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 🔁 Recurring
@@ -230,7 +288,7 @@ Save Betting
 )}
 
 <button
-className="border rounded px-4 py-2 mt-3"
+className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
 onClick={()=>save("recurring")}
 >
 Save Recurring
@@ -239,7 +297,7 @@ Save Recurring
 </div>
 
 
-<div className="border rounded-xl p-5 mt-5">
+<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 💳 Airtime Cash
@@ -251,7 +309,7 @@ Save Recurring
 )}
 
 <button
-className="border rounded px-4 py-2 mt-3"
+className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
 onClick={()=>save("airtime-cash")}
 >
 Save Airtime Cash
