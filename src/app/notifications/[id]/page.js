@@ -377,31 +377,72 @@ export default function NotificationDetails() {
 
             {transaction && (
 
-              <>
+                <>
+
+                  <DetailRow
+                  title="Service"
+                  value={
+                    transaction.providerResponse?.data?.product_name ||
+                    transaction.description ||
+                    "-"
+                  }
+                  />
+
+
+                  <DetailRow
+                  title="Amount"
+                  value={`₦${Number(transaction.amount).toLocaleString()}`}
+                  />
+
+
+                  <DetailRow
+                  title="Network"
+                  value={
+                    transaction.providerResponse?.data?.service_name ||
+                    "-"
+                  }
+                  />
+
+
+                  <DetailRow
+                  title="Recipient"
+                  value={
+                    transaction.providerResponse?.data?.phone ||
+                    transaction.phone ||
+                    "-"
+                  }
+                  />
+
+
+                  <DetailRow
+                  title="Provider Status"
+                  value={
+                    transaction.providerResponse?.data?.status ||
+                    transaction.status ||
+                    "-"
+                  }
+                  />
+
+
+                  <DetailRow
+                  title="Remarks"
+                  value={transaction.description || data.message}
+                  />
+
+
+                  <DetailRow
+                  title="Transaction Ref"
+                  value={transaction.reference}
+                  copy
+                  />
+
+                </>
+
+              )}
 
 
               <DetailRow
-              title="Remarks"
-              value={transaction.description || data.message}
-              />
-
-
-              <DetailRow
-              title="Transaction Ref"
-              value={transaction.reference}
-              copy
-              />
-
-
-              </>
-
-            )}
-
-
-
-
-            <DetailRow
-            title="Transaction Time"
+              title="Transaction Time"
             value={
               new Date(data.createdAt).toLocaleString()
             }
