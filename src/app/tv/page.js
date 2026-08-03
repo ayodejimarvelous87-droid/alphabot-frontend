@@ -83,7 +83,11 @@ const res=await fetch(
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-Authorization:`Bearer ${token}`
+Authorization:`Bearer ${token}`,
+"Idempotency-Key":
+typeof crypto !== "undefined" && crypto.randomUUID
+? crypto.randomUUID()
+: `${Date.now()}-${Math.random()}`
 },
 
 body:JSON.stringify({
