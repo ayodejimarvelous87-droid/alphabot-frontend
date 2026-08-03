@@ -178,27 +178,7 @@ onChange={(e)=>setNetwork(e.target.value)}
 
 
 
-<div>
 
-<p className="text-xs text-zinc-500 uppercase">
-Receiver
-</p>
-
-
-<PhoneInput
-
-value={phone}
-
-onChange={setPhone}
-
-beneficiaries={beneficiaries}
-
-service="epin"
-
-/>
-
-
-</div>
 
 
 
