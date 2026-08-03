@@ -35,6 +35,8 @@ headers:{
 Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({
+customer_id:phone,
+service_id:provider,
 phone,
 provider,
 amount:Number(amount),
