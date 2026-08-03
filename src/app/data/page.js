@@ -200,7 +200,12 @@ headers:{
 "Content-Type":"application/json",
 
 "Authorization":
-`Bearer ${token}`
+`Bearer ${token}`,
+
+"Idempotency-Key":
+typeof crypto !== "undefined" && crypto.randomUUID
+? crypto.randomUUID()
+: `${Date.now()}-${Math.random()}`
 
 },
 
