@@ -98,7 +98,11 @@ const data=await res.json();
 
 if(res.ok){
 
-setMessage("✅ Recharge PIN purchased successfully");
+setMessage(
+data.status === "processing"
+? "⏳ Recharge PIN order is processing"
+: "✅ Recharge PIN purchased successfully"
+);
 
 setEpinResult(data.epin);
 
