@@ -7,7 +7,7 @@ import PhoneInput from "@/components/PhoneInput";
 export default function Page(){
 
 const [phone,setPhone]=useState("");
-const [disco,setDisco]=useState("IKEDC");
+const [disco,setDisco]=useState("ikeja-electric");
 const [meterNumber,setMeterNumber]=useState("");
 const [meterType,setMeterType]=useState("prepaid");
 const [amount,setAmount]=useState("");
@@ -32,7 +32,11 @@ const res = await fetch(
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":`Bearer ${token}`
+"Authorization":`Bearer ${token}`,
+"Idempotency-Key":
+typeof crypto !== "undefined" && crypto.randomUUID
+? crypto.randomUUID()
+: `${Date.now()}-${Math.random()}`
 },
 body:JSON.stringify({
 phone,
@@ -134,10 +138,18 @@ onChange={(e)=>setDisco(e.target.value)}
 
 >
 
-<option>IKEDC</option>
-<option>EEDC</option>
-<option>EKEDC</option>
-<option>PHED</option>
+<option value="ikeja-electric">Ikeja Electric (IKEDC)</option>
+<option value="eko-electric">Eko Electric (EKEDC)</option>
+<option value="abuja-electric">Abuja Electric (AEDC)</option>
+<option value="ibadan-electric">Ibadan Electric (IBEDC)</option>
+<option value="enugu-electric">Enugu Electric (EEDC)</option>
+<option value="portharcourt-electric">Port Harcourt Electric (PHED)</option>
+<option value="kaduna-electric">Kaduna Electric (KAEDCO)</option>
+<option value="jos-electric">Jos Electric (JED)</option>
+<option value="benin-electric">Benin Electric (BEDC)</option>
+<option value="aba-electric">Aba Electric (ABEDC)</option>
+<option value="yola-electric">Yola Electric (YEDC)</option>
+<option value="kano-electric">Kano Electric (KEDCO)</option>
 
 </select>
 
