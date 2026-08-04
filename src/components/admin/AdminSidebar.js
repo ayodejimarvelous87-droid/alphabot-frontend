@@ -89,6 +89,14 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 💸 Withdrawals
 </Link>
 
+<Link href="/admin/blog-payouts" className="block p-2 hover:bg-zinc-800 rounded">
+📝 Blog Payouts
+</Link>
+
+<Link href="/admin/blog-payout-history" className="block p-2 hover:bg-zinc-800 rounded">
+📜 Blog Payout History
+</Link>
+
 <Link href="/admin/funding" className="block p-2 hover:bg-zinc-800 rounded">
 💰 Funding
 </Link>
