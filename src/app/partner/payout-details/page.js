@@ -136,7 +136,6 @@ Save Details
 
 </div>
 
-</div>
 </main>
 
 );
