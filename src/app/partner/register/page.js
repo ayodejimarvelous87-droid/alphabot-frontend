@@ -184,7 +184,6 @@ Register
 
 </div>
 
-</div>
 
 </main>
 );
