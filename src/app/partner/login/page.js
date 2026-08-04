@@ -14,6 +14,8 @@ const [message,setMessage]=useState("");
 
 const login=async()=>{
 
+try{
+
 const res=await fetch(
 "https://alphabot-1.onrender.com/blog-partner/login",
 {
@@ -52,6 +54,13 @@ router.push("/partner/dashboard");
 }else{
 
 setMessage(data.message);
+
+}
+
+}catch(error){
+
+console.log(error);
+setMessage("Login failed. Try again.");
 
 }
 
@@ -187,7 +196,7 @@ py-3
 rounded-xl
 font-bold
 "
-onClick={login}
+onClick={()=>{console.log("LOGIN CLICKED"); login();}}
 >
 Login
 </button>
