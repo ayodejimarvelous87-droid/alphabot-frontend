@@ -10,9 +10,7 @@ const router = useRouter();
 const [form,setForm]=useState({
 name:"",
 email:"",
-password:"",
-code:""
-});
+password:""});
 
 const [message,setMessage]=useState("");
 
