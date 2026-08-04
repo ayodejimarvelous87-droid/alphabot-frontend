@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import PhoneInput from "@/components/PhoneInput";
 
 export default function Page(){
 
-const [phone,setPhone]=useState("");
 const [exam,setExam]=useState("WAEC");
 const [quantity,setQuantity]=useState(1);
 const [pin,setPin]=useState("");
@@ -33,7 +31,6 @@ headers:{
 Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({
-phone,
 exam,
 quantity:Number(quantity),
 pin

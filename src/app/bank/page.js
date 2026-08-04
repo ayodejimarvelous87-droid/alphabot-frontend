@@ -211,6 +211,21 @@ setVerifying(false);
 
 
 
+useEffect(()=>{
+
+if(
+bankCode &&
+accountNumber.length >= 10
+){
+
+verifyAccount();
+
+}
+
+},[bankCode,accountNumber]);
+
+
+
 const saveBeneficiary=async()=>{
 
 try{
@@ -289,9 +304,12 @@ Authorization:`Bearer ${token}`
 body:JSON.stringify({
 
 phone:user.phone,
-beneficiaryId,
+bankCode,
+accountNumber,
+accountName,
 amount:Number(amount),
-pin
+pin,
+idempotencyKey:"TRANSFER-"+Date.now()
 
 })
 
@@ -442,32 +460,24 @@ onChange={(e)=>setAccountNumber(e.target.value)}
 
 
 
-<button
-onClick={verifyAccount}
-disabled={
-verifying ||
-!bankCode ||
-accountNumber.length < 10
-}
-className="w-full bg-blue-600 py-3 rounded-xl font-bold"
->
+{verifying && (
+<p className="text-blue-400">
+Verifying account...
+</p>
+)}
 
-{
-verifying
-?
-"Verifying..."
-:
-"Verify Account"
-}
-
-</button>
+{accountName && (
+<p className="text-green-400">
+✅ {accountName}
+</p>
+)}
 
 
 <input
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 placeholder="Account name"
 value={accountName}
-onChange={(e)=>setAccountName(e.target.value)}
+readOnly
 />
 
 
