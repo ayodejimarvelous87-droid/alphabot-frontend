@@ -26,6 +26,7 @@ const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 
 const [banks,setBanks]=useState([]);
+const [bankSearch,setBankSearch]=useState("");
 const [bankCode,setBankCode]=useState("");
 const [verified,setVerified]=useState(false);
 const [verifying,setVerifying]=useState(false);
@@ -413,6 +414,14 @@ Save Beneficiary
 </h2>
 
 
+<input
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+placeholder="Search bank..."
+value={bankSearch}
+onChange={(e)=>setBankSearch(e.target.value)}
+/>
+
+
 <select
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 value={bankCode}
@@ -436,7 +445,11 @@ Select Bank
 
 
 {
-banks.map(bank=>(
+banks.filter(bank =>
+bank.name.toLowerCase().includes(
+bankSearch.toLowerCase()
+)
+).map(bank=>(
 
 <option
 key={bank.code}
