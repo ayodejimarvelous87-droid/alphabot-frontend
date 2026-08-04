@@ -10,9 +10,12 @@ const router=useRouter();
 const [email,setEmail]=useState("");
 const [password,setPassword]=useState("");
 const [message,setMessage]=useState("");
+const [loading,setLoading]=useState(false);
 
 
 const login=async()=>{
+
+setLoading(true);
 
 try{
 
@@ -35,6 +38,8 @@ const data=await res.json();
 
 
 if(res.ok){
+
+setMessage("✅ Login successful");
 
 localStorage.setItem(
 "partnerToken",
@@ -198,7 +203,7 @@ font-bold
 "
 onClick={()=>{console.log("LOGIN CLICKED"); login();}}
 >
-Login
+{loading ? "Logging in..." : "Login"}
 </button>
 
 
