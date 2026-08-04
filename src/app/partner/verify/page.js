@@ -12,6 +12,7 @@ const email=params.get("email");
 
 const [otp,setOtp]=useState("");
 const [message,setMessage]=useState("");
+const [loading,setLoading]=useState(false);
 
 const verify=async(e)=>{
 e.preventDefault();
@@ -38,6 +39,8 @@ if(res.ok){
 router.push("/partner/login");
 }
 
+setLoading(false);
+
 };
 
 
@@ -45,7 +48,7 @@ return(
 <div className="p-6">
 
 <h1 className="text-2xl font-bold">
-📩 Verify Blog Email
+📱 Verify SMS Code
 </h1>
 
 <p className="mt-2">
@@ -58,14 +61,17 @@ className="grid gap-3 mt-5"
 >
 
 <input
-placeholder="6 digit OTP"
+placeholder="Enter SMS verification code"
 className="border p-2"
 value={otp}
 onChange={e=>setOtp(e.target.value)}
 />
 
-<button className="bg-black text-white p-2 rounded">
-Verify
+<button
+className="bg-black text-white p-2 rounded"
+disabled={loading}
+>
+{loading ? "Verifying..." : "Verify"}
 </button>
 
 </form>
