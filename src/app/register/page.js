@@ -8,7 +8,8 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import PhoneInput from "@/components/PhoneInput";
@@ -29,6 +30,23 @@ export default function Register(){
   const [otpSent,setOtpSent] = useState(false);
   const [verified,setVerified] = useState(false);
   const [loading,setLoading] = useState(false);
+
+const searchParams = useSearchParams();
+
+useEffect(()=>{
+
+const ref = searchParams.get("ref");
+
+if(ref){
+
+setForm(prev=>({
+...prev,
+referralCode:ref
+}));
+
+}
+
+},[searchParams]);
 
 
   const update=(e)=>{
@@ -325,6 +343,8 @@ export default function Register(){
 
         <input
           name="referralCode"
+          value={form.referralCode}
+          readOnly
           placeholder="Referral code (optional)"
           className={inputStyle}
           onChange={update}

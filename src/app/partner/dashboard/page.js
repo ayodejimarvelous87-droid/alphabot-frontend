@@ -267,7 +267,7 @@ p-5
 </p>
 
 <p className="mt-3 break-all">
-{window.location.origin}{data.referralLink}
+{data.referralLink}
 </p>
 
 
@@ -283,7 +283,7 @@ font-bold
 "
 onClick={()=>{
 navigator.clipboard.writeText(
-window.location.origin + data.referralLink
+data.referralLink
 );
 setToast("✅ Referral link copied");
 }}
