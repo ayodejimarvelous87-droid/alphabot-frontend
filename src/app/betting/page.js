@@ -16,16 +16,42 @@ const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 
   useEffect(()=>{
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/betting/services`)
-    .then(res=>res.json())
-    .then(data=>{
-      setServices(data);
+
+    const loadServices = async()=>{
+
+      try{
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/betting/services`
+        );
+
+        const data = await res.json();
+
+        if(Array.isArray(data)){
+          setServices(data);
+
+          if(data.length){
+            setProvider(data[0].service);
+          }
+        }else{
+          setServices([]);
+        }
+
+      }catch(error){
+
+        console.log("Betting services error:", error.message);
+        setServices([]);
+
+      }finally{
+
         setServicesLoading(false);
-      if(data.length){
-        setProvider(data[0].service);
+
       }
-    })
-    .catch(()=>{});
+
+    };
+
+    loadServices();
+
   },[]);
 
 
