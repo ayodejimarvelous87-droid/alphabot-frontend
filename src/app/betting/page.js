@@ -21,9 +21,11 @@ const [loading,setLoading]=useState(false);
 
       try{
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/betting/services`
-        );
+          const url = `${process.env.NEXT_PUBLIC_API_URL}/betting/services`;
+
+          console.log("BETTING API URL:", url);
+
+          const res = await fetch(url);
 
         const data = await res.json();
 
