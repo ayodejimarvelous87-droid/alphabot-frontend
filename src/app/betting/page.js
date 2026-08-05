@@ -182,7 +182,7 @@ Betting Platform
 
 <select
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-  value={provider || services[0]?.service || ""}
+  value={provider}
   onChange={(e)=>setProvider(e.target.value)}
 >
 
