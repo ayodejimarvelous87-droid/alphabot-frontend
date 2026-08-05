@@ -3,6 +3,7 @@
 import { useState,useEffect } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
+import Toast from "@/components/Toast";
 
 export default function Page(){
 
@@ -13,6 +14,7 @@ const [provider,setProvider]=useState("");
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
+const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
 
   useEffect(()=>{
@@ -101,7 +103,7 @@ const data=await res.json();
 
   if(res.ok){
 
-    setMessage(`✅ ${data.message || "Betting wallet funded successfully"}`);
+    setToast(`✅ ${data.message || "Betting wallet funded successfully"}`);
     setAmount("");
 
   }else{
@@ -282,6 +284,11 @@ className="block text-center text-zinc-400 mt-6"
 
 </div>
 
+<Toast
+message={toast}
+type="success"
+onClose={()=>setToast("")}
+/>
 
 </main>
 

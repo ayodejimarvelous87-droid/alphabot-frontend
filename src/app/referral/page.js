@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import CopyButton from "@/components/CopyButton";
 
 export default function Referral(){
 
@@ -15,7 +16,6 @@ const [history,setHistory]=useState([]);
 
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
-const [copied,setCopied]=useState(false);
 
 
 
@@ -85,19 +85,6 @@ console.log(error);
 
 
 
-const copyLink=()=>{
-
-navigator.clipboard.writeText(referralLink);
-
-setCopied(true);
-
-setTimeout(()=>{
-
-setCopied(false);
-
-},2000);
-
-};
 
 
 
@@ -204,14 +191,10 @@ Your Referral Link
 
 
 
-<button
-onClick={copyLink}
-className="mt-5 bg-white text-black px-5 py-3 rounded-xl font-bold active:scale-95 transition"
->
-
-{copied ? "Copied!" : "Copy Link"}
-
-</button>
+<CopyButton
+  text={referralLink}
+  setToast={setMessage}
+/>
 
 
 </div>

@@ -5,6 +5,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useParams, useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
+import Toast from "@/components/Toast";
 
 export default function ReceiptPage() {
 
@@ -26,6 +27,7 @@ export default function ReceiptPage() {
   `;
 
   const [copied, setCopied] = useState(false);
+const [toast,setToast] = useState("");
 
 
   const copyReference = async()=>{
@@ -65,7 +67,7 @@ Date: ${new Date(receipt.createdAt).toLocaleString()}
 
       await navigator.clipboard.writeText(text);
 
-      alert("Receipt details copied");
+      setToast("✅ Receipt details copied");
 
     }
 
@@ -481,6 +483,12 @@ className="max-w-xl mx-auto rounded-3xl bg-[#121214] border border-zinc-800 p-6"
       </div>
 
     </div>
+
+    <Toast
+    message={toast}
+    type="success"
+    onClose={()=>setToast("")}
+    />
 
     </>
 

@@ -21,9 +21,6 @@ const routes={
   
   "epin":"/recharge-pin",
 "airtime-cash":"/airtime-cash",
-"bank":"/bank",
-"transfer":"/transfer",
-"withdraw":"/withdraw",
 "recurring":"/recurring",
 "beneficiary":"/beneficiary",
 "ai":"/ai",
@@ -52,7 +49,6 @@ const getDisplayName=(product)=>{
 if(product.type==="airtime") return "Airtime";
 if(product.type==="data") return "Data Plan";
 if(product.type==="airtime-cash") return "Airtime Cash";
-if(product.type==="bank") return "Bank Transfer";
 return product.name;
 };
 const getIcon=(product)=>{
@@ -64,7 +60,6 @@ if(product.type==="exam-pin") return "🎓";
 if(product.type==="epin") return "🎫";
 if(product.type==="betting") return "🎯";
 if(product.type==="airtime-cash") return "💵";
-if(product.type==="bank") return "🏦";
 return "🛒";
 };
 
@@ -144,7 +139,7 @@ Services 🛠️
 🧾 Bills
 </h2>
 <div className="grid-cols-2 grid gap-3 mt-3">
-{products.filter(p=>!["airtime","data","tv","electricity","exam-pin","epin","waec","jamb","neco","bank"].includes(p.type)).map(p=>(
+{products.filter(p=>!["airtime","data","tv","electricity","exam-pin","epin","waec","jamb","neco"].includes(p.type)).map(p=>(
 <ServiceCard key={p._id} icon={getIcon(p)} title={getDisplayName(p)} link={getServiceLink(p.type)} desc={p.type} />
 ))}
 </div>
@@ -159,16 +154,7 @@ Services 🛠️
 </div>
 </section>
 
-<section className="mt-5">
-<h2 className="bg-white dark:bg-[#1A1A1E] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2 text-sm font-bold">
-🏦 Finance
-</h2>
-<div className="grid grid-cols-2 gap-3 mt-3">
-{products.filter(p=>["bank","airtime-cash"].includes(p.type)).map(p=>(
-<ServiceCard key={p._id} icon={getIcon(p)} title={getDisplayName(p)} link={getServiceLink(p.type)} desc="Finance service" />
-))}
-</div>
-</section>
+
 
 
 

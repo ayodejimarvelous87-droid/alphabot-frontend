@@ -3,6 +3,7 @@
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
+import Toast from "@/components/Toast";
 
 export default function Page(){
 
@@ -14,6 +15,7 @@ const [sessionId,setSessionId]=useState("");
 const [otpSent,setOtpSent]=useState(false);
 const [otpVerified,setOtpVerified]=useState(false);
 const [message,setMessage]=useState("");
+const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
 const [requests,setRequests]=useState([]);
 
@@ -101,7 +103,7 @@ if(res.ok){
 
 setOtpSent(true);
 
-setMessage("✅ OTP sent to your airtime line");
+setToast("✅ OTP sent to your airtime line");
 
 }else{
 
@@ -165,7 +167,7 @@ data.data.sessionId
 
 setOtpVerified(true);
 
-setMessage("✅ OTP verified");
+setToast("✅ OTP verified");
 
 }else{
 
@@ -454,6 +456,12 @@ className="block text-center text-zinc-400 mt-6"
 
 
 </div>
+
+<Toast
+message={toast}
+type="success"
+onClose={()=>setToast("")}
+/>
 
 </main>
 

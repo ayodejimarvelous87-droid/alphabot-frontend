@@ -26,7 +26,7 @@ const [newPassword,setNewPassword]=useState("");
 
 const [message,setMessage]=useState("");
 const [otp,setOtp]=useState("");
-const [verified,setVerified]=useState(false);
+
 const [pin,setPin]=useState("");
 const [pinOtp,setPinOtp]=useState("");
 const [hasPin,setHasPin]=useState(false);
@@ -103,49 +103,6 @@ setMessage("Failed to send PIN OTP");
 }
 };
 
-const sendOTP=async()=>{
-try{
-const res=await fetch(`${API}/users/send-profile-otp`,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({phone:user.phone})
-});
-
-const data=await res.json();
-setMessage(data.message);
-
-}catch(error){
-setMessage("Failed to send OTP");
-}
-};
-
-
-const verifyOTP=async()=>{
-try{
-const res=await fetch(`${API}/users/verify-profile-otp`,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-phone:user.phone,
-otp
-})
-});
-
-const data=await res.json();
-
-if(res.ok){
-setVerified(true);
-setMessage("Profile verified successfully ✅");
-}else{
-setMessage(data.message);
-}
-
-}catch(error){
-setMessage("OTP verification failed");
-}
-};
-
-
 const createTransactionPin=async()=>{
 try{
 
@@ -177,10 +134,7 @@ setMessage("Failed to create PIN");
 
 const saveProfile=async()=>{
 
-if(!verified){
-setMessage("Please verify your profile first");
-return;
-}
+
 
 try{
 
@@ -299,9 +253,15 @@ Manage your AlphaBot profile and security
 
 
 
-<Toast 
-message={message} 
-type={message.toLowerCase().includes("failed") || message.toLowerCase().includes("error") ? "error" : "success"} 
+<Toast
+message={message}
+type={
+message.toLowerCase().includes("failed") ||
+message.toLowerCase().includes("error")
+? "error"
+: "success"
+}
+onClose={()=>setMessage("")}
 />
 
 
@@ -390,33 +350,6 @@ type="email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
 />
-
-
-
-<input
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
-placeholder="Verification OTP"
-value={otp}
-onChange={(e)=>setOtp(e.target.value)}
-/>
-
-
-
-<button
-onClick={sendOTP}
-className="w-full bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold mb-3"
->
-Send Verification OTP
-</button>
-
-
-
-<button
-onClick={verifyOTP}
-className="w-full bg-green-500 text-black rounded-2xl py-4 font-bold mb-3"
->
-Verify Profile
-</button>
 
 
 

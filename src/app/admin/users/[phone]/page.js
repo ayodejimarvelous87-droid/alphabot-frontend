@@ -2,6 +2,7 @@
 
 import {useEffect,useState} from "react";
 import {useParams} from "next/navigation";
+import Toast from "@/components/Toast";
 
 export default function AdminUserDetails(){
 
@@ -15,6 +16,7 @@ const phone = decodeURIComponent(params.phone);
 
 const [data,setData] = useState(null);
 const [message,setMessage] = useState("");
+const [toast,setToast] = useState("");
 const [amount,setAmount] = useState("");
 
 
@@ -83,7 +85,7 @@ amount,})
 const result = await res.json();
 
 
-setMessage(result.message || "Done");
+setToast("✅ " + (result.message || "Done"));
 
 
 if(result.wallet){
@@ -403,8 +405,15 @@ Status: {item.status}
 
 
 
+<Toast
+message={toast}
+onClose={()=>setToast("")}
+/>
+
 </div>
+
 
 );
 
 }
+

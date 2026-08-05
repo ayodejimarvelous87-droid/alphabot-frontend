@@ -113,7 +113,7 @@ Amount
 </p>
 
 <p className="text-2xl font-bold">
-₦{item.amount}
+₦{item.commissionAmount}
 </p>
 
 <p className="mt-3 text-zinc-400">
@@ -125,15 +125,17 @@ Status
 </p>
 
 <p className="mt-3 text-zinc-400">
-Reference
+Period
 </p>
 
 <p>
-{item.reference || "N/A"}
+{new Date(item.weekStart).toLocaleDateString()}
+-
+{new Date(item.weekEnd).toLocaleDateString()}
 </p>
 
 <p>
-Date: {new Date(item.createdAt).toLocaleString()}
+Date: {new Date(item.paidAt).toLocaleString()}
 </p>
 
 </div>

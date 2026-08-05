@@ -13,6 +13,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import PhoneInput from "@/components/PhoneInput";
+import Toast from "@/components/Toast";
 
 export default function Register(){
 
@@ -25,6 +26,7 @@ export default function Register(){
   });
 
   const [message,setMessage] = useState("");
+  const [toast,setToast] = useState("");
   const [showPassword,setShowPassword] = useState(false);
   const [otp,setOtp] = useState("");
   const [otpSent,setOtpSent] = useState(false);
@@ -84,7 +86,7 @@ referralCode:ref
 
       if(res.ok){
         setOtpSent(true);
-        setMessage("OTP sent to your email");
+        setToast("✅ OTP sent to your email");
       }else{
         setMessage(data.message);
       }
@@ -125,7 +127,7 @@ referralCode:ref
       if(res.ok){
 
         setVerified(true);
-        setMessage("Email verified successfully");
+        setToast("✅ Email verified successfully");
 
       }else{
 
@@ -154,7 +156,7 @@ referralCode:ref
 
     }
 
-    setMessage("Registration completed");
+    setToast("✅ Registration completed");
 
     setTimeout(()=>{
 
@@ -496,7 +498,13 @@ referralCode:ref
       </div>
 
 
-    </main>
+    <Toast
+  message={toast}
+  type="success"
+  onClose={()=>setToast("")}
+/>
+
+</main>
 
   );
 

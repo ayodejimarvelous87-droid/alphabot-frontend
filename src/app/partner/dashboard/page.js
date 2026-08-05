@@ -322,6 +322,14 @@ onClick={()=>router.push("/partner/payout-history")}
 
 <button
 className="border border-zinc-700 py-3 rounded-xl"
+onClick={()=>router.push("/partner/payout-details")}
+>
+💳 Payout Details
+</button>
+
+
+<button
+className="border border-zinc-700 py-3 rounded-xl"
 onClick={()=>router.push("/partner/settings")}
 >
 ⚙️ Settings

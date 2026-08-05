@@ -11,6 +11,10 @@ const [loading,setLoading]=useState(true);
 const [message,setMessage]=useState("");
 const [predictions,setPredictions]=useState([]);
 const [leaderboard,setLeaderboard]=useState([]);
+  const [rewardSettings,setRewardSettings]=useState({
+    footballFirstPrize:1500,
+    footballSecondPrize:1000
+  });
   const [showRules,setShowRules]=useState(false);
 
 const currentWeek = Math.ceil((((new Date()-new Date(new Date().getFullYear(),0,1))/86400000+1)/7));
@@ -34,6 +38,15 @@ console.log("INVALID DATA:", data);
 
   }).catch(()=>{
   setLoading(false);
+  });
+
+  fetch("https://alphabot-1.onrender.com/settings")
+  .then(res=>res.json())
+  .then(data=>{
+    setRewardSettings({
+      footballFirstPrize:data.footballFirstPrize || 1500,
+      footballSecondPrize:data.footballSecondPrize || 1000
+    });
   });
 
 const user = JSON.parse(localStorage.getItem("user"));
@@ -258,6 +271,41 @@ className="mt-5 w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 </div>
 
 
+
+
+
+{/* WEEKLY REWARDS */}
+<div className="mt-6 bg-gradient-to-b from-[#18181B] to-[#101012] border border-zinc-800 rounded-3xl p-5">
+
+<p className="text-yellow-400 font-black text-sm mb-4">
+🏆 Weekly Arena+ Rewards
+</p>
+
+<div className="grid grid-cols-2 gap-4">
+
+<div className="bg-black border border-zinc-800 rounded-2xl p-4 text-center">
+<p className="text-2xl">🥇</p>
+<p className="text-zinc-400 text-xs mt-2">
+1st Place
+</p>
+<p className="font-black text-xl mt-1">
+₦{rewardSettings.footballFirstPrize}
+</p>
+</div>
+
+<div className="bg-black border border-zinc-800 rounded-2xl p-4 text-center">
+<p className="text-2xl">🥈</p>
+<p className="text-zinc-400 text-xs mt-2">
+2nd Place
+</p>
+<p className="font-black text-xl mt-1">
+₦{rewardSettings.footballSecondPrize}
+</p>
+</div>
+
+</div>
+
+</div>
 
 
 {/* MATCHES */}

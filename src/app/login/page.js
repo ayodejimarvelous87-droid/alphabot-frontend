@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
+import Toast from "@/components/Toast";
 
 export default function Login(){
 
   const [phone,setPhone] = useState("");
   const [password,setPassword] = useState("");
   const [message,setMessage] = useState("");
+const [toast,setToast] = useState("");
   const [showPassword,setShowPassword] = useState(false);
   const [loading,setLoading] = useState(false);
 
@@ -54,11 +56,13 @@ export default function Login(){
           JSON.stringify(data.user)
         );
 
-        setMessage("Login successful");
+        setToast("✅ Login successful");
 
-        setLoading(false);
+          setLoading(false);
 
-        window.location.href="/dashboard";
+          setTimeout(()=>{
+            window.location.href="/dashboard";
+          },1000);
 
 
       }else{
@@ -333,7 +337,13 @@ export default function Login(){
       </div>
 
 
-    </main>
+    <Toast
+message={toast}
+type="success"
+onClose={()=>setToast("")}
+/>
+
+</main>
 
   );
 

@@ -3,6 +3,7 @@
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import Toast from "@/components/Toast";
 
 export default function Beneficiary(){
 
@@ -10,6 +11,7 @@ const [name,setName]=useState("");
 const [beneficiaryPhone,setBeneficiaryPhone]=useState("");
 const [service,setService]=useState("airtime");
 const [message,setMessage]=useState("");
+const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
 const [list,setList]=useState([]);
 
@@ -117,7 +119,7 @@ throw new Error(data.message || "Failed");
 }
 
 
-setMessage("✅ Beneficiary saved");
+setToast("✅ Beneficiary saved");
 
 
 setName("");
@@ -323,6 +325,12 @@ className="block text-center text-yellow-400 mt-10"
 
 </div>
 
+
+<Toast
+message={toast}
+type="success"
+onClose={()=>setToast("")}
+/>
 
 <BottomNav />
 </main>

@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import Toast from "@/components/Toast";
 
 export default function PartnerLogin(){
 
@@ -10,6 +11,7 @@ const router=useRouter();
 const [email,setEmail]=useState("");
 const [password,setPassword]=useState("");
 const [message,setMessage]=useState("");
+  const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
 
 
@@ -39,7 +41,7 @@ const data=await res.json();
 
 if(res.ok){
 
-setMessage("✅ Login successful");
+setToast("✅ Login successful");
 
 localStorage.setItem(
 "partnerToken",
@@ -53,7 +55,9 @@ JSON.stringify(data.partner)
 );
 
 
-router.push("/partner/dashboard");
+setTimeout(()=>{
+  router.push("/partner/dashboard");
+  },1000);
 
 
 }else{
@@ -222,11 +226,31 @@ underline
 "
 onClick={()=>router.push("/partner/register")}
 >
+
+<p
+className="
+mt-5
+text-center
+text-zinc-400
+cursor-pointer
+underline
+"
+onClick={()=>router.push("/partner/forgot-password")}
+>
+Forgot password?
+</p>
+
+
 Create Blog Partner Account
 </p>
 
 
 </div>
+
+<Toast
+message={toast}
+onClose={()=>setToast("")}
+/>
 
 </main>
 

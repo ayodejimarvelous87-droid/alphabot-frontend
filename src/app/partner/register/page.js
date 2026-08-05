@@ -180,6 +180,16 @@ Register
 
 <p>{message}</p>
 
+  <p className="text-center text-sm text-zinc-400 mt-5">
+    Already have an account?{" "}
+    <a
+    href="/partner/login"
+    className="text-white font-bold"
+    >
+    Login
+    </a>
+  </p>
+
 </div>
 
 

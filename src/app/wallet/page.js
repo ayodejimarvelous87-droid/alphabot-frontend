@@ -314,12 +314,7 @@ History
 </Link>
 
 
-<Link
-href="/withdraw"
-className="flex-1 text-center bg-yellow-400 text-black py-2.5 rounded-xl font-bold active:scale-95 transition"
->
-Withdraw
-</Link>
+
 
 </div>
 

@@ -16,13 +16,13 @@ try{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-payout/pending",
-{
-headers:{
-Authorization:`Bearer ${token}`
-}
-}
-);
+  "https://alphabot-1.onrender.com/blog-payout/pending",
+  {
+  headers:{
+  Authorization:`Bearer ${token}`
+  }
+  }
+  );
 
 const data=await res.json();
 
@@ -49,24 +49,22 @@ loadPayouts();
 
 
 
-const markPaid=async(partnerId)=>{
+const markPaid=async(id)=>{
 
 const token=localStorage.getItem("adminToken");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-payout/pay",
-{
-method:"POST",
-headers:{
-Authorization:`Bearer ${token}`,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-partnerId
-})
-}
-);
+  `https://alphabot-1.onrender.com/blog-payout/pay/${id}`,
+  {
+  method:"PUT",
+  headers:{
+  Authorization:`Bearer ${token}`,
+  "Content-Type":"application/json"
+  },
+  body:JSON.stringify({})
+  }
+  );
 
 
 const data=await res.json();
@@ -130,38 +128,38 @@ className="border border-zinc-800 rounded-3xl p-5 shadow-xl"
 
 
 <h2 className="font-bold text-lg">
-{item.name}
+{item.blogPartner?.name}
 </h2>
 
 
 <p>
-Code: {item.code}
+Code: {item.blogPartner?.code}
 </p>
 
 
 <div className="mt-3">
 
 <p>
-💰 Amount Due: ₦{item.pendingPayout}
+💰 Amount Due: ₦{item.commissionAmount}
 </p>
 
 <p>
-🏦 Bank: {item.bankName || "Not set"}
+🏦 Bank: {item.blogPartner?.bankName || "Not set"}
 </p>
 
 <p>
-🔢 Account Number: {item.accountNumber || "Not set"}
+🔢 Account Number: {item.blogPartner?.accountNumber || "Not set"}
 </p>
 
 <p>
-👤 Account Name: {item.accountName || "Not set"}
+👤 Account Name: {item.blogPartner?.accountName || "Not set"}
 </p>
 
 </div>
 
 
 <button
-disabled={item.pendingPayout<=0}
+disabled={item.commissionAmount<=0}
 className="bg-black text-white px-4 py-2 mt-4 rounded disabled:opacity-50"
 onClick={()=>markPaid(item._id)}
 >

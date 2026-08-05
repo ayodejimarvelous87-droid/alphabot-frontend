@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Toast from "@/components/Toast";
 
 export default function TransactionPin(){
 
 const [pin,setPin] = useState("");
 const [message,setMessage] = useState("");
+const [toast,setToast] = useState("");
 const [otp,setOtp] = useState("");
 const [otpSent,setOtpSent] = useState(false);
 
@@ -37,7 +39,7 @@ const data = await res.json();
 
 if(res.ok){
 setOtpSent(true);
-setMessage("OTP sent to your email");
+setToast("✅ OTP sent to your email");
 }else{
 setMessage(data.message);
 }
@@ -81,7 +83,7 @@ const data = await res.json();
 
 if(res.ok){
 
-setMessage("✅ " + data.message);
+setToast("✅ " + data.message);
 
 }else{
 
@@ -190,6 +192,12 @@ className="block text-center text-yellow-400 mt-8"
 
 
 </div>
+
+<Toast
+message={toast}
+type="success"
+onClose={()=>setToast("")}
+/>
 
 </main>
 

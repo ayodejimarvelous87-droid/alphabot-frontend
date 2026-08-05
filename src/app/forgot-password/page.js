@@ -1,5 +1,7 @@
 "use client";
 
+import Toast from "@/components/Toast";
+
 import { useState, useEffect } from "react";
 
 export default function ForgotPassword(){
@@ -9,6 +11,7 @@ const [otp,setOtp]=useState("");
 const [newPassword,setNewPassword]=useState("");
 const [step,setStep]=useState(1);
 const [message,setMessage]=useState("");
+const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
 const [countdown,setCountdown]=useState(0);
 
@@ -52,7 +55,7 @@ const data=await res.json();
 
 if(res.ok){
 
-setMessage("OTP sent to your email");
+setToast("✅ OTP sent to your email");
 setCountdown(60);
 setStep(2);
 
@@ -114,7 +117,7 @@ const data=await res.json();
 
 if(res.ok){
 
-setMessage("Password reset successful");
+setToast("✅ Password reset successful");
 
 setTimeout(()=>{
 
@@ -244,6 +247,12 @@ className="block text-center text-yellow-400 mt-6"
 
 
 </div>
+
+<Toast
+message={toast}
+type="success"
+onClose={()=>setToast("")}
+/>
 
 </main>
 

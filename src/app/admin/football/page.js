@@ -106,7 +106,7 @@ return(
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
-placeholder="First Prize"
+placeholder="Weekly 1st Place Reward Amount"
 value={settings.footballFirstPrize}
 onChange={(e)=>update("footballFirstPrize",e.target.value)}
 />
@@ -114,7 +114,7 @@ onChange={(e)=>update("footballFirstPrize",e.target.value)}
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
-placeholder="Second Prize"
+placeholder="Weekly 2nd Place Reward Amount"
 value={settings.footballSecondPrize}
 onChange={(e)=>update("footballSecondPrize",e.target.value)}
 />

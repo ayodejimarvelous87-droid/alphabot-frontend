@@ -194,14 +194,8 @@ justify-center
 
 
 <div className="text-right">
-
-<p className="
-text-yellow-400
-font-black
-">
-
-₦{partner.totalEarned || 0}
-
+<p className="text-zinc-400 text-xs">
+Rank #{index + 1}
 </p>
 
 

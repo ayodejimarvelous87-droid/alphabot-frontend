@@ -13,6 +13,44 @@ accountName:""
 const [message,setMessage]=useState("");
 
 
+useEffect(()=>{
+
+const load=async()=>{
+
+const token=localStorage.getItem("partnerToken");
+
+if(!token){
+return;
+}
+
+const res=await fetch(
+"https://alphabot-1.onrender.com/blog-partner/dashboard",
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
+
+const data=await res.json();
+
+if(res.ok){
+
+setForm({
+bankName:data.bankName || "",
+accountNumber:data.accountNumber || "",
+accountName:data.accountName || ""
+});
+
+}
+
+};
+
+load();
+
+},[]);
+
+
 
 
 const save=async()=>{

@@ -294,8 +294,6 @@ const services=[
 ["⚡","Electricity","/electricity"],
 ["📺","TV","/tv"],
 ["💵","Airtime Cash","/airtime-cash"],
-["💸","Withdraw","/withdraw"],
-["🏦","Bank Transfer","/transfer"],
 ["🤖","AI Assistant","/ai"],
 ["👥","Beneficiary","/beneficiary"],
 ["🔁","Recurring","/recurring"],
@@ -491,13 +489,14 @@ className="min-w-0 text-center bg-white text-black py-3 rounded-xl font-bold hov
 
 
 
+
+
 <Link
-href="/withdraw"
+href="/data"
 className="min-w-0 text-center bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 py-3 rounded-xl font-bold text-white hover:scale-105 active:scale-95 transition truncate"
 >
-💸 Withdraw
+🌐 Data
 </Link>
-
 
 </div>
 

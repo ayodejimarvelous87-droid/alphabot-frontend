@@ -7,7 +7,8 @@ export default function AdminSettings(){
 const [settings,setSettings]=useState({
 maintenanceMode:false,
 announcement:"",
-referralPercentage:1
+referralPercentage:1,
+providerMinimumBalance:500
 });
 
 const [message,setMessage]=useState("");
@@ -31,7 +32,8 @@ const data=await res.json();
 setSettings({
 maintenanceMode:data.maintenanceMode || false,
 announcement:data.announcement || "",
-referralPercentage:data.referralPercentage || 1
+referralPercentage:data.referralPercentage || 1,
+providerMinimumBalance:data.providerMinimumBalance || 500
 });
 
 };
@@ -119,6 +121,18 @@ value={settings.referralPercentage}
 onChange={(e)=>setSettings({
 ...settings,
 referralPercentage:e.target.value
+})}
+/>
+
+
+<input
+className="border border-zinc-800 rounded-3xl p-3 w-full"
+type="number"
+placeholder="Provider minimum balance"
+value={settings.providerMinimumBalance}
+onChange={(e)=>setSettings({
+...settings,
+providerMinimumBalance:e.target.value
 })}
 />
 
