@@ -113,9 +113,10 @@ referralCode:ref
             "Content-Type":"application/json"
           },
           body:JSON.stringify({
-            phone:form.phone,
-            otp
-          })
+              phone:form.phone,
+              otp,
+              partner:form.referralCode
+            })
         }
       );
 
