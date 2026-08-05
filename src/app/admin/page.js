@@ -115,7 +115,7 @@ return(
 
 
 <p>
-Manage AlphaBot operations and monitor business performance.
+<span className="text-zinc-400">Manage AlphaBot operations and monitor business performance.</span>
 </p>
 
 
@@ -128,7 +128,7 @@ Manage AlphaBot operations and monitor business performance.
 <div className="grid gap-4 md:grid-cols-3">
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
 <h2>👥 Total Users</h2>
 <p className="text-2xl font-bold">
 {data.totalUsers}
@@ -136,7 +136,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
 <h2>💰 Wallet Balance</h2>
 <p className="text-2xl font-bold">
 ₦{data.walletBalance}
@@ -144,7 +144,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
 <h2>💳 Today's Sales</h2>
 <p className="text-2xl font-bold">
 ₦{data.todaySales}
@@ -152,7 +152,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
 <h2>📈 Today's Profit</h2>
 <p className="text-2xl font-bold">
 ₦{data.todayProfit}
@@ -160,7 +160,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
 <h2>📅 Monthly Profit</h2>
 <p className="text-2xl font-bold">
 ₦{data.monthProfit}
@@ -168,7 +168,7 @@ Manage AlphaBot operations and monitor business performance.
 </div>
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
 <h2>🏆 Best Service</h2>
 <p className="text-2xl font-bold">
 {data.bestService}
@@ -183,7 +183,7 @@ Manage AlphaBot operations and monitor business performance.
 <div className="grid gap-6 mt-6">
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-5 ">
 
 <h2 className="font-bold mb-4">
 📊 7 Day Sales Trend
@@ -212,7 +212,7 @@ dataKey="amount"
 
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-5 ">
 
 <h2 className="font-bold mb-4">
 📈 7 Day Profit Trend
@@ -241,7 +241,7 @@ dataKey="amount"
 
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-5 ">
 
 <h2 className="font-bold mb-4">
 🏆 Service Performance
@@ -272,7 +272,7 @@ dataKey="amount"
 
 
 
-<div className="bg-[#111827] border border-zinc-800 rounded-xl p-5 shadow-lg">
+<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-5 ">
 
 <h2 className="font-bold mb-3">
 📜 Recent Transactions

@@ -182,7 +182,7 @@ Total Users: {users.length}
 </p>
 
 <input
-className="bg-[#111827] border border-zinc-800 rounded-xl p-3 w-full mt-5 text-white placeholder-zinc-500"
+className="bg-[#18181B] border border-zinc-800 rounded-xl p-3 w-full mt-5 text-white placeholder-zinc-500"
 placeholder="Search by name or phone"
 value={search}
 onChange={(e)=>setSearch(e.target.value)}
@@ -201,7 +201,7 @@ onChange={(e)=>setSearch(e.target.value)}
 
 <div
 key={user._id}
-className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg"
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 shadow-lg"
 >
 
 
@@ -217,7 +217,7 @@ className="bg-[#111827] border border-zinc-800 rounded-2xl p-5 shadow-lg"
 
 <a
 href={`/admin/users/${user.phone}`}
-className="bg-blue-600 hover:bg-blue-700 rounded-lg px-3 py-2 inline-block mt-3 text-white"
+className="bg-blue-600 hover:bg-blue-700 rounded-2xl px-3 py-2 inline-block mt-3 text-white"
 >
 👤 View Profile
 </a>
