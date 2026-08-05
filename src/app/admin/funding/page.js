@@ -81,7 +81,7 @@ return(
 
 <div
 key={item._id}
-className="border border-zinc-800 rounded-3xl-xl p-4"
+className="border border-zinc-800 rounded-3xl p-4"
 >
 
 <p>

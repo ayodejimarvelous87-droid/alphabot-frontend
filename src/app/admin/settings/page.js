@@ -101,7 +101,7 @@ Maintenance Mode
 
 
 <textarea
-className="border border-zinc-800 rounded-3xl-xl p-3 w-full"
+className="border border-zinc-800 rounded-3xl p-3 w-full"
 placeholder="Announcement message"
 value={settings.announcement}
 onChange={(e)=>setSettings({
@@ -112,7 +112,7 @@ announcement:e.target.value
 
 
 <input
-className="border border-zinc-800 rounded-3xl-xl p-3 w-full"
+className="border border-zinc-800 rounded-3xl p-3 w-full"
 type="number"
 placeholder="Referral percentage"
 value={settings.referralPercentage}

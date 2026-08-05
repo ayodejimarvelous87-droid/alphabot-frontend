@@ -147,7 +147,7 @@ className="p-4 rounded-3xl bg-[#18181B] border border-zinc-800"
 
 
 <input
-className="border border-zinc-800 rounded-3xl-xl p-3 w-full mt-5"
+className="border border-zinc-800 rounded-3xl p-3 w-full mt-5"
 placeholder="Notification title"
 value={title}
 onChange={(e)=>setTitle(e.target.value)}
@@ -155,7 +155,7 @@ onChange={(e)=>setTitle(e.target.value)}
 
 
 <textarea
-className="border border-zinc-800 rounded-3xl-xl p-3 w-full mt-4 h-32"
+className="border border-zinc-800 rounded-3xl p-3 w-full mt-4 h-32"
 placeholder="Write your message..."
 value={message}
 onChange={(e)=>setMessage(e.target.value)}
@@ -164,7 +164,7 @@ onChange={(e)=>setMessage(e.target.value)}
 
 <button
 onClick={sendNotification}
-className="border border-zinc-800 rounded-3xl-xl px-5 py-3 mt-4"
+className="border border-zinc-800 rounded-3xl px-5 py-3 mt-4"
 >
 🚀 Send To All Users
 </button>

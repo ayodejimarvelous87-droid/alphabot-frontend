@@ -76,7 +76,7 @@ return(
 <div className="grid gap-4 mt-6">
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
 <h2>Total Sales</h2>
 <p className="text-2xl font-bold">
 ₦{data.totalSales}
@@ -84,7 +84,7 @@ return(
 </div>
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
 <h2>Provider Cost</h2>
 <p className="text-2xl font-bold">
 ₦{data.totalCost}
@@ -92,7 +92,7 @@ return(
 </div>
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
 <h2>Total Profit</h2>
 <p className="text-2xl font-bold">
 ₦{data.totalProfit}
@@ -100,7 +100,7 @@ return(
 </div>
 
 
-<div className="border rounded-xl p-5">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
 <h2>Airtime Profit</h2>
 <p className="text-2xl font-bold">
 ₦{data.airtimeProfit}
@@ -120,7 +120,7 @@ Profit Records
 
 <div
 key={item._id}
-className="border rounded-xl p-4 mt-3"
+className="bg-[#18181B] border border-zinc-800 rounded-3xl p-4 mt-3"
 >
 
 <p>

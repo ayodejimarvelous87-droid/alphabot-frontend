@@ -86,7 +86,7 @@ No payout history yet
 
 <div
 key={item._id}
-className="border border-zinc-800 rounded-3xl-xl p-5 shadow-xl"
+className="border border-zinc-800 rounded-3xl p-5 shadow-xl"
 >
 
 

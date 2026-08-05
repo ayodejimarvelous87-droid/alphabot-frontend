@@ -233,7 +233,7 @@ Current Balance: ₦{Number(data.wallet?.balance || 0).toLocaleString()}
 
 
 <input
-className="border p-2 block mt-3 w-full"
+className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-2 block mt-3 w-full"
 placeholder="Amount"
 value={amount}
 onChange={(e)=>setAmount(e.target.value)}
@@ -281,7 +281,7 @@ Deduct Funds
 
 <div
 key={tx._id}
-className="border rounded-xl p-4 mt-3"
+className="bg-[#18181B] border border-zinc-800 rounded-3xl p-4 mt-3"
 >
 
 <p>
@@ -332,7 +332,7 @@ Date: {new Date(tx.createdAt).toLocaleString()}
 
 <div
 key={order._id}
-className="border rounded-xl p-4 mt-3"
+className="bg-[#18181B] border border-zinc-800 rounded-3xl p-4 mt-3"
 >
 
 <p>
@@ -375,7 +375,7 @@ Status: {order.status}
 
 <div
 key={item._id}
-className="border rounded-xl p-4 mt-3"
+className="bg-[#18181B] border border-zinc-800 rounded-3xl p-4 mt-3"
 >
 
 <p>

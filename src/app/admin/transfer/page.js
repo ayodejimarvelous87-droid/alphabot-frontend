@@ -105,7 +105,7 @@ return(
 
 
 
-<div className="border border-zinc-800 rounded-3xl-xl p-4 mt-5 space-y-4">
+<div className="border border-zinc-800 rounded-3xl p-4 mt-5 space-y-4">
 
 
 <label>
@@ -114,7 +114,7 @@ Transfer Fee (₦)
 
 
 <input
-className="border p-2 w-full"
+className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-2 w-full"
 type="number"
 value={settings.transferFee}
 onChange={(e)=>
@@ -168,7 +168,7 @@ promoActive:e.target.checked
 
 
 <input
-className="border p-2 w-full"
+className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-2 w-full"
 placeholder="Promo message"
 value={settings.promoMessage}
 onChange={(e)=>

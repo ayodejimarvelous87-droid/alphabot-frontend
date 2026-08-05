@@ -107,7 +107,7 @@ Current Fee: ₦{item.fee}
 
 
 <input
-className="border p-2 mt-2 w-full"
+className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-2 mt-2 w-full"
 type="number"
 value={item.fee}
 onChange={(e)=>{

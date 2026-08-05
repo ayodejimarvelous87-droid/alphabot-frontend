@@ -115,7 +115,7 @@ Number(plan.providerPrice||0)
 
 
 <input
-className="border p-2 mt-2 w-full"
+className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-2 mt-2 w-full"
 type="number"
 value={plan.sellingPrice}
 onChange={(e)=>{

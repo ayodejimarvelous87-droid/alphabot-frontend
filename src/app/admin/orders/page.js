@@ -68,7 +68,7 @@ return(
 
 <div
 key={order._id}
-className="border border-zinc-800 rounded-3xl-xl p-5"
+className="border border-zinc-800 rounded-3xl p-5"
 >
 
 
