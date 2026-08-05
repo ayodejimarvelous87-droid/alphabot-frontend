@@ -217,7 +217,7 @@ className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 shadow-lg"
 
 <a
 href={`/admin/users/${user.phone}`}
-className="bg-white text-black hover:bg-zinc-200 rounded-2xl px-3 py-2 inline-block mt-3 text-white"
+className="bg-[#18181B] text-white hover:bg-zinc-800 rounded-2xl px-3 py-2 inline-block mt-3 text-white"
 >
 👤 View Profile
 </a>

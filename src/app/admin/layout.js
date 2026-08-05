@@ -7,15 +7,21 @@ export default function AdminLayout({children}){
 
 return (
 
-<div className="min-h-screen bg-[#090d16] text-white">
+<div className="min-h-screen bg-[#050505] text-white">
 
 <AdminSidebar />
 
+<div className="md:ml-64">
+
 <AdminTopbar />
 
-<main className="w-full p-4 md:p-6">
+<main className="p-4 md:p-8">
+
 {children}
+
 </main>
+
+</div>
 
 </div>
 

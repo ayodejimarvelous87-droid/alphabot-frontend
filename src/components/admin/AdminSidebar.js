@@ -16,8 +16,8 @@ const [services,setServices] = useState(false);
 
 const active=(path)=>
 pathname===path
-? "bg-blue-600 text-white"
-: "text-zinc-300 hover:bg-zinc-800";
+? "bg-white text-black"
+: "text-zinc-300 hover:bg-[#18181B]";
 
 
 return (
@@ -26,7 +26,7 @@ return (
 
 <button
 onClick={()=>setOpen(!open)}
-className="fixed top-4 left-4 z-50 bg-[#111827] text-white rounded-xl p-3 shadow-xl"
+className="fixed top-4 left-4 z-50 bg-[#18181B] text-white rounded-xl p-3 border border-zinc-800"
 >
 🏠
 </button>
@@ -34,7 +34,7 @@ className="fixed top-4 left-4 z-50 bg-[#111827] text-white rounded-xl p-3 shadow
 
 {open && (
 
-<aside className="fixed top-0 left-0 z-40 w-64 h-screen overflow-y-auto bg-[#111827] text-white p-5 shadow-2xl">
+<aside className="fixed top-0 left-0 z-40 w-64 h-screen overflow-y-auto border-r border-zinc-800 bg-[#101012] text-white p-5 shadow-2xl">
 
 
 <h1 className="text-xl font-bold mb-6">
@@ -52,7 +52,7 @@ className={`block rounded-lg px-3 py-2 ${active("/admin")}`}
 
 <button
 onClick={()=>setUsers(!users)}
-className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
+className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 >
 👥 User Management {users?"▼":"▶"}
 </button>
@@ -61,7 +61,7 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 {users && (
 <div className="ml-3 space-y-2 mt-2">
 
-<Link href="/admin/users" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/users" className="block p-2 hover:bg-[#18181B] rounded">
 Users
 </Link>
 
@@ -72,7 +72,7 @@ Users
 
 <button
 onClick={()=>setFinance(!finance)}
-className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
+className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 >
 💰 Finance {finance?"▼":"▶"}
 </button>
@@ -81,23 +81,23 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 {finance && (
 <div className="ml-3 space-y-2 mt-2">
 
-<Link href="/admin/transactions" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/transactions" className="block p-2 hover:bg-[#18181B] rounded">
 💳 Transactions
 </Link>
 
-<Link href="/admin/withdrawals" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/withdrawals" className="block p-2 hover:bg-[#18181B] rounded">
 💸 Withdrawals
 </Link>
 
-<Link href="/admin/blog-payouts" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/blog-payouts" className="block p-2 hover:bg-[#18181B] rounded">
 📝 Blog Payouts
 </Link>
 
-<Link href="/admin/blog-payout-history" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/blog-payout-history" className="block p-2 hover:bg-[#18181B] rounded">
 📜 Blog Payout History
 </Link>
 
-<Link href="/admin/funding" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/funding" className="block p-2 hover:bg-[#18181B] rounded">
 💰 Funding
 </Link>
 
@@ -108,7 +108,7 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 
 <Link
 href="/admin/orders"
-className="block mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
+className="block mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 >
 📦 Orders Management
 </Link>
@@ -117,7 +117,7 @@ className="block mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 
 <Link
 href="/admin/notifications"
-className="block mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
+className="block mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 >
 📢 Broadcast
 </Link>
@@ -126,7 +126,7 @@ className="block mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 
 <button
 onClick={()=>setServices(!services)}
-className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
+className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 >
 ⚡ Service Management {services?"▼":"▶"}
 </button>
@@ -136,27 +136,27 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 
 <div className="ml-3 mt-2 space-y-2">
 
-<Link href="/admin/products" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/products" className="block p-2 hover:bg-[#18181B] rounded">
 📦 Data Plans
 </Link>
 
-<Link href="/admin/airtime" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/airtime" className="block p-2 hover:bg-[#18181B] rounded">
 📱 Airtime
 </Link>
 
-<Link href="/admin/electricity" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/electricity" className="block p-2 hover:bg-[#18181B] rounded">
 ⚡ Electricity
 </Link>
 
-<Link href="/admin/tv" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/tv" className="block p-2 hover:bg-[#18181B] rounded">
 📺 TV
 </Link>
 
-<Link href="/admin/betting" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/betting" className="block p-2 hover:bg-[#18181B] rounded">
 🎲 Betting
 </Link>
 
-<Link href="/admin/recurring" className="block p-2 hover:bg-zinc-800 rounded">
+<Link href="/admin/recurring" className="block p-2 hover:bg-[#18181B] rounded">
 🔁 Recurring
 </Link>
 
@@ -168,7 +168,7 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 
 <Link
 href="/admin/football"
-className="block mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
+className="block mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 >
 ⚽ Football Rewards
 </Link>
@@ -176,7 +176,7 @@ className="block mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
 
 <Link
 href="/admin/settings"
-className="block mt-4 px-3 py-2 rounded-lg hover:bg-zinc-800"
+className="block mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 >
 ⚙️ System Settings
 </Link>

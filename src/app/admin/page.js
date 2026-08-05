@@ -106,7 +106,7 @@ requestNotificationPermission().then(async(token)=>{
 
 return(
 
-<div className="p-6 space-y-6">
+<div className="p-4 md:p-6 space-y-6">
 
 
 <h1 className="text-3xl font-bold">
@@ -128,49 +128,49 @@ return(
 <div className="grid gap-4 md:grid-cols-3">
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
-<h2>👥 Total Users</h2>
-<p className="text-2xl font-bold">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<h2 className="text-zinc-400 text-sm">👥 Total Users</h2>
+<p className="text-3xl font-black mt-3">
 {data.totalUsers}
 </p>
 </div>
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
-<h2>💰 Wallet Balance</h2>
-<p className="text-2xl font-bold">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<h2 className="text-zinc-400 text-sm">💰 Wallet Balance</h2>
+<p className="text-3xl font-black mt-3">
 ₦{data.walletBalance}
 </p>
 </div>
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
-<h2>💳 Today's Sales</h2>
-<p className="text-2xl font-bold">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<h2 className="text-zinc-400 text-sm">💳 Today's Sales</h2>
+<p className="text-3xl font-black mt-3">
 ₦{data.todaySales}
 </p>
 </div>
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
-<h2>📈 Today's Profit</h2>
-<p className="text-2xl font-bold">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<h2 className="text-zinc-400 text-sm">📈 Today's Profit</h2>
+<p className="text-3xl font-black mt-3">
 ₦{data.todayProfit}
 </p>
 </div>
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
-<h2>📅 Monthly Profit</h2>
-<p className="text-2xl font-bold">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<h2 className="text-zinc-400 text-sm">📅 Monthly Profit</h2>
+<p className="text-3xl font-black mt-3">
 ₦{data.monthProfit}
 </p>
 </div>
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 ">
-<h2>🏆 Best Service</h2>
-<p className="text-2xl font-bold">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<h2 className="text-zinc-400 text-sm">🏆 Best Service</h2>
+<p className="text-3xl font-black mt-3">
 {data.bestService}
 </p>
 </div>

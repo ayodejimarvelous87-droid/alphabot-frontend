@@ -143,7 +143,7 @@ setSettings({
 
 return(
 
-<div className="p-6 space-y-6">
+<div className="p-4 md:p-6 space-y-6">
 
 <h1 className="text-3xl font-bold">
 ⚙️ Service Management
@@ -154,7 +154,7 @@ return(
 <div className="grid md:grid-cols-3 gap-4 mt-6">
 
 <a href="/admin/airtime"
-className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:shadow-md">
 📱 Airtime
 <p className="text-sm text-zinc-500">
 Manage airtime pricing
@@ -163,7 +163,7 @@ Manage airtime pricing
 
 
 <a href="/admin/products"
-className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:shadow-md">
 📶 Data
 <p className="text-sm text-zinc-500">
 Manage data plans
@@ -172,7 +172,7 @@ Manage data plans
 
 
 <a href="/admin/electricity"
-className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:shadow-md">
 ⚡ Electricity
 <p className="text-sm text-zinc-500">
 Manage electricity settings
@@ -181,7 +181,7 @@ Manage electricity settings
 
 
 <a href="/admin/tv"
-className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:shadow-md">
 📺 TV Subscription
 <p className="text-sm text-zinc-500">
 Manage TV services
@@ -190,7 +190,7 @@ Manage TV services
 
 
 <a href="/admin/betting"
-className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:shadow-md">
 🎲 Betting
 <p className="text-sm text-zinc-500">
 Manage betting
@@ -199,7 +199,7 @@ Manage betting
 
 
 <a href="/admin/recurring"
-className="bg-white shadow-sm rounded-2xl p-5 hover:shadow-md">
+className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 hover:shadow-md">
 🔁 Recurring
 <p className="text-sm text-zinc-500">
 Manage recurring services
@@ -210,7 +210,7 @@ Manage recurring services
 
 
 
-<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
+<div className="bg-[#18181B] border border-zinc-800 border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 ⚡ Electricity
@@ -222,7 +222,7 @@ Manage recurring services
 )}
 
 <button
-className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
+className="bg-[#18181B] text-white rounded-xl px-5 py-2 mt-4 hover:bg-zinc-800 transition"
 onClick={()=>save("electricity")}
 >
 Save Electricity
@@ -232,7 +232,7 @@ Save Electricity
 
 
 
-<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
+<div className="bg-[#18181B] border border-zinc-800 border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 📺 TV Subscription
@@ -244,7 +244,7 @@ Save Electricity
 )}
 
 <button
-className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
+className="bg-[#18181B] text-white rounded-xl px-5 py-2 mt-4 hover:bg-zinc-800 transition"
 onClick={()=>save("tv")}
 >
 Save TV
@@ -254,7 +254,7 @@ Save TV
 
 
 
-<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
+<div className="bg-[#18181B] border border-zinc-800 border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 🎲 Betting
@@ -266,7 +266,7 @@ Save TV
 )}
 
 <button
-className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
+className="bg-[#18181B] text-white rounded-xl px-5 py-2 mt-4 hover:bg-zinc-800 transition"
 onClick={()=>save("betting")}
 >
 Save Betting
@@ -276,7 +276,7 @@ Save Betting
 
 
 
-<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
+<div className="bg-[#18181B] border border-zinc-800 border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 🔁 Recurring
@@ -288,7 +288,7 @@ Save Betting
 )}
 
 <button
-className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
+className="bg-[#18181B] text-white rounded-xl px-5 py-2 mt-4 hover:bg-zinc-800 transition"
 onClick={()=>save("recurring")}
 >
 Save Recurring
@@ -297,7 +297,7 @@ Save Recurring
 </div>
 
 
-<div className="bg-white shadow-sm border rounded-2xl p-6 mt-5">
+<div className="bg-[#18181B] border border-zinc-800 border rounded-2xl p-6 mt-5">
 
 <h2 className="font-bold">
 💳 Airtime Cash
@@ -309,7 +309,7 @@ Save Recurring
 )}
 
 <button
-className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
+className="bg-[#18181B] text-white rounded-xl px-5 py-2 mt-4 hover:bg-zinc-800 transition"
 onClick={()=>save("airtime-cash")}
 >
 Save Airtime Cash

@@ -113,7 +113,7 @@ notifications.length === 0 ?
 notifications.map((item)=>(
 <div
 key={item._id}
-className="p-4 rounded-xl bg-zinc-100 dark:bg-zinc-900"
+className="p-4 rounded-xl bg-[#18181B] border border-zinc-800"
 >
 
 <h2 className="font-bold">

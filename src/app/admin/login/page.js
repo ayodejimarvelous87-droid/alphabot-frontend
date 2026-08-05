@@ -184,7 +184,7 @@ onChange={(e)=>setPassword(e.target.value)}
 <button
 onClick={login}
 disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold"
+className="w-full bg-[#18181B] text-white py-3 rounded-xl font-bold"
 >
 {loading ? "Checking..." : "Continue"}
 </button>
@@ -215,7 +215,7 @@ onChange={(e)=>setOtp(e.target.value)}
 <button
 onClick={verifyOTP}
 disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold"
+className="w-full bg-[#18181B] text-white py-3 rounded-xl font-bold"
 >
 {loading ? "Verifying..." : "Verify OTP"}
 </button>

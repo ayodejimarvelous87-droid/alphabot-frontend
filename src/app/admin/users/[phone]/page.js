@@ -101,14 +101,14 @@ wallet:result.wallet
 
 if(message){
 
-return <div className="p-6">{message}</div>;
+return <div className="p-4 md:p-6 space-y-6">{message}</div>;
 
 }
 
 
 if(!data){
 
-return <div className="p-6">Loading...</div>;
+return <div className="p-4 md:p-6 space-y-6">Loading...</div>;
 
 }
 
@@ -145,7 +145,7 @@ const totalWithdrawn = withdrawals
 
 return(
 
-<div className="p-6">
+<div className="p-4 md:p-6 space-y-6">
 
 
 <h1 className="text-3xl font-bold">

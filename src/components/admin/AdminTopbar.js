@@ -4,7 +4,7 @@ export default function AdminTopbar(){
 
 return (
 
-<header className="h-16 bg-[#111827] border-b border-zinc-800 text-white flex items-center justify-between px-6">
+<header className="h-16 bg-[#101012] border-b border-zinc-800 text-white flex items-center justify-between px-6">
 
 <div>
 <h2 className="font-bold text-lg">
@@ -17,7 +17,7 @@ Control Center
 </div>
 
 
-<div className="text-sm text-blue-400">
+<div className="text-sm text-zinc-300">
 Administrator
 </div>
 
