@@ -23,7 +23,7 @@ const [loading,setLoading]=useState(false);
 
           const url = `${process.env.NEXT_PUBLIC_API_URL}/betting/services`;
 
-          console.log("BETTING API URL:", url);
+          
 
           const res = await fetch(url);
 
@@ -33,7 +33,6 @@ const [loading,setLoading]=useState(false);
           setServices(data);
 
           if(data.length){
-            setProvider(data[0].service);
           }
         }else{
           setServices([]);
@@ -41,7 +40,7 @@ const [loading,setLoading]=useState(false);
 
       }catch(error){
 
-        console.log("Betting services error:", error.message);
+        
         setServices([]);
 
       }finally{
@@ -183,10 +182,12 @@ Betting Platform
 
 
 <select
-  className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+  className="w-full bg-white text-black border border-zinc-700 rounded-xl p-3"
   value={provider}
   onChange={(e)=>setProvider(e.target.value)}
 >
+
+    <option value="">Select platform</option>
 
   {services.map((item)=>(
     <option
@@ -199,7 +200,7 @@ Betting Platform
 </select>
 
   <p className="text-xs text-red-500">
-    Services loaded: {services.length} | Provider: {provider}
+
   </p>
 
 </div>
