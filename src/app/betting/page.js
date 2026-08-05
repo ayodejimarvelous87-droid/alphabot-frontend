@@ -1,23 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 
 export default function Page(){
 
 const [phone,setPhone]=useState("");
-const [provider,setProvider]=useState("Bet9ja");
+const [provider,setProvider]=useState("");
+  const [services,setServices]=useState([]);
+  const [servicesLoading,setServicesLoading]=useState(true);
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+
+  useEffect(()=>{
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/betting/services`)
+    .then(res=>res.json())
+    .then(data=>{
+      setServices(data);
+        setServicesLoading(false);
+      if(data.length){
+        setProvider(data[0].service);
+      }
+    })
+    .catch(()=>{});
+  },[]);
 
 
 
 const fundBetting=async()=>{
 
 try{
+
+  if(!phone || !provider || !amount || !pin){
+    setMessage("❌ Please fill all fields");
+    return;
+  }
+
+  if(Number(amount) <= 0){
+    setMessage("❌ Enter a valid amount");
+    return;
+  }
 
 setLoading(true);
 setMessage("Processing...");
@@ -27,7 +52,7 @@ const token=localStorage.getItem("token");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/betting/fund",
+`${process.env.NEXT_PUBLIC_API_URL}/betting/fund`,
 {
 method:"POST",
 headers:{
@@ -37,8 +62,6 @@ Authorization:`Bearer ${token}`
 body:JSON.stringify({
 customer_id:phone,
 service_id:provider,
-phone,
-provider,
 amount:Number(amount),
 pin
 })
@@ -49,16 +72,25 @@ pin
 const data=await res.json();
 
 
-if(res.ok){
+  if(res.ok){
 
-setMessage(`✅ ${data.message}`);
+    setMessage(`✅ ${data.message || "Betting wallet funded successfully"}`);
+    setAmount("");
 
-}else{
+  }else{
 
-setMessage(`❌ ${data.message}`);
+    if(
+      data.message &&
+      data.message.toLowerCase().includes("wait for 3 minutes")
+    ){
+      setMessage("⏳ Please wait before trying another betting funding.");
+    }else{
+      setMessage(
+        `❌ ${data.message || data.error || "Betting request failed"}`
+      );
+    }
 
-}
-
+  }
 
 }catch(error){
 
@@ -123,37 +155,51 @@ Betting Platform
 
 
 <select
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-value={provider}
-onChange={(e)=>setProvider(e.target.value)}
->
+  className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+  value={provider}
+  onChange={(e)=>setProvider(e.target.value)}
+  >
 
-<option>
-Bet9ja
-</option>
+    {servicesLoading ? (
+      <option>Loading platforms...</option>
+    ) : (
+    services.map((item)=>(
+    <option
+    key={item._id}
+    value={item.service}
+    >
+      {item.service}
+    </option>
+    ))
+    )}
 
-<option>
-SportyBet
-</option>
-
-<option>
-1xBet
-</option>
-
-</select>
+  </select>
 
 </div>
 
 
 
 
-<input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-placeholder="Amount"
-type="number"
-value={amount}
-onChange={(e)=>setAmount(e.target.value)}
-/>
+  <div className="flex gap-2 flex-wrap">
+    {[100,200,500,1000].map((value)=>(
+      <button
+      key={value}
+      type="button"
+      onClick={()=>setAmount(String(value))}
+      className="bg-zinc-800 px-4 py-2 rounded-xl text-sm hover:bg-zinc-700"
+      >
+        ₦{value}
+      </button>
+    ))}
+  </div>
+
+  <input
+  className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+  placeholder="Amount"
+  type="number"
+  value={amount}
+  onChange={(e)=>setAmount(e.target.value)}
+  />
 
 
 
@@ -173,7 +219,7 @@ onChange={(e)=>setPin(e.target.value)}
 <button
 onClick={fundBetting}
 disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold hover:scale-105 active:scale-95 transition"
+className="w-full bg-white text-black py-3 rounded-xl font-bold hover:scale-105 active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed"
 >
 
 {

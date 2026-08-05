@@ -55,7 +55,9 @@ Authorization:
 
 body:JSON.stringify({
 
-sellingPrice:Number(plan.sellingPrice),
+providerPrice:Number(plan.providerPrice),
+
+  sellingPrice:Number(plan.sellingPrice),
 
 active:plan.active
 
