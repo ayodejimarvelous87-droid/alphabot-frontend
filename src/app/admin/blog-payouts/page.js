@@ -125,7 +125,7 @@ No pending payouts.
 
 <div
 key={item._id}
-className="border rounded-xl p-5 shadow-sm"
+className="border border-zinc-800 rounded-3xl-xl p-5 shadow-xl"
 >
 
 

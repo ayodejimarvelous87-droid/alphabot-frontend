@@ -105,7 +105,7 @@ return(
 
 
 
-<div className="border rounded-xl p-4 mt-5 space-y-4">
+<div className="border border-zinc-800 rounded-3xl-xl p-4 mt-5 space-y-4">
 
 
 <label>
@@ -183,7 +183,7 @@ promoMessage:e.target.value
 
 
 <button
-className="border rounded px-4 py-2"
+className="border border-zinc-800 rounded-3xl px-4 py-2"
 onClick={save}
 >
 Save

@@ -105,7 +105,7 @@ return(
 
 
 <input
-className="border rounded-xl p-3 w-full"
+className="border border-zinc-800 rounded-3xl-xl p-3 w-full"
 placeholder="First Prize"
 value={settings.footballFirstPrize}
 onChange={(e)=>update("footballFirstPrize",e.target.value)}
@@ -113,7 +113,7 @@ onChange={(e)=>update("footballFirstPrize",e.target.value)}
 
 
 <input
-className="border rounded-xl p-3 w-full"
+className="border border-zinc-800 rounded-3xl-xl p-3 w-full"
 placeholder="Second Prize"
 value={settings.footballSecondPrize}
 onChange={(e)=>update("footballSecondPrize",e.target.value)}
@@ -121,7 +121,7 @@ onChange={(e)=>update("footballSecondPrize",e.target.value)}
 
 
 <input
-className="border rounded-xl p-3 w-full"
+className="border border-zinc-800 rounded-3xl-xl p-3 w-full"
 placeholder="First Minimum Points"
 value={settings.footballFirstMinimumPoints}
 onChange={(e)=>update("footballFirstMinimumPoints",e.target.value)}
@@ -129,7 +129,7 @@ onChange={(e)=>update("footballFirstMinimumPoints",e.target.value)}
 
 
 <input
-className="border rounded-xl p-3 w-full"
+className="border border-zinc-800 rounded-3xl-xl p-3 w-full"
 placeholder="Second Minimum Points"
 value={settings.footballSecondMinimumPoints}
 onChange={(e)=>update("footballSecondMinimumPoints",e.target.value)}
@@ -137,7 +137,7 @@ onChange={(e)=>update("footballSecondMinimumPoints",e.target.value)}
 
 
 <input
-className="border rounded-xl p-3 w-full"
+className="border border-zinc-800 rounded-3xl-xl p-3 w-full"
 placeholder="Minimum Predictions"
 value={settings.footballMinimumPredictions}
 onChange={(e)=>update("footballMinimumPredictions",e.target.value)}
@@ -145,7 +145,7 @@ onChange={(e)=>update("footballMinimumPredictions",e.target.value)}
 
 
 <input
-className="border rounded-xl p-3 w-full"
+className="border border-zinc-800 rounded-3xl-xl p-3 w-full"
 placeholder="Minimum Wins"
 value={settings.footballMinimumWins}
 onChange={(e)=>update("footballMinimumWins",e.target.value)}
@@ -153,7 +153,7 @@ onChange={(e)=>update("footballMinimumWins",e.target.value)}
 
 
 <button
-className="bg-black text-white px-5 py-3 rounded-xl"
+className="bg-black text-white px-5 py-3 rounded-3xl"
 onClick={saveSettings}
 >
 Save Football Rewards

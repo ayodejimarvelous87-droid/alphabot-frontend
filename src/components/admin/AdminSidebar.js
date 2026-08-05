@@ -28,7 +28,7 @@ return (
 onClick={()=>setOpen(!open)}
 className="fixed top-4 left-4 z-50 bg-[#18181B] text-white rounded-xl p-3 border border-zinc-800"
 >
-🏠
+☰
 </button>
 
 

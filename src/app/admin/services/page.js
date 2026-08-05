@@ -125,7 +125,7 @@ const field=(name,label)=>(
 </label>
 
 <input
-className="bg-zinc-50 border rounded-xl p-3 w-full outline-none"
+className="bg-[#050505] border border-zinc-800 rounded-xl p-3 w-full text-white outline-none"
 type="number"
 value={settings[name] || ""}
 onChange={(e)=>

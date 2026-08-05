@@ -176,7 +176,7 @@ return(
 
 <div
 key={id}
-className="border p-4 mt-3 rounded"
+className="border border-zinc-800 p-4 mt-3 rounded"
 >
 
 
@@ -218,7 +218,7 @@ defaultValue={
 plan.display_price || plan.price
 }
 
-className="border p-2 mt-2"
+className="border border-zinc-800 p-2 mt-2"
 
 />
 

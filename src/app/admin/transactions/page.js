@@ -58,7 +58,7 @@ return(
 
 
 <input
-className="border p-2 mt-4"
+className="border border-zinc-800 p-2 mt-4"
 placeholder="Search phone"
 value={search}
 onChange={(e)=>setSearch(e.target.value)}
@@ -66,7 +66,7 @@ onChange={(e)=>setSearch(e.target.value)}
 
 
 <select
-className="border p-2 ml-2"
+className="border border-zinc-800 p-2 ml-2"
 value={type}
 onChange={(e)=>setType(e.target.value)}
 >
@@ -101,7 +101,7 @@ Admin Debit
 
 <div
 key={tx._id}
-className="border rounded-xl p-4 mb-3"
+className="border border-zinc-800 rounded-3xl p-4 mb-3"
 >
 
 <a

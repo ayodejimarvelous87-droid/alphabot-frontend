@@ -219,7 +219,7 @@ return(
 
 <div
 key={network}
-className="border rounded p-4 mt-4"
+className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5 mt-4"
 >
 
 
@@ -244,7 +244,7 @@ Number(item.providerPrice||0)
 
 
 <input
-className="border p-2 mt-2"
+className="border border-zinc-800 p-2 mt-2"
 type="number"
 value={item.sellingPrice}
 onChange={(e)=>
@@ -310,7 +310,7 @@ Save Price
 
 <div
 key={item.network}
-className="border rounded p-4 mt-4"
+className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5 mt-4"
 >
 
 <h3 className="font-bold">
@@ -324,7 +324,7 @@ Stored Airtime: ₦{item.storedAmount}
 
 
 <input
-className="border p-2 mt-2"
+className="border border-zinc-800 p-2 mt-2"
 type="number"
 value={item.limit}
 onChange={(e)=>{

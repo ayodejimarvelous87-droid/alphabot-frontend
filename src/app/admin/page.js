@@ -106,10 +106,10 @@ requestNotificationPermission().then(async(token)=>{
 
 return(
 
-<div className="p-4 md:p-6 space-y-6">
+<div className="space-y-8">
 
 
-<h1 className="text-3xl font-bold">
+<h1 className="text-4xl font-black tracking-tight">
 👑 AlphaBot Admin Panel
 </h1>
 
@@ -185,7 +185,7 @@ return(
 
 <div className="bg-[#18181B] border border-zinc-800 rounded-xl p-5 ">
 
-<h2 className="font-bold mb-4">
+<h2 className="font-bold text-lg mb-5">
 📊 7 Day Sales Trend
 </h2>
 
@@ -214,7 +214,7 @@ dataKey="amount"
 
 <div className="bg-[#18181B] border border-zinc-800 rounded-xl p-5 ">
 
-<h2 className="font-bold mb-4">
+<h2 className="font-bold text-lg mb-5">
 📈 7 Day Profit Trend
 </h2>
 
@@ -243,7 +243,7 @@ dataKey="amount"
 
 <div className="bg-[#18181B] border border-zinc-800 rounded-xl p-5 ">
 
-<h2 className="font-bold mb-4">
+<h2 className="font-bold text-lg mb-5">
 🏆 Service Performance
 </h2>
 
