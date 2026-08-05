@@ -185,9 +185,6 @@ Betting Platform
   value={provider}
   onChange={(e)=>setProvider(e.target.value)}
 >
-  <option value="">
-    {servicesLoading ? "Loading platforms..." : "Select betting platform"}
-  </option>
 
   {services.map((item)=>(
     <option
