@@ -119,7 +119,7 @@ return(
 </p>
 
 
-<div className="bg-yellow-100 text-yellow-800 border border-yellow-300 rounded-xl p-3">
+<div className="bg-[#18181B] text-zinc-300 border border-zinc-800 rounded-xl p-3">
 {message}
 </div>
 

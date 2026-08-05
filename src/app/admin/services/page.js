@@ -222,7 +222,7 @@ Manage recurring services
 )}
 
 <button
-className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
+className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
 onClick={()=>save("electricity")}
 >
 Save Electricity
@@ -244,7 +244,7 @@ Save Electricity
 )}
 
 <button
-className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
+className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
 onClick={()=>save("tv")}
 >
 Save TV
@@ -266,7 +266,7 @@ Save TV
 )}
 
 <button
-className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
+className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
 onClick={()=>save("betting")}
 >
 Save Betting
@@ -288,7 +288,7 @@ Save Betting
 )}
 
 <button
-className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
+className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
 onClick={()=>save("recurring")}
 >
 Save Recurring
@@ -309,7 +309,7 @@ Save Recurring
 )}
 
 <button
-className="bg-blue-600 text-white rounded-xl px-5 py-2 mt-4 hover:bg-blue-700 transition"
+className="bg-white text-black rounded-xl px-5 py-2 mt-4 hover:bg-zinc-200 transition"
 onClick={()=>save("airtime-cash")}
 >
 Save Airtime Cash
