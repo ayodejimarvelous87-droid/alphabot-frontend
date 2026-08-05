@@ -184,22 +184,20 @@ Betting Platform
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
   value={provider}
   onChange={(e)=>setProvider(e.target.value)}
-  >
+>
+  <option value="">
+    {servicesLoading ? "Loading platforms..." : "Select betting platform"}
+  </option>
 
-    {servicesLoading ? (
-      <option>Loading platforms...</option>
-    ) : (
-    services.map((item)=>(
+  {services.map((item)=>(
     <option
-    key={item._id}
-    value={item.service}
+      key={item._id}
+      value={item.service}
     >
       {item.service}
     </option>
-    ))
-    )}
-
-  </select>
+  ))}
+</select>
 
 </div>
 
