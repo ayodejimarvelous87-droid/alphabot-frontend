@@ -68,6 +68,8 @@ const networks = data.networks || {};
 
 setPlans(networks);
 
+
+
 const firstNetwork = Object.keys(networks)[0];
 
 if(firstNetwork){
@@ -342,7 +344,8 @@ setSelectedPlan("");
 
 ({cat==="All Plans"
 ?
-Object.values(plans[network] || {}).flat().length
+Object.values(plans[network] || {})
+  .reduce((total,list)=>total + list.length,0)
 :
 (plans[network]?.[cat]?.length || 0)
 })
@@ -379,11 +382,7 @@ Select Bundle
 {dataPlans.map((plan,index)=>(
 
 <option
-key={
-plan.variation_id ||
-plan.package_id ||
-plan.id || index
-}
+key={`${plan.network}-${plan.name}-${index}`}
 value={
 plan.variation_id ||
 plan.package_id ||
