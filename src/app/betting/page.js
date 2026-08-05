@@ -196,6 +196,10 @@ Betting Platform
   ))}
 </select>
 
+  <p className="text-xs text-red-500">
+    Services loaded: {services.length} | Provider: {provider}
+  </p>
+
 </div>
 
 
