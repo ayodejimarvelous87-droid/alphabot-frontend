@@ -25,6 +25,11 @@ todaySales:0,
 todayProfit:0,
 monthProfit:0,
 bestService:"N/A",
+  masterWallet:{
+    oplug:0,
+    blitzpay:0,
+    vtu:0
+  },
 salesChart:[],
 profitChart:[],
 serviceChart:[],
@@ -179,6 +184,33 @@ return(
 </div>
 
 
+
+
+
+  <div className="grid gap-4 md:grid-cols-3 mt-6">
+
+  <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+  <h2 className="text-zinc-400 text-sm">🟣 Oplug Wallet</h2>
+  <p className="text-3xl font-black mt-3">
+  ₦{Number(data.masterWallet?.oplug || 0).toFixed(2)}
+  </p>
+  </div>
+
+  <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+  <h2 className="text-zinc-400 text-sm">🔵 BlitzPay Wallet</h2>
+  <p className="text-3xl font-black mt-3">
+  ₦{Number(data.masterWallet?.blitzpay || 0).toFixed(2)}
+  </p>
+  </div>
+
+  <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+  <h2 className="text-zinc-400 text-sm">🟢 VTU.ng Wallet</h2>
+  <p className="text-3xl font-black mt-3">
+  ₦{Number(data.masterWallet?.vtu || 0).toFixed(2)}
+  </p>
+  </div>
+
+  </div>
 
 <div className="grid gap-6 mt-6">
 
