@@ -146,14 +146,29 @@ setLoading(false);
 
 const deleteBeneficiary=async(id)=>{
 try{
-await fetch(`${API}/beneficiary/${id}`,{
+
+const res = await fetch(`${API}/beneficiary/${id}`,{
 method:"DELETE",
-headers:{Authorization:`Bearer ${localStorage.getItem("token")}`}
+headers:{
+Authorization:`Bearer ${localStorage.getItem("token")}`
+}
 });
-loadBeneficiaries();
-setMessage("✅ Beneficiary deleted");
+
+if(!res.ok){
+throw new Error("Delete failed");
+}
+
+setList(prev =>
+  prev.filter(item=>item._id !== id)
+);
+
+setToast("✅ Beneficiary deleted");
+
 }catch(error){
-setMessage("❌ Delete failed");
+
+console.log("Delete error:",error.message);
+setToast("❌ Delete failed");
+
 }
 };
 

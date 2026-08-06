@@ -7,6 +7,7 @@ export default function AdminProducts(){
 const [plans,setPlans]=useState([]);
 const [open,setOpen]=useState({});
 const [message,setMessage]=useState("");
+const [saving,setSaving]=useState(false);
 
 
 const loadPlans=async()=>{
@@ -139,61 +140,48 @@ return(
 {
 Object.keys(grouped).map(provider=>(
 
+
 <div key={provider}
 className="mt-6">
 
-
 <button
-
 className="font-bold text-xl"
-
 onClick={()=>setOpen({
 ...open,
 [provider]:!open[provider]
 })}
-
 >
-
 {open[provider] ? "▼":"▶"} {provider}
-
 </button>
-
-
 
 {
 open[provider] &&
 
 grouped[provider].map((plan,index)=>{
 
-const id=
+const id =
 plan.variation_id ||
 plan.id ||
 plan.plan_id ||
 `${provider}-${index}`;
 
-
 return(
-
 <div
 key={id}
 className="border border-zinc-800 p-4 mt-3 rounded"
 >
 
-
 <h2 className="font-bold">
 {plan.name || plan.data_plan}
 </h2>
-
 
 <p>
 Network: {plan.network || plan.service_name}
 </p>
 
-
 <p>
 Provider cost: ₦{plan.price}
 </p>
-
 
 <label>
 <input
@@ -201,39 +189,25 @@ id={`active-${id}`}
 type="checkbox"
 defaultChecked={true}
 />
- Active
+Active
 </label>
 
-
-
-<div>
-
 <input
-
 id={`price-${id}`}
-
 type="number"
-
-defaultValue={
-plan.display_price || plan.price
-}
-
+defaultValue={plan.display_price || plan.price}
 className="border border-zinc-800 p-2 mt-2"
-
 />
 
+</div>
+)
 
-<button
+})
 
-className="bg-black text-white p-2 ml-2"
-
-onClick={()=>savePlan(plan)}
-
->
-Save
-</button>
+}
 
 </div>
+
 
 
 </div>
@@ -252,6 +226,21 @@ Save
 }
 
 
+
+
+<div className="sticky bottom-4 mt-8">
+
+<button
+onClick={saveAll}
+disabled={saving}
+className="w-full bg-green-600 text-white py-3 rounded-xl font-bold disabled:opacity-50"
+>
+
+{saving ? "SAVING..." : "SAVE ALL"}
+
+</button>
+
+</div>
 </div>
 
 );
