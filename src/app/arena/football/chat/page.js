@@ -371,9 +371,9 @@ minute:"2-digit"
 ))}
 
 
-</div>
-
 <div ref={chatEndRef} />
+
+</div>
 
 <div className="flex gap-2 mt-4">
 

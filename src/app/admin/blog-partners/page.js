@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function BlogPartnersPage(){
 
@@ -18,7 +19,7 @@ export default function BlogPartnersPage(){
       const token = localStorage.getItem("adminToken");
 
       const res = await fetch(
-        "https://alphabot-1.onrender.com/blog-partners/all",
+        "https://alphabot-1.onrender.com/blog-partner/all",
         {
           headers:{
             Authorization:`Bearer ${token}`
@@ -27,6 +28,7 @@ export default function BlogPartnersPage(){
       );
 
       const data = await res.json();
+      console.log('BLOG PARTNERS DATA:', data);
 
       setPartners(Array.isArray(data) ? data : []);
 
@@ -67,9 +69,12 @@ export default function BlogPartnersPage(){
               className="rounded-xl border border-zinc-800 p-4"
             >
 
-              <h2 className="font-bold">
+              <Link
+                href={`/admin/blog-partners/${partner._id}`}
+                className="font-bold text-yellow-400 hover:underline"
+              >
                 {partner.name || partner.username || "Unnamed Partner"}
-              </h2>
+              </Link>
 
               <p className="text-sm text-zinc-400">
                 {partner.email || ""}

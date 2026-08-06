@@ -7,6 +7,7 @@ export default function BlogPayouts(){
 const [payouts,setPayouts]=useState([]);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(true);
+const [paying,setPaying]=useState(null);
 
 
 const loadPayouts=async()=>{
@@ -51,6 +52,10 @@ loadPayouts();
 
 const markPaid=async(id)=>{
 
+try{
+
+setPaying(id);
+
 const token=localStorage.getItem("adminToken");
 
 
@@ -73,16 +78,28 @@ const data=await res.json();
 setMessage(
 res.ok
 ?
-"✅ Payout marked as paid"
+"✅ Payout marked as paid and partner notified"
 :
-data.message
+data.message || "Payment failed"
 );
 
 
+if(res.ok){
 loadPayouts();
+}
+
+
+}catch(error){
+
+setMessage("❌ Network error while paying");
+
+}finally{
+
+setPaying(null);
+
+}
 
 };
-
 
 
 return(
@@ -136,6 +153,10 @@ className="border border-zinc-800 rounded-3xl p-5 shadow-xl"
 Code: {item.blogPartner?.code}
 </p>
 
+<p>
+📧 Email: {item.blogPartner?.email || "Not available"}
+</p>
+
 
 <div className="mt-3">
 
@@ -159,11 +180,13 @@ Code: {item.blogPartner?.code}
 
 
 <button
-disabled={item.commissionAmount<=0}
+disabled={item.commissionAmount<=0 || paying===item._id}
 className="bg-black text-white px-4 py-2 mt-4 rounded disabled:opacity-50"
 onClick={()=>markPaid(item._id)}
 >
-Mark Paid
+{
+paying===item._id ? "Paying..." : "Mark Paid"
+}
 </button>
 
 
