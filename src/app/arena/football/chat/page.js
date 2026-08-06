@@ -18,13 +18,17 @@ const activeFans = [
 const [currentUser,setCurrentUser]=useState(null);
 
 const chatEndRef = useRef(null);
+const chatBoxRef = useRef(null);
+const isAtBottom = useRef(true);
 
 useEffect(()=>{
-  if(chatEndRef.current){
-    chatEndRef.current.scrollIntoView({
-      behavior:"smooth"
-    });
-  }
+
+if(isAtBottom.current && chatEndRef.current){
+  chatEndRef.current.scrollIntoView({
+    behavior:"smooth"
+  });
+}
+
 },[messages]);
 
 const bottomRef = useRef(null);
@@ -283,7 +287,16 @@ Discuss matches, predictions and football
 </p>
 
 
-<div className="
+<div
+ref={chatBoxRef}
+onScroll={(e)=>{
+const box=e.currentTarget;
+
+isAtBottom.current =
+box.scrollHeight - box.scrollTop - box.clientHeight < 50;
+
+}}
+className="
 mt-6
 bg-[#18181B]
 border
