@@ -66,6 +66,67 @@ grouped[provider].push(plan);
 
 
 
+
+
+const saveAll = async()=>{
+
+setSaving(true);
+
+try{
+
+for(const plan of plans){
+
+const id =
+plan.variation_id ||
+plan.id ||
+plan.plan_id ||
+`${plan.provider}-${plan.name}`;
+
+const price =
+document.getElementById(`price-${id}`)?.value;
+
+if(!price) continue;
+
+
+await fetch(
+`https://alphabot-1.onrender.com/admin/data-prices/${id}`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:
+`Bearer ${localStorage.getItem("adminToken")}`
+},
+body:JSON.stringify({
+
+provider:plan.provider,
+network:plan.network || plan.service_name,
+name:plan.name || plan.data_plan,
+providerPrice:Number(plan.price),
+sellingPrice:Number(price),
+active:
+document.getElementById(`active-${id}`)?.checked
+
+})
+}
+);
+
+}
+
+setMessage("✅ All plans saved");
+
+}catch(error){
+
+console.log(error);
+setMessage("❌ Save failed");
+
+}
+
+setSaving(false);
+
+};
+
+
 const savePlan=async(plan)=>{
 
 const id=
