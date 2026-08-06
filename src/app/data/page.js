@@ -66,7 +66,9 @@ const data = await res.json();
 
 const networks = data.networks || {};
 
+
 setPlans(networks);
+
 
 
 
@@ -154,6 +156,26 @@ return getSize(a) - getSize(b);
 
 
 
+
+
+
+const getCategoryCount = (cat)=>{
+
+const list =
+cat === "All Plans"
+?
+Object.values(plans[network] || {}).flat()
+:
+(plans[network]?.[cat] || []);
+
+
+return new Set(
+list.map(plan =>
+`${plan.data_plan || plan.name}-${plan.validity || ""}-${plan.price || plan.reseller_price || ""}`
+)
+).size;
+
+};
 
 const buyData = async()=>{
 
@@ -344,18 +366,9 @@ setSelectedPlan("");
 
 ({cat==="All Plans"
 ?
-new Set(
-  Object.values(plans[network] || {})
-    .flat()
-    .map(plan =>
-      plan.variation_id ||
-      plan.package_id ||
-      plan.id ||
-      plan.name
-    )
-).size
+getCategoryCount("All Plans")
 :
-(plans[network]?.[cat]?.length || 0)
+getCategoryCount(cat)
 })
 
 </option>

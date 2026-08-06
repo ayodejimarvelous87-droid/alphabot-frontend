@@ -193,15 +193,9 @@ value={name}
 onChange={e=>setName(e.target.value)}
 />
 
-<div className="flex items-center w-full rounded-2xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700 focus-within:ring-2 focus-within:ring-yellow-400">
-
-<span className="px-4 text-zinc-500 border-r border-zinc-300 dark:border-zinc-700">
-+234 |
-</span>
-
 <input
-className="flex-1 p-4 bg-transparent outline-none"
-placeholder="8012345678"
+className="w-full p-4 rounded-2xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700 focus:ring-2 focus:ring-yellow-400 outline-none"
+placeholder="Phone number (90XXXXXXXXX)"
 value={beneficiaryPhone}
 onChange={e=>{
   let value=e.target.value
