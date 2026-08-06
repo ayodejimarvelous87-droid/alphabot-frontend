@@ -279,9 +279,7 @@ className="border border-zinc-800 p-2 mt-2"
 
 </div>
 
-))
 
-}
 
 
 
