@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import BottomNav from "@/components/BottomNav";
+import { useRouter } from "next/navigation";
 
 
 export default function FootballArena(){
+
+const router = useRouter();
 
 const [matches,setMatches]=useState([]);
 const [loading,setLoading]=useState(true);
@@ -213,6 +216,14 @@ onClick={()=>setShowRules(!showRules)}
 className="mt-5 w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 >
 📖 {showRules ? "Hide Rules" : "How To Play"}
+</button>
+
+
+<button
+onClick={()=>router.push("/arena/football/chat")}
+className="mt-3 w-full bg-[#050505] border border-zinc-700 py-3 rounded-xl font-bold"
+>
+💬 Football Chat Arena
 </button>
 
 {showRules && (

@@ -344,8 +344,16 @@ setSelectedPlan("");
 
 ({cat==="All Plans"
 ?
-Object.values(plans[network] || {})
-  .reduce((total,list)=>total + list.length,0)
+new Set(
+  Object.values(plans[network] || {})
+    .flat()
+    .map(plan =>
+      plan.variation_id ||
+      plan.package_id ||
+      plan.id ||
+      plan.name
+    )
+).size
 :
 (plans[network]?.[cat]?.length || 0)
 })

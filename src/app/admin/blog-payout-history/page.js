@@ -96,17 +96,17 @@ className="border border-zinc-800 rounded-3xl p-5 shadow-xl"
 
 
 <p>
-💰 Amount: ₦{item.amount}
+💰 Amount: ₦{item.commissionAmount}
 </p>
 
 
 <p>
-📅 Period Start: {new Date(item.periodStart).toLocaleString()}
+📅 Period Start: {new Date(item.weekStart).toLocaleString()}
 </p>
 
 
 <p>
-📅 Period End: {new Date(item.periodEnd).toLocaleString()}
+📅 Period End: {new Date(item.weekEnd).toLocaleString()}
 </p>
 
 

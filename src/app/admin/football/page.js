@@ -10,7 +10,13 @@ footballSecondPrize:1000,
 footballFirstMinimumPoints:200,
 footballSecondMinimumPoints:180,
 footballMinimumPredictions:20,
-footballMinimumWins:10
+footballMinimumWins:10,
+
+footballAIEnabled:true,
+footballIdleChatEnabled:true,
+footballIdleChatInterval:5,
+footballAnalystStyle:"",
+goalMasterStyle:""
 });
 
 const [message,setMessage]=useState("");
@@ -37,7 +43,13 @@ footballSecondPrize:data.footballSecondPrize || 1000,
 footballFirstMinimumPoints:data.footballFirstMinimumPoints || 200,
 footballSecondMinimumPoints:data.footballSecondMinimumPoints || 180,
 footballMinimumPredictions:data.footballMinimumPredictions || 20,
-footballMinimumWins:data.footballMinimumWins || 10
+footballMinimumWins:data.footballMinimumWins || 10,
+
+footballAIEnabled:data.footballAIEnabled !== false,
+footballIdleChatEnabled:data.footballIdleChatEnabled !== false,
+footballIdleChatInterval:data.footballIdleChatInterval || 5,
+footballAnalystStyle:data.footballAnalystStyle || "",
+goalMasterStyle:data.goalMasterStyle || ""
 });
 
 };
@@ -78,9 +90,19 @@ res.ok ? "✅ Football rewards updated" : data.message
 
 const update=(key,value)=>{
 
+const textFields=[
+"footballAnalystStyle",
+"goalMasterStyle"
+];
+
 setSettings({
 ...settings,
-[key]:Number(value)
+[key]:
+typeof value === "boolean"
+? value
+: textFields.includes(key)
+? value
+: Number(value)
 });
 
 };
@@ -106,7 +128,7 @@ return(
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
-placeholder="Weekly 1st Place Reward Amount"
+placeholder="🏆 1st Position Prize Amount"
 value={settings.footballFirstPrize}
 onChange={(e)=>update("footballFirstPrize",e.target.value)}
 />
@@ -114,7 +136,7 @@ onChange={(e)=>update("footballFirstPrize",e.target.value)}
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
-placeholder="Weekly 2nd Place Reward Amount"
+placeholder="🥈 2nd Position Prize Amount"
 value={settings.footballSecondPrize}
 onChange={(e)=>update("footballSecondPrize",e.target.value)}
 />
@@ -122,7 +144,7 @@ onChange={(e)=>update("footballSecondPrize",e.target.value)}
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
-placeholder="First Minimum Points"
+placeholder="⭐ 1st Position Minimum Points"
 value={settings.footballFirstMinimumPoints}
 onChange={(e)=>update("footballFirstMinimumPoints",e.target.value)}
 />
@@ -130,7 +152,7 @@ onChange={(e)=>update("footballFirstMinimumPoints",e.target.value)}
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
-placeholder="Second Minimum Points"
+placeholder="⭐ 2nd Position Minimum Points"
 value={settings.footballSecondMinimumPoints}
 onChange={(e)=>update("footballSecondMinimumPoints",e.target.value)}
 />
@@ -138,7 +160,7 @@ onChange={(e)=>update("footballSecondMinimumPoints",e.target.value)}
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
-placeholder="Minimum Predictions"
+placeholder="📊 Minimum Predictions Required"
 value={settings.footballMinimumPredictions}
 onChange={(e)=>update("footballMinimumPredictions",e.target.value)}
 />
@@ -146,7 +168,7 @@ onChange={(e)=>update("footballMinimumPredictions",e.target.value)}
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
-placeholder="Minimum Wins"
+placeholder="🎯 Minimum Wins Required"
 value={settings.footballMinimumWins}
 onChange={(e)=>update("footballMinimumWins",e.target.value)}
 />
@@ -156,8 +178,67 @@ onChange={(e)=>update("footballMinimumWins",e.target.value)}
 className="bg-black text-white px-5 py-3 rounded-3xl"
 onClick={saveSettings}
 >
-Save Football Rewards
+Save Football Settings
 </button>
+
+<div className="mt-10 space-y-4">
+
+<h2 className="text-xl font-bold">
+🤖 Football AI Controls
+</h2>
+
+
+<label className="flex justify-between items-center">
+Enable Football AI
+
+<input
+type="checkbox"
+checked={settings.footballAIEnabled}
+onChange={(e)=>update("footballAIEnabled",e.target.checked)}
+/>
+
+</label>
+
+
+<label className="flex justify-between items-center">
+Enable Idle Football Discussions
+
+<input
+type="checkbox"
+checked={settings.footballIdleChatEnabled}
+onChange={(e)=>update("footballIdleChatEnabled",e.target.checked)}
+/>
+
+</label>
+
+
+<input
+className="border border-zinc-800 rounded-3xl p-3 w-full"
+placeholder="Idle Chat Interval (minutes)"
+value={settings.footballIdleChatInterval}
+onChange={(e)=>update("footballIdleChatInterval",e.target.value)}
+/>
+
+
+<textarea
+className="border border-zinc-800 rounded-3xl p-3 w-full"
+placeholder="⚽ Analyst Style"
+value={settings.footballAnalystStyle}
+onChange={(e)=>update("footballAnalystStyle",e.target.value)}
+/>
+
+
+<textarea
+className="border border-zinc-800 rounded-3xl p-3 w-full"
+placeholder="🔥 GoalMaster Style"
+value={settings.goalMasterStyle}
+onChange={(e)=>update("goalMasterStyle",e.target.value)}
+/>
+
+
+</div>
+
+
 
 
 </div>
