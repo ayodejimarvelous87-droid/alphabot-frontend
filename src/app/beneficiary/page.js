@@ -333,9 +333,6 @@ className="block text-center text-yellow-400 mt-10"
 </Link>
 
 
-</div>
-
-
 <Toast
 message={toast}
 type="success"
