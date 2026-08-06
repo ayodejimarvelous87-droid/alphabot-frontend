@@ -236,7 +236,7 @@ Current Balance: ₦{Number(data.wallet?.balance || 0).toLocaleString()}
 
 <input
 className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-2 block mt-3 w-full"
-placeholder="Amount"
+placeholder="💰 Amount (NGN)"
 value={amount}
 onChange={(e)=>setAmount(e.target.value)}
 />

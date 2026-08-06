@@ -100,7 +100,7 @@ Authorization:`Bearer ${localStorage.getItem("token")}`
 body:JSON.stringify({
 
 name,
-beneficiary_phone:beneficiaryPhone,
+beneficiary_phone:"+234"+beneficiaryPhone,
 service
 
 })
@@ -195,9 +195,17 @@ onChange={e=>setName(e.target.value)}
 
 <input
 className="w-full p-4 rounded-2xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700 focus:ring-2 focus:ring-yellow-400 outline-none"
-placeholder="Phone number"
+placeholder="Phone number (90XXXXXXXXX)"
 value={beneficiaryPhone}
-onChange={e=>setBeneficiaryPhone(e.target.value)}
+onChange={e=>{
+  let value=e.target.value
+    .replace(/\+234/g,"")
+    .replace(/\s/g,"")
+    .replace(/\D/g,"")
+    .slice(0,10);
+
+  setBeneficiaryPhone(value);
+}}
 />
 
 <select

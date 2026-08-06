@@ -67,7 +67,10 @@ const user = JSON.parse(
 localStorage.getItem("user")
 );
 
-setCurrentUser(user);
+setCurrentUser({
+  ...user,
+  id: user.id || user._id
+});
 
 loadMessages();
 

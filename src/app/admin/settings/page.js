@@ -113,6 +113,10 @@ announcement:e.target.value
 />
 
 
+<label className="font-bold block">
+💰 Referral Percentage (%)
+</label>
+
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"
 type="number"
@@ -124,6 +128,10 @@ referralPercentage:e.target.value
 })}
 />
 
+
+<label className="font-bold block">
+🏦 Provider Minimum Balance (NGN)
+</label>
 
 <input
 className="border border-zinc-800 rounded-3xl p-3 w-full"

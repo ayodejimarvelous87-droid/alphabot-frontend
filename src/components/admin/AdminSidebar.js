@@ -65,6 +65,10 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 Users
 </Link>
 
+<Link href="/admin/blog-partners" className="block p-2 hover:bg-[#18181B] rounded">
+👥 Blog Partners
+</Link>
+
 </div>
 )}
 
