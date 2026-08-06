@@ -17,6 +17,16 @@ const activeFans = [
 ].length;
 const [currentUser,setCurrentUser]=useState(null);
 
+const chatEndRef = useRef(null);
+
+useEffect(()=>{
+  if(chatEndRef.current){
+    chatEndRef.current.scrollIntoView({
+      behavior:"smooth"
+    });
+  }
+},[messages]);
+
 const bottomRef = useRef(null);
 
 
@@ -289,7 +299,7 @@ space-y-3
 key={msg._id}
 className={`
 flex
-${currentUser?.id === msg.user ? "justify-end" : "justify-start"}
+${currentUser?.id?.toString() === msg.user?.toString() ? "justify-end" : "justify-start"}
 `}
 >
 
@@ -298,7 +308,7 @@ className={`
 max-w-[80%]
 rounded-2xl
 p-3
-${currentUser?.id === msg.user
+${currentUser?.id?.toString() === msg.user?.toString()
 ? "bg-yellow-400 text-black"
 : "bg-black border border-zinc-900 text-white"}
 `}
@@ -307,11 +317,11 @@ ${currentUser?.id === msg.user
 <p className={`
 font-bold
 text-sm
-${currentUser?.id === msg.user
+${currentUser?.id?.toString() === msg.user?.toString()
 ? "text-black"
 : "text-yellow-400"}
 `}>
-{currentUser?.id === msg.user ? "You" : `⚽ ${msg.name}`}
+{currentUser?.id?.toString() === msg.user?.toString() ? "You" : `⚽ ${msg.name}`}
 </p>
 
 <p className="mt-1">
@@ -341,7 +351,7 @@ ${currentUser?.id === msg.user
 <p className={`
 text-[10px]
 mt-2
-${currentUser?.id === msg.user
+${currentUser?.id?.toString() === msg.user?.toString()
 ? "text-black/60"
 : "text-zinc-500"}
 `}>
@@ -360,14 +370,16 @@ minute:"2-digit"
 
 </div>
 
+<div ref={chatEndRef} />
 
 <div className="flex gap-2 mt-4">
 
 
-<input
+<textarea
 value={text}
 onChange={(e)=>setText(e.target.value)}
 placeholder="Type message..."
+rows="1"
 className="
 flex-1
 bg-[#18181B]
@@ -375,6 +387,10 @@ border
 border-zinc-800
 rounded-xl
 px-4
+py-3
+resize-y
+min-h-[45px]
+max-h-32
 "
 />
 
