@@ -17,6 +17,7 @@ const [selectedPlan,setSelectedPlan]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+  const [search,setSearch]=useState("");
   const [beneficiaries,setBeneficiaries]=useState([]);
 
 useEffect(()=>{
@@ -159,6 +160,21 @@ return getSize(a) - getSize(b);
 
 
 
+
+const filteredPlans = dataPlans.filter((plan)=>{
+
+const text = (
+  plan.data_plan ||
+  plan.name ||
+  plan.size ||
+  ""
+).toLowerCase();
+
+return text.includes(search.toLowerCase());
+
+});
+
+
 const getCategoryCount = (cat)=>{
 
 const list =
@@ -289,12 +305,23 @@ setLoading(false);
 
 return(
 
+
 <ServiceLayout
 icon="🌐"
 title="Buy Data"
 subtitle="Fast internet bundles with instant delivery"
 message={message}
 >
+
+<div className="mb-5">
+<input
+type="text"
+value={search}
+onChange={(e)=>setSearch(e.target.value)}
+placeholder="Search data plans..."
+className="w-full p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-white"
+/>
+</div>
 
 <div className="max-w-md mx-auto space-y-3">
 
@@ -400,7 +427,7 @@ Select Bundle
 </option>
 
 
-{dataPlans.map((plan,index)=>(
+{filteredPlans.map((plan,index)=>(
 
 <option
 key={`${plan.network}-${plan.name}-${index}`}
