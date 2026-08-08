@@ -1,6 +1,7 @@
 "use client";
 
 import {useState,useEffect} from "react";
+import SuccessCelebration from "@/components/success-celebration";
 
 const API="https://alphabot-1.onrender.com";
 
@@ -33,6 +34,7 @@ const [verifying,setVerifying]=useState(false);
 
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+const [showSuccess,setShowSuccess]=useState(false);
 
 const [transferSettings,setTransferSettings]=useState(null);
 
@@ -325,6 +327,8 @@ const data=await res.json();
 if(res.ok){
 
 setMessage("✅ Money sent successfully");
+setShowSuccess(true);
+setTimeout(()=>setShowSuccess(false),3000);
 
 }else{
 
@@ -350,6 +354,12 @@ setLoading(false);
 
 
 return(
+<>
+<SuccessCelebration
+show={showSuccess}
+message="🎉 Money sent successfully!"
+/>
+
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
@@ -658,6 +668,7 @@ loading
 
 </main>
 
+</>
 );
 
 }

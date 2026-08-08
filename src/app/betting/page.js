@@ -4,6 +4,7 @@ import { useState,useEffect } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 import Toast from "@/components/Toast";
+import SuccessCelebration from "@/components/success-celebration";
 
 export default function Page(){
 
@@ -16,6 +17,7 @@ const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
+const [showSuccess,setShowSuccess]=useState(false);
 
   useEffect(()=>{
 
@@ -104,6 +106,8 @@ const data=await res.json();
   if(res.ok){
 
     setToast(`✅ ${data.message || "Betting wallet funded successfully"}`);
+setShowSuccess(true);
+setTimeout(()=>setShowSuccess(false),3000);
     setAmount("");
 
   }else{
@@ -136,6 +140,12 @@ setLoading(false);
 
 
 return(
+<>
+<SuccessCelebration
+show={showSuccess}
+message="🎉 Betting wallet funded successfully!"
+/>
+
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
@@ -292,6 +302,7 @@ onClose={()=>setToast("")}
 
 </main>
 
+</>
 );
 
 }

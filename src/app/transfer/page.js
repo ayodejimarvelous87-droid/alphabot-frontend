@@ -2,6 +2,7 @@
 
 import {useState,useEffect} from "react";
 import Link from "next/link";
+import SuccessCelebration from "@/components/success-celebration";
 
 export default function Transfer(){
 
@@ -62,6 +63,7 @@ const [accountName,setAccountName]=useState("");
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
+const [showSuccess,setShowSuccess]=useState(false);
 const [verified,setVerified]=useState(false);
 
 
@@ -169,6 +171,8 @@ const data = await res.json();
 if(res.ok){
 
 setMessage("✅ Transfer successful");
+setShowSuccess(true);
+setTimeout(()=>setShowSuccess(false),3000);
 
 }else{
 
@@ -187,6 +191,12 @@ setMessage("❌ Connection error");
 
 
 return(
+<>
+<SuccessCelebration
+show={showSuccess}
+message="🎉 Transfer successful!"
+/>
+
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
@@ -411,6 +421,7 @@ className="block text-center text-zinc-400 mt-6"
 
 </main>
 
+</>
 );
 
 }

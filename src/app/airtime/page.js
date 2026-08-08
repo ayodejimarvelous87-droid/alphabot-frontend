@@ -4,6 +4,7 @@ import { useState,useEffect } from "react";
 import {useSearchParams} from "next/navigation";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
+import SuccessCelebration from "@/components/success-celebration";
 
 export default function Airtime(){
 const searchParams = useSearchParams();
@@ -14,6 +15,7 @@ const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+const [showSuccess,setShowSuccess]=useState(false);
   const [beneficiaries,setBeneficiaries]=useState([]);
 
 
@@ -79,6 +81,8 @@ const data = await res.json();
 if(res.ok){
 
 setMessage(`✅ ${data.message}`);
+setShowSuccess(true);
+setTimeout(()=>setShowSuccess(false),3000);
 
 }else{
 
@@ -102,6 +106,12 @@ setLoading(false);
 
 
 return(
+<>
+<SuccessCelebration
+show={showSuccess}
+message="🎉 Airtime purchase successful!"
+/>
+
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
@@ -295,6 +305,7 @@ className="block text-center text-zinc-400 mt-6"
 
 </main>
 
+</>
 );
 
 

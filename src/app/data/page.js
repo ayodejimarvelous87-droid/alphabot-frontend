@@ -1,5 +1,7 @@
 "use client";
 
+import SuccessCelebration from "@/components/success-celebration";
+
 import { useEffect, useState } from "react";
 import {useSearchParams} from "next/navigation";
 import Link from "next/link";
@@ -7,6 +9,8 @@ import PhoneInput from "@/components/PhoneInput";
 import ServiceLayout from "@/components/ServiceLayout";
 
 export default function Page(){
+
+  const [showSuccess, setShowSuccess] = useState(false);
 const searchParams = useSearchParams();
 
 const [phone,setPhone]=useState("");
@@ -282,9 +286,9 @@ await res.json();
 
 if(res.ok){
 
-setMessage(
-"✅ Data purchase successful"
-);
+setMessage("✅ Data purchase successful");
+setShowSuccess(true);
+setTimeout(() => setShowSuccess(false), 3000);
 
 }else{
 
@@ -314,7 +318,11 @@ setLoading(false);
 
 
 return(
-
+<>
+<SuccessCelebration
+show={showSuccess}
+message="🎉 Data purchase completed successfully!"
+/>
 
 <ServiceLayout
 icon="🌐"
@@ -571,6 +579,7 @@ className="block text-center text-zinc-400 mt-3"
 
 
 </ServiceLayout>
+</>
 
 );
 

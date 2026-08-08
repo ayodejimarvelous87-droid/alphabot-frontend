@@ -3,6 +3,7 @@
 import {useState,useEffect} from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
+import SuccessCelebration from "@/components/success-celebration";
 
 export default function RechargePin(){
 
@@ -14,6 +15,7 @@ const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [epinResult,setEpinResult]=useState(null);
 const [loading,setLoading]=useState(false);
+const [showSuccess,setShowSuccess]=useState(false);
 const [beneficiaries,setBeneficiaries]=useState([]);
 
 
@@ -104,6 +106,11 @@ data.status === "processing"
 : "✅ Recharge PIN purchased successfully"
 );
 
+if(data.status !== "processing"){
+  setShowSuccess(true);
+  setTimeout(()=>setShowSuccess(false),3000);
+}
+
 setEpinResult(data.epin);
 
 
@@ -130,6 +137,12 @@ setLoading(false);
 
 
 return(
+<>
+<SuccessCelebration
+show={showSuccess}
+message="🎉 Recharge PIN purchased successfully!"
+/>
+
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
@@ -353,6 +366,7 @@ className="block text-center text-zinc-400 mt-6"
 
 </main>
 
+</>
 )
 
 }

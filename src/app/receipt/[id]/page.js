@@ -262,124 +262,89 @@ className="max-w-xl mx-auto rounded-3xl bg-[#121214] border border-zinc-800 p-6"
         <div className="mt-8">
 
           <h2 className="text-lg font-bold mb-4">
-            Transaction Information
-          </h2>
+          <div className="mt-8">
 
+            <h2 className="text-lg font-bold mb-4">
+              Transaction Information
+            </h2>
 
-          <div className="space-y-4">
+            <div className="space-y-4">
 
-          <Row
-            title="Amount"
-            value={`₦${Number(receipt.amount).toLocaleString()}`}
-          />
+              <Row
+                title="Amount"
+                value={`₦${Number(receipt.amount || 0).toLocaleString()}`}
+              />
 
-          <Row
-            title="Sender"
-            value={receipt.phone || "-"}
-          />
+              <Row
+                title="Service"
+                value={getServiceName(receipt)}
+              />
 
-          <Row
-            title="Recipient"
-            value={receipt.recipient || receipt.phone || "-"}
-          />
+              {getReceiptDetails(receipt).map((item, index) => (
+                <Row
+                  key={index}
+                  title={item.title}
+                  value={item.value || "-"}
+                />
+              ))}
 
-          <Row
-            title="Service Purchased"
-            value={
-              receipt.description ||
-              receipt.type ||
-              "Wallet Transaction"
-            }
-          />
+              <Row
+                title="Payment Method"
+                value="AlphaBot Wallet"
+              />
 
-          <Row
-            title="Network"
-            value={
-              receipt.network ||
-              receipt.providerResponse?.data?.service_name ||
-              "-"
-            }
-          />
+              <div className="rounded-2xl bg-black border border-zinc-800 p-4">
 
-          <Row
-            title="Provider Order ID"
-            value={
-              receipt.providerResponse?.data?.order_id ||
-              "-"
-            }
-          />
+                <p className="text-xs text-zinc-500">
+                  Transaction Reference
+                </p>
 
-          <Row
-            title="Wallet Charged"
-            value={`₦${Number(
-              receipt.providerResponse?.data?.amount_charged ||
-              receipt.amount
-            ).toLocaleString()}`}
-          />
+                <div className="flex items-center justify-between gap-3 mt-2">
 
-          <Row
-            title="Payment Method"
-            value="AlphaBot Wallet"
-          />
+                  <p className="font-bold break-all">
+                    {receipt.reference}
+                  </p>
 
+                  <button
+                    onClick={copyReference}
+                    className="bg-yellow-400 text-black px-3 py-2 rounded-xl text-xs font-bold"
+                  >
+                    {copied ? "Copied" : "Copy"}
+                  </button>
 
-          <Row
-            title="Type"
-            value={receipt.type}
-          />
+                </div>
 
-          <div className="rounded-2xl bg-black border border-zinc-800 p-4">
+              </div>
 
-            <p className="text-xs text-zinc-500">
-              Transaction Reference
-            </p>
+              <Row
+                title="Status"
+                value={receipt.status}
+              />
 
-            <div className="flex items-center justify-between gap-3 mt-2">
+              <TechnicalDetails receipt={receipt} />
 
-              <p className="font-bold break-all">
-                {receipt.reference}
-              </p>
+              <Row
+                title="Balance Before"
+                value={`₦${Number(receipt.balanceBefore || 0).toLocaleString()}`}
+              />
 
-              <button
-                onClick={copyReference}
-                className="bg-yellow-400 text-black px-3 py-2 rounded-xl text-xs font-bold"
-              >
-                {copied ? "Copied" : "Copy"}
-              </button>
+              <Row
+                title="Balance After"
+                value={`₦${Number(receipt.balanceAfter || 0).toLocaleString()}`}
+              />
+
+              <Row
+                title="Date"
+                value={
+                  receipt.createdAt
+                    ? new Date(receipt.createdAt).toLocaleString()
+                    : "-"
+                }
+              />
 
             </div>
 
           </div>
-
-          <Row
-            title="Status"
-            value={receipt.status}
-          />
-
-            <TechnicalDetails receipt={receipt} />
-
-          <Row
-            title="Balance Before"
-            value={`₦${Number(receipt.balanceBefore).toLocaleString()}`}
-          />
-
-          <Row
-            title="Balance After"
-            value={`₦${Number(receipt.balanceAfter).toLocaleString()}`}
-          />
-
-          <Row
-            title="Date"
-            value={new Date(receipt.createdAt).toLocaleString()}
-          />
-
-          </div>
-
-        </div>
-
-        <div className="mt-8 rounded-3xl bg-[#0A0A0C] border border-zinc-800 p-5">
-
-          <h2 className="font-bold text-lg mb-4">
             Wallet Summary
           </h2>
 
@@ -489,6 +454,239 @@ className="max-w-xl mx-auto rounded-3xl bg-[#121214] border border-zinc-800 p-6"
 }
 
 
+
+function getServiceName(receipt) {
+  const service = String(
+    receipt.service || receipt.type || ""
+  ).toLowerCase();
+
+  const names = {
+    data: "Data",
+    airtime: "Airtime",
+    electricity: "Electricity",
+    tv: "TV Subscription",
+    betting: "Betting",
+    exam_pin: "Exam PIN",
+    recharge_pin: "Recharge PIN",
+    airtime_cash: "Airtime Cash",
+    bank_transfer: "Bank Transfer",
+    payments: "Wallet Funding"
+  };
+
+  return (
+    names[service] ||
+    receipt.description ||
+    receipt.type ||
+    "Wallet Transaction"
+  );
+}
+
+
+function getReceiptDetails(receipt) {
+  const service = String(
+    receipt.service || receipt.type || ""
+  ).toLowerCase();
+
+  const data = receipt.providerResponse?.data || {};
+  const details = [];
+
+  if (service === "airtime") {
+    details.push(
+      {
+        title: "Phone Number",
+        value: receipt.recipient || receipt.phone
+      },
+      {
+        title: "Network",
+        value: receipt.network || data.service_name
+      }
+    );
+
+  } else if (service === "data") {
+    details.push(
+      {
+        title: "Phone Number",
+        value: receipt.recipient || receipt.phone
+      },
+      {
+        title: "Network",
+        value: receipt.network || data.service_name
+      },
+      {
+        title: "Data Plan",
+        value:
+          receipt.product_name ||
+          data.product_name ||
+          data.plan_name ||
+          receipt.description
+      },
+      {
+        title: "Provider Order ID",
+        value: data.order_id
+      }
+    );
+
+  } else if (service === "electricity") {
+    details.push(
+      {
+        title: "Meter Number",
+        value:
+          receipt.meterNumber ||
+          receipt.meter_number ||
+          receipt.recipient
+      },
+      {
+        title: "Disco",
+        value:
+          receipt.disco ||
+          receipt.network ||
+          data.service_name
+      },
+      {
+        title: "Customer Name",
+        value:
+          receipt.customerName ||
+          receipt.customer_name ||
+          data.customer_name
+      },
+      {
+        title: "Token",
+        value:
+          receipt.token ||
+          data.token
+      }
+    );
+
+  } else if (service === "tv") {
+    details.push(
+      {
+        title: "Smartcard Number",
+        value:
+          receipt.smartcardNumber ||
+          receipt.smartcard_number ||
+          receipt.recipient
+      },
+      {
+        title: "Provider",
+        value:
+          receipt.provider ||
+          receipt.network ||
+          data.service_name
+      },
+      {
+        title: "Package",
+        value:
+          receipt.package ||
+          receipt.packageName ||
+          receipt.description ||
+          data.package_name
+      },
+      {
+        title: "Customer Name",
+        value:
+          receipt.customerName ||
+          receipt.customer_name ||
+          data.customer_name
+      }
+    );
+
+  } else if (service === "betting") {
+    details.push(
+      {
+        title: "Betting Platform",
+        value:
+          receipt.provider ||
+          receipt.network ||
+          receipt.service_id
+      },
+      {
+        title: "Customer ID",
+        value:
+          receipt.customer_id ||
+          receipt.customerId ||
+          receipt.recipient
+      }
+    );
+
+  } else if (service === "exam_pin") {
+    details.push(
+      {
+        title: "Exam",
+        value:
+          receipt.exam ||
+          receipt.product_name ||
+          receipt.description
+      },
+      {
+        title: "PIN",
+        value:
+          receipt.pin ||
+          data.pin ||
+          data.pin_number
+      }
+    );
+
+  } else if (service === "recharge_pin") {
+    details.push(
+      {
+        title: "Network",
+        value:
+          receipt.network ||
+          data.service_name
+      },
+      {
+        title: "PIN",
+        value:
+          receipt.pin ||
+          data.pin
+      }
+    );
+
+  } else if (service === "airtime_cash") {
+    details.push(
+      {
+        title: "Phone Number",
+        value:
+          receipt.recipient ||
+          receipt.phone
+      },
+      {
+        title: "Network",
+        value: receipt.network
+      }
+    );
+
+  } else if (service === "bank_transfer") {
+    details.push(
+      {
+        title: "Account Number",
+        value:
+          receipt.accountNumber ||
+          receipt.account_number ||
+          receipt.recipient
+      },
+      {
+        title: "Bank",
+        value:
+          receipt.bankName ||
+          receipt.bank_name
+      },
+      {
+        title: "Account Name",
+        value:
+          receipt.accountName ||
+          receipt.account_name
+      }
+    );
+  }
+
+  return details.filter(
+    item =>
+      item.value !== undefined &&
+      item.value !== null &&
+      item.value !== ""
+  );
+}
 
 function TechnicalDetails({ receipt }) {
   return (

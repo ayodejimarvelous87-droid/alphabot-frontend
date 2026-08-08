@@ -4,6 +4,7 @@ import {useEffect,useState} from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 import Toast from "@/components/Toast";
+import SuccessCelebration from "@/components/success-celebration";
 
 export default function Page(){
 
@@ -17,6 +18,7 @@ const [otpVerified,setOtpVerified]=useState(false);
 const [message,setMessage]=useState("");
 const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
+const [showSuccess,setShowSuccess]=useState(false);
 const [requests,setRequests]=useState([]);
 
 
@@ -230,6 +232,8 @@ if(res.ok){
 setMessage(
 `✅ ${data.message}. Received ₦${data.cashAmount}`
 );
+setShowSuccess(true);
+setTimeout(()=>setShowSuccess(false),3000);
 
 setAmount("");
 
@@ -258,6 +262,12 @@ setLoading(false);
 
 
 return(
+<>
+<SuccessCelebration
+show={showSuccess}
+message="🎉 Airtime converted successfully!"
+/>
+
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
@@ -465,6 +475,7 @@ onClose={()=>setToast("")}
 
 </main>
 
+</>
 );
 
 }

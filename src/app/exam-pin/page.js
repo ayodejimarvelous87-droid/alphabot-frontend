@@ -3,6 +3,7 @@
 import { useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
 import Link from "next/link";
+import SuccessCelebration from "@/components/success-celebration";
 
 export default function Page(){
 
@@ -12,6 +13,7 @@ const [quantity,setQuantity]=useState(1);
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+const [showSuccess,setShowSuccess]=useState(false);
 
 
 const buyExamPin = async()=>{
@@ -48,6 +50,8 @@ const data=await res.json();
 if(res.ok){
 
 setMessage(`✅ ${data.message}`);
+setShowSuccess(true);
+setTimeout(()=>setShowSuccess(false),3000);
 
 }else{
 
@@ -71,6 +75,12 @@ setLoading(false);
 
 
 return(
+<>
+<SuccessCelebration
+show={showSuccess}
+message="🎉 Exam PIN purchase successful!"
+/>
+
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
 
@@ -187,6 +197,7 @@ className="block text-center text-zinc-400 mt-6"
 
 </main>
 
+</>
 );
 
 }
