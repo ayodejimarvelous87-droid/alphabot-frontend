@@ -6,7 +6,6 @@ import { requestNotificationPermission } from "@/firebase";
 import BottomNav from "@/components/BottomNav";
 import Toast from "@/components/Toast";
 import { useTheme } from "@/components/ThemeProvider";
-import { getCached, setCached } from "@/lib/cache";
 
 export default function Dashboard(){
 
@@ -35,6 +34,7 @@ useEffect(()=>{
 const token=localStorage.getItem("token");
 const saved=localStorage.getItem("user");
 
+
 if(!token){
 
 window.location.href="/login";
@@ -42,195 +42,27 @@ return;
 
 }
 
-if(!saved){
-setLoading(false);
-return;
-}
+
+if(saved){
 
 const data=JSON.parse(saved);
 
 setUser(data);
 
-const profileKey=`dashboard_profile_${data.phone}`;
-const balanceKey=`dashboard_balance_${data.phone}`;
-const transactionsKey=`dashboard_transactions_${data.phone}`;
-const referralKey=`dashboard_referral_${data.phone}`;
-const notificationsKey=`dashboard_notifications_${data.phone}`;
-
-const cachedProfile=getCached(profileKey);
-const cachedBalance=getCached(balanceKey);
-const cachedTransactions=getCached(transactionsKey);
-const cachedReferral=getCached(referralKey);
-const cachedNotifications=getCached(notificationsKey);
-
-if(cachedProfile){
-setUser(cachedProfile);
-}
-
-if(cachedBalance !== null && cachedBalance !== undefined){
-setBalance(cachedBalance);
-}
-
-if(Array.isArray(cachedTransactions)){
-
-setTransactionCount(cachedTransactions.length);
-
-setTotalSpent(
-cachedTransactions.reduce(
-(sum,item)=>sum + Number(item.amount || 0),
-0
-)
-);
-
-}
-
-if(cachedReferral?.totalEarnings !== undefined){
-setReferralEarnings(cachedReferral.totalEarnings);
-}
-
-if(Array.isArray(cachedNotifications)){
-
-setNotifications(cachedNotifications.slice(0,3));
-
-setUnreadCount(
-cachedNotifications.filter(item=>!item.read).length
-);
-
-}
-
-setLoading(false);
-
-const headers={
+fetch(`https://alphabot-1.onrender.com/users/profile/${data.phone}`,{
+headers:{
 Authorization:`Bearer ${token}`
-};
-
-const loadFreshData=async()=>{
-
-const requests=await Promise.allSettled([
-
-fetch(
-`https://alphabot-1.onrender.com/users/profile/${data.phone}`,
-{headers}
-),
-
-fetch(
-`https://alphabot-1.onrender.com/wallet/balance/${data.phone}`,
-{headers}
-),
-
-fetch(
-`https://alphabot-1.onrender.com/transactions/${data.phone}`,
-{headers}
-),
-
-fetch(
-`https://alphabot-1.onrender.com/referral-earnings/${data.phone}`,
-{headers}
-),
-
-fetch(
-`https://alphabot-1.onrender.com/notifications/${data.phone}`,
-{headers}
-)
-
-]);
-
-const [profileRes,balanceRes,transactionsRes,referralRes,notificationsRes]=requests;
-
-if(profileRes.status==="fulfilled" && profileRes.value.ok){
-
-const profile=await profileRes.value.json();
-
+}
+})
+.then(res=>res.json())
+.then(async(profile)=>{
 if(profile && !profile.message){
-
 setUser(profile);
-
-setCached(profileKey,profile);
-
 localStorage.setItem("user",JSON.stringify(profile));
 
-}
+const fcmToken = await requestNotificationPermission();
 
-}
-
-if(balanceRes.status==="fulfilled" && balanceRes.value.ok){
-
-const wallet=await balanceRes.value.json();
-
-if(wallet.balance !== undefined){
-
-setBalance(wallet.balance);
-
-setCached(balanceKey,wallet.balance);
-
-}
-
-}
-
-if(transactionsRes.status==="fulfilled" && transactionsRes.value.ok){
-
-const list=await transactionsRes.value.json();
-
-if(Array.isArray(list)){
-
-setTransactionCount(list.length);
-
-setTotalSpent(
-list.reduce(
-(sum,item)=>sum + Number(item.amount || 0),
-0
-)
-);
-
-setCached(transactionsKey,list);
-
-}
-
-}
-
-if(referralRes.status==="fulfilled" && referralRes.value.ok){
-
-const ref=await referralRes.value.json();
-
-if(ref.totalEarnings !== undefined){
-
-setReferralEarnings(ref.totalEarnings);
-
-setCached(referralKey,ref);
-
-}
-
-}
-
-if(notificationsRes.status==="fulfilled" && notificationsRes.value.ok){
-
-const list=await notificationsRes.value.json();
-
-if(Array.isArray(list)){
-
-setNotifications(list.slice(0,3));
-
-setUnreadCount(
-list.filter(item=>!item.read).length
-);
-
-setCached(notificationsKey,list);
-
-}
-
-}
-
-};
-
-loadFreshData();
-
-const registerNotifications=async()=>{
-
-try{
-
-const fcmToken=await requestNotificationPermission();
-
-if(!fcmToken)return;
+if(fcmToken){
 
 await fetch(
 "https://alphabot-1.onrender.com/notifications/register-token",
@@ -242,22 +74,133 @@ Authorization:"Bearer "+token
 },
 body:JSON.stringify({
 token:fcmToken,
-phone:data.phone
+phone:profile.phone
 })
 }
 );
 
-}catch(error){
+}
 
-console.log("Notification registration skipped:",error.message);
+}
+});
+
+
+
+
+fetch(
+`https://alphabot-1.onrender.com/wallet/balance/${data.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(wallet=>{
+
+if(wallet.balance !== undefined){
+
+setBalance(wallet.balance);
 
 }
 
-};
+})
+.catch(()=>{
+setToast("Unable to load wallet balance");
+});
 
-registerNotifications();
+
+
+fetch(
+`https://alphabot-1.onrender.com/transactions/${data.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(list=>{
+
+if(Array.isArray(list)){
+
+setTransactionCount(list.length);
+
+setTotalSpent(
+list.reduce((sum,item)=>sum + Number(item.amount || 0),0)
+);
+
+
+}
+
+})
+.catch(()=>{
+setToast("Unable to load transaction summary");
+});
+
+
+
+fetch(
+`https://alphabot-1.onrender.com/referral-earnings/${data.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(ref=>{
+
+if(ref.totalEarnings !== undefined){
+
+setReferralEarnings(ref.totalEarnings);
+
+}
+
+})
+.catch(()=>{
+setToast("Unable to load referral earnings");
+});
+
+
+
+fetch(
+`https://alphabot-1.onrender.com/notifications/${data.phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(list=>{
+
+if(Array.isArray(list)){
+
+setNotifications(list.slice(0,3));
+
+setUnreadCount(
+list.filter(item=>!item.read).length
+);
+
+
+}
+
+setLoading(false);
+
+})
+.catch(()=>{
+setToast("Unable to load notifications");
+  setLoading(false);
+});
+
+
+}
+
 
 },[]);
+
+
 
 
 useEffect(()=>{

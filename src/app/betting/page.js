@@ -5,7 +5,6 @@ import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 import Toast from "@/components/Toast";
 import SuccessCelebration from "@/components/success-celebration";
-import { getCached, setCached } from "@/lib/cache";
 
 export default function Page(){
 
@@ -24,43 +23,29 @@ const [showSuccess,setShowSuccess]=useState(false);
 
     const loadServices = async()=>{
 
-      const CACHE_KEY = "betting_services";
-
-      const applyServices = (data) => {
-
-        if(Array.isArray(data)){
-          setServices(data);
-        }else{
-          setServices([]);
-        }
-
-      };
-
-      const cached = getCached(CACHE_KEY);
-
-      if(cached){
-        applyServices(cached);
-        setServicesLoading(false);
-      }
-
       try{
 
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/betting/services`;
+          const url = `${process.env.NEXT_PUBLIC_API_URL}/betting/services`;
 
-        const res = await fetch(url);
+          
+
+          const res = await fetch(url);
 
         const data = await res.json();
 
         if(Array.isArray(data)){
-          setCached(CACHE_KEY, data);
-          applyServices(data);
+          setServices(data);
+
+          if(data.length){
+          }
+        }else{
+          setServices([]);
         }
 
       }catch(error){
 
-        if(!cached){
-          setServices([]);
-        }
+        
+        setServices([]);
 
       }finally{
 
@@ -73,6 +58,7 @@ const [showSuccess,setShowSuccess]=useState(false);
     loadServices();
 
   },[]);
+
 
 
 const fundBetting=async()=>{
