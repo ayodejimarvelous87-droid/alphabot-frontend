@@ -3,6 +3,7 @@
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import SuccessCelebration from "@/components/success-celebration";
+import { getCached, setCached } from "@/lib/cache";
 
 export default function Page(){
 
@@ -24,6 +25,31 @@ useEffect(()=>{
 
 const loadPlans=async()=>{
 
+const CACHE_KEY="tv_plans";
+
+const applyPlans=(data)=>{
+
+if(!data?.success || !Array.isArray(data.plans)){
+return;
+}
+
+setPlans(data.plans);
+
+const providerList=[
+...new Set(data.plans.map(item=>item.provider))
+];
+
+setProviders(providerList);
+setProvider(data.plans[0]?.provider || "");
+
+};
+
+const cached=getCached(CACHE_KEY);
+
+if(cached){
+applyPlans(cached);
+}
+
 try{
 
 const token=localStorage.getItem("token");
@@ -37,18 +63,15 @@ Authorization:`Bearer ${token}`
 }
 );
 
-
 const data=await res.json();
 
+if(data?.success){
 
-if(data.success){
+setCached(CACHE_KEY,data);
 
-setPlans(data.plans);
-setProviders([...new Set(data.plans.map(item=>item.provider))]);
-setProvider(data.plans[0]?.provider || "");
+applyPlans(data);
 
 }
-
 
 }catch(error){
 
@@ -62,9 +85,6 @@ console.log(error);
 loadPlans();
 
 },[]);
-
-
-
 
 
 const subscribeTV=async()=>{

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import Toast from "@/components/Toast";
+import { getCached, setCached } from "@/lib/cache";
 
 export default function Wallet(){
 
@@ -24,14 +25,27 @@ useEffect(()=>{
 const token=localStorage.getItem("token");
 const user=JSON.parse(localStorage.getItem("user"));
 
+if(!user){
+setMessage("User session expired");
+setLoading(false);
+return;
+}
 
-  if(!user){
-    setMessage("User session expired");
-    return;
-  }
+const balanceKey=`wallet_balance_${user.phone}`;
+const transactionsKey=`wallet_transactions_${user.phone}`;
 
+const cachedBalance=getCached(balanceKey);
+const cachedTransactions=getCached(transactionsKey);
 
+if(cachedBalance !== null && cachedBalance !== undefined){
+setBalance(cachedBalance);
+setLoading(false);
+}
 
+if(Array.isArray(cachedTransactions)){
+setTransactions(cachedTransactions.slice(0,5));
+setLoading(false);
+}
 
 fetch(
 `https://alphabot-1.onrender.com/wallet/balance/${user.phone}`,
@@ -45,14 +59,12 @@ Authorization:`Bearer ${token}`
 .then(data=>{
 
 if(data.balance !== undefined){
-
 setBalance(data.balance);
-
+setCached(balanceKey,data.balance);
 }
 
-});
-
-
+})
+.catch(()=>{});
 
 fetch(
 `https://alphabot-1.onrender.com/transactions/${user.phone}`,
@@ -66,17 +78,18 @@ Authorization:`Bearer ${token}`
 .then(data=>{
 
 if(Array.isArray(data)){
-
 setTransactions(data.slice(0,5));
-
+setCached(transactionsKey,data);
 }
 
-  setLoading(false);
+setLoading(false);
+
+})
+.catch(()=>{
+setLoading(false);
 });
 
-
 },[]);
-
 useEffect(()=>{
 
 let startY=0;
