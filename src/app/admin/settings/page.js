@@ -30,10 +30,10 @@ Authorization:`Bearer ${token}`
 const data=await res.json();
 
 setSettings({
-maintenanceMode:data.maintenanceMode || false,
-announcement:data.announcement || "",
-referralPercentage:data.referralPercentage || 1,
-providerMinimumBalance:data.providerMinimumBalance || 500
+maintenanceMode:data.maintenanceMode ?? false,
+announcement:data.announcement ?? "",
+referralPercentage:data.referralPercentage ?? 1,
+providerMinimumBalance:data.providerMinimumBalance ?? 500
 });
 
 };

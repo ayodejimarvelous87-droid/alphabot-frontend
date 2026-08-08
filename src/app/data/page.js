@@ -196,11 +196,16 @@ list.map(plan =>
 const buyData = async()=>{
 
 
-const selected =
-dataPlans.find(
-item =>
-(item.variation_id || item.package_id || item.id || item.plan.id || index) == selectedPlan
-);
+console.log("SELECTED:", selectedPlan);
+console.log("PLANS:", dataPlans.slice(0,3));
+
+console.log("SELECTED PLAN:", selectedPlan);
+console.log("DATA PLANS COUNT:", dataPlans.length);
+console.log("FIRST PLAN:", dataPlans[0]);
+
+const selected = filteredPlans[Number(selectedPlan)];
+
+
 
 
 if(!selected){
@@ -256,7 +261,12 @@ plan:selected.data_plan || selected.name,
 amount:Number(selected.display_price || selected.reseller_price || selected.price),
 pin,
 provider:selected.provider,
-variation_id:selected.variation_id,
+variation_id:
+selected.variation_id ||
+selected.package_id ||
+selected.providerPlanId ||
+selected.plan_id ||
+selected.id,
 package_id:selected.package_id
 })
 
@@ -311,9 +321,10 @@ icon="🌐"
 title="Buy Data"
 subtitle="Fast internet bundles with instant delivery"
 message={message}
+setMessage={setMessage}
 >
 
-<div className="mb-5">
+<div className="mb-2">
 <input
 type="text"
 value={search}
@@ -323,7 +334,7 @@ className="w-full p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-white"
 />
 </div>
 
-<div className="max-w-md mx-auto space-y-3">
+<div className="max-w-md mx-auto space-y-2 scale-[0.92] origin-top">
 
 
 
@@ -340,7 +351,7 @@ Network
 </p>
 
 <select
-className="w-full mt-2 p-4 rounded-xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white"
 value={network}
 onChange={(e)=>{
 
@@ -375,7 +386,7 @@ Category
 </p>
 
 <select
-className="w-full mt-2 p-4 rounded-xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white"
 value={category}
 onChange={(e)=>{
 
@@ -417,7 +428,7 @@ Data Plan
 
 
 <select
-className="w-full mt-2 p-4 rounded-xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white"
 value={selectedPlan}
 onChange={(e)=>setSelectedPlan(e.target.value)}
 >
@@ -431,11 +442,7 @@ Select Bundle
 
 <option
 key={`${plan.network}-${plan.name}-${index}`}
-value={
-plan.variation_id ||
-plan.package_id ||
-plan.id || index
-}
+value={index}
 >
 
 {plan.data_plan || plan.name}
@@ -492,7 +499,7 @@ Transaction PIN
 
 <input
 
-className="w-full mt-3 p-4 rounded-xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-3 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white"
 
 placeholder="Enter 4 digit PIN"
 
@@ -560,6 +567,8 @@ className="block text-center text-zinc-400 mt-3"
 
 
 </div>
+
+
 
 </ServiceLayout>
 

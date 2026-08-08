@@ -1,7 +1,6 @@
 "use client";
 
 import BottomNav from "@/components/BottomNav";
-import Toast from "@/components/Toast";
 
 export default function ServiceLayout({
 icon,
@@ -58,10 +57,7 @@ p-3
 
 
 
-<Toast
-message={message}
-type={type}
-/>
+
 
 
 </div>
