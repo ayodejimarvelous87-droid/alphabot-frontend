@@ -10,6 +10,7 @@ export default function Profile() {
 
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
+  const [balanceVisible, setBalanceVisible] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -141,37 +142,300 @@ export default function Profile() {
         </div>
 
 
-        {/* PROFILE */}
+        {/* PROFILE + WALLET */}
 
-        <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+        <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-start justify-between gap-4">
 
-            <div className="w-20 h-20 shrink-0 rounded-3xl bg-gradient-to-br from-white via-zinc-300 to-zinc-500 text-black flex items-center justify-center text-3xl font-black">
+            {/* USER */}
 
-              {user?.name?.charAt(0)?.toUpperCase() || "A"}
+            <div className="flex items-center gap-3 min-w-0">
+
+              <div className="w-12 h-12 shrink-0 rounded-2xl bg-white text-black flex items-center justify-center text-xl font-black">
+                A
+              </div>
+
+              <div className="min-w-0">
+
+                <h2 className="text-lg font-black truncate">
+                  {user?.name || "AlphaBot User"}
+                </h2>
+
+                <p className="text-xs text-zinc-500 truncate mt-1">
+                  {user?.phone || "No phone number"}
+                </p>
+
+              </div>
 
             </div>
 
 
-            <div className="min-w-0">
+            {/* MEMBERSHIP PANTHER */}
 
-              <h2 className="text-xl font-bold truncate">
-                {user?.name || "AlphaBot User"}
+            {(() => {
+
+              const tier =
+                String(user?.accountTier || "normal").toLowerCase();
+
+              const isGold = tier === "gold";
+              const isSilver = tier === "silver";
+
+              const accent = isGold
+                ? "#D4AF37"
+                : isSilver
+                  ? "#C0C0C0"
+                  : "#52525B";
+
+              const label = isGold
+                ? "GOLD USER"
+                : isSilver
+                  ? "SILVER USER"
+                  : "USER";
+
+              return (
+
+                <div className="shrink-0 flex flex-col items-center">
+
+                  <div
+                    className="relative w-16 h-16 rounded-full flex items-center justify-center"
+                    style={{
+                      border: `1px solid ${accent}`,
+                      boxShadow: `0 0 18px ${accent}33`
+                    }}
+                  >
+
+                    <div
+                      className="absolute inset-1 rounded-full border"
+                      style={{borderColor:`${accent}66`}}
+                    />
+
+                    {/* Premium Panther emblem */}
+
+                    <svg
+                      viewBox="0 0 100 100"
+                      className="w-11 h-11"
+                      aria-label="Panther membership emblem"
+                    >
+
+                      {/* Ears / head silhouette */}
+
+                      <path
+                        d="
+                          M18 35
+                          L13 15
+                          L31 23
+
+                          C36 20 42 18 50 18
+                          C58 18 64 20 69 23
+
+                          L87 15
+                          L82 35
+
+                          C87 42 88 52 85 62
+                          C82 74 72 83 60 87
+
+                          C56 89 53 91 50 94
+                          C47 91 44 89 40 87
+
+                          C28 83 18 74 15 62
+                          C12 52 13 42 18 35
+                          Z
+                        "
+                        fill="#050505"
+                        stroke={accent}
+                        strokeWidth="2"
+                        strokeLinejoin="round"
+                      />
+
+                      {/* Brow / forehead definition */}
+
+                      <path
+                        d="
+                          M25 39
+                          C32 30 41 27 50 27
+                          C59 27 68 30 75 39
+                          C68 35 61 34 50 34
+                          C39 34 32 35 25 39
+                          Z
+                        "
+                        fill="#18181B"
+                      />
+
+                      {/* Aggressive eyes */}
+
+                      <path
+                        d="
+                          M25 47
+                          C30 43 37 43 43 47
+                          C38 51 31 51 25 47
+                          Z
+                        "
+                        fill={accent}
+                      />
+
+                      <path
+                        d="
+                          M57 47
+                          C63 43 70 43 75 47
+                          C69 51 62 51 57 47
+                          Z
+                        "
+                        fill={accent}
+                      />
+
+                      {/* Black pupils */}
+
+                      <path
+                        d="M31 47 L38 46 L34 49 Z"
+                        fill="#050505"
+                      />
+
+                      <path
+                        d="M69 47 L62 46 L66 49 Z"
+                        fill="#050505"
+                      />
+
+                      {/* Nose */}
+
+                      <path
+                        d="
+                          M43 58
+                          Q50 54 57 58
+                          L54 63
+                          Q50 66 46 63
+                          Z
+                        "
+                        fill={accent}
+                      />
+
+                      {/* Muzzle */}
+
+                      <path
+                        d="
+                          M31 61
+                          C37 67 43 69 50 69
+                          C57 69 63 67 69 61
+                          C66 72 59 77 50 77
+                          C41 77 34 72 31 61
+                          Z
+                        "
+                        fill="#111113"
+                      />
+
+                      {/* Mouth / jaw */}
+
+                      <path
+                        d="
+                          M38 70
+                          Q50 76 62 70
+                          Q58 82 50 84
+                          Q42 82 38 70
+                          Z
+                        "
+                        fill="#050505"
+                        stroke={accent}
+                        strokeWidth="1"
+                      />
+
+                      {/* Small metallic highlight */}
+
+                      <path
+                        d="M20 35 L16 20 L29 26"
+                        fill="none"
+                        stroke={accent}
+                        strokeWidth="1"
+                        opacity="0.8"
+                      />
+
+                      <path
+                        d="M80 35 L84 20 L71 26"
+                        fill="none"
+                        stroke={accent}
+                        strokeWidth="1"
+                        opacity="0.8"
+                      />
+
+                    </svg>
+
+                  </div>
+
+                  <span
+                    className="text-[8px] font-black tracking-widest mt-1"
+                    style={{color:accent}}
+                  >
+                    {label}
+                  </span>
+
+                </div>
+
+              );
+
+            })()}
+
+          </div>
+
+
+          {/* BALANCE */}
+
+          <div className="mt-6 pt-5 border-t border-zinc-800">
+
+            <p className="text-xs text-zinc-500 uppercase tracking-wider">
+              Total balance
+            </p>
+
+            <div className="flex items-center gap-2 mt-1">
+
+              <h2 className="text-3xl font-black tracking-tight">
+                {balanceVisible
+                  ? `₦${Number(balance).toLocaleString("en-US")}`
+                  : "••••••"}
               </h2>
 
-              <p className="text-sm text-zinc-400 mt-1">
-                {user?.phone || "No phone number"}
-              </p>
+              <button
+                type="button"
+                aria-label={
+                  balanceVisible
+                    ? "Hide balance"
+                    : "Show balance"
+                }
+                className="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-white transition"
+                onClick={() =>
+                  setBalanceVisible(prev => !prev)
+                }
+              >
 
-              <p className="text-sm text-zinc-500 truncate">
-                {user?.email || "No email address"}
-              </p>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  className="w-5 h-5"
+                >
+                  {balanceVisible ? (
+                    <>
+                      <path
+                        d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                      />
+                      <circle cx="12" cy="12" r="2.5" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M3 3l18 18" />
+                      <path d="M10.6 6.2A10.5 10.5 0 0 1 12 6c6 0 9.5 6 9.5 6a17.5 17.5 0 0 1-3.1 3.7" />
+                      <path d="M6.2 6.3C3.9 8 2.5 12 2.5 12s3.5 6 9.5 6c1.4 0 2.7-.3 3.8-.8" />
+                    </>
+                  )}
+                </svg>
+
+              </button>
 
             </div>
 
           </div>
 
+
+          {/* ACCOUNT STATUS */}
 
           <div className="flex items-center justify-between mt-5 pt-4 border-t border-zinc-800">
 
@@ -193,37 +457,10 @@ export default function Profile() {
 
           </div>
 
-        </div>
-
-
-        {/* WALLET */}
-
-        <div className="bg-white text-black rounded-3xl p-6">
-
-          <div className="flex items-start justify-between">
-
-            <div>
-
-              <p className="text-sm text-zinc-500">
-                Wallet Balance
-              </p>
-
-              <h2 className="text-3xl font-black mt-2">
-                ₦{Number(balance).toLocaleString("en-US")}
-              </h2>
-
-            </div>
-
-            <div className="w-11 h-11 rounded-2xl bg-black text-white flex items-center justify-center text-xl">
-              ◈
-            </div>
-
-          </div>
-
 
           <Link
             href="/wallet"
-            className="block mt-5 text-center bg-black text-white rounded-xl py-3 font-bold"
+            className="block mt-5 text-center bg-white text-black rounded-xl py-3 font-bold hover:bg-zinc-200 transition"
           >
             Open Wallet
           </Link>
