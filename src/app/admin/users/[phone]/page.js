@@ -19,6 +19,11 @@ const [message,setMessage] = useState("");
 const [toast,setToast] = useState("");
 const [amount,setAmount] = useState("");
 
+const [membership,setMembership] = useState(null);
+const [membershipLoading,setMembershipLoading] = useState(true);
+const [membershipAction,setMembershipAction] = useState(false);
+const [membershipDuration,setMembershipDuration] = useState("30");
+
 
 
 useEffect(()=>{
@@ -59,6 +64,56 @@ load();
 
 },[phone]);
 
+
+
+useEffect(()=>{
+
+const loadMembership = async()=>{
+
+try{
+
+const token = localStorage.getItem("adminToken");
+
+const res = await fetch(
+`https://alphabot-1.onrender.com/admin/user/membership/${phone}`,
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+);
+
+const result = await res.json();
+
+if(res.ok){
+
+setMembership(result);
+
+}else{
+
+setMessage(result.message || "Unable to load membership");
+
+}
+
+}catch(error){
+
+console.log(error);
+
+setMessage("Unable to load membership");
+
+}finally{
+
+setMembershipLoading(false);
+
+}
+
+};
+
+if(phone){
+loadMembership();
+}
+
+},[phone]);
 
 
 const walletAction = async(type)=>{
@@ -221,6 +276,348 @@ Status: {data.user.status}
 
 
 
+
+
+<div className="border border-zinc-800 rounded-2xl p-5 mt-5 bg-[#101012]">
+
+<h2 className="font-bold text-xl">
+👑 Membership Management
+</h2>
+
+{membershipLoading ? (
+
+<p className="text-zinc-400 mt-3">
+Loading membership...
+</p>
+
+) : (
+
+<>
+
+<div className="mt-4 p-4 rounded-xl bg-[#18181B] border border-zinc-800">
+
+<p className="text-sm text-zinc-500">
+Current membership
+</p>
+
+<p className={`text-2xl font-black mt-1 ${
+membership?.user?.accountTier === "gold"
+? "text-yellow-400"
+: membership?.user?.accountTier === "silver"
+? "text-zinc-300"
+: "text-zinc-500"
+}`}>
+{membership?.user?.accountTier === "gold"
+? "🥇 GOLD"
+: membership?.user?.accountTier === "silver"
+? "🥈 SILVER"
+: "NORMAL"}
+</p>
+
+{membership?.user?.accountTierExpiresAt && (
+<p className="text-sm text-zinc-400 mt-2">
+Expires: {
+new Date(
+membership.user.accountTierExpiresAt
+).toLocaleDateString()
+}
+</p>
+)}
+
+</div>
+
+
+<div className="mt-4">
+
+<label className="text-sm text-zinc-400">
+Membership duration
+</label>
+
+<input
+type="number"
+min="1"
+max="3650"
+className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-3 block mt-2 w-full"
+value={membershipDuration}
+onChange={(e)=>setMembershipDuration(e.target.value)}
+/>
+
+<p className="text-xs text-zinc-600 mt-1">
+Duration is added to the existing expiry if the membership is still active.
+</p>
+
+</div>
+
+
+<div className="flex gap-2 flex-wrap mt-4">
+
+<button
+disabled={membershipAction}
+className="px-4 py-2 rounded-xl bg-zinc-200 text-black font-bold hover:bg-white disabled:opacity-50"
+onClick={async()=>{
+
+const token = localStorage.getItem("adminToken");
+
+const days = Number(membershipDuration);
+
+if(!Number.isInteger(days) || days <= 0 || days > 3650){
+setToast("❌ Duration must be between 1 and 3650 days");
+return;
+}
+
+if(!confirm(`Upgrade ${phone} to SILVER for ${days} days?`)){
+return;
+}
+
+setMembershipAction(true);
+
+try{
+
+const res = await fetch(
+`https://alphabot-1.onrender.com/admin/user/tier/${phone}`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+tier:"silver",
+durationDays:days
+})
+}
+);
+
+const result = await res.json();
+
+if(!res.ok){
+throw new Error(result.message || "Failed to upgrade membership");
+}
+
+setToast("🥈 " + result.message);
+
+setMembership({
+success:true,
+user:{
+...membership.user,
+accountTier:result.accountTier,
+accountTierExpiresAt:result.accountTierExpiresAt
+},
+history:membership.history || []
+});
+
+}catch(error){
+
+setToast("❌ " + error.message);
+
+}finally{
+
+setMembershipAction(false);
+
+}
+
+}}
+>
+🥈 Upgrade to Silver
+</button>
+
+
+<button
+disabled={membershipAction}
+className="px-4 py-2 rounded-xl bg-yellow-500 text-black font-bold hover:bg-yellow-400 disabled:opacity-50"
+onClick={async()=>{
+
+const token = localStorage.getItem("adminToken");
+
+const days = Number(membershipDuration);
+
+if(!Number.isInteger(days) || days <= 0 || days > 3650){
+setToast("❌ Duration must be between 1 and 3650 days");
+return;
+}
+
+if(!confirm(`Upgrade ${phone} to GOLD for ${days} days?`)){
+return;
+}
+
+setMembershipAction(true);
+
+try{
+
+const res = await fetch(
+`https://alphabot-1.onrender.com/admin/user/tier/${phone}`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+tier:"gold",
+durationDays:days
+})
+}
+);
+
+const result = await res.json();
+
+if(!res.ok){
+throw new Error(result.message || "Failed to upgrade membership");
+}
+
+setToast("🥇 " + result.message);
+
+setMembership({
+success:true,
+user:{
+...membership.user,
+accountTier:result.accountTier,
+accountTierExpiresAt:result.accountTierExpiresAt
+},
+history:membership.history || []
+});
+
+}catch(error){
+
+setToast("❌ " + error.message);
+
+}finally{
+
+setMembershipAction(false);
+
+}
+
+}}
+>
+🥇 Upgrade to Gold
+</button>
+
+
+<button
+disabled={membershipAction}
+className="px-4 py-2 rounded-xl bg-red-950 text-red-400 border border-red-900 font-bold hover:bg-red-900 disabled:opacity-50"
+onClick={async()=>{
+
+if(!confirm(`Remove premium membership from ${phone}?`)){
+return;
+}
+
+const token = localStorage.getItem("adminToken");
+
+setMembershipAction(true);
+
+try{
+
+const res = await fetch(
+`https://alphabot-1.onrender.com/admin/user/tier/${phone}`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+tier:"normal"
+})
+}
+);
+
+const result = await res.json();
+
+if(!res.ok){
+throw new Error(result.message || "Failed to remove membership");
+}
+
+setToast("✅ " + result.message);
+
+setMembership({
+success:true,
+user:{
+...membership.user,
+accountTier:"normal",
+accountTierExpiresAt:null
+},
+history:membership.history || []
+});
+
+}catch(error){
+
+setToast("❌ " + error.message);
+
+}finally{
+
+setMembershipAction(false);
+
+}
+
+}}
+>
+🚫 Remove Membership
+</button>
+
+</div>
+
+
+<div className="mt-6">
+
+<h3 className="font-bold">
+📜 Membership History
+</h3>
+
+{(!membership?.history || membership.history.length === 0) ? (
+
+<p className="text-sm text-zinc-500 mt-2">
+No membership history.
+</p>
+
+) : (
+
+<div className="mt-3 space-y-2">
+
+{membership.history.map((item,index)=>(
+
+<div
+key={item._id || index}
+className="border border-zinc-800 rounded-xl p-3 bg-[#18181B]"
+>
+
+<div className="flex items-center justify-between gap-3">
+
+<span className="font-bold uppercase">
+{item.tier || "membership"}
+</span>
+
+<span className="text-xs text-zinc-500">
+{item.status || "unknown"}
+</span>
+
+</div>
+
+<p className="text-sm text-zinc-400 mt-1">
+Duration: {item.durationDays || "—"} days
+</p>
+
+<p className="text-xs text-zinc-600 mt-1">
+{item.createdAt
+? new Date(item.createdAt).toLocaleString()
+: ""}
+</p>
+
+</div>
+
+))}
+
+</div>
+
+)}
+
+</div>
+
+</>
+
+)}
+
+</div>
 
 
 <div className="border rounded-xl p-5 mt-5">
