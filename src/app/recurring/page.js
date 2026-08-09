@@ -12,6 +12,7 @@ const [payments,setPayments]=useState([]);
 const [service,setService]=useState("data");
 
 const [dataPlans,setDataPlans]=useState([]);
+const [planSearch,setPlanSearch]=useState("");
 const [selectedPlan,setSelectedPlan]=useState(null);
 
 const [amount,setAmount]=useState("");
@@ -271,6 +272,25 @@ setMessage("❌ Error cancelling payment");
 
 
 
+const filteredDataPlans = dataPlans.filter((plan)=>{
+const search = planSearch.trim().toLowerCase();
+
+if(!search) return true;
+
+return [
+plan.name,
+plan.data_plan,
+plan.network,
+plan.provider,
+plan.variation_id,
+plan.providerPlanId,
+plan.plan_id
+].some(value =>
+String(value || "").toLowerCase().includes(search)
+);
+});
+
+
 return(
 
 <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
@@ -331,6 +351,20 @@ setAmount("");
 
 
 {service === "data" && (
+<div className="space-y-3">
+
+<input
+type="search"
+placeholder="🔎 Search data plans..."
+value={planSearch}
+onChange={(e)=>setPlanSearch(e.target.value)}
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-white outline-none focus:border-yellow-400"
+/>
+
+<p className="text-xs text-zinc-500">
+{filteredDataPlans.length} plan{filteredDataPlans.length === 1 ? "" : "s"} found
+</p>
+
 
 <select
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
@@ -364,7 +398,7 @@ setSelectedPlan(plan || null);
 Select data plan
 </option>
 
-{dataPlans.map((plan,index)=>{
+{filteredDataPlans.map((plan,index)=>{
 
 const id=
 plan.variation_id ||
@@ -427,6 +461,8 @@ onChange={(e)=>setTargetPhone(e.target.value)}
 />
 
 
+
+</div>
 
 {service === "airtime" && (
 
