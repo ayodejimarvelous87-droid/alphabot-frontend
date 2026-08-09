@@ -22,11 +22,25 @@ const [name,setName] = useState(user.name || "");
 const [email,setEmail] = useState(user.email || "");
 const [message,setMessage] = useState("");
 const [loading,setLoading] = useState(false);
+const [twoFactorCode,setTwoFactorCode] = useState("");
 
 const saveProfile = async () => {
 
 if(!name.trim()) {
 setMessage("❌ Please enter your name");
+return;
+}
+
+if(user?.twoFactorEnabled && !twoFactorCode.trim()) {
+setMessage("❌ Authenticator code is required");
+return;
+}
+
+if(
+user?.twoFactorEnabled &&
+!/^[0-9]{6}$/.test(twoFactorCode.trim())
+) {
+setMessage("❌ Enter a valid 6-digit authenticator code");
 return;
 }
 
@@ -45,7 +59,10 @@ Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({
 name:name.trim(),
-email:email.trim()
+email:email.trim(),
+...(user?.twoFactorEnabled
+? { code:twoFactorCode.trim() }
+: {})
 })
 }
 );
@@ -68,6 +85,7 @@ localStorage.setItem(
 JSON.stringify(updatedUser)
 );
 
+setTwoFactorCode("");
 setMessage("Profile updated successfully ✅");
 
 } catch(error) {
@@ -206,6 +224,39 @@ Your phone number is linked to your AlphaBot account and cannot be changed here.
 
 </div>
 
+
+{user?.twoFactorEnabled && (
+
+<div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/10 p-4 space-y-3">
+
+<div>
+
+<p className="text-sm font-bold">
+🔐 Authenticator Verification
+</p>
+
+<p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+Two-factor authentication is enabled. Enter the 6-digit code from your authenticator app to save profile changes.
+</p>
+
+</div>
+
+<input
+className="w-full p-4 rounded-2xl bg-white dark:bg-[#050505] border border-zinc-300 dark:border-zinc-800 text-black dark:text-white outline-none focus:border-yellow-400 text-center tracking-[0.4em] font-bold"
+placeholder="000000"
+inputMode="numeric"
+maxLength={6}
+value={twoFactorCode}
+onChange={(e)=>
+setTwoFactorCode(
+e.target.value.replace(/\D/g,"").slice(0,6)
+)
+}
+/>
+
+</div>
+
+)}
 
 <div className="pt-2">
 
