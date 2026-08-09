@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Link from "next/link";
 import Toast from "@/components/Toast";
 
-const API="https://alphabot-1.onrender.com";
+const API = "https://alphabot-1.onrender.com";
 
-export default function EditProfile(){
+export default function EditProfile() {
 
 const user =
 typeof window !== "undefined"
@@ -17,128 +18,24 @@ typeof window !== "undefined"
 ? localStorage.getItem("token")
 : null;
 
+const [name,setName] = useState(user.name || "");
+const [email,setEmail] = useState(user.email || "");
+const [message,setMessage] = useState("");
+const [loading,setLoading] = useState(false);
 
-const [name,setName]=useState(user.name || "");
-const [email,setEmail]=useState(user.email || "");
+const saveProfile = async () => {
 
-const [oldPassword,setOldPassword]=useState("");
-const [newPassword,setNewPassword]=useState("");
-
-const [message,setMessage]=useState("");
-const [otp,setOtp]=useState("");
-
-const [pin,setPin]=useState("");
-const [pinOtp,setPinOtp]=useState("");
-const [hasPin,setHasPin]=useState(false);
-const [pinOtpSent,setPinOtpSent]=useState(false);
-
-
-
-
-
-const checkPinStatus=async()=>{
-try{
-const res=await fetch(`${API}/pin/status`,{
-headers:{
-Authorization:`Bearer ${token}`
-}
-});
-
-const data=await res.json();
-setHasPin(data.hasPin);
-
-}catch(error){
-console.log(error);
-}
-};
-useEffect(()=>{
-
-const loadPinStatus = async()=>{
-try{
-const res = await fetch(`${API}/pin/status`,{
-headers:{
-Authorization:`Bearer ${token}`
-}
-});
-
-const data = await res.json();
-setHasPin(data.hasPin);
-
-}catch(error){
-console.log(error);
-}
-};
-
-loadPinStatus();
-
-},[token]);
-
-
-
-
-const sendPinOTP=async()=>{
-try{
-const res=await fetch(`${API}/pin/send-pin-otp`,{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-Authorization:`Bearer ${token}`
-},
-body:JSON.stringify({
-phone:user.phone
-})
-});
-
-const data=await res.json();
-
-if(res.ok){
-setPinOtpSent(true);
-setMessage("Transaction PIN OTP sent to email");
-}else{
-setMessage(data.message);
+if(!name.trim()) {
+setMessage("❌ Please enter your name");
+return;
 }
 
-}catch(error){
-setMessage("Failed to send PIN OTP");
-}
-};
+try {
 
-const createTransactionPin=async()=>{
-try{
+setLoading(true);
+setMessage("");
 
-const res=await fetch(`${API}/pin/set`,{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-Authorization:`Bearer ${token}`
-},
-body:JSON.stringify({
-phone:user.phone,
-pin,
-otp:pinOtp
-})
-});
-
-const data=await res.json();
-
-if(res.ok){
-setMessage(hasPin ? "Transaction PIN changed successfully ✅" : "Transaction PIN created successfully ✅");
-}else{
-setMessage(data.message);
-}
-
-}catch(error){
-setMessage("Failed to create PIN");
-}
-};
-
-const saveProfile=async()=>{
-
-
-
-try{
-
-const res=await fetch(
+const res = await fetch(
 `${API}/users/profile/${user.phone}`,
 {
 method:"PUT",
@@ -147,117 +44,81 @@ headers:{
 Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({
-name,
-email
+name:name.trim(),
+email:email.trim()
 })
 }
 );
 
+const data = await res.json();
 
-const data=await res.json();
+if(!res.ok){
+setMessage("❌ " + (data.message || "Update failed"));
+return;
+}
 
-
-if(res.ok){
+const updatedUser = {
+...user,
+name:name.trim(),
+email:email.trim()
+};
 
 localStorage.setItem(
 "user",
-JSON.stringify({
-...user,
-name,
-email
-})
+JSON.stringify(updatedUser)
 );
 
 setMessage("Profile updated successfully ✅");
 
-}else{
+} catch(error) {
 
-setMessage(data.message || "Update failed");
+console.log(error);
+setMessage("❌ Network error");
 
-}
+} finally {
 
-
-}catch(err){
-
-setMessage("Network error");
+setLoading(false);
 
 }
 
 };
-
-
-
-
-const changePassword=async()=>{
-
-try{
-
-const res=await fetch(
-`${API}/users/change-password/${user.phone}`,
-{
-method:"PUT",
-headers:{
-"Content-Type":"application/json",
-Authorization:`Bearer ${token}`
-},
-body:JSON.stringify({
-oldPassword,
-newPassword
-})
-}
-
-
-);
-
-
-const data=await res.json();
-
-
-setMessage(
-data.message || "Password changed successfully"
-);
-
-
-}catch(err){
-
-setMessage("Password change failed");
-
-}
-
-};
-
-
-
 
 return(
 
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
+<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white px-5 py-8 pb-24">
 
 <div className="max-w-md mx-auto space-y-5">
 
-
-{/* HEADER */}
+<Link
+href="/profile"
+className="inline-flex items-center text-sm text-zinc-500 hover:text-black dark:hover:text-white transition"
+>
+← Back to Profile
+</Link>
 
 <div>
 
-<h1 className="text-3xl font-black">
-⚙️ Account Settings
+<p className="text-xs text-zinc-500 uppercase tracking-widest">
+AlphaBot Account
+</p>
+
+<h1 className="text-3xl font-black mt-2">
+Edit Profile
 </h1>
 
-<p className="text-zinc-400 mt-2">
-Manage your AlphaBot profile and security
+<p className="text-zinc-500 dark:text-zinc-400 mt-2">
+Update your personal information
 </p>
 
 </div>
-
-
 
 
 <Toast
 message={message}
 type={
 message.toLowerCase().includes("failed") ||
-message.toLowerCase().includes("error")
+message.toLowerCase().includes("error") ||
+message.includes("❌")
 ? "error"
 : "success"
 }
@@ -265,213 +126,119 @@ onClose={()=>setMessage("")}
 />
 
 
-{/* PROFILE IDENTITY */}
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
-
+<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
 
 <div className="flex items-center gap-4">
 
-
 <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-white to-zinc-500 text-black flex items-center justify-center text-3xl font-black">
 
-{user?.name?.charAt(0) || "A"}
+{name?.charAt(0)?.toUpperCase() || "A"}
+
+</div>
+
+<div>
+
+<h2 className="text-xl font-bold">
+{name || "AlphaBot User"}
+</h2>
+
+<p className="text-sm text-zinc-500 dark:text-zinc-400">
+{user.phone || "No phone number"}
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 space-y-5">
+
+<div>
+
+<label className="text-sm text-zinc-500 block mb-2">
+Full Name
+</label>
+
+<input
+className="w-full p-4 rounded-2xl bg-white dark:bg-[#050505] border border-zinc-300 dark:border-zinc-800 text-black dark:text-white outline-none focus:border-yellow-400"
+placeholder="Enter your full name"
+value={name}
+onChange={(e)=>setName(e.target.value)}
+/>
 
 </div>
 
 
 <div>
 
-<h2 className="text-xl font-bold">
-{user?.name || "AlphaBot User"}
-</h2>
-
-<p className="text-sm text-zinc-400">
-{user?.phone}
-</p>
-
-<p className="text-xs text-zinc-500 mt-1">
-{user?.email || "No email added"}
-</p>
-
-</div>
-
-
-</div>
-
-
-
-<div className="mt-5 pt-4 border-t border-zinc-800">
-
-<p className="text-xs text-zinc-500">
-Account Verification
-</p>
-
-
-<p className="mt-2 font-bold text-green-400">
-{user?.emailVerified
-? "✓ Verified Account"
-: "⏳ Verification Required"}
-</p>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-{/* PROFILE INFORMATION */}
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
-
-
-<h2 className="text-lg font-bold mb-5">
-👤 Personal Information
-</h2>
-
+<label className="text-sm text-zinc-500 block mb-2">
+Email Address
+</label>
 
 <input
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
-placeholder="Full name"
-value={name}
-onChange={(e)=>setName(e.target.value)}
-/>
-
-
-
-<input
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
-placeholder="Email address"
+className="w-full p-4 rounded-2xl bg-white dark:bg-[#050505] border border-zinc-300 dark:border-zinc-800 text-black dark:text-white outline-none focus:border-yellow-400"
+placeholder="Enter your email address"
 type="email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
 />
 
+</div>
+
+
+<div>
+
+<label className="text-sm text-zinc-500 block mb-2">
+Phone Number
+</label>
+
+<input
+className="w-full p-4 rounded-2xl bg-zinc-200 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-zinc-500 cursor-not-allowed"
+value={user.phone || ""}
+disabled
+/>
+
+<p className="text-xs text-zinc-500 mt-2">
+Your phone number is linked to your AlphaBot account and cannot be changed here.
+</p>
+
+</div>
+
+
+<div className="pt-2">
+
+<p className="text-sm text-zinc-500">
+Account Verification
+</p>
+
+<p className="mt-2 font-bold">
+{user?.emailVerified
+? "✓ Verified Account"
+: "⏳ Verification Required"}
+</p>
+
+</div>
 
 
 <button
 onClick={saveProfile}
-className="w-full bg-white text-black rounded-2xl py-4 font-bold"
+disabled={loading}
+className="w-full bg-black dark:bg-white text-white dark:text-black rounded-2xl py-4 font-bold disabled:opacity-50"
 >
-Save Changes
+{loading ? "Saving..." : "Save Changes"}
 </button>
-
 
 </div>
 
 
-
-
-
-{/* TRANSACTION PIN */}
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
-
-
-<h2 className="text-lg font-bold mb-2">
-🔐 Transaction Security
-</h2>
-
-
-<p className="text-sm text-zinc-400 mb-5">
-Protect payments with your transaction PIN
-</p>
-
-
-
-<input
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
-placeholder="4 digit PIN"
-type="password"
-maxLength="4"
-value={pin}
-onChange={(e)=>setPin(e.target.value)}
-/>
-
-
-
-<button
-onClick={sendPinOTP}
-className="w-full bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold mb-3"
+<Link
+href="/settings"
+className="block text-center bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl py-4 font-bold"
 >
-Send PIN OTP
-</button>
-
-
-
-<input
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
-placeholder="PIN OTP"
-value={pinOtp}
-onChange={(e)=>setPinOtp(e.target.value)}
-/>
-
-
-
-<button
-onClick={createTransactionPin}
-className="w-full bg-white text-black rounded-2xl py-4 font-bold"
->
-{hasPin ? "Change Transaction PIN" : "Create Transaction PIN"}
-</button>
-
-
-</div>
-
-
-
-
-
-{/* PASSWORD */}
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
-
-
-<h2 className="text-lg font-bold mb-5">
-🛡️ Password Protection
-</h2>
-
-
-
-<input
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
-placeholder="Old password"
-type="password"
-value={oldPassword}
-onChange={(e)=>setOldPassword(e.target.value)}
-/>
-
-
-
-<input
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 mb-3 text-white"
-placeholder="New password"
-type="password"
-value={newPassword}
-onChange={(e)=>setNewPassword(e.target.value)}
-/>
-
-
-
-<button
-onClick={changePassword}
-className="w-full bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold"
->
-Update Password
-</button>
-
-
-</div>
-
-
-
-
-
-
+⚙️ Account Settings
+</Link>
 
 
 </div>
@@ -479,8 +246,5 @@ Update Password
 </main>
 
 );
-
-
-
 
 }

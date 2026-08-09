@@ -3,369 +3,564 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
-import Toast from "@/components/Toast";
 
-export default function Profile(){
+const API = "https://alphabot-1.onrender.com";
 
-const [user,setUser]=useState(null);
-const [balance,setBalance]=useState(0);
-const [loading,setLoading]=useState(true);
-const [error,setError]=useState("");
-const [toast,setToast]=useState("");
+export default function Profile() {
 
-useEffect(()=>{
+  const [user, setUser] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-const load=async()=>{
+  useEffect(() => {
 
-try{
+    const load = async () => {
 
-const saved=localStorage.getItem("user");
-const token=localStorage.getItem("token");
+      try {
 
-if(!saved){
-window.location.href="/login";
-return;
-}
+        const saved = localStorage.getItem("user");
+        const token = localStorage.getItem("token");
 
-const localUser=JSON.parse(saved);
+        if (!saved || !token) {
+          window.location.href = "/login";
+          return;
+        }
 
+        const localUser = JSON.parse(saved);
 
-const profile=await fetch(
-`https://alphabot-1.onrender.com/users/profile/${localUser.phone}`,
-{
-headers:{
-Authorization:`Bearer ${token}`
-}
-}
-);
+        const headers = {
+          Authorization: `Bearer ${token}`
+        };
 
-const data=await profile.json();
+        const [profileRes, walletRes] = await Promise.all([
 
-if(profile.ok){
-setUser(data);
-localStorage.setItem("user",JSON.stringify(data));
-}
+          fetch(
+            `${API}/users/profile/${localUser.phone}`,
+            { headers }
+          ),
 
+          fetch(
+            `${API}/wallet/balance/${localUser.phone}`,
+            { headers }
+          )
 
+        ]);
 
-const wallet=await fetch(
-`https://alphabot-1.onrender.com/wallet/balance/${localUser.phone}`,
-{
-headers:{
-Authorization:`Bearer ${token}`
-}
-}
-);
+        const profileData = await profileRes.json();
+        const walletData = await walletRes.json();
 
+        const currentUser =
+          profileRes.ok
+            ? profileData
+            : localUser;
 
-const walletData=await wallet.json();
+        setUser(currentUser);
 
-if(wallet.ok){
-setBalance(walletData.balance || 0);
-}
+        localStorage.setItem(
+          "user",
+          JSON.stringify(currentUser)
+        );
 
+        if (walletRes.ok) {
+          setBalance(walletData.balance || 0);
+        }
 
-}catch(e){
+      } catch (error) {
 
-console.log(e);
-setError("Failed to load profile");
+        console.log(error);
+        setError("Unable to load account");
 
-}finally{
+      } finally {
 
-setLoading(false);
+        setLoading(false);
 
-}
+      }
 
-};
+    };
 
+    load();
 
-load();
+  }, []);
 
-},[]);
 
+  const logout = () => {
 
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
-const logout=()=>{
+    window.location.href = "/login";
 
-localStorage.removeItem("token");
-localStorage.removeItem("user");
+  };
 
-window.location.href="/login";
 
-};
+  if (loading) {
 
+    return (
 
+      <main className="min-h-screen bg-[#050505] text-white px-5 py-8">
 
-if(loading){
+        <div className="max-w-md mx-auto">
 
-return(
-<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white p-6">
-<p className="text-zinc-600 dark:text-zinc-400">Loading profile...</p>
-</main>
-)
+          <p className="text-zinc-400">
+            Loading account...
+          </p>
 
-}
+        </div>
 
+      </main>
 
+    );
 
-return(
+  }
 
-<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white px-6 py-6 pb-24">
 
-<Toast message={toast} type="error"/>
+  return (
 
+    <main className="min-h-screen bg-[#050505] text-white px-5 py-6 pb-24">
 
-<div className="max-w-md mx-auto space-y-5">
+      <div className="max-w-md mx-auto space-y-5">
 
 
-{/* HEADER */}
+        {/* HEADER */}
 
-<div>
+        <div>
 
-<p className="text-xs text-zinc-500 uppercase tracking-widest">
-AlphaBot Account
-</p>
+          <p className="text-xs text-zinc-500 uppercase tracking-[0.2em]">
+            AlphaBot
+          </p>
 
-<h1 className="text-3xl font-black mt-2">
-Profile
-</h1>
+          <h1 className="text-3xl font-black mt-2">
+            Account
+          </h1>
 
-</div>
+          <p className="text-zinc-400 mt-1">
+            Manage your account and preferences
+          </p>
 
+        </div>
 
 
-{/* PROFILE CARD */}
+        {/* PROFILE */}
 
-<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+        <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
 
+          <div className="flex items-center gap-4">
 
-<div className="flex items-center gap-4">
+            <div className="w-20 h-20 shrink-0 rounded-3xl bg-gradient-to-br from-white via-zinc-300 to-zinc-500 text-black flex items-center justify-center text-3xl font-black">
 
+              {user?.name?.charAt(0)?.toUpperCase() || "A"}
 
-<div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-white to-zinc-500 text-black flex items-center justify-center text-3xl font-black">
+            </div>
 
-{user?.name?.charAt(0) || "A"}
 
-</div>
+            <div className="min-w-0">
 
+              <h2 className="text-xl font-bold truncate">
+                {user?.name || "AlphaBot User"}
+              </h2>
 
-<div>
+              <p className="text-sm text-zinc-400 mt-1">
+                {user?.phone || "No phone number"}
+              </p>
 
-<h2 className="text-xl font-bold">
-{user?.name || "AlphaBot User"}
-</h2>
+              <p className="text-sm text-zinc-500 truncate">
+                {user?.email || "No email address"}
+              </p>
 
+            </div>
 
-<p className="text-zinc-600 dark:text-zinc-400 text-sm mt-1">
-{user?.phone}
-</p>
+          </div>
 
 
-<p className="text-zinc-500 text-sm">
-{user?.email || "No email"}
-</p>
+          <div className="flex items-center justify-between mt-5 pt-4 border-t border-zinc-800">
 
+            <span className="text-sm text-zinc-500">
+              Account status
+            </span>
 
-</div>
+            <span
+              className={
+                user?.emailVerified
+                  ? "text-sm font-bold text-green-400"
+                  : "text-sm font-bold text-yellow-400"
+              }
+            >
+              {user?.emailVerified
+                ? "✓ Verified"
+                : "⏳ Pending"}
+            </span>
 
+          </div>
 
-</div>
+        </div>
 
 
+        {/* WALLET */}
 
-<div className="mt-5 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+        <div className="bg-white text-black rounded-3xl p-6">
 
+          <div className="flex items-start justify-between">
 
-<p className="text-sm text-zinc-600 dark:text-zinc-400">
-Account Status
-</p>
+            <div>
 
+              <p className="text-sm text-zinc-500">
+                Wallet Balance
+              </p>
 
-<p className="mt-2 font-bold">
-{user?.emailVerified 
-? "✓ Verified Account"
-: "Pending Verification"}
-</p>
+              <h2 className="text-3xl font-black mt-2">
+                ₦{Number(balance).toLocaleString("en-US")}
+              </h2>
 
+            </div>
 
-</div>
+            <div className="w-11 h-11 rounded-2xl bg-black text-white flex items-center justify-center text-xl">
+              ◈
+            </div>
 
+          </div>
 
-</div>
 
+          <Link
+            href="/wallet"
+            className="block mt-5 text-center bg-black text-white rounded-xl py-3 font-bold"
+          >
+            Open Wallet
+          </Link>
 
+        </div>
 
 
+        {/* ACCOUNT LEVEL */}
 
-{/* STATS */}
+        <Link
+          href="/account-upgrade"
+          className="block bg-[#18181B] border border-zinc-800 rounded-3xl p-5 hover:border-yellow-400 transition"
+        >
 
+          <div className="flex items-center justify-between">
 
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
 
+              <p className="text-xs text-zinc-500 uppercase tracking-wider">
+                Membership
+              </p>
 
-<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
+              <h2 className="text-lg font-black mt-1">
+                Upgrade
+              </h2>
 
-<p className="text-xs text-zinc-500">
-Wallet Balance
-</p>
+            </div>
 
-<h2 className="text-2xl sm:text-3xl font-black mt-2 break-all">
-₦{Number(balance).toLocaleString("en-US")}
-</h2>
+            <span className="px-4 py-2 rounded-xl bg-yellow-400 text-black text-xs font-black">
+              UPGRADE
+            </span>
 
-</div>
+          </div>
 
+          <p className="text-sm text-zinc-400 mt-3">
+            Upgrade your AlphaBot account and unlock more benefits.
+          </p>
 
+        </Link>
 
-<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
 
-<p className="text-xs text-zinc-500">
-Referral Earnings
-</p>
+        {/* ACCOUNT MANAGEMENT */}
 
-<h2 className="text-2xl sm:text-3xl font-black mt-2 break-all">
-₦{Number(user?.referralEarnings || 0).toLocaleString("en-US")}
-</h2>
+        <div>
 
-</div>
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
+            Account Management
+          </p>
 
 
-</div>
+          <div className="space-y-2">
 
 
+            <Link
+              href="/edit-profile"
+              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+            >
 
+              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                ✏️
+              </span>
 
+              <div className="flex-1">
 
-{/* INFORMATION */}
+                <p className="font-bold">
+                  Edit Profile
+                </p>
 
+                <p className="text-xs text-zinc-500 mt-1">
+                  Update your personal information
+                </p>
 
-<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+              </div>
 
+              <span className="text-zinc-500">
+                ›
+              </span>
 
-<h2 className="font-bold">
-Account Information
-</h2>
+            </Link>
 
 
-<div className="mt-5 space-y-4 text-sm">
+            <Link
+              href="/settings"
+              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+            >
 
+              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                ⚙️
+              </span>
 
-<div className="flex justify-between">
-<span className="text-zinc-500">
-Referral Code
-</span>
+              <div className="flex-1">
 
-<span className="font-bold">
-{user?.referralCode || "None"}
-</span>
+                <p className="font-bold">
+                  Settings
+                </p>
 
-</div>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Security, password and account controls
+                </p>
 
+              </div>
 
+              <span className="text-zinc-500">
+                ›
+              </span>
 
-<div className="flex justify-between">
-<span className="text-zinc-500">
-Joined
-</span>
+            </Link>
 
-<span>
-{user?.createdAt
-? new Date(user.createdAt).toDateString()
-:"Unknown"}
-</span>
 
-</div>
+            <Link
+              href="/transactions"
+              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+            >
 
+              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                📜
+              </span>
 
-</div>
+              <div className="flex-1">
 
+                <p className="font-bold">
+                  Transaction History
+                </p>
 
-</div>
+                <p className="text-xs text-zinc-500 mt-1">
+                  View your wallet activity
+                </p>
 
+              </div>
 
+              <span className="text-zinc-500">
+                ›
+              </span>
 
+            </Link>
 
 
-{/* MENU */}
+          </div>
 
-<div className="space-y-3">
+        </div>
 
 
-<Link
-href="/referral"
-className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
->
-🎁 Invite & Earn
-</Link>
+        {/* TRANSACTION HISTORY */}
 
+        <div>
 
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
+            Activity
+          </p>
 
+          <Link
+            href="/transactions"
+            className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+          >
 
-<Link
-href="/support"
-className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
->
-🆘 Support
-</Link>
+            <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+              📜
+            </span>
 
+            <div className="flex-1">
 
-<Link
-href="/terms"
-className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
->
-📄 Terms & Conditions
-</Link>
+              <p className="font-bold">
+                Transaction History
+              </p>
 
+              <p className="text-xs text-zinc-500 mt-1">
+                View your wallet and payment activities
+              </p>
 
-<Link
-href="/privacy"
-className="block bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
->
-🔒 Privacy Policy
-</Link>
+            </div>
 
+            <span className="text-zinc-500">
+              ›
+            </span>
 
-</div>
+          </Link>
 
+        </div>
 
 
+        {/* REFERRAL */}
 
+        <div>
 
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
+            Earn & Rewards
+          </p>
 
-<Link
-href="/edit-profile"
-className="block text-center bg-white text-black rounded-xl py-3 font-bold"
->
-Edit Profile
-</Link>
 
+          <Link
+            href="/referral"
+            className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+          >
 
+            <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+              🎁
+            </span>
 
-<button
-onClick={logout}
-className="w-full bg-zinc-100 dark:bg-[#18181B] border border-red-900 text-red-400 rounded-xl py-3 font-bold"
->
-Logout
-</button>
+            <div className="flex-1">
 
+              <p className="font-bold">
+                Invite & Earn
+              </p>
 
+              <p className="text-xs text-zinc-500 mt-1">
+                Share AlphaBot and earn referral rewards
+              </p>
 
-{error && (
-<p className="text-red-400 text-center">
-{error}
-</p>
-)}
+            </div>
 
+            <span className="text-zinc-500">
+              ›
+            </span>
 
+          </Link>
 
-</div>
+        </div>
 
 
-<BottomNav />
+        {/* SUPPORT */}
 
+        <div>
 
-</main>
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
+            Help
+          </p>
 
-)
 
+          <div className="space-y-2">
+
+
+            <Link
+              href="/support"
+              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
+            >
+
+              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                🆘
+              </span>
+
+              <div className="flex-1">
+
+                <p className="font-bold">
+                  Support
+                </p>
+
+                <p className="text-xs text-zinc-500 mt-1">
+                  Get help with your account
+                </p>
+
+              </div>
+
+              <span className="text-zinc-500">
+                ›
+              </span>
+
+            </Link>
+
+
+            <Link
+              href="/terms"
+              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
+            >
+
+              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                📄
+              </span>
+
+              <div className="flex-1">
+
+                <p className="font-bold">
+                  Terms & Conditions
+                </p>
+
+              </div>
+
+              <span className="text-zinc-500">
+                ›
+              </span>
+
+            </Link>
+
+
+            <Link
+              href="/privacy"
+              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
+            >
+
+              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                🔒
+              </span>
+
+              <div className="flex-1">
+
+                <p className="font-bold">
+                  Privacy Policy
+                </p>
+
+              </div>
+
+              <span className="text-zinc-500">
+                ›
+              </span>
+
+            </Link>
+
+
+          </div>
+
+        </div>
+
+
+        {error && (
+
+          <p className="text-red-400 text-center text-sm">
+            {error}
+          </p>
+
+        )}
+
+
+        {/* LOGOUT */}
+
+        <button
+          onClick={logout}
+          className="w-full bg-[#18181B] border border-red-900 text-red-400 rounded-2xl py-4 font-bold"
+        >
+          Log Out
+        </button>
+
+
+      </div>
+
+
+      <BottomNav />
+
+    </main>
+
+  );
 }
