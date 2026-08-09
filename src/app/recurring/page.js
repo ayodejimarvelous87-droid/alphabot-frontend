@@ -450,6 +450,7 @@ value={id}
 
 </select>
 
+</div>
 )}
 
 <input
@@ -549,7 +550,6 @@ className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 </p>
 
 
-</div>
 
 
 
