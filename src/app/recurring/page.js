@@ -10,6 +10,10 @@ export default function RecurringPage(){
 
 const [payments,setPayments]=useState([]);
 const [service,setService]=useState("data");
+
+const [dataPlans,setDataPlans]=useState([]);
+const [selectedPlan,setSelectedPlan]=useState(null);
+
 const [amount,setAmount]=useState("");
 const [targetPhone,setTargetPhone]=useState("");
 const [frequency,setFrequency]=useState("daily");
@@ -25,6 +29,49 @@ const token =
 typeof window !== "undefined"
 ? localStorage.getItem("token")
 : null;
+
+
+const loadDataPlans=async()=>{
+
+try{
+
+const res=await fetch(
+`${API}/data/plans`
+);
+
+const data=await res.json();
+
+const plans=[];
+
+Object.keys(data?.networks || {}).forEach(network=>{
+
+Object.keys(data.networks[network] || {}).forEach(category=>{
+
+(data.networks[network][category] || []).forEach(plan=>{
+
+plans.push({
+...plan,
+network:
+plan.network ||
+plan.service_name ||
+network
+});
+
+});
+
+});
+
+});
+
+setDataPlans(plans);
+
+}catch(error){
+
+console.log("Data plans load error:",error);
+
+}
+
+};
 
 
 const loadPayments=async()=>{
@@ -58,6 +105,7 @@ console.log(error);
 useEffect(()=>{
 
 loadPayments();
+loadDataPlans();
 
 },[]);
 
@@ -65,9 +113,23 @@ loadPayments();
 
 const createPayment=async()=>{
 
-if(!targetPhone || !amount){
+if(!targetPhone){
 
-setMessage("❌ Enter phone number and amount");
+setMessage("❌ Enter phone number");
+return;
+
+}
+
+if(service === "data" && !selectedPlan){
+
+setMessage("❌ Select a data plan");
+return;
+
+}
+
+if(service === "airtime" && !amount){
+
+setMessage("❌ Enter airtime amount");
 return;
 
 }
@@ -88,11 +150,60 @@ headers:{
 Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({
+
 phone:user.phone,
+
 targetPhone,
+
 service,
-amount:Number(amount),
+
+provider:
+service === "data"
+  ? selectedPlan?.provider || ""
+  : "",
+
+variationId:
+service === "data"
+  ? (
+      selectedPlan?.variation_id ||
+      selectedPlan?.providerPlanId ||
+      selectedPlan?.plan_id ||
+      selectedPlan?.id ||
+      ""
+    )
+  : "",
+
+network:
+service === "data"
+  ? (
+      selectedPlan?.network ||
+      selectedPlan?.service_name ||
+      ""
+    )
+  : "",
+
+planName:
+service === "data"
+  ? (
+      selectedPlan?.data_plan ||
+      selectedPlan?.name ||
+      ""
+    )
+  : "",
+
+amount:
+service === "data"
+  ? Number(
+      selectedPlan?.display_price ||
+      selectedPlan?.sellingPrice ||
+      selectedPlan?.price ||
+      selectedPlan?.reseller_price ||
+      0
+    )
+  : Number(amount),
+
 frequency
+
 })
 }
 );
@@ -190,7 +301,19 @@ Service
 <select
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 value={service}
-onChange={(e)=>setService(e.target.value)}
+onChange={(e)=>{
+
+const value=e.target.value;
+
+setService(value);
+
+setSelectedPlan(null);
+
+if(value === "data"){
+setAmount("");
+}
+
+}}
 >
 
 <option value="data">
@@ -207,6 +330,94 @@ onChange={(e)=>setService(e.target.value)}
 
 
 
+{service === "data" && (
+
+<select
+className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+value={selectedPlan ? (
+selectedPlan.variation_id ||
+selectedPlan.providerPlanId ||
+selectedPlan.plan_id ||
+selectedPlan.id ||
+""
+) : ""}
+onChange={(e)=>{
+
+const value=e.target.value;
+
+const plan=dataPlans.find(item=>
+String(
+item.variation_id ||
+item.providerPlanId ||
+item.plan_id ||
+item.id ||
+""
+) === String(value)
+);
+
+setSelectedPlan(plan || null);
+
+}}
+>
+
+<option value="">
+Select data plan
+</option>
+
+{dataPlans.map((plan,index)=>{
+
+const id=
+plan.variation_id ||
+plan.providerPlanId ||
+plan.plan_id ||
+plan.id;
+
+const name=
+plan.data_plan ||
+plan.name ||
+"Data plan";
+
+const network=
+plan.network ||
+plan.service_name ||
+"";
+
+const price=
+plan.display_price ||
+plan.sellingPrice ||
+plan.price ||
+plan.reseller_price ||
+0;
+
+const validity=
+plan.validity ||
+(
+plan.day
+? `${plan.day} Days`
+: ""
+);
+
+return(
+
+<option
+key={`${id}-${index}`}
+value={id}
+>
+
+{network} {name}
+{validity ? ` • ${validity}` : ""}
+ • ₦{Number(price).toLocaleString()}
+
+</option>
+
+);
+
+})}
+
+</select>
+
+)}
+
 <input
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 placeholder="Phone number"
@@ -217,6 +428,8 @@ onChange={(e)=>setTargetPhone(e.target.value)}
 
 
 
+{service === "airtime" && (
+
 <input
 className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
 placeholder="Amount"
@@ -224,6 +437,41 @@ type="number"
 value={amount}
 onChange={(e)=>setAmount(e.target.value)}
 />
+
+)}
+
+{service === "data" && selectedPlan && (
+
+<div className="bg-[#050505] border border-zinc-700 rounded-xl p-3">
+
+<p className="font-bold">
+{selectedPlan.network ||
+ selectedPlan.service_name ||
+"Data"}{" "}
+{selectedPlan.data_plan ||
+ selectedPlan.name ||
+"Data plan"}
+</p>
+
+<p className="text-zinc-400 text-sm mt-1">
+
+₦{Number(
+selectedPlan.display_price ||
+selectedPlan.sellingPrice ||
+selectedPlan.price ||
+selectedPlan.reseller_price ||
+0
+).toLocaleString()}
+
+{selectedPlan.validity
+? ` • ${selectedPlan.validity}`
+: ""}
+
+</p>
+
+</div>
+
+)}
 
 
 
@@ -288,12 +536,38 @@ className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
 >
 
 <p className="font-bold">
-{item.service.toUpperCase()}
+{item.service === "data" ? "🌐 DATA" : "📱 AIRTIME"}
 </p>
 
-<p className="text-zinc-400 mt-1">
-₦{item.amount} • {item.frequency}
+{item.service === "data" ? (
+
+<div className="mt-2 space-y-1">
+
+<p className="text-zinc-300">
+Data subscription
 </p>
+
+<p className="text-zinc-400">
+₦{Number(item.amount).toLocaleString()} • {item.frequency}
+</p>
+
+</div>
+
+) : (
+
+<div className="mt-2 space-y-1">
+
+<p className="text-zinc-300">
+Airtime subscription
+</p>
+
+<p className="text-zinc-400">
+₦{Number(item.amount).toLocaleString()} • {item.frequency}
+</p>
+
+</div>
+
+)}
 
 
 <button
