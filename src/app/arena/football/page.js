@@ -129,7 +129,8 @@ const res = await fetch(
 method:"POST",
 
 headers:{
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+"Authorization":`Bearer ${localStorage.getItem("token")}`
 },
 
 body:JSON.stringify({
@@ -149,19 +150,34 @@ choice
 
 const data = await res.json();
 
+if(!res.ok){
+throw new Error(data.message || "Prediction failed");
+}
+
 setMessage(data.message || "Prediction submitted");
+
+if(data.prediction){
+setPredictions(prev => [
+...prev,
+data.prediction
+]);
+}
 
 setTimeout(()=>{
 setMessage("");
 },3000);
 
-const updated = await fetch(`https://alphabot-1.onrender.com/football/my-predictions/${user._id}`);
-
-const refreshed = await updated.json();
-
+// Refresh in background
+fetch(
+`https://alphabot-1.onrender.com/football/my-predictions/${user._id}`
+)
+.then(res => res.json())
+.then(refreshed => {
 if(Array.isArray(refreshed)){
 setPredictions(refreshed);
 }
+})
+.catch(()=>{});
 
 
 }catch(error){
