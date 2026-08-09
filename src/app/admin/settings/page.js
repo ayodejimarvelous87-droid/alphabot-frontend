@@ -51,6 +51,7 @@ providerMinimumBalance:data.providerMinimumBalance ?? 500
 
 useEffect(()=>{
 loadSettings();
+loadMembershipAdmin();
 },[]);
 
 
