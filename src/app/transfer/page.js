@@ -2,6 +2,7 @@
 
 import {useState,useEffect} from "react";
 import Link from "next/link";
+import { authenticateWithBiometric } from "@/lib/biometric";
 import SuccessCelebration from "@/components/success-celebration";
 
 export default function Transfer(){
@@ -62,6 +63,7 @@ const [accountNumber,setAccountNumber]=useState("");
 const [accountName,setAccountName]=useState("");
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
+const [biometricLoading,setBiometricLoading]=useState(false);
 const [message,setMessage]=useState("");
 const [showSuccess,setShowSuccess]=useState(false);
 const [verified,setVerified]=useState(false);
@@ -122,13 +124,17 @@ setMessage("❌ Verification failed");
 
 
 
+const hasBiometricAuthorization =
+typeof window !== "undefined" &&
+!!localStorage.getItem("biometricToken");
+
 const disabled =
 !bank ||
 !accountNumber ||
 !accountName ||
 !amount ||
 Number(amount)<=0 ||
-!pin ||
+(!pin && !hasBiometricAuthorization) ||
 !verified;
 
 
@@ -161,7 +167,8 @@ bankCode:bank,
 accountNumber,
 accountName,
 amount:Number(amount),
-pin
+pin: localStorage.getItem("biometricToken") ? undefined : pin,
+biometricToken: localStorage.getItem("biometricToken") || undefined
 })
 }
 );
@@ -169,6 +176,8 @@ pin
 const data = await res.json();
 
 if(res.ok){
+
+localStorage.removeItem("biometricToken");
 
 setMessage("✅ Transfer successful");
 setShowSuccess(true);
@@ -364,6 +373,42 @@ onChange={(e)=>setPin(e.target.value)}
 
 
 
+
+
+<button
+
+onClick={async()=>{
+
+try{
+
+setBiometricLoading(true);
+setMessage("Touch your fingerprint...");
+
+await authenticateWithBiometric();
+
+setMessage("✅ Fingerprint verified. Tap Transfer Money.");
+
+}catch(error){
+
+localStorage.removeItem("biometricToken");
+setMessage("❌ " + error.message);
+
+}finally{
+
+setBiometricLoading(false);
+
+}
+
+}}
+
+disabled={biometricLoading}
+
+className="w-full py-3 rounded-xl font-bold bg-zinc-900 border border-zinc-700 text-white mb-3"
+
+>
+{biometricLoading ? "Touch fingerprint..." : "👆 Use Fingerprint"}
+
+</button>
 
 
 <button

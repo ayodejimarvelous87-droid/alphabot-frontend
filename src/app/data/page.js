@@ -5,6 +5,7 @@ import SuccessCelebration from "@/components/success-celebration";
 import { useEffect, useState } from "react";
 import {useSearchParams} from "next/navigation";
 import Link from "next/link";
+import { authenticateWithBiometric } from "@/lib/biometric";
 import PhoneInput from "@/components/PhoneInput";
 import ServiceLayout from "@/components/ServiceLayout";
 
@@ -19,6 +20,7 @@ const [category,setCategory]=useState("");
 const [plans,setPlans]=useState({});
 const [selectedPlan,setSelectedPlan]=useState("");
 const [pin,setPin]=useState("");
+const [biometricLoading,setBiometricLoading]=useState(false);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
   const [search,setSearch]=useState("");
@@ -235,6 +237,9 @@ setMessage(
 const token =
 localStorage.getItem("token");
 
+const biometricToken =
+localStorage.getItem("biometricToken");
+
 
 const res = await fetch(
 
@@ -263,7 +268,8 @@ phone,
 network,
 plan:selected.data_plan || selected.name,
 amount:Number(selected.display_price || selected.reseller_price || selected.price),
-pin,
+pin: biometricToken ? undefined : pin,
+biometricToken: biometricToken || undefined,
 provider:selected.provider,
 variation_id:
 selected.variation_id ||
@@ -285,6 +291,8 @@ await res.json();
 
 
 if(res.ok){
+
+localStorage.removeItem("biometricToken");
 
 setMessage("✅ Data purchase successful");
 setShowSuccess(true);
@@ -526,6 +534,42 @@ onChange={(e)=>setPin(e.target.value)}
 
 
 
+
+
+<button
+
+onClick={async()=>{
+
+try{
+
+setBiometricLoading(true);
+setMessage("Touch your fingerprint...");
+
+await authenticateWithBiometric();
+
+setMessage("✅ Fingerprint verified. Tap Buy Data.");
+
+}catch(error){
+
+localStorage.removeItem("biometricToken");
+setMessage("❌ " + error.message);
+
+}finally{
+
+setBiometricLoading(false);
+
+}
+
+}}
+
+disabled={loading || biometricLoading}
+
+className="w-full bg-zinc-900 border border-zinc-700 text-white py-3 rounded-2xl font-black text-lg active:scale-95 transition"
+
+>
+{biometricLoading ? "Touch fingerprint..." : "👆 Use Fingerprint"}
+
+</button>
 
 
 <button

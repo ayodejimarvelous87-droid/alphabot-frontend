@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Toast from "@/components/Toast";
 
+import {
+  getBiometricStatus,
+  enableBiometric,
+  authenticateWithBiometric,
+  disableBiometric
+} from "@/lib/biometric";
+
 const API = "https://alphabot-1.onrender.com";
 
 export default function Settings(){
@@ -29,6 +36,9 @@ const [newPassword,setNewPassword] = useState("");
 
 const [message,setMessage] = useState("");
 const [loading,setLoading] = useState(false);
+
+const [biometricEnabled,setBiometricEnabled] = useState(false);
+const [biometricLoading,setBiometricLoading] = useState(false);
 
 
 useEffect(()=>{
@@ -62,7 +72,148 @@ console.log(error);
 
 loadPinStatus();
 
+const loadBiometricStatus = async () => {
+
+  try {
+
+    const data = await getBiometricStatus();
+
+    setBiometricEnabled(
+      !!data.enabled
+    );
+
+  } catch(error) {
+
+    console.log(
+      "Biometric status:",
+      error
+    );
+
+  }
+
+};
+
+loadBiometricStatus();
+
 },[token]);
+
+
+const setupFingerprint = async () => {
+
+  try {
+
+    setBiometricLoading(true);
+    setMessage("");
+
+    const data =
+      await enableBiometric();
+
+    if (data.verified) {
+
+      setBiometricEnabled(true);
+
+      setMessage(
+        "Fingerprint payment enabled successfully ✅"
+      );
+
+    }
+
+  } catch(error) {
+
+    console.error(error);
+
+    setMessage(
+      "❌ " +
+      (error.message ||
+      "Fingerprint setup failed")
+    );
+
+  } finally {
+
+    setBiometricLoading(false);
+
+  }
+
+};
+
+
+const testFingerprint = async () => {
+
+  try {
+
+    setBiometricLoading(true);
+    setMessage("");
+
+    const data =
+      await authenticateWithBiometric();
+
+    if (data.verified) {
+
+      setMessage(
+        "Fingerprint verified successfully ✅"
+      );
+
+    }
+
+  } catch(error) {
+
+    console.error(error);
+
+    setMessage(
+      "❌ " +
+      (error.message ||
+      "Fingerprint verification failed")
+    );
+
+  } finally {
+
+    setBiometricLoading(false);
+
+  }
+
+};
+
+
+const removeFingerprint = async () => {
+
+  if (
+    !confirm(
+      "Disable fingerprint payment on this account?"
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    setBiometricLoading(true);
+    setMessage("");
+
+    await disableBiometric();
+
+    setBiometricEnabled(false);
+
+    setMessage(
+      "Fingerprint payment disabled successfully ✅"
+    );
+
+  } catch(error) {
+
+    console.error(error);
+
+    setMessage(
+      "❌ " +
+      (error.message ||
+      "Unable to disable fingerprint")
+    );
+
+  } finally {
+
+    setBiometricLoading(false);
+
+  }
+
+};
 
 
 const sendPinOTP = async()=>{
@@ -411,6 +562,80 @@ className="w-full bg-black dark:bg-white text-white dark:text-black rounded-2xl 
 >
 {hasPin ? "Change Transaction PIN" : "Create Transaction PIN"}
 </button>
+
+</div>
+
+
+{/* BIOMETRIC */}
+
+<div className="bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+
+<div className="mb-5">
+
+<h2 className="text-lg font-bold">
+👆 Fingerprint Payment
+</h2>
+
+<p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+Use your fingerprint to authorize AlphaBot payments instead of entering your transaction PIN.
+</p>
+
+</div>
+
+
+<div className="bg-white dark:bg-[#050505] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 mb-4">
+
+<p className="text-xs text-zinc-500">
+Current status
+</p>
+
+<p className="font-bold mt-1">
+{biometricEnabled
+  ? "✓ Fingerprint payment is enabled"
+  : "⚠️ Fingerprint payment is not enabled"}
+</p>
+
+</div>
+
+
+{!biometricEnabled ? (
+
+<button
+onClick={setupFingerprint}
+disabled={biometricLoading || loading}
+className="w-full bg-black dark:bg-white text-white dark:text-black rounded-2xl py-4 font-bold disabled:opacity-50"
+>
+{biometricLoading
+  ? "Waiting for fingerprint..."
+  : "👆 Enable Fingerprint Payment"}
+</button>
+
+) : (
+
+<div className="space-y-3">
+
+<button
+onClick={testFingerprint}
+disabled={biometricLoading || loading}
+className="w-full bg-black dark:bg-white text-white dark:text-black rounded-2xl py-4 font-bold disabled:opacity-50"
+>
+{biometricLoading
+  ? "Checking fingerprint..."
+  : "👆 Test Fingerprint"}
+</button>
+
+
+<button
+onClick={removeFingerprint}
+disabled={biometricLoading || loading}
+className="w-full border border-red-500 text-red-500 dark:text-red-400 rounded-2xl py-4 font-bold disabled:opacity-50"
+>
+Disable Fingerprint Payment
+</button>
+
+</div>
+
+)}
 
 </div>
 

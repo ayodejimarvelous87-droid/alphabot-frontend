@@ -3,6 +3,7 @@
 import { useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
 import Toast from "@/components/Toast";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 export default function Login(){
 
@@ -12,6 +13,116 @@ export default function Login(){
 const [toast,setToast] = useState("");
   const [showPassword,setShowPassword] = useState(false);
   const [loading,setLoading] = useState(false);
+
+
+  const biometricLogin = async () => {
+
+    try {
+
+      if (!phone) {
+        setMessage("Enter your phone number first");
+        return;
+      }
+
+      setLoading(true);
+      setMessage("Starting fingerprint login...");
+
+      const optionsRes = await fetch(
+        "https://alphabot-1.onrender.com/biometric/login/options",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            phone
+          })
+        }
+      );
+
+      const options = await optionsRes.json();
+
+      if (!optionsRes.ok) {
+        throw new Error(
+          options.message ||
+          "Fingerprint login is not available"
+        );
+      }
+
+      setMessage("Touch your fingerprint sensor...");
+
+      const authenticationResponse =
+        await startAuthentication({
+          optionsJSON: options
+        });
+
+      const verifyRes = await fetch(
+        "https://alphabot-1.onrender.com/biometric/login/verify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            phone,
+            ...authenticationResponse
+          })
+        }
+      );
+
+      const data = await verifyRes.json();
+
+      if (!verifyRes.ok) {
+        throw new Error(
+          data.message ||
+          "Fingerprint login failed"
+        );
+      }
+
+      if (!data.token) {
+        throw new Error(
+          "Fingerprint login did not return a token"
+        );
+      }
+
+      localStorage.setItem(
+        "token",
+        data.token
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
+
+      localStorage.removeItem("biometricToken");
+
+      setMessage("");
+      setToast("✅ Fingerprint login successful");
+
+      setLoading(false);
+
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 700);
+
+    } catch (error) {
+
+      console.error(
+        "BIOMETRIC LOGIN ERROR:",
+        error
+      );
+
+      setLoading(false);
+
+      setMessage(
+        error.message ||
+        "Fingerprint login failed"
+      );
+
+    }
+
+  };
 
 
   const login = async()=>{
@@ -279,6 +390,42 @@ const [toast,setToast] = useState("");
           "Logging in..."
           :
           "Login"
+        }
+
+        </button>
+
+
+        <button
+
+        type="button"
+
+        onClick={biometricLogin}
+
+        disabled={loading}
+
+        className="
+        w-full
+        mt-3
+        bg-zinc-900
+        border
+        border-zinc-700
+        text-white
+        py-3.5
+        rounded-xl
+        font-bold
+        hover:bg-zinc-800
+        transition
+        disabled:opacity-50
+        "
+
+        >
+
+        {
+          loading
+          ?
+          "Please wait..."
+          :
+          "👆 Use Fingerprint"
         }
 
         </button>

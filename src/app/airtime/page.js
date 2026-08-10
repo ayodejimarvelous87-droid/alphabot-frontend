@@ -3,6 +3,7 @@
 import { useState,useEffect } from "react";
 import {useSearchParams} from "next/navigation";
 import Link from "next/link";
+import { authenticateWithBiometric } from "@/lib/biometric";
 import PhoneInput from "@/components/PhoneInput";
 import SuccessCelebration from "@/components/success-celebration";
 
@@ -13,6 +14,7 @@ const [phone,setPhone]=useState("");
 const [network,setNetwork]=useState("MTN");
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
+const [biometricLoading,setBiometricLoading]=useState(false);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
@@ -54,6 +56,7 @@ setLoading(true);
 setMessage("Processing...");
 
 const token = localStorage.getItem("token");
+const biometricToken = localStorage.getItem("biometricToken");
 
 
 const res = await fetch(
@@ -69,7 +72,8 @@ body:JSON.stringify({
 phone,
 network,
 amount:Number(amount),
-pin
+pin: biometricToken ? undefined : pin,
+biometricToken: biometricToken || undefined
 })
 }
 );
@@ -79,6 +83,8 @@ const data = await res.json();
 
 
 if(res.ok){
+
+localStorage.removeItem("biometricToken");
 
 setMessage(`✅ ${data.message}`);
 setShowSuccess(true);
@@ -253,6 +259,42 @@ onChange={(e)=>setPin(e.target.value)}
 
 
 
+
+
+<button
+
+onClick={async()=>{
+
+try{
+
+setBiometricLoading(true);
+setMessage("Touch your fingerprint...");
+
+await authenticateWithBiometric();
+
+setMessage("✅ Fingerprint verified. Tap Buy Airtime.");
+
+}catch(error){
+
+localStorage.removeItem("biometricToken");
+setMessage("❌ " + error.message);
+
+}finally{
+
+setBiometricLoading(false);
+
+}
+
+}}
+
+disabled={loading || biometricLoading}
+
+className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition"
+
+>
+{biometricLoading ? "Touch fingerprint..." : "👆 Use Fingerprint"}
+
+</button>
 
 
 <button
