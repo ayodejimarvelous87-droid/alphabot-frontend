@@ -48,45 +48,6 @@ const [twoFactorLoading,setTwoFactorLoading] = useState(false);
 const [biometricLoading,setBiometricLoading] = useState(false);
 
 
-useEffect(()=>{
-
-
-const loadTwoFactorStatus = async () => {
-
-  try {
-
-    const res = await fetch(
-      `${API}/2fa/status`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(
-        data.message ||
-        "Unable to check 2FA status"
-      );
-    }
-
-    setTwoFactorEnabled(
-      !!data.enabled
-    );
-
-  } catch (error) {
-
-    console.error(
-      "2FA status error:",
-      error
-    );
-
-  }
-
-};
 
 
 const setupTwoFactor = async () => {
@@ -144,8 +105,7 @@ const setupTwoFactor = async () => {
 
   }
 
-};
-
+}
 
 const verifyTwoFactorSetup = async () => {
 
@@ -210,8 +170,7 @@ const verifyTwoFactorSetup = async () => {
 
   }
 
-};
-
+}
 
 const disableTwoFactor = async () => {
 
@@ -276,7 +235,56 @@ const disableTwoFactor = async () => {
 
   }
 
+}
+
+useEffect(()=>{
+
+
+const loadTwoFactorStatus = async () => {
+
+  try {
+
+    const res = await fetch(
+      `${API}/2fa/status`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.message ||
+        "Unable to check 2FA status"
+      );
+    }
+
+    setTwoFactorEnabled(
+      !!data.enabled
+    );
+
+  } catch (error) {
+
+    console.error(
+      "2FA status error:",
+      error
+    );
+
+  }
+
 };
+
+
+;
+
+
+;
+
+
+;
 
 
 const loadPinStatus = async()=>{
