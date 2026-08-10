@@ -38,10 +38,246 @@ const [message,setMessage] = useState("");
 const [loading,setLoading] = useState(false);
 
 const [biometricEnabled,setBiometricEnabled] = useState(false);
+const [twoFactorEnabled,setTwoFactorEnabled] = useState(false);
+const [twoFactorSetup,setTwoFactorSetup] = useState(false);
+const [twoFactorQrCode,setTwoFactorQrCode] = useState("");
+const [twoFactorSecret,setTwoFactorSecret] = useState("");
+const [twoFactorCode,setTwoFactorCode] = useState("");
+const [twoFactorLoading,setTwoFactorLoading] = useState(false);
+
 const [biometricLoading,setBiometricLoading] = useState(false);
 
 
 useEffect(()=>{
+
+
+const loadTwoFactorStatus = async () => {
+
+  try {
+
+    const res = await fetch(
+      `${API}/2fa/status`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.message ||
+        "Unable to check 2FA status"
+      );
+    }
+
+    setTwoFactorEnabled(
+      !!data.enabled
+    );
+
+  } catch (error) {
+
+    console.error(
+      "2FA status error:",
+      error
+    );
+
+  }
+
+};
+
+
+const setupTwoFactor = async () => {
+
+  try {
+
+    setTwoFactorLoading(true);
+    setMessage("Generating 2FA setup...");
+
+    const res = await fetch(
+      `${API}/2fa/setup`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.message ||
+        "Unable to start 2FA setup"
+      );
+    }
+
+    setTwoFactorQrCode(
+      data.qrCode || ""
+    );
+
+    setTwoFactorSecret(
+      data.secret || ""
+    );
+
+    setTwoFactorSetup(true);
+    setTwoFactorCode("");
+
+    setMessage(
+      "Scan the QR code with your authenticator app."
+    );
+
+  } catch (error) {
+
+    setMessage(
+      "❌ " +
+      (error.message ||
+       "Unable to start 2FA setup")
+    );
+
+  } finally {
+
+    setTwoFactorLoading(false);
+
+  }
+
+};
+
+
+const verifyTwoFactorSetup = async () => {
+
+  if (!/^\d{6}$/.test(twoFactorCode)) {
+
+    setMessage(
+      "❌ Enter the 6-digit authenticator code"
+    );
+
+    return;
+  }
+
+  try {
+
+    setTwoFactorLoading(true);
+    setMessage("Verifying authenticator code...");
+
+    const res = await fetch(
+      `${API}/2fa/verify-setup`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          code: twoFactorCode
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.message ||
+        "Invalid authenticator code"
+      );
+    }
+
+    setTwoFactorEnabled(true);
+    setTwoFactorSetup(false);
+    setTwoFactorQrCode("");
+    setTwoFactorSecret("");
+    setTwoFactorCode("");
+
+    setMessage(
+      "Two-factor authentication enabled successfully ✅"
+    );
+
+  } catch (error) {
+
+    setMessage(
+      "❌ " +
+      (error.message ||
+       "2FA verification failed")
+    );
+
+  } finally {
+
+    setTwoFactorLoading(false);
+
+  }
+
+};
+
+
+const disableTwoFactor = async () => {
+
+  if (!/^\d{6}$/.test(twoFactorCode)) {
+
+    setMessage(
+      "❌ Enter your 6-digit authenticator code"
+    );
+
+    return;
+  }
+
+  try {
+
+    setTwoFactorLoading(true);
+    setMessage("Disabling 2FA...");
+
+    const res = await fetch(
+      `${API}/2fa/disable`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          code: twoFactorCode
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.message ||
+        "Unable to disable 2FA"
+      );
+    }
+
+    setTwoFactorEnabled(false);
+    setTwoFactorSetup(false);
+    setTwoFactorCode("");
+    setTwoFactorQrCode("");
+    setTwoFactorSecret("");
+
+    setMessage(
+      "Two-factor authentication disabled successfully"
+    );
+
+  } catch (error) {
+
+    setMessage(
+      "❌ " +
+      (error.message ||
+       "Unable to disable 2FA")
+    );
+
+  } finally {
+
+    setTwoFactorLoading(false);
+
+  }
+
+};
+
 
 const loadPinStatus = async()=>{
 
@@ -94,6 +330,7 @@ const loadBiometricStatus = async () => {
 };
 
 loadBiometricStatus();
+loadTwoFactorStatus();
 
 },[token]);
 
@@ -636,6 +873,237 @@ Disable Fingerprint Payment
 </div>
 
 )}
+
+</div>
+
+
+
+{/* TWO-FACTOR AUTHENTICATION */}
+
+<div className="
+mt-8
+p-5
+rounded-2xl
+border
+border-zinc-800
+bg-zinc-950
+">
+
+<h3 className="text-lg font-bold">
+🔐 Two-Factor Authentication
+</h3>
+
+<p className="
+text-sm
+text-zinc-400
+mt-2
+">
+Protect your AlphaBot account with an authenticator app.
+</p>
+
+<div className="mt-4">
+
+{twoFactorEnabled ? (
+
+<div>
+
+<p className="
+text-sm
+text-green-400
+font-semibold
+mb-4
+">
+✓ Two-factor authentication is enabled
+</p>
+
+<input
+type="text"
+inputMode="numeric"
+maxLength={6}
+placeholder="Enter 6-digit authenticator code"
+value={twoFactorCode}
+onChange={(e)=>
+setTwoFactorCode(
+e.target.value.replace(/\D/g,"")
+)
+}
+className="
+w-full
+bg-zinc-900
+border
+border-zinc-700
+rounded-xl
+px-4
+py-3
+text-white
+"
+/>
+
+<button
+type="button"
+onClick={disableTwoFactor}
+disabled={twoFactorLoading || loading}
+className="
+w-full
+mt-3
+bg-red-600
+text-white
+py-3
+rounded-xl
+font-bold
+disabled:opacity-50
+"
+>
+{twoFactorLoading
+? "Processing..."
+: "Disable 2FA"}
+</button>
+
+</div>
+
+) : (
+
+<div>
+
+<p className="
+text-sm
+text-yellow-400
+font-semibold
+mb-4
+">
+⚠️ Two-factor authentication is not enabled
+</p>
+
+{!twoFactorSetup ? (
+
+<button
+type="button"
+onClick={setupTwoFactor}
+disabled={twoFactorLoading || loading}
+className="
+w-full
+bg-white
+text-black
+py-3
+rounded-xl
+font-bold
+disabled:opacity-50
+"
+>
+{twoFactorLoading
+? "Preparing..."
+: "🔐 Set Up 2FA"}
+</button>
+
+) : (
+
+<div>
+
+<p className="
+text-sm
+text-zinc-300
+mb-3
+">
+Open Google Authenticator, Microsoft Authenticator,
+Authy, or another compatible authenticator app and
+scan this QR code.
+</p>
+
+{twoFactorQr && (
+<div className="
+flex
+justify-center
+bg-white
+p-4
+rounded-xl
+mb-4
+">
+<img
+src={twoFactorQr}
+alt="2FA QR code"
+className="w-52 h-52"
+/>
+</div>
+)}
+
+{twoFactorSecret && (
+<div className="mb-4">
+<p className="
+text-xs
+text-zinc-400
+mb-1
+">
+Can't scan the QR code? Enter this setup key manually:
+</p>
+
+<div className="
+bg-zinc-900
+border
+border-zinc-700
+rounded-xl
+p-3
+text-center
+font-mono
+text-sm
+break-all
+">
+{twoFactorSecret}
+</div>
+</div>
+)}
+
+<input
+type="text"
+inputMode="numeric"
+maxLength={6}
+placeholder="Enter 6-digit code"
+value={twoFactorCode}
+onChange={(e)=>
+setTwoFactorCode(
+e.target.value.replace(/\D/g,"")
+)
+}
+className="
+w-full
+bg-zinc-900
+border
+border-zinc-700
+rounded-xl
+px-4
+py-3
+text-white
+"
+/>
+
+<button
+type="button"
+onClick={verifyTwoFactorSetup}
+disabled={twoFactorLoading || loading}
+className="
+w-full
+mt-3
+bg-green-600
+text-white
+py-3
+rounded-xl
+font-bold
+disabled:opacity-50
+"
+>
+{twoFactorLoading
+? "Verifying..."
+: "Verify & Enable 2FA"}
+</button>
+
+</div>
+
+)}
+
+</div>
+
+)}
+
+</div>
 
 </div>
 
