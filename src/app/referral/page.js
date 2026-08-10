@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import CopyButton from "@/components/CopyButton";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function Referral(){
 
@@ -195,6 +196,22 @@ Your Referral Link
   text={referralLink}
   setToast={setMessage}
 />
+
+{referralLink && (
+  <div className="mt-6 flex flex-col items-center">
+    <div className="bg-white p-4 rounded-2xl">
+      <QRCodeSVG
+        value={referralLink}
+        size={220}
+        level="H"
+      />
+    </div>
+
+    <p className="text-sm mt-3 text-center text-zinc-600 dark:text-zinc-400">
+      Scan this QR code to use your referral link
+    </p>
+  </div>
+)}
 
 
 </div>
