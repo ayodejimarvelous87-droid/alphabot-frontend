@@ -1009,7 +1009,7 @@ Authy, or another compatible authenticator app and
 scan this QR code.
 </p>
 
-{twoFactorQr && (
+{twoFactorQrCode && (
 <div className="
 flex
 justify-center
@@ -1019,7 +1019,7 @@ rounded-xl
 mb-4
 ">
 <img
-src={twoFactorQr}
+src={twoFactorQrCode}
 alt="2FA QR code"
 className="w-52 h-52"
 />
