@@ -9,10 +9,14 @@ export default function RateUs() {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [feedback, setFeedback] = useState("");
+  const [displayPublicly, setDisplayPublicly] = useState(false);
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [publicData, setPublicData] = useState(null);
+  const [publicLoading, setPublicLoading] = useState(true);
 
   const ratingText = {
     1: "We are sorry AlphaBot did not meet your expectations.",
@@ -21,6 +25,30 @@ export default function RateUs() {
     4: "Great to hear that you are enjoying AlphaBot!",
     5: "Thank you! We are glad you are enjoying AlphaBot."
   };
+
+  useEffect(() => {
+    const loadPublicRatings = async () => {
+      try {
+        const response = await fetch(`${API}/ratings/public`);
+
+        if (!response.ok) {
+          throw new Error("Unable to load public ratings.");
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          setPublicData(data);
+        }
+      } catch (err) {
+        console.error("Unable to load public ratings:", err);
+      } finally {
+        setPublicLoading(false);
+      }
+    };
+
+    loadPublicRatings();
+  }, []);
 
   useEffect(() => {
     const loadExistingRating = async () => {
@@ -40,6 +68,9 @@ export default function RateUs() {
         if (response.ok && data.hasRating && data.rating) {
           setRating(data.rating.rating || 0);
           setFeedback(data.rating.feedback || "");
+          setDisplayPublicly(
+            data.rating.displayPublicly === true
+          );
         }
       } catch (err) {
         console.error("Unable to load rating:", err);
@@ -77,7 +108,8 @@ export default function RateUs() {
         },
         body: JSON.stringify({
           rating,
-          feedback
+          feedback,
+          displayPublicly
         })
       });
 
@@ -91,6 +123,21 @@ export default function RateUs() {
 
       setSubmitted(true);
 
+      // Refresh public statistics after submitting.
+      try {
+        const publicResponse = await fetch(`${API}/ratings/public`);
+
+        if (publicResponse.ok) {
+          const publicResult = await publicResponse.json();
+
+          if (publicResult.success) {
+            setPublicData(publicResult);
+          }
+        }
+      } catch (refreshError) {
+        console.error("Unable to refresh public ratings:", refreshError);
+      }
+
     } catch (err) {
       console.error("Rating submission error:", err);
 
@@ -103,6 +150,15 @@ export default function RateUs() {
       setLoading(false);
     }
   };
+
+  const stats = publicData?.stats;
+
+  const averageRating = stats?.averageRating
+    ? Number(stats.averageRating).toFixed(1)
+    : "0.0";
+
+  const totalRatings = stats?.totalRatings || 0;
+  const reviews = publicData?.reviews || [];
 
   return (
     <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8 pb-24">
@@ -140,7 +196,59 @@ export default function RateUs() {
 
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-8">
+            {/* Public rating summary */}
+            <div className="mt-7 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111111] p-6">
+
+              <div className="flex items-center justify-between">
+
+                <div>
+                  <p className="text-xs text-zinc-500 uppercase tracking-widest">
+                    AlphaBot Rating
+                  </p>
+
+                  {publicLoading ? (
+                    <p className="text-sm text-zinc-400 mt-3">
+                      Loading ratings...
+                    </p>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-4xl font-black">
+                          {averageRating}
+                        </span>
+
+                        <div>
+                          <div className="text-yellow-400 text-lg tracking-tight">
+                            {"★".repeat(
+                              Math.round(Number(averageRating))
+                            )}
+                            <span className="text-zinc-300 dark:text-zinc-700">
+                              {"★".repeat(
+                                5 - Math.round(Number(averageRating))
+                              )}
+                            </span>
+                          </div>
+
+                          <p className="text-xs text-zinc-500 mt-1">
+                            {totalRatings}{" "}
+                            {totalRatings === 1 ? "rating" : "ratings"}
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="text-4xl">
+                  ⭐
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Rating form */}
+            <form onSubmit={handleSubmit} className="mt-4">
 
               <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111111] p-6">
 
@@ -224,6 +332,26 @@ export default function RateUs() {
                   {feedback.length}/1000
                 </p>
 
+                <label className="flex items-start gap-3 mt-5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={displayPublicly}
+                    onChange={(e) => setDisplayPublicly(e.target.checked)}
+                    className="mt-1 w-4 h-4 accent-yellow-400"
+                  />
+
+                  <span className="text-sm leading-5 text-zinc-600 dark:text-zinc-300">
+                    <span className="font-bold">
+                      Share my feedback publicly
+                    </span>
+                    <span className="block text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                      If enabled, your written feedback may appear on
+                      AlphaBot's public ratings page. Your phone number
+                      and email address will never be displayed.
+                    </span>
+                  </span>
+                </label>
+
               </div>
 
               {error && (
@@ -258,6 +386,91 @@ export default function RateUs() {
               </p>
 
             </form>
+
+            {/* Public reviews */}
+            <section className="mt-10">
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-zinc-500 uppercase tracking-widest">
+                    Community Feedback
+                  </p>
+
+                  <h2 className="text-xl font-black mt-1">
+                    What users are saying
+                  </h2>
+                </div>
+
+                {!publicLoading && stats?.totalPublicReviews > 0 && (
+                  <span className="text-xs text-zinc-500">
+                    {stats.totalPublicReviews} reviews
+                  </span>
+                )}
+              </div>
+
+              {publicLoading ? (
+                <div className="mt-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 text-center">
+                  <p className="text-sm text-zinc-500">
+                    Loading reviews...
+                  </p>
+                </div>
+              ) : reviews.length === 0 ? (
+                <div className="mt-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#111111] p-7 text-center">
+
+                  <div className="text-3xl">
+                    💬
+                  </div>
+
+                  <h3 className="font-bold mt-3">
+                    No public reviews yet
+                  </h3>
+
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 leading-6">
+                    Be one of the first users to share your experience
+                    with the AlphaBot community.
+                  </p>
+
+                </div>
+              ) : (
+                <div className="mt-5 space-y-3">
+
+                  {reviews.map((review, index) => (
+                    <div
+                      key={review._id || review.id || index}
+                      className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111111] p-5"
+                    >
+
+                      <div className="flex items-center justify-between">
+
+                        <div className="text-yellow-400 tracking-tight">
+                          {"★".repeat(Number(review.rating || 0))}
+                          <span className="text-zinc-300 dark:text-zinc-700">
+                            {"★".repeat(
+                              5 - Number(review.rating || 0)
+                            )}
+                          </span>
+                        </div>
+
+                        {review.createdAt && (
+                          <span className="text-xs text-zinc-400">
+                            {new Date(review.createdAt).toLocaleDateString()}
+                          </span>
+                        )}
+
+                      </div>
+
+                      <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-3 leading-6">
+                        "{review.feedback}"
+                      </p>
+
+                    </div>
+                  ))}
+
+                </div>
+              )}
+
+            </section>
+
           </>
         ) : (
           <div className="mt-16 text-center">
