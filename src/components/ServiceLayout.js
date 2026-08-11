@@ -14,14 +14,14 @@ type="error"
 return (
 
 <main className="
-h-screen
-overflow-hidden
+min-h-screen
 bg-white text-black
 dark:bg-[#0A0A0A] dark:text-white
 px-3 py-3
+pb-24
 ">
 
-<div className="max-w-md mx-auto h-full flex flex-col">
+<div className="max-w-md mx-auto min-h-[calc(100vh-1.5rem)] flex flex-col">
 
 
 <header className="shrink-0 mb-2">
@@ -40,7 +40,9 @@ px-3 py-3
 
 <section className="
 flex-1
-overflow-hidden
+min-h-0
+overflow-y-auto
+overscroll-contain
 bg-zinc-100
 dark:bg-[#121214]
 border border-zinc-200
