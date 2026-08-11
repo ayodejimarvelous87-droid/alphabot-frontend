@@ -269,11 +269,17 @@ open[provider] &&
 
 grouped[provider].map((plan,index)=>{
 
-const id =
+const rawId =
+plan.providerPlanId ||
+plan.provider_plan_id ||
 plan.variation_id ||
 plan.id ||
-plan.plan_id ||
-`${provider}-${index}`;
+plan.plan_id;
+
+const id =
+`${String(plan.provider || provider || "").toLowerCase()}:${String(
+  plan.network || plan.service_name || ""
+).trim().toUpperCase()}:${String(rawId)}`;
 
 return(
 <div
