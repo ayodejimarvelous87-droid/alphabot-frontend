@@ -8,6 +8,7 @@ const [plans,setPlans]=useState([]);
 const [open,setOpen]=useState({});
 const [message,setMessage]=useState("");
 const [saving,setSaving]=useState(false);
+const [savingId,setSavingId]=useState(null);
 
 
 const loadPlans=async()=>{
@@ -76,11 +77,17 @@ try{
 
 for(const plan of plans){
 
-const id =
+const rawId =
+plan.providerPlanId ||
+plan.provider_plan_id ||
 plan.variation_id ||
 plan.id ||
-plan.plan_id ||
-`${plan.provider}-${plan.name}`;
+plan.plan_id;
+
+const id =
+`${String(plan.provider || "").toLowerCase()}:${String(
+  plan.network || plan.service_name || ""
+).trim().toUpperCase()}:${String(rawId)}`;
 
 const price =
 document.getElementById(`price-${id}`)?.value;
@@ -129,17 +136,36 @@ setSaving(false);
 
 const savePlan=async(plan)=>{
 
-const id=
+const rawId =
+plan.providerPlanId ||
+plan.provider_plan_id ||
 plan.variation_id ||
 plan.id ||
-plan.plan_id ||
-`${plan.provider}-${plan.name}`;
+plan.plan_id;
 
+const id =
+`${String(plan.provider || "").toLowerCase()}:${String(
+  plan.network || plan.service_name || ""
+).trim().toUpperCase()}:${String(rawId)}`;
 
-const price=document.getElementById(
-`price-${id}`
-).value;
+if(savingId === id){
+return;
+}
 
+setSavingId(id);
+
+try{
+
+const price =
+document.getElementById(`price-${id}`)?.value;
+
+const active =
+document.getElementById(`active-${id}`)?.checked;
+
+if(!price){
+setMessage("❌ Enter a selling price");
+return;
+}
 
 const res=await fetch(
 
@@ -158,16 +184,28 @@ body:JSON.stringify({
 
 provider:plan.provider,
 
-network:plan.network,
+network:
+plan.network ||
+plan.service_name,
 
-name:plan.name,
+name:
+plan.name ||
+plan.data_plan,
 
-providerPrice:Number(plan.price),
+providerPlanId:
+String(rawId),
 
-sellingPrice:Number(price),
+providerPrice:
+Number(
+  plan.costPrice ??
+  plan.providerPrice ??
+  plan.price
+),
 
-active:
-document.getElementById(`active-${id}`).checked
+sellingPrice:
+Number(price),
+
+active
 
 })
 
@@ -175,14 +213,25 @@ document.getElementById(`active-${id}`).checked
 
 );
 
-
 setMessage(
-res.ok ? "✅ Saved":"❌ Failed"
+res.ok
+? "✅ Plan saved"
+: "❌ Failed to save plan"
 );
 
+}catch(error){
+
+console.log(error);
+
+setMessage("❌ Save failed");
+
+}finally{
+
+setSavingId(null);
+
+}
 
 };
-
 
 
 return(
@@ -259,6 +308,14 @@ type="number"
 defaultValue={plan.display_price || plan.price}
 className="border border-zinc-800 p-2 mt-2"
 />
+
+<button
+onClick={()=>savePlan(plan)}
+disabled={savingId === id}
+className="block mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg font-bold disabled:opacity-50"
+>
+{savingId === id ? "SAVING..." : "💾 SAVE"}
+</button>
 
 </div>
 )
