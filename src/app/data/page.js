@@ -350,7 +350,7 @@ className="w-full p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-white"
 />
 </div>
 
-<div className="max-w-md mx-auto space-y-2 scale-[0.92] origin-top">
+<div className="max-w-md mx-auto space-y-2 scale-[0.88] origin-top pb-4">
 
 
 

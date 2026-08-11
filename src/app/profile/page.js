@@ -502,141 +502,73 @@ export default function Profile() {
         </Link>
 
 
-        {/* ACCOUNT MANAGEMENT */}
+        {/* ACCOUNT */}
 
         <div>
 
           <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
-            Account Management
+            Account
           </p>
 
-
-          <div className="space-y-2">
-
+          <div className="bg-[#18181B] border border-zinc-800 rounded-2xl overflow-hidden">
 
             <Link
               href="/edit-profile"
-              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+              className="flex items-center gap-4 p-4 hover:bg-zinc-900 transition"
             >
-
-              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
                 ✏️
               </span>
 
-              <div className="flex-1">
-
-                <p className="font-bold">
-                  Edit Profile
-                </p>
-
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Edit Profile</p>
                 <p className="text-xs text-zinc-500 mt-1">
                   Update your personal information
                 </p>
-
               </div>
 
-              <span className="text-zinc-500">
-                ›
-              </span>
-
+              <span className="text-zinc-500 text-xl">›</span>
             </Link>
 
 
             <Link
               href="/settings"
-              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+              className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
             >
-
-              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
                 ⚙️
               </span>
 
-              <div className="flex-1">
-
-                <p className="font-bold">
-                  Settings
-                </p>
-
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Settings</p>
                 <p className="text-xs text-zinc-500 mt-1">
-                  Security, password and account controls
+                  Manage your account preferences
                 </p>
-
               </div>
 
-              <span className="text-zinc-500">
-                ›
-              </span>
-
+              <span className="text-zinc-500 text-xl">›</span>
             </Link>
 
 
             <Link
               href="/transactions"
-              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
+              className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
             >
-
-              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
                 📜
               </span>
 
-              <div className="flex-1">
-
-                <p className="font-bold">
-                  Transaction History
-                </p>
-
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Transaction History</p>
                 <p className="text-xs text-zinc-500 mt-1">
-                  View your wallet activity
+                  View your wallet and payment activities
                 </p>
-
               </div>
 
-              <span className="text-zinc-500">
-                ›
-              </span>
-
+              <span className="text-zinc-500 text-xl">›</span>
             </Link>
 
-
           </div>
-
-        </div>
-
-
-        {/* TRANSACTION HISTORY */}
-
-        <div>
-
-          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
-            Activity
-          </p>
-
-          <Link
-            href="/transactions"
-            className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
-          >
-
-            <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
-              📜
-            </span>
-
-            <div className="flex-1">
-
-              <p className="font-bold">
-                Transaction History
-              </p>
-
-              <p className="text-xs text-zinc-500 mt-1">
-                View your wallet and payment activities
-              </p>
-
-            </div>
-
-            <span className="text-zinc-500">
-              ›
-            </span>
-
-          </Link>
 
         </div>
 
@@ -649,32 +581,22 @@ export default function Profile() {
             Earn & Rewards
           </p>
 
-
           <Link
             href="/referral"
             className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4 hover:border-zinc-600 transition"
           >
-
-            <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+            <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
               🎁
             </span>
 
-            <div className="flex-1">
-
-              <p className="font-bold">
-                Invite & Earn
-              </p>
-
+            <div className="flex-1 min-w-0">
+              <p className="font-bold">Invite & Earn</p>
               <p className="text-xs text-zinc-500 mt-1">
                 Share AlphaBot and earn referral rewards
               </p>
-
             </div>
 
-            <span className="text-zinc-500">
-              ›
-            </span>
-
+            <span className="text-zinc-500 text-xl">›</span>
           </Link>
 
         </div>
@@ -685,88 +607,208 @@ export default function Profile() {
         <div>
 
           <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
-            Help
+            Support
           </p>
 
-
-          <div className="space-y-2">
-
+          <div className="bg-[#18181B] border border-zinc-800 rounded-2xl overflow-hidden">
 
             <Link
               href="/support"
-              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
+              className="flex items-center gap-4 p-4 hover:bg-zinc-900 transition"
             >
-
-              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
-                🆘
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                🎧
               </span>
 
-              <div className="flex-1">
-
-                <p className="font-bold">
-                  Support
-                </p>
-
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Customer Service</p>
                 <p className="text-xs text-zinc-500 mt-1">
                   Get help with your account
                 </p>
-
               </div>
 
-              <span className="text-zinc-500">
-                ›
-              </span>
-
+              <span className="text-zinc-500 text-xl">›</span>
             </Link>
 
 
             <Link
-              href="/terms"
-              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
+              href="/ai-support"
+              className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
             >
-
-              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
-                📄
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                🤖
               </span>
 
-              <div className="flex-1">
-
-                <p className="font-bold">
-                  Terms & Conditions
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">AI Support</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Get help from AlphaBot AI
                 </p>
-
               </div>
 
-              <span className="text-zinc-500">
-                ›
+              <span className="text-zinc-500 text-xl">›</span>
+            </Link>
+
+          </div>
+
+        </div>
+
+
+        {/* APP & INFORMATION */}
+
+        <div>
+
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
+            App & Information
+          </p>
+
+          <div className="bg-[#18181B] border border-zinc-800 rounded-2xl overflow-hidden">
+
+            <Link
+              href="/rate-us"
+              className="flex items-center gap-4 p-4 hover:bg-zinc-900 transition"
+            >
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                ⭐
               </span>
 
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Rate Us</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Tell us what you think about AlphaBot
+                </p>
+              </div>
+
+              <span className="text-zinc-500 text-xl">›</span>
+            </Link>
+
+
+            <Link
+              href="/about"
+              className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
+            >
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                ℹ️
+              </span>
+
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">About AlphaBot</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Learn more about AlphaBot
+                </p>
+              </div>
+
+              <span className="text-zinc-500 text-xl">›</span>
             </Link>
 
 
             <Link
               href="/privacy"
-              className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
+              className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
             >
-
-              <span className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
                 🔒
               </span>
 
-              <div className="flex-1">
-
-                <p className="font-bold">
-                  Privacy Policy
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Privacy Policy</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Learn how AlphaBot protects your information
                 </p>
-
               </div>
 
-              <span className="text-zinc-500">
-                ›
-              </span>
-
+              <span className="text-zinc-500 text-xl">›</span>
             </Link>
 
+
+            <Link
+              href="/terms"
+              className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
+            >
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                📄
+              </span>
+
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Terms & Conditions</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  AlphaBot terms of service
+                </p>
+              </div>
+
+              <span className="text-zinc-500 text-xl">›</span>
+            </Link>
+
+          </div>
+
+        </div>
+
+
+        {/* SERVICES */}
+
+        <div>
+
+          <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3">
+            Services
+          </p>
+
+          <div className="bg-[#18181B] border border-zinc-800 rounded-2xl overflow-hidden">
+
+            <Link
+              href="/network-status"
+              className="flex items-center gap-4 p-4 hover:bg-zinc-900 transition"
+            >
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                📡
+              </span>
+
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Network Status</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Check AlphaBot service availability
+                </p>
+              </div>
+
+              <span className="text-zinc-500 text-xl">›</span>
+            </Link>
+
+
+            <Link
+              href="/developer"
+              className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
+            >
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                🧑‍💻
+              </span>
+
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Developer Centre</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Developer tools, resources and documentation
+                </p>
+              </div>
+
+              <span className="text-zinc-500 text-xl">›</span>
+            </Link>
+
+
+            <Link
+              href="/developer-api"
+              className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
+            >
+              <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+                🔑
+              </span>
+
+              <div className="flex-1 min-w-0">
+                <p className="font-bold">Developer API</p>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Integrate AlphaBot services with your application
+                </p>
+              </div>
+
+              <span className="text-zinc-500 text-xl">›</span>
+            </Link>
 
           </div>
 
