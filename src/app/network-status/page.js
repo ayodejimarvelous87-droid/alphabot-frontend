@@ -49,7 +49,7 @@ export default function NetworkStatus() {
       const data = await response.json();
 
       setPlans({
-        airtime: data.airtime || null,
+        airtimePlans: data.airtimePlans || {},
         dataPlans: data.dataPlans || {},
       });
 
@@ -71,7 +71,10 @@ export default function NetworkStatus() {
   }, []);
 
   const getNetworkStatus = (network) => {
-    return plans.dataPlans?.[network.key] || null;
+    return {
+      airtime: plans.airtimePlans?.[network.key] || null,
+      data: plans.dataPlans?.[network.key] || null,
+    };
   };
 
   const getAvailabilityLabel = (availability) => {
@@ -198,13 +201,15 @@ export default function NetworkStatus() {
           {NETWORKS.map((network) => {
             const status = getNetworkStatus(network);
 
-            const availability =
-              typeof status?.availability === "number"
-                ? status.availability
+            const airtimeAvailability =
+              typeof status.airtime?.availability === "number"
+                ? status.airtime.availability
                 : null;
 
-            const label = getAvailabilityLabel(availability);
-            const colors = getStatusColor(availability);
+            const dataAvailability =
+              typeof status.data?.availability === "number"
+                ? status.data.availability
+                : null;
 
             return (
               <div
@@ -226,36 +231,70 @@ export default function NetworkStatus() {
                         {network.name}
                       </p>
 
-                      <p className="text-sm text-zinc-500 mt-1">
-                        Airtime & Data
-                      </p>
+                      <div className="flex flex-col gap-1 mt-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-zinc-500">
+                            Airtime
+                          </span>
+
+                          <span className={`font-bold ${getStatusColor(airtimeAvailability).text}`}>
+                            {airtimeAvailability !== null
+                              ? `${airtimeAvailability}%`
+                              : "Unknown"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="text-zinc-500">
+                            Data
+                          </span>
+
+                          <span className={`font-bold ${getStatusColor(dataAvailability).text}`}>
+                            {dataAvailability !== null
+                              ? `${dataAvailability}%`
+                              : "Unknown"}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <div className="text-right">
 
                     {!loading && (
-                      <div className="flex flex-col items-end gap-1">
+                      <div className="flex flex-col items-end gap-2">
 
                         <div className="flex items-center gap-2">
-
                           <span
-                            className={`w-2.5 h-2.5 rounded-full ${colors.dot}`}
+                            className={`w-2.5 h-2.5 rounded-full ${
+                              getStatusColor(airtimeAvailability).dot
+                            }`}
                           />
 
                           <span
-                            className={`font-bold text-sm ${colors.text}`}
+                            className={`font-bold text-sm ${
+                              getStatusColor(airtimeAvailability).text
+                            }`}
                           >
-                            {label}
+                            Airtime {getAvailabilityLabel(airtimeAvailability)}
                           </span>
-
                         </div>
 
-                        <span className="text-lg font-black">
-                          {availability !== null
-                            ? `${availability}%`
-                            : "—"}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full ${
+                              getStatusColor(dataAvailability).dot
+                            }`}
+                          />
+
+                          <span
+                            className={`font-bold text-sm ${
+                              getStatusColor(dataAvailability).text
+                            }`}
+                          >
+                            Data {getAvailabilityLabel(dataAvailability)}
+                          </span>
+                        </div>
 
                       </div>
                     )}
