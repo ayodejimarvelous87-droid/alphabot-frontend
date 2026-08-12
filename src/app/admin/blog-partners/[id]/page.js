@@ -155,7 +155,7 @@ return (
 
 <p>📈 Total Generated: ₦{partner.totalGenerated || 0}</p>
 
-<p>💎 Commission (30%): ₦{partner.totalCommission || 0}</p>
+<p>💎 Commission ({partner.commissionRate || 0}%): ₦{partner.totalCommission || 0}</p>
 
 
 <div>
