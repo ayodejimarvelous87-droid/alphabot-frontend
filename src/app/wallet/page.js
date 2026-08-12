@@ -237,6 +237,10 @@ setMessage(data.message || "Funding request submitted");
 
 if(res.ok){
 setAmount("");
+
+setTimeout(()=>{
+setMessage("");
+},2500);
 }
 
 setManualFunding(false);
