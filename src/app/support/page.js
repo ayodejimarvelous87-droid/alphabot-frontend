@@ -1,229 +1,227 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+
+const faqs = [
+  {
+    question: "How do I fund my AlphaBot wallet?",
+    answer: "Open your AlphaBot Wallet, choose Fund Wallet and complete the available payment process. Successful payments are verified before your wallet is credited."
+  },
+  {
+    question: "I made a payment but my AlphaBot wallet has not been credited.",
+    answer: "Do not pay again immediately. AlphaBot automatically checks pending payments and credits your wallet once the payment is successfully verified."
+  },
+  {
+    question: "How do I buy data on AlphaBot?",
+    answer: "Open Data, select your network and data plan, enter the recipient's phone number and complete the purchase."
+  },
+  {
+    question: "My airtime or data purchase failed. What should I do?",
+    answer: "Check your transaction history first. If you were charged but did not receive the service, contact AlphaBot support with your transaction details."
+  },
+  {
+    question: "How do AlphaBot referral rewards work?",
+    answer: "Share your AlphaBot referral code with others. Eligible referrals can earn you rewards according to AlphaBot's current referral terms."
+  },
+  {
+    question: "How do I reset my AlphaBot password?",
+    answer: "From the AlphaBot login page, use the password reset option and follow the instructions to create a new password."
+  },
+  {
+    question: "My transfer is pending. What should I do?",
+    answer: "A pending transfer may still be processing. Give it some time, and contact AlphaBot support if it remains pending."
+  },
+  {
+    question: "How can I protect my AlphaBot account?",
+    answer: "Use a strong password and enable two-factor authentication (2FA) when available. Never share your password, OTP or PIN."
+  },
+  {
+    question: "Will AlphaBot support ask for my password or OTP?",
+    answer: "No. AlphaBot support will never ask you to reveal your password, OTP, PIN or authentication codes. Never share them with anyone."
+  }
+];
 
 export default function Support(){
 
-const [message,setMessage]=useState("");
-const [loading,setLoading]=useState(false);
+  const [openFaq,setOpenFaq] = useState(null);
 
-const [chat,setChat]=useState([
-{
-from:"bot",
-text:"Hello 👋 I'm AlphaBot AI Support. How can I help you?"
-}
-]);
+  return(
 
+    <main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8 pb-24">
 
-const sendMessage = async(text)=>{
+      <div className="max-w-md mx-auto">
 
-const userMessage = text || message;
+        <Link
+          href="/profile"
+          className="text-yellow-500 font-semibold"
+        >
+          ← Profile
+        </Link>
 
-if(!userMessage.trim()) return;
 
+        <div className="mt-6 text-center">
 
-setChat(prev=>[
-...prev,
-{
-from:"user",
-text:userMessage
-}
-]);
+          <div className="text-5xl mb-4">
+            🎧
+          </div>
 
+          <h1 className="text-3xl font-black">
+            Customer Support
+          </h1>
 
-setMessage("");
-setLoading(true);
+          <p className="text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
+            Find quick answers or contact our support team.
+          </p>
 
+        </div>
 
-try{
 
-const response = await fetch(
-"https://alphabot-1.onrender.com/ai/chat",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-message:userMessage
-})
-}
-);
+        {/* WHATSAPP */}
 
+        <div className="mt-7 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
 
-const data = await response.json();
+          <div className="text-3xl mb-3">
+            💬
+          </div>
 
+          <h2 className="text-xl font-bold">
+            WhatsApp Support
+          </h2>
 
-setChat(prev=>[
-...prev,
-{
-from:"bot",
-text:data.reply
-}
-]);
+          <p className="mt-2 text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">
+            Need help with something that is not answered below?
+            Chat directly with our support team.
+          </p>
 
+          <a
+            href="https://wa.me/2349037120624"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-center mt-5 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold transition"
+          >
+            Chat on WhatsApp
+          </a>
 
-}catch(error){
+        </div>
 
-setChat(prev=>[
-...prev,
-{
-from:"bot",
-text:"Sorry, AlphaBot AI is currently unavailable."
-}
-]);
 
-}
+        {/* FAQ */}
 
+        <div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
 
-setLoading(false);
+          <h2 className="text-xl font-bold">
+            Frequently Asked Questions
+          </h2>
 
-};
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+            Quick answers to common questions.
+          </p>
 
 
+          <div className="mt-5 space-y-3">
 
-const faqs=[
-"How do I fund my wallet?",
-"How do I buy data?",
-"How do referral rewards work?",
-"How do I reset my password?"
-];
+            {faqs.map((faq,index)=>{
 
+              const open = openFaq === index;
 
-return(
+              return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8 pb-24">
+                <div
+                  key={index}
+                  className="rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden"
+                >
 
-<div className="max-w-md mx-auto">
+                  <button
+                    type="button"
+                    onClick={()=>setOpenFaq(open ? null : index)}
+                    className="w-full text-left p-4 flex items-center justify-between gap-4"
+                  >
 
-<h1 className="text-3xl font-bold">
-Alpha<span className="text-yellow-400">Bot</span> Support 🤖
-</h1>
+                    <span className="text-sm font-semibold">
+                      {faq.question}
+                    </span>
 
+                    <span className="text-zinc-500 shrink-0">
+                      {open ? "−" : "+"}
+                    </span>
 
-<p className="text-zinc-500 dark:text-zinc-400 mt-2">
-AI assistance and customer support
-</p>
+                  </button>
 
 
-<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-5">
+                  {open && (
 
+                    <div className="px-4 pb-4 text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                      {faq.answer}
+                    </div>
 
-<h2 className="font-bold text-xl">
-AI Assistant 🤖
-</h2>
+                  )}
 
+                </div>
 
-<div className="mt-4 space-y-3 max-h-60 overflow-y-auto">
+              );
 
-{chat.map((item,index)=>(
+            })}
 
-<div
-key={index}
-className={item.from==="user" ? "text-right":"text-left"}
->
+          </div>
 
-<span className="inline-block bg-white dark:bg-black rounded-xl p-3 text-sm">
-{item.text}
-</span>
+        </div>
 
-</div>
 
-))}
+        {/* STILL NEED HELP */}
 
+        <div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6 text-center">
 
-{loading && (
-<div className="text-left">
-<span className="inline-block bg-white dark:bg-black rounded-xl p-3 text-sm">
-Typing...
-</span>
-</div>
-)}
+          <div className="text-3xl mb-3">
+            🤖
+          </div>
 
-</div>
+          <h2 className="text-xl font-bold">
+            Still need help?
+          </h2>
 
+          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+            Ask AlphaBot AI for quick assistance, or contact our
+            support team directly.
+          </p>
 
 
-<div className="flex gap-2 mt-5">
+          <div className="mt-5 flex gap-3">
 
-<input
-className="flex-1 p-3 rounded-xl bg-white dark:bg-black border"
-placeholder="Ask AlphaBot..."
-value={message}
-onChange={(e)=>setMessage(e.target.value)}
-/>
+            <Link
+              href="/ai"
+              className="flex-1 bg-yellow-400 text-black py-3 rounded-xl font-bold"
+            >
+              Ask AlphaBot AI
+            </Link>
 
+            <a
+              href="https://wa.me/2349037120624"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 bg-green-500 text-white py-3 rounded-xl font-bold"
+            >
+              WhatsApp
+            </a>
 
-<button
-onClick={()=>sendMessage()}
-className="bg-yellow-400 text-black px-4 rounded-xl font-bold"
->
-Send
-</button>
+          </div>
 
-</div>
+        </div>
 
 
-</div>
+        <p className="text-xs text-center text-zinc-500 mt-6 leading-relaxed">
+          Never share your password, OTP, PIN or authentication codes
+          with anyone claiming to be AlphaBot support.
+        </p>
 
+      </div>
 
 
-<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
+      <BottomNav />
 
-<h2 className="text-xl font-bold">
-WhatsApp Support 💬
-</h2>
+    </main>
 
-<p className="mt-3 text-zinc-500">
-Need human assistance? Chat with our team.
-</p>
-
-
-<a
-href="https://wa.me/2349037120624"
-className="block text-center mt-5 bg-green-500 text-white py-3 rounded-xl font-bold"
->
-Chat on WhatsApp
-</a>
-
-</div>
-
-
-
-<div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
-
-<h2 className="text-xl font-bold">
-Frequently Asked Questions
-</h2>
-
-
-<div className="mt-4 space-y-3">
-
-{faqs.map((faq,index)=>(
-
-<button
-key={index}
-onClick={()=>sendMessage(faq)}
-className="block w-full text-left text-zinc-500 hover:text-yellow-400"
->
-• {faq}
-</button>
-
-))}
-
-</div>
-
-</div>
-
-
-</div>
-
-
-<BottomNav />
-
-</main>
-
-);
+  );
 
 }

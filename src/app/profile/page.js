@@ -632,7 +632,7 @@ export default function Profile() {
 
 
             <Link
-              href="/ai-support"
+              href="/ai"
               className="flex items-center gap-4 p-4 border-t border-zinc-800 hover:bg-zinc-900 transition"
             >
               <span className="w-10 h-10 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
