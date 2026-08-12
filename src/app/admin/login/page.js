@@ -166,7 +166,7 @@ return(
 
 <input
 className="w-full p-3 rounded-xl bg-black border border-zinc-700 mb-3"
-placeholder="Username"
+placeholder="Username or Phone Number"
 value={username}
 onChange={(e)=>setUsername(e.target.value)}
 />
