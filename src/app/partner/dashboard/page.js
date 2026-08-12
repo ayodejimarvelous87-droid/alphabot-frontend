@@ -216,11 +216,11 @@ p-5
 ">
 
 <p className="text-zinc-400">
-💰 Total Commission
+💰 Lifetime Commission
 </p>
 
 <p className="text-2xl font-bold mt-2">
-₦{data.totalEarned || 0}
+₦{Number(data.lifetimeCommission || data.totalEarned || 0).toLocaleString()}
 </p>
 
 </div>
@@ -241,7 +241,7 @@ p-5
 </p>
 
 <p className="text-2xl font-bold mt-2">
-₦{data.pendingPayout || 0}
+₦{Number(data.pendingPayout || 0).toLocaleString()}
 </p>
 
 </div>
