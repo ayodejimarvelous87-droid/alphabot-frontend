@@ -11,7 +11,6 @@ export default function PaymentResult(){
 
   const [success,setSuccess] = useState(false);
 
-
   useEffect(()=>{
 
     const verify = async()=>{
@@ -23,20 +22,14 @@ export default function PaymentResult(){
       const transaction_id =
         params.get("transaction_id");
 
-      const status =
-        params.get("status");
-
-
-      if(status && status !== "successful"){
-
-        setMessage(
-          "Payment failed or was cancelled."
-        );
-
-        return;
-
-      }
-
+      /*
+       * IMPORTANT:
+       * Do NOT trust the redirect status to decide
+       * whether payment succeeded or failed.
+       *
+       * Flutterwave's transaction verification endpoint
+       * is the authoritative source.
+       */
 
       if(!transaction_id){
 
@@ -48,31 +41,32 @@ export default function PaymentResult(){
 
       }
 
-
       try{
 
         const token =
           localStorage.getItem("token");
 
+        const headers = {};
+
+        if(token){
+          headers.Authorization = `Bearer ${token}`;
+        }
 
         const res = await fetch(
           `https://alphabot-1.onrender.com/flutterwave/verify/${transaction_id}`,
           {
-            headers:{
-              Authorization:`Bearer ${token}`
-            }
+            headers
           }
         );
 
-
         const data = await res.json();
-
 
         if(res.ok){
 
           setSuccess(true);
 
           setMessage(
+            data.message ||
             "Payment verified successfully. Your wallet is up to date."
           );
 
@@ -80,30 +74,29 @@ export default function PaymentResult(){
 
           setMessage(
             data.message ||
-            "Payment verification failed."
+            "Payment verification failed. Please wait a moment and check your wallet."
           );
 
         }
 
-
       }catch(err){
 
+        console.error(
+          "Payment verification error:",
+          err
+        );
+
         setMessage(
-          "Could not verify payment. It will be checked automatically."
+          "Could not verify payment right now. It will be checked automatically."
         );
 
       }
 
-
     };
-
 
     verify();
 
-
   },[]);
-
-
 
   return (
 
@@ -115,11 +108,9 @@ export default function PaymentResult(){
           {success ? "✅ Success" : "💳 Payment Status"}
         </h1>
 
-
         <p>
           {message}
         </p>
-
 
         <Link
           href="/dashboard"
