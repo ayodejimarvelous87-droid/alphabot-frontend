@@ -430,6 +430,20 @@ export default function NotificationDetails() {
                   />
 
 
+                  {(
+                    transaction.service === "recharge_pin" ||
+                    transaction.type === "recharge_pin"
+                  ) && transaction.pin && (
+
+                    <DetailRow
+                    title="PIN"
+                    value={transaction.pin}
+                    copy
+                    />
+
+                  )}
+
+
                   <DetailRow
                   title="Transaction Ref"
                   value={transaction.reference}

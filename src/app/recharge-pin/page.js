@@ -17,6 +17,9 @@ const [epinResult,setEpinResult]=useState(null);
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
 const [beneficiaries,setBeneficiaries]=useState([]);
+const [epinReference,setEpinReference]=useState("");
+const [polling,setPolling]=useState(false);
+const [copyMessage,setCopyMessage]=useState("");
 
 
 useEffect(()=>{
@@ -61,6 +64,174 @@ loadData();
 
 },[]);
 
+
+
+
+const checkEPinStatus = async(reference)=>{
+
+  if(!reference) return;
+
+  try{
+
+    const res = await fetch(
+      `https://alphabot-1.onrender.com/epin/status/${encodeURIComponent(reference)}`,
+      {
+        headers:{
+          Authorization:`Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if(!res.ok){
+      return;
+    }
+
+    if(data.epin){
+
+      setEpinResult(data.epin);
+
+    }
+
+    const pins =
+      Array.isArray(data.epin?.pins)
+      ? data.epin.pins.filter(Boolean)
+      : [];
+
+    if(
+      data.status === "successful" &&
+      pins.length > 0
+    ){
+
+      setPolling(false);
+
+      setMessage(
+        "✅ Recharge PIN is ready!"
+      );
+
+      setShowSuccess(true);
+
+      setTimeout(
+        ()=>setShowSuccess(false),
+        3000
+      );
+
+      return true;
+
+    }
+
+    if(
+      data.status === "failed" ||
+      data.status === "refunded"
+    ){
+
+      setPolling(false);
+
+      setMessage(
+        data.status === "refunded"
+        ? "↩️ Your ePIN order was refunded."
+        : "❌ Your ePIN order failed."
+      );
+
+      return true;
+
+    }
+
+  }catch(error){
+
+    console.log(
+      "EPIN STATUS CHECK ERROR:",
+      error.message
+    );
+
+  }
+
+  return false;
+
+};
+
+
+const startEPinPolling = (reference)=>{
+
+  if(!reference) return;
+
+  setEpinReference(reference);
+  setPolling(true);
+
+  let attempts = 0;
+
+  const maxAttempts = 60;
+
+  const poll = async()=>{
+
+    attempts++;
+
+    const finished =
+      await checkEPinStatus(reference);
+
+    if(
+      finished ||
+      attempts >= maxAttempts
+    ){
+
+      setPolling(false);
+
+      if(attempts >= maxAttempts && !finished){
+
+        setMessage(
+          "⏳ Your ePIN is still processing. You can leave this page and check again later."
+        );
+
+      }
+
+      return;
+
+    }
+
+    setTimeout(
+      poll,
+      3000
+    );
+
+  };
+
+  poll();
+
+};
+
+
+const copyPin = async(pin)=>{
+
+  try{
+
+    await navigator.clipboard.writeText(
+      String(pin)
+    );
+
+    setCopyMessage(
+      "PIN copied!"
+    );
+
+    setTimeout(
+      ()=>setCopyMessage(""),
+      2000
+    );
+
+  }catch(error){
+
+    setCopyMessage(
+      "Unable to copy PIN"
+    );
+
+    setTimeout(
+      ()=>setCopyMessage(""),
+      2000
+    );
+
+  }
+
+};
 
 
 const buyRechargePin=async()=>{
@@ -112,6 +283,30 @@ if(data.status !== "processing"){
 }
 
 setEpinResult(data.epin);
+
+const reference =
+  data.epin?.reference ||
+  data.transaction?.reference ||
+  data.reference;
+
+if(reference){
+
+  setEpinReference(reference);
+
+  if(
+    data.status === "processing" ||
+    !data.epin?.pins?.length
+  ){
+
+    setMessage(
+      "⏳ Recharge PIN order is processing. Waiting for the PIN..."
+    );
+
+    startEPinPolling(reference);
+
+  }
+
+}
 
 
 }else{
@@ -307,7 +502,39 @@ className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
 
 
 
+{polling && (
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5 text-center">
+
+<div className="text-4xl mb-3">
+⏳
+</div>
+
+<h2 className="font-black text-xl">
+Your Recharge PIN is Processing
+</h2>
+
+<p className="text-zinc-400 mt-3 text-sm">
+Your payment was received and the PIN is being generated.
+</p>
+
+<p className="text-zinc-500 mt-2 text-xs">
+This page will automatically update when your PIN arrives.
+</p>
+
+<div className="mt-4 animate-pulse text-sm font-bold">
+Waiting for PIN...
+</div>
+
+</div>
+
+)}
+
+
 {epinResult && (
+  Array.isArray(epinResult.pins) &&
+  epinResult.pins.length > 0
+) && (
 
 <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
 
@@ -317,23 +544,52 @@ className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
 
 
 <p className="mt-3">
-Network: {epinResult.network.toUpperCase()}
+Network: {epinResult.network?.toUpperCase()}
 </p>
 
 
-<p className="mt-2">
-PIN:
-</p>
+<div className="mt-4 space-y-3">
 
+{epinResult.pins.map((item,index)=>(
+
+<div
+key={`${item}-${index}`}
+className="bg-[#050505] border border-zinc-800 rounded-2xl p-4"
+>
+
+<div className="flex items-center justify-between gap-3">
 
 <div className="text-xl font-black break-all">
+{item}
+</div>
 
-{epinResult.pins.join(", ")}
+<button
+type="button"
+onClick={()=>copyPin(item)}
+className="shrink-0 bg-white text-black px-4 py-2 rounded-xl font-bold text-sm"
+>
+Copy
+</button>
+
+</div>
+
+</div>
+
+))}
 
 </div>
 
 
-<p className="text-zinc-400 mt-3 text-sm">
+{copyMessage && (
+
+<p className="text-center text-green-400 font-bold mt-4">
+{copyMessage}
+</p>
+
+)}
+
+
+<p className="text-zinc-400 mt-4 text-sm">
 
 Dial *311*PIN# to recharge
 
