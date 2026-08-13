@@ -63,10 +63,14 @@ const [accountNumber,setAccountNumber]=useState("");
 const [accountName,setAccountName]=useState("");
 const [amount,setAmount]=useState("");
 const [pin,setPin]=useState("");
+const [idempotencyKey,setIdempotencyKey]=useState(
+  () => crypto.randomUUID()
+);
 const [biometricLoading,setBiometricLoading]=useState(false);
 const [message,setMessage]=useState("");
 const [showSuccess,setShowSuccess]=useState(false);
 const [verified,setVerified]=useState(false);
+const [hasBiometricAuthorization,setHasBiometricAuthorization]=useState(false);
 
 
 const verifyAccount=async()=>{
@@ -110,6 +114,7 @@ setMessage(
 
 }else{
 
+
 setMessage("❌ "+(typeof data.message==="object" ? JSON.stringify(data.message) : data.message));
 
 }
@@ -124,9 +129,8 @@ setMessage("❌ Verification failed");
 
 
 
-const hasBiometricAuthorization =
-typeof window !== "undefined" &&
-!!localStorage.getItem("biometricToken");
+const hasTransactionAuthorization =
+!!pin || hasBiometricAuthorization;
 
 const disabled =
 !bank ||
@@ -134,7 +138,7 @@ const disabled =
 !accountName ||
 !amount ||
 Number(amount)<=0 ||
-(!pin && !hasBiometricAuthorization) ||
+!hasTransactionAuthorization ||
 !verified;
 
 
@@ -147,6 +151,11 @@ setMessage("❌ Complete transfer details");
 return;
 
 }
+
+const biometricToken =
+  !pin
+    ? localStorage.getItem("biometricToken")
+    : null;
 
 try{
 
@@ -167,8 +176,9 @@ bankCode:bank,
 accountNumber,
 accountName,
 amount:Number(amount),
-pin: localStorage.getItem("biometricToken") ? undefined : pin,
-biometricToken: localStorage.getItem("biometricToken") || undefined
+pin: pin ? pin : undefined,
+biometricToken: biometricToken || undefined,
+idempotencyKey
 })
 }
 );
@@ -178,6 +188,8 @@ const data = await res.json();
 if(res.ok){
 
 localStorage.removeItem("biometricToken");
+setHasBiometricAuthorization(false);
+setIdempotencyKey(crypto.randomUUID());
 
 setMessage("✅ Transfer successful");
 setShowSuccess(true);
@@ -185,7 +197,17 @@ setTimeout(()=>setShowSuccess(false),3000);
 
 }else{
 
-setMessage("❌ "+(typeof data.message==="object" ? JSON.stringify(data.message) : data.message));
+if (biometricToken) {
+  localStorage.removeItem("biometricToken");
+  setHasBiometricAuthorization(false);
+}
+
+setMessage(
+  "❌ " +
+  (typeof data.message==="object"
+    ? JSON.stringify(data.message)
+    : data.message)
+);
 
 }
 
@@ -385,6 +407,8 @@ setBiometricLoading(true);
 setMessage("Touch your fingerprint...");
 
 await authenticateWithBiometric();
+
+setHasBiometricAuthorization(true);
 
 setMessage("✅ Fingerprint verified. Tap Transfer Money.");
 
