@@ -261,7 +261,7 @@ onChange={(e)=>{
 
 
 const selected=plans.find(
-p=>p.code===e.target.value
+p=>p.variation_id===e.target.value
 );
 
 
@@ -270,7 +270,7 @@ setTvPackage(e.target.value);
 
 if(selected){
 
-setAmount(selected.price);
+setAmount(selected.sellingPrice);
 
 }
 
@@ -296,11 +296,11 @@ p=>p.provider===provider
 
 
 <option
-key={plan.code}
-value={plan.code}
+key={plan.variation_id}
+value={plan.variation_id}
 >
 
-{plan.name} - ₦{plan.price}
+{plan.name} - ₦{Number(plan.sellingPrice).toLocaleString("en-NG")}
 
 </option>
 
