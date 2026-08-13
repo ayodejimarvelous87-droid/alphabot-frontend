@@ -230,7 +230,7 @@ export default function Home(){
       {/* AI SECTION */}
       <section className="px-6 pb-16 max-w-5xl mx-auto">
 
-        <div className="rounded-3xl bg-white text-black p-6 sm:p-8">
+        <div className="rounded-3xl border border-zinc-800 bg-[#111113] text-white p-6 sm:p-8">
 
           <div className="text-3xl">
             🤖
@@ -240,24 +240,19 @@ export default function Home(){
             AlphaBot is built with AI in mind.
           </h3>
 
-          <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-7 max-w-2xl">
+          <p className="text-sm sm:text-base text-zinc-400 mt-3 leading-7 max-w-2xl">
             Technology should make everyday digital experiences easier,
             not more complicated. AlphaBot is being developed with AI
             as an important part of that experience.
           </p>
 
-          <p className="text-sm sm:text-base text-zinc-600 mt-3 leading-7 max-w-2xl">
+          <p className="text-sm sm:text-base text-zinc-400 mt-3 leading-7 max-w-2xl">
             From getting assistance to understanding services and
             navigating the platform, intelligent features can make
             AlphaBot more useful over time.
           </p>
 
-          <Link
-            href="/ai"
-            className="inline-flex mt-6 bg-black text-white px-6 py-3 rounded-xl font-bold active:scale-95 hover:scale-105 transition"
-          >
-            Explore AlphaBot AI →
-          </Link>
+
 
         </div>
 
@@ -353,13 +348,7 @@ export default function Home(){
                   About AlphaBot
                 </Link>
 
-                <Link href="/services" className="hover:text-white transition">
-                  Services
-                </Link>
 
-                <Link href="/ai" className="hover:text-white transition">
-                  AlphaBot AI
-                </Link>
 
                 <Link href="/about" className="hover:text-white transition">
                   Security
@@ -376,9 +365,6 @@ export default function Home(){
 
               <div className="flex flex-col gap-3 mt-4 text-sm text-zinc-400">
 
-                <Link href="/ai" className="hover:text-white transition">
-                  AI Support
-                </Link>
 
                 <Link href="/support" className="hover:text-white transition">
                   Support
@@ -447,18 +433,6 @@ export default function Home(){
 
 
 
-
-        {/* FLOATING AI SUPPORT */}
-
-        <Link
-          href="/ai"
-          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-full shadow-2xl border border-blue-400/30 active:scale-95 hover:scale-105 transition"
-        >
-          <span className="text-lg">💬</span>
-          <span className="text-sm font-black">
-            AI Support
-          </span>
-        </Link>
 
 </main>
   )

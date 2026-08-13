@@ -675,6 +675,19 @@ className="h-16 bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zi
 </section>
 
 
+  {/* FLOATING AI SUPPORT */}
+
+  <Link
+  href="/ai"
+  aria-label="Open AlphaBot AI Support"
+  className="fixed bottom-20 right-4 z-50 w-14 h-14 rounded-full bg-yellow-400 text-black flex items-center justify-center shadow-2xl border border-yellow-300 active:scale-90 hover:scale-105 transition-transform duration-150"
+  >
+    <span className="text-2xl">
+      💬
+    </span>
+  </Link>
+
+
 <BottomNav />
 
 
