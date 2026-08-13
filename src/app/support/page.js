@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 
@@ -46,6 +46,30 @@ const faqs = [
 export default function Support(){
 
   const [openFaq,setOpenFaq] = useState(null);
+
+  useEffect(() => {
+
+    if (window.Tawk_API) {
+      return;
+    }
+
+    window.Tawk_API = window.Tawk_API || {};
+    window.Tawk_LoadStart = new Date();
+
+    const script = document.createElement("script");
+
+    script.async = true;
+    script.src = "https://embed.tawk.to/6a7e1e7c8a142a1d4d48bb7e/1jvuae6da";
+    script.charset = "UTF-8";
+    script.setAttribute("crossorigin", "*");
+
+    document.body.appendChild(script);
+
+    return () => {
+      // Tawk remains available while the app is running.
+    };
+
+  }, []);
 
   return(
 
@@ -103,6 +127,40 @@ export default function Support(){
           >
             Chat on WhatsApp
           </a>
+
+        </div>
+
+
+        {/* LIVE SERVICE */}
+
+        <div className="mt-6 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6">
+
+          <div className="text-3xl mb-3">
+            👨🏾‍💻
+          </div>
+
+          <h2 className="text-xl font-bold">
+            Live Service
+          </h2>
+
+          <p className="mt-2 text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">
+            Need to speak with a real person?
+            Start a live chat with AlphaBot customer support.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => {
+
+              if (window.Tawk_API?.maximize) {
+                window.Tawk_API.maximize();
+              }
+
+            }}
+            className="w-full mt-5 bg-yellow-400 hover:bg-yellow-300 text-black py-3 rounded-xl font-bold transition"
+          >
+            Start Live Chat
+          </button>
 
         </div>
 
