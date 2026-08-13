@@ -196,6 +196,19 @@ export default function Home(){
 
 
 
-    </main>
+    
+        {/* FLOATING AI SUPPORT */}
+
+        <Link
+          href="/ai"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-full shadow-2xl border border-blue-400/30 active:scale-95 hover:scale-105 transition"
+        >
+          <span className="text-lg">💬</span>
+          <span className="text-sm font-black">
+            AI Support
+          </span>
+        </Link>
+
+</main>
   )
 }
