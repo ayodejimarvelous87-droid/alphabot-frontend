@@ -3,7 +3,7 @@
 import SuccessCelebration from "@/components/success-celebration";
 
 import { useEffect, useState } from "react";
-import {useSearchParams} from "next/navigation";
+import {useSearchParams, useRouter} from "next/navigation";
 import Link from "next/link";
 import { authenticateWithBiometric } from "@/lib/biometric";
 import PhoneInput from "@/components/PhoneInput";
