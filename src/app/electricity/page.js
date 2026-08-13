@@ -1,11 +1,15 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 import SuccessCelebration from "@/components/success-celebration";
 
 export default function Page(){
+
+const router=useRouter();
 
 const [phone,setPhone]=useState("");
 const [disco,setDisco]=useState("ikeja-electric");
@@ -268,21 +272,13 @@ Transaction PIN
 </p>
 
 
-<input
-
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
-
-placeholder="4 digit PIN"
-
-type="password"
-
-maxLength="4"
-
-value={pin}
-
-onChange={(e)=>setPin(e.target.value)}
-
-/>
+<button
+  type="button"
+  onClick={()=>router.push("/enter-pin?return=/electricity")}
+  className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+>
+  {pin ? "••••" : "Enter 4 digit PIN"} →
+</button>
 
 
 </div>

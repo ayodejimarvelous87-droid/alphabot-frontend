@@ -11,6 +11,8 @@ import ServiceLayout from "@/components/ServiceLayout";
 
 export default function Page(){
 
+const router=useRouter();
+
   const [showSuccess, setShowSuccess] = useState(false);
 const searchParams = useSearchParams();
 
@@ -513,21 +515,13 @@ Transaction PIN
 </p>
 
 
-<input
-
-className="w-full mt-3 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white"
-
-placeholder="Enter 4 digit PIN"
-
-type="password"
-
-maxLength="4"
-
-value={pin}
-
-onChange={(e)=>setPin(e.target.value)}
-
-/>
+<button
+  type="button"
+  onClick={()=>router.push("/enter-pin?return=/data")}
+  className="w-full mt-3 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+>
+  {pin ? "••••" : "Enter 4 digit PIN"} →
+</button>
 
 
 </div>

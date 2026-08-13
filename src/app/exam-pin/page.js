@@ -1,11 +1,15 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
 import Link from "next/link";
 import SuccessCelebration from "@/components/success-celebration";
 
 export default function Page(){
+
+const router=useRouter();
 
 const [phone,setPhone]=useState("");
 const [exam,setExam]=useState("WAEC");
@@ -145,14 +149,13 @@ onChange={(e)=>setQuantity(e.target.value)}
 
 
 
-<input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-placeholder="Transaction PIN"
-type="password"
-maxLength="4"
-value={pin}
-onChange={(e)=>setPin(e.target.value)}
-/>
+<button
+  type="button"
+  onClick={()=>router.push("/enter-pin?return=/exam-pin")}
+  className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+>
+  {pin ? "••••" : "Enter 4 digit PIN"} →
+</button>
 
 
 

@@ -1,13 +1,25 @@
 "use client";
 
 import { useState,useEffect } from "react";
-import {useSearchParams} from "next/navigation";
+import {useSearchParams,useRouter} from "next/navigation";
 import Link from "next/link";
 import { authenticateWithBiometric } from "@/lib/biometric";
 import PhoneInput from "@/components/PhoneInput";
 import SuccessCelebration from "@/components/success-celebration";
 
 export default function Airtime(){
+
+const router=useRouter();
+
+useEffect(()=>{
+  const savedPin=sessionStorage.getItem("alphaBotTransactionPin");
+
+  if(savedPin){
+    setPin(savedPin);
+    sessionStorage.removeItem("alphaBotTransactionPin");
+  }
+},[]);
+
 const searchParams = useSearchParams();
 
 const [phone,setPhone]=useState("");
@@ -235,21 +247,13 @@ Transaction PIN
 </p>
 
 
-<input
-
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
-
-placeholder="4 digit PIN"
-
-type="password"
-
-maxLength="4"
-
-value={pin}
-
-onChange={(e)=>setPin(e.target.value)}
-
-/>
+<button
+  type="button"
+  onClick={()=>router.push("/enter-pin?return=/airtime")}
+  className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+>
+  {pin ? "••••" : "Enter 4-digit PIN"} →
+</button>
 
 
 </div>

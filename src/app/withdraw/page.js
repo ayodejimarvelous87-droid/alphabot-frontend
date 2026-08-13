@@ -1,11 +1,15 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {useState,useEffect} from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import Toast from "@/components/Toast";
 
 export default function Withdraw(){
+
+const router=useRouter();
 
 const [phone,setPhone]=useState("");
 const [amount,setAmount]=useState("");
@@ -356,14 +360,13 @@ Change Withdrawal Account
 
 
 
-<input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-placeholder="Transaction PIN"
-type="password"
-maxLength="4"
-value={pin}
-onChange={(e)=>setPin(e.target.value)}
-/>
+<button
+  type="button"
+  onClick={()=>router.push("/enter-pin?return=/withdraw")}
+  className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+>
+  {pin ? "••••" : "Enter 4 digit PIN"} →
+</button>
 
 
 
