@@ -23,6 +23,11 @@ localStorage.setItem("showBalance", showBalance);
 const [transactionCount,setTransactionCount]=useState(0);
 const [totalSpent,setTotalSpent]=useState(0);
 const [referralEarnings,setReferralEarnings]=useState(0);
+
+const [coinSettings,setCoinSettings]=useState({
+  target:1000,
+  reward:200
+});
 const [notifications,setNotifications]=useState([]);
 const [unreadCount,setUnreadCount]=useState(0);
 
@@ -138,6 +143,36 @@ list.reduce((sum,item)=>sum + Number(item.amount || 0),0)
 setToast("Unable to load transaction summary");
 });
 
+
+
+fetch(
+  "https://alphabot-1.onrender.com/settings",
+  {
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  }
+)
+.then(res=>res.json())
+.then(settings=>{
+
+  if(settings && !settings.message){
+
+    setCoinSettings({
+      target:Number(
+        settings.abCoinsRedemptionTarget ?? 1000
+      ),
+      reward:Number(
+        settings.abCoinsRedemptionReward ?? 200
+      )
+    });
+
+  }
+
+})
+.catch(()=>{
+  setToast("Unable to load AB Coin settings");
+});
 
 
 fetch(
@@ -503,6 +538,69 @@ className="min-w-0 text-center bg-zinc-900 dark:bg-zinc-900 border border-zinc-8
 
 </section>
 
+
+{/* ALPHABOT COINS */}
+
+<section className="mt-3 relative overflow-hidden bg-[#151515] border border-zinc-800 rounded-3xl p-4 shadow-lg">
+
+<div className="absolute -right-10 -top-10 w-32 h-32 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none"/>
+
+<div className="flex items-center justify-between relative">
+
+<div className="flex items-center gap-3">
+
+<div className="w-11 h-11 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/10">
+<span className="text-xl">
+🪙
+</span>
+</div>
+
+<div>
+
+<p className="text-xs text-yellow-400 font-bold">
+AB COINS
+</p>
+
+<p className="text-sm font-bold mt-1">
+{Number(user?.abCoins || 0).toLocaleString()} / {coinSettings.target.toLocaleString()}
+</p>
+
+</div>
+
+</div>
+
+<Link
+href="/coins"
+className="text-xs bg-white text-black px-4 py-2 rounded-xl font-bold active:scale-95 transition"
+>
+View
+</Link>
+
+</div>
+
+<div className="mt-4">
+
+<div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+
+<div
+className="h-full bg-yellow-400 rounded-full transition-all"
+style={{
+width:`${Math.min(
+(Number(user?.abCoins || 0) / coinSettings.target) * 100,
+100
+)}%`
+}}
+/>
+
+</div>
+
+<p className="text-[10px] text-zinc-500 mt-2">
+{coinSettings.target.toLocaleString()} AB Coins = ₦{coinSettings.reward.toLocaleString()} wallet credit
+</p>
+
+</div>
+
+</section>
 
 
 <h2 className="text-base font-bold mt-4">

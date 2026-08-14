@@ -9,6 +9,9 @@ maintenanceMode:false,
 announcement:"",
 referralPercentage:1,
 providerMinimumBalance:500,
+abCoinsPer100Naira:0.2,
+abCoinsRedemptionTarget:1000,
+abCoinsRedemptionReward:200,
 membershipSilverPrice:1000,
 membershipGoldPrice:2000,
 membershipDurationDays:30,
@@ -43,7 +46,10 @@ setSettings({
 maintenanceMode:data.maintenanceMode ?? false,
 announcement:data.announcement ?? "",
 referralPercentage:data.referralPercentage ?? 1,
-providerMinimumBalance:data.providerMinimumBalance ?? 500
+providerMinimumBalance:data.providerMinimumBalance ?? 500,
+abCoinsPer100Naira:data.abCoinsPer100Naira ?? 0.2,
+abCoinsRedemptionTarget:data.abCoinsRedemptionTarget ?? 1000,
+abCoinsRedemptionReward:data.abCoinsRedemptionReward ?? 200
 });
 
 };
@@ -335,6 +341,67 @@ onChange={(e)=>setSettings({
 providerMinimumBalance:e.target.value
 })}
 />
+
+
+<section className="rounded-3xl border border-zinc-800 p-5 space-y-4">
+
+<h2 className="text-xl font-black">
+🪙 AB Coins Management
+</h2>
+
+<p className="text-sm text-zinc-500">
+Control how many AB Coins users earn and the redemption value.
+</p>
+
+<label className="font-bold block">
+Coins awarded per ₦100
+</label>
+
+<input
+className="border border-zinc-800 rounded-2xl p-3 w-full bg-transparent"
+type="number"
+step="0.01"
+min="0"
+value={settings.abCoinsPer100Naira}
+onChange={(e)=>setSettings({
+...settings,
+abCoinsPer100Naira:e.target.value
+})}
+/>
+
+<label className="font-bold block">
+Redemption coin target
+</label>
+
+<input
+className="border border-zinc-800 rounded-2xl p-3 w-full bg-transparent"
+type="number"
+step="1"
+min="1"
+value={settings.abCoinsRedemptionTarget}
+onChange={(e)=>setSettings({
+...settings,
+abCoinsRedemptionTarget:e.target.value
+})}
+/>
+
+<label className="font-bold block">
+Redemption reward (₦)
+</label>
+
+<input
+className="border border-zinc-800 rounded-2xl p-3 w-full bg-transparent"
+type="number"
+step="1"
+min="1"
+value={settings.abCoinsRedemptionReward}
+onChange={(e)=>setSettings({
+...settings,
+abCoinsRedemptionReward:e.target.value
+})}
+/>
+
+</section>
 
 
 <button
