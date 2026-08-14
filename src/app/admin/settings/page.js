@@ -42,7 +42,8 @@ Authorization:`Bearer ${token}`
 
 const data=await res.json();
 
-setSettings({
+setSettings(prev=>({
+...prev,
 maintenanceMode:data.maintenanceMode ?? false,
 announcement:data.announcement ?? "",
 referralPercentage:data.referralPercentage ?? 1,
@@ -50,7 +51,7 @@ providerMinimumBalance:data.providerMinimumBalance ?? 500,
 abCoinsPer100Naira:data.abCoinsPer100Naira ?? 0.2,
 abCoinsRedemptionTarget:data.abCoinsRedemptionTarget ?? 1000,
 abCoinsRedemptionReward:data.abCoinsRedemptionReward ?? 200
-});
+}));
 
 };
 
@@ -74,7 +75,14 @@ headers:{
 "Content-Type":"application/json",
 Authorization:`Bearer ${token}`
 },
-body:JSON.stringify(settings)
+body:JSON.stringify({
+  ...settings,
+  referralPercentage:Number(settings.referralPercentage),
+  providerMinimumBalance:Number(settings.providerMinimumBalance),
+  abCoinsPer100Naira:Number(settings.abCoinsPer100Naira),
+  abCoinsRedemptionTarget:Number(settings.abCoinsRedemptionTarget),
+  abCoinsRedemptionReward:Number(settings.abCoinsRedemptionReward)
+})
 }
 );
 
@@ -172,9 +180,9 @@ headers:{
 Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({
-membershipSilverPrice:Number(settings.membershipSilverPrice),
-membershipGoldPrice:Number(settings.membershipGoldPrice),
-membershipDurationDays:Number(settings.membershipDurationDays)
+silverPrice:Number(settings.membershipSilverPrice),
+goldPrice:Number(settings.membershipGoldPrice),
+durationDays:Number(settings.membershipDurationDays)
 })
 }
 );
@@ -322,9 +330,9 @@ placeholder="Referral percentage"
 value={settings.referralPercentage}
 onChange={(e)=>setSettings({
 ...settings,
-referralPercentage:e.target.value
+referralPercentage:Number(e.target.value)
 })}
-/>
+ />
 
 
 <label className="font-bold block">
