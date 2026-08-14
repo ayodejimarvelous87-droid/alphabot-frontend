@@ -22,7 +22,7 @@ return;
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/dashboard",
+"https://api.alphabothq.com/blog-partner/dashboard",
 {
 headers:{
 Authorization:`Bearer ${token}`

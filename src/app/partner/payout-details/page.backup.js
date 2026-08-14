@@ -21,7 +21,7 @@ const token=localStorage.getItem("partnerToken");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/payout-details",
+"https://api.alphabothq.com/blog-partner/payout-details",
 {
 method:"PUT",
 headers:{

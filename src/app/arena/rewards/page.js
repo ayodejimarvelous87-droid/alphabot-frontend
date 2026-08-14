@@ -18,7 +18,7 @@ return;
 }
 
 fetch(
-`https://alphabot-1.onrender.com/football/rewards/${user._id}`
+`https://api.alphabothq.com/football/rewards/${user._id}`
 )
 
 .then(res=>res.json())

@@ -20,7 +20,7 @@ export default function NotificationDetails() {
       try {
 
         const res = await fetch(
-          `https://alphabot-1.onrender.com/notifications/detail/${id}`
+          `https://api.alphabothq.com/notifications/detail/${id}`
         );
 
         const result = await res.json();

@@ -11,7 +11,7 @@ const [loading,setLoading]=useState(true);
 useEffect(()=>{
 
 fetch(
-"https://alphabot-1.onrender.com/blog-partner/leaderboard"
+"https://api.alphabothq.com/blog-partner/leaderboard"
 )
 .then(res=>res.json())
 .then(data=>{

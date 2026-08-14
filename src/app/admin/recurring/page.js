@@ -13,7 +13,7 @@ const [message,setMessage]=useState("");
 const load=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/recurring",
+"https://api.alphabothq.com/admin/recurring",
 {
 headers:{
 Authorization:
@@ -43,7 +43,7 @@ load();
 const cancel=async(id)=>{
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/admin/recurring/cancel/${id}`,
+`https://api.alphabothq.com/admin/recurring/cancel/${id}`,
 {
 method:"PUT",
 headers:{

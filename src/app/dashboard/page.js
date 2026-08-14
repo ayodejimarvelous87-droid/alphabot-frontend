@@ -54,7 +54,7 @@ const data=JSON.parse(saved);
 
 setUser(data);
 
-fetch(`https://alphabot-1.onrender.com/users/profile/${data.phone}`,{
+fetch(`https://api.alphabothq.com/users/profile/${data.phone}`,{
 headers:{
 Authorization:`Bearer ${token}`
 }
@@ -70,7 +70,7 @@ const fcmToken = await requestNotificationPermission();
 if(fcmToken){
 
 await fetch(
-"https://alphabot-1.onrender.com/notifications/register-token",
+"https://api.alphabothq.com/notifications/register-token",
 {
 method:"POST",
 headers:{
@@ -93,7 +93,7 @@ phone:profile.phone
 
 
 fetch(
-`https://alphabot-1.onrender.com/wallet/balance/${data.phone}`,
+`https://api.alphabothq.com/wallet/balance/${data.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -117,7 +117,7 @@ setToast("Unable to load wallet balance");
 
 
 fetch(
-`https://alphabot-1.onrender.com/transactions/${data.phone}`,
+`https://api.alphabothq.com/transactions/${data.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -146,7 +146,7 @@ setToast("Unable to load transaction summary");
 
 
 fetch(
-  "https://alphabot-1.onrender.com/settings",
+  "https://api.alphabothq.com/settings",
   {
     headers:{
       Authorization:`Bearer ${token}`
@@ -176,7 +176,7 @@ fetch(
 
 
 fetch(
-`https://alphabot-1.onrender.com/referral-earnings/${data.phone}`,
+`https://api.alphabothq.com/referral-earnings/${data.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -200,7 +200,7 @@ setToast("Unable to load referral earnings");
 
 
 fetch(
-`https://alphabot-1.onrender.com/notifications/${data.phone}`,
+`https://api.alphabothq.com/notifications/${data.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -247,7 +247,7 @@ const token = localStorage.getItem("token");
 
 if(!user || !token) return;
 
-fetch(`https://alphabot-1.onrender.com/notifications/${user.phone}`,{
+fetch(`https://api.alphabothq.com/notifications/${user.phone}`,{
 headers:{
 Authorization:`Bearer ${token}`
 }

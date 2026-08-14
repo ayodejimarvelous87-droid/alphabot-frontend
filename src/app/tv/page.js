@@ -33,7 +33,7 @@ try{
 const token=localStorage.getItem("token");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/tv/plans",
+"https://api.alphabothq.com/tv/plans",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -84,7 +84,7 @@ const token=localStorage.getItem("token");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/tv/subscribe",
+"https://api.alphabothq.com/tv/subscribe",
 {
 method:"POST",
 headers:{

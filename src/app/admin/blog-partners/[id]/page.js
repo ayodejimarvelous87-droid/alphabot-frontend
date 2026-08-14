@@ -27,7 +27,7 @@ try{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/blog-partner/admin/${id}/users`,
+`https://api.alphabothq.com/blog-partner/admin/${id}/users`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -53,7 +53,7 @@ async function loadPartner(){
 try{
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/blog-partner/${id}`
+`https://api.alphabothq.com/blog-partner/${id}`
 );
 
 const data=await res.json();
@@ -81,7 +81,7 @@ try{
 setSaving(true);
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/blog-partner/admin/${id}`,
+`https://api.alphabothq.com/blog-partner/admin/${id}`,
 {
 method:"PUT",
 headers:{

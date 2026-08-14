@@ -23,7 +23,7 @@ setLoading(true);
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/send-reset-otp",
+"https://api.alphabothq.com/blog-partner/send-reset-otp",
 {
 method:"POST",
 headers:{
@@ -65,7 +65,7 @@ setLoading(true);
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/verify-reset-otp",
+"https://api.alphabothq.com/blog-partner/verify-reset-otp",
 {
 method:"POST",
 headers:{

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {useState,useEffect} from "react";
 import SuccessCelebration from "@/components/success-celebration";
 
-const API="https://alphabot-1.onrender.com";
+const API="https://api.alphabothq.com";
 
 export default function Page(){
 

@@ -19,7 +19,7 @@ const loadProfile=async()=>{
 const token=localStorage.getItem("partnerToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/dashboard",
+"https://api.alphabothq.com/blog-partner/dashboard",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -48,7 +48,7 @@ typeof window !== "undefined"
 const changePassword=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/change-password",
+"https://api.alphabothq.com/blog-partner/change-password",
 {
 method:"PUT",
 headers:{
@@ -73,7 +73,7 @@ setMessage(data.message);
 const updateEmail=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/update-email",
+"https://api.alphabothq.com/blog-partner/update-email",
 {
 method:"PUT",
 headers:{

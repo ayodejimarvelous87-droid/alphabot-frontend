@@ -33,7 +33,7 @@ const load = async()=>{
 const token = localStorage.getItem("adminToken");
 
 const res = await fetch(
-`https://alphabot-1.onrender.com/admin/user/${phone}`,
+`https://api.alphabothq.com/admin/user/${phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -75,7 +75,7 @@ try{
 const token = localStorage.getItem("adminToken");
 
 const res = await fetch(
-`https://alphabot-1.onrender.com/admin/user/membership/${phone}`,
+`https://api.alphabothq.com/admin/user/membership/${phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -374,7 +374,7 @@ setMembershipAction(true);
 try{
 
 const res = await fetch(
-`https://alphabot-1.onrender.com/admin/user/tier/${phone}`,
+`https://api.alphabothq.com/admin/user/tier/${phone}`,
 {
 method:"PUT",
 headers:{
@@ -445,7 +445,7 @@ setMembershipAction(true);
 try{
 
 const res = await fetch(
-`https://alphabot-1.onrender.com/admin/user/tier/${phone}`,
+`https://api.alphabothq.com/admin/user/tier/${phone}`,
 {
 method:"PUT",
 headers:{
@@ -509,7 +509,7 @@ setMembershipAction(true);
 try{
 
 const res = await fetch(
-`https://alphabot-1.onrender.com/admin/user/tier/${phone}`,
+`https://api.alphabothq.com/admin/user/tier/${phone}`,
 {
 method:"PUT",
 headers:{

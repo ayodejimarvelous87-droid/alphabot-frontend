@@ -25,7 +25,7 @@ setError("");
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/login",
+"https://api.alphabothq.com/admin/login",
 {
 method:"POST",
 headers:{
@@ -91,7 +91,7 @@ setError("");
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/verify-otp",
+"https://api.alphabothq.com/admin/verify-otp",
 {
 method:"POST",
 headers:{

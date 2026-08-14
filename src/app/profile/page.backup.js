@@ -31,7 +31,7 @@ const localUser=JSON.parse(saved);
 
 
 const profile=await fetch(
-`https://alphabot-1.onrender.com/users/profile/${localUser.phone}`,
+`https://api.alphabothq.com/users/profile/${localUser.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -49,7 +49,7 @@ localStorage.setItem("user",JSON.stringify(data));
 
 
 const wallet=await fetch(
-`https://alphabot-1.onrender.com/wallet/balance/${localUser.phone}`,
+`https://api.alphabothq.com/wallet/balance/${localUser.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`

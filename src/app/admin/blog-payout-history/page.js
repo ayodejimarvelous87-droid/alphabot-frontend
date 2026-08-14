@@ -15,7 +15,7 @@ try{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-payout/history",
+"https://api.alphabothq.com/blog-payout/history",
 {
 headers:{
 Authorization:`Bearer ${token}`

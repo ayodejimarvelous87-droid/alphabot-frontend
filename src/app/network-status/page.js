@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const API = "https://alphabot-1.onrender.com";
+const API = "https://api.alphabothq.com";
 
 const NETWORKS = [
   {

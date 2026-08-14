@@ -32,7 +32,7 @@ const loadSettings=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/settings",
+"https://api.alphabothq.com/settings",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -68,7 +68,7 @@ const saveSettings=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/system-settings",
+"https://api.alphabothq.com/admin/system-settings",
 {
 method:"PUT",
 headers:{
@@ -107,17 +107,17 @@ const token=localStorage.getItem("adminToken");
 const [pricingRes,accountRes,requestsRes]=await Promise.all([
 
 fetch(
-"https://alphabot-1.onrender.com/admin/membership/pricing",
+"https://api.alphabothq.com/admin/membership/pricing",
 {headers:{Authorization:`Bearer ${token}`}}
 ),
 
 fetch(
-"https://alphabot-1.onrender.com/admin/membership/payment-account",
+"https://api.alphabothq.com/admin/membership/payment-account",
 {headers:{Authorization:`Bearer ${token}`}}
 ),
 
 fetch(
-"https://alphabot-1.onrender.com/admin/membership/payments",
+"https://api.alphabothq.com/admin/membership/payments",
 {headers:{Authorization:`Bearer ${token}`}}
 )
 
@@ -172,7 +172,7 @@ const saveMembershipPricing=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/membership/pricing",
+"https://api.alphabothq.com/admin/membership/pricing",
 {
 method:"PUT",
 headers:{
@@ -202,7 +202,7 @@ const savePaymentAccount=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/membership/payment-account",
+"https://api.alphabothq.com/admin/membership/payment-account",
 {
 method:"PUT",
 headers:{
@@ -236,7 +236,7 @@ setMembershipLoading(true);
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/admin/membership/payments/${id}/${action}`,
+`https://api.alphabothq.com/admin/membership/payments/${id}/${action}`,
 {
 method:"PUT",
 headers:{

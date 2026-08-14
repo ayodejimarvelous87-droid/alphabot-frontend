@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const API = "https://alphabot-1.onrender.com";
+const API = "https://api.alphabothq.com";
 
 export default function TwoFactorPage() {
   const [enabled, setEnabled] = useState(false);

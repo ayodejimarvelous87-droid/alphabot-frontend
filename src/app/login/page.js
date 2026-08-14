@@ -28,7 +28,7 @@ const [toast,setToast] = useState("");
       setMessage("Starting fingerprint login...");
 
       const optionsRes = await fetch(
-        "https://alphabot-1.onrender.com/biometric/login/options",
+        "https://api.alphabothq.com/biometric/login/options",
         {
           method: "POST",
           headers: {
@@ -57,7 +57,7 @@ const [toast,setToast] = useState("");
         });
 
       const verifyRes = await fetch(
-        "https://alphabot-1.onrender.com/biometric/login/verify",
+        "https://api.alphabothq.com/biometric/login/verify",
         {
           method: "POST",
           headers: {
@@ -133,7 +133,7 @@ const [toast,setToast] = useState("");
       setMessage("");
 
       const res = await fetch(
-        "https://alphabot-1.onrender.com/users/login",
+        "https://api.alphabothq.com/users/login",
         {
           method:"POST",
           headers:{

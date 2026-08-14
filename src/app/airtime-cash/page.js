@@ -37,7 +37,7 @@ if(!user?.phone) return;
 
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/airtime-cash/${user.phone}`,
+`https://api.alphabothq.com/airtime-cash/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token()}`
@@ -79,7 +79,7 @@ setMessage("Sending OTP...");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/airtime-cash/generate-otp",
+"https://api.alphabothq.com/airtime-cash/generate-otp",
 {
 method:"POST",
 headers:{
@@ -137,7 +137,7 @@ setMessage("Verifying OTP...");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/airtime-cash/verify-otp",
+"https://api.alphabothq.com/airtime-cash/verify-otp",
 {
 method:"POST",
 headers:{
@@ -201,7 +201,7 @@ setMessage("Converting airtime...");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/airtime-cash/convert",
+"https://api.alphabothq.com/airtime-cash/convert",
 {
 method:"POST",
 headers:{

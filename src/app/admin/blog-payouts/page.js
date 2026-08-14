@@ -17,7 +17,7 @@ try{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-  "https://alphabot-1.onrender.com/blog-payout/pending",
+  "https://api.alphabothq.com/blog-payout/pending",
   {
   headers:{
   Authorization:`Bearer ${token}`
@@ -60,7 +60,7 @@ const token=localStorage.getItem("adminToken");
 
 
 const res=await fetch(
-  `https://alphabot-1.onrender.com/blog-payout/pay/${id}`,
+  `https://api.alphabothq.com/blog-payout/pay/${id}`,
   {
   method:"PUT",
   headers:{

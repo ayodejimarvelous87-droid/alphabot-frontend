@@ -13,7 +13,7 @@ const [message,setMessage]=useState("");
 const loadSettings=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/electricity-settings",
+"https://api.alphabothq.com/admin/electricity-settings",
 {
 headers:{
 Authorization:
@@ -44,7 +44,7 @@ const save=async(item)=>{
 
 const res=await fetch(
 
-`https://alphabot-1.onrender.com/admin/electricity-settings/${item.disco}`,
+`https://api.alphabothq.com/admin/electricity-settings/${item.disco}`,
 
 {
 method:"PUT",

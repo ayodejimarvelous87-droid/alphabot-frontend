@@ -33,7 +33,7 @@ const token = localStorage.getItem("token");
 
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/electricity/pay",
+"https://api.alphabothq.com/electricity/pay",
 {
 method:"POST",
 headers:{

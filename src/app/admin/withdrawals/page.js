@@ -13,7 +13,7 @@ const loadWithdrawals=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/withdrawal",
+"https://api.alphabothq.com/admin/withdrawal",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -41,7 +41,7 @@ const token=localStorage.getItem("adminToken");
 
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/admin/${type}/${id}`,
+`https://api.alphabothq.com/admin/${type}/${id}`,
 {
 method:"POST",
 headers:{

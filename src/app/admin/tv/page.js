@@ -12,7 +12,7 @@ const [message,setMessage]=useState("");
 const loadPlans=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/tv-plans",
+"https://api.alphabothq.com/admin/tv-plans",
 {
 headers:{
 Authorization:
@@ -42,7 +42,7 @@ const savePlan=async(plan)=>{
 
 const res=await fetch(
 
-`https://alphabot-1.onrender.com/admin/tv-plans/${plan._id}`,
+`https://api.alphabothq.com/admin/tv-plans/${plan._id}`,
 
 {
 method:"PUT",

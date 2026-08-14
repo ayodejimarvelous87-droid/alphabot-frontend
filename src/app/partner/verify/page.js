@@ -20,7 +20,7 @@ e.preventDefault();
   setLoading(true);
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/verify-email",
+"https://api.alphabothq.com/blog-partner/verify-email",
 {
 method:"POST",
 headers:{

@@ -22,7 +22,7 @@ setLoading(true);
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/login",
+"https://api.alphabothq.com/blog-partner/login",
 {
 method:"POST",
 headers:{

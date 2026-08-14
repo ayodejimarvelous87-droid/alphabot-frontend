@@ -17,7 +17,7 @@ const loadNotifications = async()=>{
 try{
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/notifications/admin"
+"https://api.alphabothq.com/notifications/admin"
 );
 
 const data = await res.json();
@@ -49,7 +49,7 @@ const token = localStorage.getItem("adminToken");
 
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/admin/notifications/broadcast",
+"https://api.alphabothq.com/admin/notifications/broadcast",
 {
 method:"POST",
 headers:{

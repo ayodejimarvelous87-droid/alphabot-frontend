@@ -16,7 +16,7 @@ const [loading,setLoading]=useState(false);
 const [list,setList]=useState([]);
 
 
-const API="https://alphabot-1.onrender.com";
+const API="https://api.alphabothq.com";
 
 
 const serviceIcon=(type)=>{

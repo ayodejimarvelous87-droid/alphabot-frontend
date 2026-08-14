@@ -31,7 +31,7 @@ const token=localStorage.getItem("token");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/exam-pin",
+"https://api.alphabothq.com/exam-pin",
 {
 method:"POST",
 headers:{

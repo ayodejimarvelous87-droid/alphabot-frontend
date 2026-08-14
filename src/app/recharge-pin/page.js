@@ -36,7 +36,7 @@ setPhone(user.phone);
 
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/beneficiaries/${user.phone}`,
+`https://api.alphabothq.com/beneficiaries/${user.phone}`,
 {
 headers:{
 Authorization:"Bearer "+localStorage.getItem("token")
@@ -74,7 +74,7 @@ const checkEPinStatus = async(reference)=>{
   try{
 
     const res = await fetch(
-      `https://alphabot-1.onrender.com/epin/status/${encodeURIComponent(reference)}`,
+      `https://api.alphabothq.com/epin/status/${encodeURIComponent(reference)}`,
       {
         headers:{
           Authorization:`Bearer ${localStorage.getItem("token")}`
@@ -244,7 +244,7 @@ setEpinResult(null);
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/epin/buy",
+"https://api.alphabothq.com/epin/buy",
 {
 method:"POST",
 headers:{

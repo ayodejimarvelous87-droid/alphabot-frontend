@@ -45,7 +45,7 @@ return;
 
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/football/chat",
+"https://api.alphabothq.com/football/chat",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -103,7 +103,7 @@ const reactToMessage = async(id,reaction)=>{
 const token = localStorage.getItem("token");
 
 await fetch(
-`https://alphabot-1.onrender.com/football/chat/${id}/react`,
+`https://api.alphabothq.com/football/chat/${id}/react`,
 {
 method:"POST",
 headers:{
@@ -133,7 +133,7 @@ setCooldown(true);
 
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/football/chat",
+"https://api.alphabothq.com/football/chat",
 {
 method:"POST",
 headers:{

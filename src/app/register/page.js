@@ -72,7 +72,7 @@ referralCode:ref
     try{
 
       const res=await fetch(
-        "https://alphabot-1.onrender.com/users/send-registration-otp",
+        "https://api.alphabothq.com/users/send-registration-otp",
         {
           method:"POST",
           headers:{
@@ -108,7 +108,7 @@ referralCode:ref
     try{
 
       const res=await fetch(
-        "https://alphabot-1.onrender.com/users/verify-registration-otp",
+        "https://api.alphabothq.com/users/verify-registration-otp",
         {
           method:"POST",
           headers:{

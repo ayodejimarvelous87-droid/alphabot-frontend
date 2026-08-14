@@ -47,7 +47,7 @@ const load=async()=>{
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/dashboard",
+"https://api.alphabothq.com/admin/dashboard",
 {
 headers:{
 Authorization:
@@ -89,7 +89,7 @@ requestNotificationPermission().then(async(token)=>{
   if(token){
 
     await fetch(
-      "https://alphabot-1.onrender.com/notifications/register-token",
+      "https://api.alphabothq.com/notifications/register-token",
       {
         method:"POST",
         headers:{

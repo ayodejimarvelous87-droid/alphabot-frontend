@@ -22,7 +22,7 @@ console.log("REGISTER DATA", form);
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/create",
+"https://api.alphabothq.com/blog-partner/create",
 {
 method:"POST",
 headers:{

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Toast from "@/components/Toast";
 
-const API = "https://alphabot-1.onrender.com";
+const API = "https://api.alphabothq.com";
 
 export default function TransactionPinPage() {
   const [hasPin, setHasPin] = useState(false);

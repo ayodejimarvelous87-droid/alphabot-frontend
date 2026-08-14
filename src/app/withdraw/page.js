@@ -50,7 +50,7 @@ setPhone(user.phone);
 
 
 fetch(
-`https://alphabot-1.onrender.com/wallet/balance/${user.phone}`,
+`https://api.alphabothq.com/wallet/balance/${user.phone}`,
 {
 headers:{
 Authorization:
@@ -68,7 +68,7 @@ setBalance(data.balance);
 });
 
 fetch(
-`https://alphabot-1.onrender.com/users/withdraw-account/${user.phone}`,
+`https://api.alphabothq.com/users/withdraw-account/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${localStorage.getItem("token")}`
@@ -94,7 +94,7 @@ setVerified(true);
 
 
 
-fetch("https://alphabot-1.onrender.com/settings")
+fetch("https://api.alphabothq.com/settings")
 .then(res=>res.json())
 .then(data=>{
 
@@ -126,7 +126,7 @@ try{
 setVerifying(true);
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/bank/verify",
+"https://api.alphabothq.com/bank/verify",
 {
 method:"POST",
 headers:{
@@ -198,7 +198,7 @@ setMessage("Processing...");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/withdrawal",
+"https://api.alphabothq.com/withdrawal",
 {
 method:"POST",
 headers:{

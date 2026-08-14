@@ -17,7 +17,7 @@ return;
 }
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/blog-partner/payout-history",
+"https://api.alphabothq.com/blog-partner/payout-history",
 {
 headers:{
 Authorization:`Bearer ${token}`

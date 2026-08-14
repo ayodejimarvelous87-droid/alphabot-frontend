@@ -31,7 +31,7 @@ return;
 
 
 fetch(
-`https://alphabot-1.onrender.com/notifications/${user.phone}`,
+`https://api.alphabothq.com/notifications/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -92,7 +92,7 @@ item
 try{
 
 await fetch(
-`https://alphabot-1.onrender.com/notifications/read/${id}`,
+`https://api.alphabothq.com/notifications/read/${id}`,
 {
 method:"PATCH",
 headers:{
@@ -129,7 +129,7 @@ read:true
 try{
 
 await fetch(
-`https://alphabot-1.onrender.com/notifications/read-all/${user.phone}`,
+`https://api.alphabothq.com/notifications/read-all/${user.phone}`,
 {
 method:"PATCH",
 headers:{

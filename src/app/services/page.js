@@ -33,7 +33,7 @@ return routes[type] || "/services";
 
 useEffect(()=>{
 
-fetch("https://alphabot-1.onrender.com/products")
+fetch("https://api.alphabothq.com/products")
 .then(res=>res.json())
 .then(data=>{
 setProducts(data);

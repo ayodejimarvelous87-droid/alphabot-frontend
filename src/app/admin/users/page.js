@@ -15,7 +15,7 @@ const loadUsers=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/users",
+"https://api.alphabothq.com/admin/users",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -43,7 +43,7 @@ const updateUserStatus = async(phone,action)=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/admin/user/${action}/${phone}`,
+`https://api.alphabothq.com/admin/user/${action}/${phone}`,
 {
 method:"PUT",
 headers:{
@@ -87,7 +87,7 @@ const changeUserRole = async(phone,action)=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/admin/user/${action}/${phone}`,
+`https://api.alphabothq.com/admin/user/${action}/${phone}`,
 {
 method:"PUT",
 headers:{
@@ -141,7 +141,7 @@ const token=localStorage.getItem("adminToken");
 
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/admin/user/${phone}`,
+`https://api.alphabothq.com/admin/user/${phone}`,
 {
 method:"DELETE",
 headers:{

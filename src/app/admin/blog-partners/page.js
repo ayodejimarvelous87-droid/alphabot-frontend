@@ -19,7 +19,7 @@ export default function BlogPartnersPage(){
       const token = localStorage.getItem("adminToken");
 
       const res = await fetch(
-        "https://alphabot-1.onrender.com/blog-partner/all",
+        "https://api.alphabothq.com/blog-partner/all",
         {
           headers:{
             Authorization:`Bearer ${token}`

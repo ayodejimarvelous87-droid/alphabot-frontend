@@ -5,7 +5,7 @@ import {useEffect,useState} from "react";
 
 export default function AdminTransfer(){
 
-const API="https://alphabot-1.onrender.com";
+const API="https://api.alphabothq.com";
 
 
 const [settings,setSettings]=useState({

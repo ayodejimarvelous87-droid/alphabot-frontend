@@ -16,7 +16,7 @@ const load=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/transactions",
+"https://api.alphabothq.com/admin/transactions",
 {
 headers:{
 Authorization:`Bearer ${token}`

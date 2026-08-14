@@ -13,7 +13,7 @@ const loadRequests=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/funding/requests",
+"https://api.alphabothq.com/funding/requests",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -39,7 +39,7 @@ const action=async(id,type)=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/funding/${type}/${id}`,
+`https://api.alphabothq.com/funding/${type}/${id}`,
 {
 method:"PUT",
 headers:{

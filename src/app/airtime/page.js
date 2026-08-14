@@ -44,7 +44,7 @@ try{
 const user=JSON.parse(localStorage.getItem("user"));
 if(!user?.phone)return;
 
-const res=await fetch(`https://alphabot-1.onrender.com/beneficiaries/${user.phone}`,{
+const res=await fetch(`https://api.alphabothq.com/beneficiaries/${user.phone}`,{
 headers:{Authorization:"Bearer "+localStorage.getItem("token")}
 });
 
@@ -72,7 +72,7 @@ const biometricToken = localStorage.getItem("biometricToken");
 
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/airtime/buy",
+"https://api.alphabothq.com/airtime/buy",
 {
 method:"POST",
 headers:{

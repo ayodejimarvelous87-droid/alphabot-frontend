@@ -13,7 +13,7 @@ const [message,setMessage]=useState("");
 const loadSettings=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/betting-settings",
+"https://api.alphabothq.com/admin/betting-settings",
 {
 headers:{
 Authorization:
@@ -44,7 +44,7 @@ const save=async(item)=>{
 
 const res=await fetch(
 
-`https://alphabot-1.onrender.com/admin/betting-settings/${item.service}`,
+`https://api.alphabothq.com/admin/betting-settings/${item.service}`,
 
 {
 method:"PUT",

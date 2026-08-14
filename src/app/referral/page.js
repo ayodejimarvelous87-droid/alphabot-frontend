@@ -44,7 +44,7 @@ const loadReferral=async(phone)=>{
 try{
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/referrals/${phone}`
+`https://api.alphabothq.com/referrals/${phone}`
 );
 
 const data=await res.json();
@@ -60,7 +60,7 @@ setEarnings(data.earnings);
 
 
 const historyRes=await fetch(
-`https://alphabot-1.onrender.com/referral-earnings/${phone}`
+`https://api.alphabothq.com/referral-earnings/${phone}`
 );
 
 
@@ -104,7 +104,7 @@ const token=localStorage.getItem("token");
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/referral-withdraw",
+"https://api.alphabothq.com/referral-withdraw",
 {
 method:"POST",
 headers:{

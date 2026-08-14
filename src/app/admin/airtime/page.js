@@ -35,7 +35,7 @@ localStorage.getItem("adminToken")
 const loadPrices=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/airtime-prices",
+"https://api.alphabothq.com/admin/airtime-prices",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -76,7 +76,7 @@ setPrices(result);
 const loadInventory=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/airtime-inventory",
+"https://api.alphabothq.com/admin/airtime-inventory",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -109,7 +109,7 @@ const item=prices[network];
 
 const res=await fetch(
 
-`https://alphabot-1.onrender.com/admin/airtime-prices/${network}`,
+`https://api.alphabothq.com/admin/airtime-prices/${network}`,
 
 {
 method:"PUT",
@@ -143,7 +143,7 @@ const saveLimit=async(item)=>{
 
 const res=await fetch(
 
-`https://alphabot-1.onrender.com/admin/airtime-inventory/${item.network}`,
+`https://api.alphabothq.com/admin/airtime-inventory/${item.network}`,
 
 {
 method:"PUT",

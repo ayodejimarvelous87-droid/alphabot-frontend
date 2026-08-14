@@ -34,7 +34,7 @@ const user=JSON.parse(localStorage.getItem("user"));
 
 
 fetch(
-`https://alphabot-1.onrender.com/wallet/balance/${user.phone}`,
+`https://api.alphabothq.com/wallet/balance/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -55,7 +55,7 @@ setBalance(data.balance);
 
 
 fetch(
-`https://alphabot-1.onrender.com/transactions/${user.phone}`,
+`https://api.alphabothq.com/transactions/${user.phone}`,
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -118,7 +118,7 @@ const user=JSON.parse(localStorage.getItem("user"));
 
 try{
 
-const balanceRes=await fetch(`https://alphabot-1.onrender.com/wallet/balance/${user.phone}`,{
+const balanceRes=await fetch(`https://api.alphabothq.com/wallet/balance/${user.phone}`,{
 headers:{Authorization:`Bearer ${token}`}
 });
 
@@ -128,7 +128,7 @@ if(balanceData.balance !== undefined){
 setBalance(balanceData.balance);
 }
 
-const transactionRes=await fetch(`https://alphabot-1.onrender.com/transactions/${user.phone}`,{
+const transactionRes=await fetch(`https://api.alphabothq.com/transactions/${user.phone}`,{
 headers:{Authorization:`Bearer ${token}`}
 });
 
@@ -157,7 +157,7 @@ setFlutterFunding(true);
 setMessage("");
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/flutterwave/pay",
+"https://api.alphabothq.com/flutterwave/pay",
 {
 method:"POST",
 headers:{
@@ -216,7 +216,7 @@ setManualFunding(true);
 setMessage("");
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/funding/request",
+"https://api.alphabothq.com/funding/request",
 {
 method:"POST",
 headers:{

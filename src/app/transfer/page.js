@@ -16,7 +16,7 @@ const loadBanks=async()=>{
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/bank",
+"https://api.alphabothq.com/bank",
 {
 headers:{
 Authorization:`Bearer ${localStorage.getItem("token")}`
@@ -85,7 +85,7 @@ return;
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/bank/verify",
+"https://api.alphabothq.com/bank/verify",
 {
 method:"POST",
 headers:{
@@ -162,7 +162,7 @@ try{
 setMessage("Processing transfer...");
 
 const res = await fetch(
-"https://alphabot-1.onrender.com/transfer/send",
+"https://api.alphabothq.com/transfer/send",
 {
 method:"POST",
 headers:{

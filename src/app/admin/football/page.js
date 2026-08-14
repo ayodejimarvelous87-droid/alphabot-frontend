@@ -27,7 +27,7 @@ const loadSettings=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/settings",
+"https://api.alphabothq.com/settings",
 {
 headers:{
 Authorization:`Bearer ${token}`
@@ -66,7 +66,7 @@ const saveSettings=async()=>{
 const token=localStorage.getItem("adminToken");
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/football-settings",
+"https://api.alphabothq.com/admin/football-settings",
 {
 method:"PUT",
 headers:{

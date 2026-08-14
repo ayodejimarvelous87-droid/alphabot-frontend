@@ -53,7 +53,7 @@ export default function PaymentResult(){
         }
 
         const res = await fetch(
-          `https://alphabot-1.onrender.com/flutterwave/verify/${transaction_id}`,
+          `https://api.alphabothq.com/flutterwave/verify/${transaction_id}`,
           {
             headers
           }

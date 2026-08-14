@@ -33,7 +33,7 @@ setLoading(true);
 
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/ai/chat",
+"https://api.alphabothq.com/ai/chat",
 {
 method:"POST",
 headers:{

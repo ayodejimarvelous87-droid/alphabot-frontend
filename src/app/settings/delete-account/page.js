@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const API = "https://alphabot-1.onrender.com";
+const API = "https://api.alphabothq.com";
 
 const reasons = [
   "I no longer need AlphaBot",

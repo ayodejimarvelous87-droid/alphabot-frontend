@@ -22,7 +22,7 @@ const load=async()=>{
 try{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/profits",
+"https://api.alphabothq.com/admin/profits",
 {
 headers:{
 Authorization:

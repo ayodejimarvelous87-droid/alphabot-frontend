@@ -14,7 +14,7 @@ const [savingId,setSavingId]=useState(null);
 const loadPlans=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/data/plans"
+"https://api.alphabothq.com/data/plans"
 );
 
 const data=await res.json();
@@ -96,7 +96,7 @@ if(!price) continue;
 
 
 await fetch(
-`https://alphabot-1.onrender.com/admin/data-prices/${id}`,
+`https://api.alphabothq.com/admin/data-prices/${id}`,
 {
 method:"PUT",
 headers:{
@@ -169,7 +169,7 @@ return;
 
 const res=await fetch(
 
-`https://alphabot-1.onrender.com/admin/data-prices/${id}`,
+`https://api.alphabothq.com/admin/data-prices/${id}`,
 
 {
 method:"PUT",

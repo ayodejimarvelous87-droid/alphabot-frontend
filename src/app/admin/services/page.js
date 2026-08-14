@@ -12,7 +12,7 @@ const [message,setMessage]=useState("");
 const loadSettings=async()=>{
 
 const res=await fetch(
-"https://alphabot-1.onrender.com/admin/services",
+"https://api.alphabothq.com/admin/services",
 {
 headers:{
 Authorization:
@@ -94,7 +94,7 @@ settings.airtimeCashProfit || 0
 
 
 const res=await fetch(
-`https://alphabot-1.onrender.com/admin/services/${service}`,
+`https://api.alphabothq.com/admin/services/${service}`,
 {
 method:"PUT",
 headers:{
