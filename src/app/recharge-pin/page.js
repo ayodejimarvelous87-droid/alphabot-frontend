@@ -1,11 +1,14 @@
 "use client";
 
 import {useState,useEffect} from "react";
+import {useRouter} from "next/navigation";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 import SuccessCelebration from "@/components/success-celebration";
 
 export default function RechargePin(){
+
+const router=useRouter();
 
 const [phone,setPhone]=useState("");
 const [network,setNetwork]=useState("MTN");
@@ -23,6 +26,48 @@ const [copyMessage,setCopyMessage]=useState("");
 
 
 useEffect(()=>{
+
+const savedState =
+sessionStorage.getItem("alphaBotRechargePinPurchaseState");
+
+const savedPin =
+sessionStorage.getItem("alphaBotTransactionPin");
+
+if(savedState){
+
+try{
+
+const state=JSON.parse(savedState);
+
+if(state.phone !== undefined)
+setPhone(state.phone);
+
+if(state.network !== undefined)
+setNetwork(state.network);
+
+if(state.amount !== undefined)
+setAmount(state.amount);
+
+if(state.quantity !== undefined)
+setQuantity(state.quantity);
+
+}catch(error){
+
+console.log(error);
+
+}
+
+}
+
+if(savedPin){
+
+setPin(savedPin);
+
+}
+
+sessionStorage.removeItem("alphaBotTransactionPin");
+
+
 
 const loadData=async()=>{
 
@@ -271,6 +316,18 @@ const data=await res.json();
 
 if(res.ok){
 
+sessionStorage.removeItem(
+"alphaBotTransactionPin"
+);
+
+sessionStorage.removeItem(
+"alphaBotRechargePinPurchaseState"
+);
+
+setPin("");
+
+
+
 setMessage(
 data.status === "processing"
 ? "⏳ Recharge PIN order is processing"
@@ -447,21 +504,27 @@ Transaction PIN
 </p>
 
 
-<input
+<button
+  type="button"
+  onClick={()=>{
 
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+    sessionStorage.setItem(
+      "alphaBotRechargePinPurchaseState",
+      JSON.stringify({
+        phone,
+        network,
+        amount,
+        quantity
+      })
+    );
 
-placeholder="4 digit PIN"
+    router.push("/enter-pin?return=/recharge-pin");
 
-type="password"
-
-maxLength="4"
-
-value={pin}
-
-onChange={(e)=>setPin(e.target.value)}
-
-/>
+  }}
+  className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+>
+  {pin ? "••••" : "Enter 4 digit PIN"} →
+</button>
 
 
 </div>

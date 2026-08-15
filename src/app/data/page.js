@@ -28,37 +28,96 @@ const [loading,setLoading]=useState(false);
   const [search,setSearch]=useState("");
   const [beneficiaries,setBeneficiaries]=useState([]);
 
-useEffect(()=>{
-const savedPhone = searchParams.get("phone");
+useEffect(() => {
 
-if(savedPhone){
-setPhone(savedPhone);
-}
+  const savedState =
+    sessionStorage.getItem("alphaBotDataPurchaseState");
 
-const loadBeneficiaries = async()=>{
-try{
-const user = JSON.parse(localStorage.getItem("user"));
-if(!user?.phone) return;
+  const savedPin =
+    sessionStorage.getItem("alphaBotTransactionPin");
 
-const res = await fetch(
-`https://api.alphabothq.com/beneficiaries/${user.phone}`,
-{
-headers:{
-Authorization:"Bearer "+localStorage.getItem("token")
-}
-}
-);
+  if (savedState) {
 
-const data = await res.json();
-setBeneficiaries(data);
+    try {
 
-}catch(error){
-}
-};
+      const state =
+        JSON.parse(savedState);
 
-loadBeneficiaries();
+      if (state.phone !== undefined)
+        setPhone(state.phone);
 
-},[]);
+      if (state.network !== undefined)
+        setNetwork(state.network);
+
+      if (state.category !== undefined)
+        setCategory(state.category);
+
+      if (state.selectedPlan !== undefined)
+        setSelectedPlan(state.selectedPlan);
+
+      if (state.search !== undefined)
+        setSearch(state.search);
+
+    } catch (error) {
+
+      console.log(
+        "Unable to restore data purchase state:",
+        error.message
+      );
+
+    }
+
+  } else {
+
+    const savedPhone =
+      searchParams.get("phone");
+
+    if (savedPhone) {
+      setPhone(savedPhone);
+    }
+
+  }
+
+  if (savedPin) {
+    setPin(savedPin);
+  }
+
+
+  const loadBeneficiaries = async () => {
+
+    try {
+
+      const user =
+        JSON.parse(
+          localStorage.getItem("user")
+        );
+
+      if (!user?.phone) return;
+
+      const res = await fetch(
+        `https://api.alphabothq.com/beneficiaries/${user.phone}`,
+        {
+          headers: {
+            Authorization:
+              "Bearer " +
+              localStorage.getItem("token")
+          }
+        }
+      );
+
+      const data = await res.json();
+
+      setBeneficiaries(data);
+
+    } catch (error) {
+
+    }
+
+  };
+
+  loadBeneficiaries();
+
+}, []);
 
 
 useEffect(()=>{
@@ -73,33 +132,59 @@ const res = await fetch(
 
 const data = await res.json();
 
-const networks = data.networks || {};
+const networksData = data.networks || {};
 
+setPlans(networksData);
 
-setPlans(networks);
+const firstProvider = Object.keys(networksData)[0];
 
+const savedState =
+  sessionStorage.getItem("alphaBotDataPurchaseState");
 
+let restoredState = null;
 
+if(savedState){
 
-const firstNetwork = Object.keys(networks)[0];
+  try{
 
-if(firstNetwork){
+    restoredState = JSON.parse(savedState);
 
-setNetwork(firstNetwork);
+  }catch(error){
 
-const firstCategory =
-Object.keys(networks[firstNetwork])
-.find(cat => networks[firstNetwork][cat].length > 0);
+    console.log(
+      "Unable to read saved data purchase state:",
+      error.message
+    );
 
-if(firstCategory){
-setCategory("All Plans");
+  }
+
 }
 
+const restoredProvider =
+  restoredState?.provider ||
+  restoredState?.network;
+
+if(
+  restoredProvider &&
+  networksData[restoredProvider]
+){
+
+  setNetwork(restoredProvider);
+
+}else if(firstProvider){
+
+  setNetwork(firstProvider);
+
 }
+
+setCategory("");
 
 }catch(error){
 
-console.log("Plans error:", error.message);
+console.log(
+"Plans error:",
+error.message
+);
 
 }
 
@@ -116,90 +201,41 @@ const networks = Object.keys(plans);
 
 
 
-const actualNetwork = network;
+const networkCategories =
+  network &&
+  plans[network] &&
+  typeof plans[network] === "object"
+    ? plans[network]
+    : {};
 
 const categories =
-actualNetwork
-? [
-"All Plans",
-...Object.keys(plans[actualNetwork]).filter(cat=>cat !== "All Plans")
-]
-: [];
+  Object.keys(networkCategories);
 
+const categoryPlans =
+  category &&
+  Array.isArray(networkCategories[category])
+    ? networkCategories[category]
+    : [];
 
 const dataPlans =
-actualNetwork
-?
-(category === "All Plans"
-? Object.values(plans[actualNetwork]).flat()
-: plans[actualNetwork]?.[category] || [])
-.sort((a,b)=>{
+  categoryPlans;
 
-const getSize = plan => {
+const filteredPlans =
+  dataPlans.filter(plan => {
 
-const text = (
-plan.size ||
-plan.data_plan ||
-plan.name ||
-""
-).toUpperCase();
+    const text = (
+      plan.data_plan ||
+      plan.name ||
+      plan.size ||
+      plan.datasize ||
+      ""
+    ).toLowerCase();
 
-const value = parseFloat(text) || 0;
+    return text.includes(
+      search.toLowerCase()
+    );
 
-if(text.includes("TB")) return value * 1024;
-
-if(text.includes("GB")) return value;
-
-if(text.includes("MB")) return value / 1024;
-
-return value;
-
-};
-
-return getSize(a) - getSize(b);
-
-})
-:
-[];
-
-
-
-
-
-
-
-
-const filteredPlans = dataPlans.filter((plan)=>{
-
-const text = (
-  plan.data_plan ||
-  plan.name ||
-  plan.size ||
-  ""
-).toLowerCase();
-
-return text.includes(search.toLowerCase());
-
-});
-
-
-const getCategoryCount = (cat)=>{
-
-const list =
-cat === "All Plans"
-?
-Object.values(plans[network] || {}).flat()
-:
-(plans[network]?.[cat] || []);
-
-
-return new Set(
-list.map(plan =>
-`${plan.data_plan || plan.name}-${plan.validity || ""}-${plan.price || plan.reseller_price || ""}`
-)
-).size;
-
-};
+  });
 
 const buyData = async()=>{
 
@@ -267,19 +303,17 @@ typeof crypto !== "undefined" && crypto.randomUUID
 
 body:JSON.stringify({
 phone,
-network,
-plan:selected.data_plan || selected.name,
+network:
+  selected.network ||
+  selected.service_name ||
+  "",
+plan:selected.data_plan || selected.name || selected.datasize,
 amount:Number(selected.display_price || selected.reseller_price || selected.price),
 pin: biometricToken ? undefined : pin,
 biometricToken: biometricToken || undefined,
 provider:selected.provider,
 variation_id:
-selected.variation_id ||
-selected.package_id ||
-selected.providerPlanId ||
-selected.plan_id ||
-selected.id,
-package_id:selected.package_id
+selected.variation_id
 })
 
 }
@@ -296,9 +330,26 @@ if(res.ok){
 
 localStorage.removeItem("biometricToken");
 
-setMessage("✅ Data purchase successful");
+sessionStorage.removeItem(
+  "alphaBotTransactionPin"
+);
+
+sessionStorage.removeItem(
+  "alphaBotDataPurchaseState"
+);
+
+setPin("");
+
+setMessage(
+  "✅ Data purchase successful"
+);
+
 setShowSuccess(true);
-setTimeout(() => setShowSuccess(false), 3000);
+
+setTimeout(
+  () => setShowSuccess(false),
+  3000
+);
 
 }else{
 
@@ -377,14 +428,14 @@ const selectedNetwork=e.target.value;
 
 setNetwork(selectedNetwork);
 setSelectedPlan("");
-setCategory(selectedNetwork ? "All Plans" : "");
+setCategory("");
 
 }}
 >
 
 {networks.map(net=>(
 
-<option key={net}>
+<option key={net} value={net}>
 {net}
 </option>
 
@@ -393,8 +444,6 @@ setCategory(selectedNetwork ? "All Plans" : "");
 </select>
 
 </div>
-
-
 
 
 <div>
@@ -414,19 +463,14 @@ setSelectedPlan("");
 }}
 >
 
-{categories.map(cat=>(
+<option value="">
+Select Category
+</option>
 
-<option key={cat} value={cat}>
+{categories.map(name=>(
 
-{cat}
-
-({cat==="All Plans"
-?
-getCategoryCount("All Plans")
-:
-getCategoryCount(cat)
-})
-
+<option key={name} value={name}>
+{name}
 </option>
 
 ))}
@@ -434,8 +478,6 @@ getCategoryCount(cat)
 </select>
 
 </div>
-
-
 
 
 <div>
@@ -455,11 +497,10 @@ onChange={(e)=>setSelectedPlan(e.target.value)}
 Select Bundle
 </option>
 
-
 {filteredPlans.map((plan,index)=>(
 
 <option
-key={`${plan.network}-${plan.name}-${index}`}
+key={`${plan.network}-${plan.name}-${plan.id || plan.plan_id || index}`}
 value={index}
 >
 
@@ -521,7 +562,22 @@ Transaction PIN
 
 <button
   type="button"
-  onClick={()=>router.push("/enter-pin?return=/data")}
+  onClick={() => {
+
+  sessionStorage.setItem(
+    "alphaBotDataPurchaseState",
+    JSON.stringify({
+      phone,
+      network,
+      category,
+      selectedPlan,
+      search
+    })
+  );
+
+  router.push("/enter-pin?return=/data");
+
+}}
   className="w-full mt-3 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
   {pin ? "••••" : "Enter 4 digit PIN"} →

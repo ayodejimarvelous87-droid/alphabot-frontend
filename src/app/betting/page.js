@@ -23,6 +23,45 @@ const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
 
+useEffect(()=>{
+
+const savedState =
+sessionStorage.getItem("alphaBotBettingPurchaseState");
+
+const savedPin =
+sessionStorage.getItem("alphaBotTransactionPin");
+
+if(savedState){
+
+try{
+
+const state=JSON.parse(savedState);
+
+if(state.phone !== undefined)
+setPhone(state.phone);
+
+if(state.provider !== undefined)
+setProvider(state.provider);
+
+if(state.amount !== undefined)
+setAmount(state.amount);
+
+}catch(error){
+
+console.log(
+"Unable to restore betting purchase state:",
+error.message
+);
+
+}
+
+}
+
+if(savedPin)
+setPin(savedPin);
+
+},[]);
+
   useEffect(()=>{
 
     const loadServices = async()=>{
@@ -108,6 +147,16 @@ const data=await res.json();
 
 
   if(res.ok){
+
+    sessionStorage.removeItem(
+      "alphaBotTransactionPin"
+    );
+
+    sessionStorage.removeItem(
+      "alphaBotBettingPurchaseState"
+    );
+
+    setPin("");
 
     setToast(`✅ ${data.message || "Betting wallet funded successfully"}`);
 setShowSuccess(true);
@@ -250,7 +299,20 @@ Betting Platform
 
 <button
   type="button"
-  onClick={()=>router.push("/enter-pin?return=/betting")}
+  onClick={()=>{
+
+  sessionStorage.setItem(
+    "alphaBotBettingPurchaseState",
+    JSON.stringify({
+      phone,
+      provider,
+      amount
+    })
+  );
+
+  router.push("/enter-pin?return=/betting");
+
+}}
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
   {pin ? "••••" : "Enter 4 digit PIN"} →

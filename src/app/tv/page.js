@@ -22,6 +22,48 @@ const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
 
+useEffect(()=>{
+
+const savedState =
+sessionStorage.getItem("alphaBotTVPurchaseState");
+
+const savedPin =
+sessionStorage.getItem("alphaBotTransactionPin");
+
+if(savedState){
+
+try{
+
+const state=JSON.parse(savedState);
+
+if(state.provider !== undefined)
+setProvider(state.provider);
+
+if(state.smartCardNumber !== undefined)
+setSmartCardNumber(state.smartCardNumber);
+
+if(state.tvPackage !== undefined)
+setTvPackage(state.tvPackage);
+
+if(state.amount !== undefined)
+setAmount(state.amount);
+
+}catch(error){
+
+console.log(
+"Unable to restore TV purchase state:",
+error.message
+);
+
+}
+
+}
+
+if(savedPin)
+setPin(savedPin);
+
+},[]);
+
 
 
 useEffect(()=>{
@@ -116,6 +158,16 @@ const data=await res.json();
 
 
 if(res.ok){
+
+sessionStorage.removeItem(
+"alphaBotTransactionPin"
+);
+
+sessionStorage.removeItem(
+"alphaBotTVPurchaseState"
+);
+
+setPin("");
 
 setMessage(`✅ ${data.message}`);
 setShowSuccess(true);
@@ -342,7 +394,21 @@ onChange={(e)=>setAmount(e.target.value)}
 
 <button
   type="button"
-  onClick={()=>router.push("/enter-pin?return=/tv")}
+  onClick={()=>{
+
+  sessionStorage.setItem(
+    "alphaBotTVPurchaseState",
+    JSON.stringify({
+      provider,
+      smartCardNumber,
+      tvPackage,
+      amount
+    })
+  );
+
+  router.push("/enter-pin?return=/tv");
+
+}}
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
   {pin ? "••••" : "Enter 4 digit PIN"} →

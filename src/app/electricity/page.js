@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 import SuccessCelebration from "@/components/success-celebration";
@@ -20,6 +20,51 @@ const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
+
+useEffect(()=>{
+
+const savedState =
+sessionStorage.getItem("alphaBotElectricityPurchaseState");
+
+const savedPin =
+sessionStorage.getItem("alphaBotTransactionPin");
+
+if(savedState){
+
+try{
+
+const state=JSON.parse(savedState);
+
+if(state.phone !== undefined)
+setPhone(state.phone);
+
+if(state.disco !== undefined)
+setDisco(state.disco);
+
+if(state.meterNumber !== undefined)
+setMeterNumber(state.meterNumber);
+
+if(state.meterType !== undefined)
+setMeterType(state.meterType);
+
+if(state.amount !== undefined)
+setAmount(state.amount);
+
+}catch(error){
+
+console.log(
+"Unable to restore electricity purchase state:",
+error.message
+);
+
+}
+
+}
+
+if(savedPin)
+setPin(savedPin);
+
+},[]);
 
 
 const payElectricity = async()=>{
@@ -60,6 +105,16 @@ const data = await res.json();
 
 
 if(res.ok){
+
+sessionStorage.removeItem(
+"alphaBotTransactionPin"
+);
+
+sessionStorage.removeItem(
+"alphaBotElectricityPurchaseState"
+);
+
+setPin("");
 
 setMessage(`✅ ${data.message}`);
 setShowSuccess(true);
@@ -274,7 +329,22 @@ Transaction PIN
 
 <button
   type="button"
-  onClick={()=>router.push("/enter-pin?return=/electricity")}
+  onClick={()=>{
+
+  sessionStorage.setItem(
+    "alphaBotElectricityPurchaseState",
+    JSON.stringify({
+      phone,
+      disco,
+      meterNumber,
+      meterType,
+      amount
+    })
+  );
+
+  router.push("/enter-pin?return=/electricity");
+
+}}
   className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
   {pin ? "••••" : "Enter 4 digit PIN"} →

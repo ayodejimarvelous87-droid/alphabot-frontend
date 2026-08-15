@@ -103,10 +103,23 @@ Services 🛠️
 <h2 className="bg-white dark:bg-[#1A1A1E] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2 text-sm font-bold">
 📱 Mobile
 </h2>
+
 <div className="grid grid-cols-2 gap-3 mt-3">
-{products.filter(p=>["airtime","data"].includes(p.type)).map(p=>(
-<ServiceCard key={p._id} icon={getIcon(p)} title={getDisplayName(p)} link={getServiceLink(p.type)} desc={p.network || "Mobile service"} />
-))}
+
+<ServiceCard
+icon="📞"
+title="Airtime"
+link="/airtime"
+desc="Mobile service"
+/>
+
+<ServiceCard
+icon="📶"
+title="Data Plan"
+link="/data"
+desc="Mobile service"
+/>
+
 </div>
 </section>
 

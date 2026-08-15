@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
 import Link from "next/link";
 import SuccessCelebration from "@/components/success-celebration";
@@ -18,6 +18,45 @@ const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
+
+useEffect(()=>{
+
+const savedState =
+sessionStorage.getItem("alphaBotExamPinPurchaseState");
+
+const savedPin =
+sessionStorage.getItem("alphaBotTransactionPin");
+
+if(savedState){
+
+try{
+
+const state=JSON.parse(savedState);
+
+if(state.phone !== undefined)
+setPhone(state.phone);
+
+if(state.exam !== undefined)
+setExam(state.exam);
+
+if(state.quantity !== undefined)
+setQuantity(state.quantity);
+
+}catch(error){
+
+console.log(
+"Unable to restore exam PIN purchase state:",
+error.message
+);
+
+}
+
+}
+
+if(savedPin)
+setPin(savedPin);
+
+},[]);
 
 
 const buyExamPin = async()=>{
@@ -52,6 +91,16 @@ const data=await res.json();
 
 
 if(res.ok){
+
+sessionStorage.removeItem(
+"alphaBotTransactionPin"
+);
+
+sessionStorage.removeItem(
+"alphaBotExamPinPurchaseState"
+);
+
+setPin("");
 
 setMessage(`✅ ${data.message}`);
 setShowSuccess(true);
@@ -151,7 +200,20 @@ onChange={(e)=>setQuantity(e.target.value)}
 
 <button
   type="button"
-  onClick={()=>router.push("/enter-pin?return=/exam-pin")}
+  onClick={()=>{
+
+  sessionStorage.setItem(
+    "alphaBotExamPinPurchaseState",
+    JSON.stringify({
+      phone,
+      exam,
+      quantity
+    })
+  );
+
+  router.push("/enter-pin?return=/exam-pin");
+
+}}
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
   {pin ? "••••" : "Enter 4 digit PIN"} →

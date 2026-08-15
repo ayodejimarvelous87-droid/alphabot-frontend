@@ -11,15 +11,6 @@ export default function Airtime(){
 
 const router=useRouter();
 
-useEffect(()=>{
-  const savedPin=sessionStorage.getItem("alphaBotTransactionPin");
-
-  if(savedPin){
-    setPin(savedPin);
-    sessionStorage.removeItem("alphaBotTransactionPin");
-  }
-},[]);
-
 const searchParams = useSearchParams();
 
 const [phone,setPhone]=useState("");
@@ -30,7 +21,53 @@ const [biometricLoading,setBiometricLoading]=useState(false);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
-  const [beneficiaries,setBeneficiaries]=useState([]);
+const [beneficiaries,setBeneficiaries]=useState([]);
+
+useEffect(()=>{
+
+const savedState =
+sessionStorage.getItem("alphaBotAirtimePurchaseState");
+
+const savedPin =
+sessionStorage.getItem("alphaBotTransactionPin");
+
+if(savedState){
+
+try{
+
+const state=JSON.parse(savedState);
+
+if(state.phone !== undefined)
+setPhone(state.phone);
+
+if(state.network !== undefined)
+setNetwork(state.network);
+
+if(state.amount !== undefined)
+setAmount(state.amount);
+
+}catch(error){
+
+console.log(
+"Unable to restore airtime purchase state:",
+error.message
+);
+
+}
+
+}else{
+
+const savedPhone=searchParams.get("phone");
+
+if(savedPhone)
+setPhone(savedPhone);
+
+}
+
+if(savedPin)
+setPin(savedPin);
+
+},[]);
 
 
 useEffect(()=>{
@@ -97,6 +134,16 @@ const data = await res.json();
 if(res.ok){
 
 localStorage.removeItem("biometricToken");
+
+sessionStorage.removeItem(
+"alphaBotTransactionPin"
+);
+
+sessionStorage.removeItem(
+"alphaBotAirtimePurchaseState"
+);
+
+setPin("");
 
 setMessage(`✅ ${data.message}`);
 setShowSuccess(true);
@@ -249,7 +296,20 @@ Transaction PIN
 
 <button
   type="button"
-  onClick={()=>router.push("/enter-pin?return=/airtime")}
+  onClick={()=>{
+
+  sessionStorage.setItem(
+    "alphaBotAirtimePurchaseState",
+    JSON.stringify({
+      phone,
+      network,
+      amount
+    })
+  );
+
+  router.push("/enter-pin?return=/airtime");
+
+}}
   className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
   {pin ? "••••" : "Enter 4-digit PIN"} →

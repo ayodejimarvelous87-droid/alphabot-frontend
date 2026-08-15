@@ -247,7 +247,7 @@ const cancelPayment=async(id)=>{
 
 try{
 
-await fetch(
+const res = await fetch(
 `${API}/recurring/${id}`,
 {
 method:"DELETE",
@@ -257,14 +257,33 @@ Authorization:`Bearer ${token}`
 }
 );
 
-setMessage("✅ Payment cancelled");
+const data = await res.json();
 
-loadPayments();
+if(!res.ok){
+
+throw new Error(
+data?.message || "Failed to cancel payment"
+);
+
+}
+
+setPayments(prev =>
+prev.filter(item => item._id !== id)
+);
+
+setMessage("✅ Payment cancelled");
 
 
 }catch(error){
 
-setMessage("❌ Error cancelling payment");
+console.log(
+"Cancel payment error:",
+error
+);
+
+setMessage(
+`❌ ${error.message || "Error cancelling payment"}`
+);
 
 }
 
