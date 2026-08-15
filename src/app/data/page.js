@@ -469,7 +469,11 @@ value={index}
 plan.reseller_price ||
 plan.price}
 
-({plan.validity || plan.day+" Days"})
+{plan.validity
+  ? `(${plan.validity})`
+  : plan.day
+    ? `(${plan.day} Days)`
+    : ""}
 
 </option>
 
