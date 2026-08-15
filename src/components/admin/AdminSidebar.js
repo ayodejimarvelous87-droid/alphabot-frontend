@@ -89,10 +89,6 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 💳 Transactions
 </Link>
 
-<Link href="/admin/withdrawals" className="block p-2 hover:bg-[#18181B] rounded">
-💸 Withdrawals
-</Link>
-
 <Link href="/admin/blog-payouts" className="block p-2 hover:bg-[#18181B] rounded">
 📝 Blog Payouts
 </Link>
