@@ -18,7 +18,6 @@ const [disco,setDisco]=useState("ikeja-electric");
 const [meterNumber,setMeterNumber]=useState("");
 const [meterType,setMeterType]=useState("prepaid");
 const [amount,setAmount]=useState("");
-const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
@@ -29,9 +28,6 @@ useEffect(()=>{
 
 const savedState =
 sessionStorage.getItem("alphaBotElectricityPurchaseState");
-
-const savedPin =
-sessionStorage.getItem("alphaBotTransactionPin");
 
 if(savedState){
 
@@ -65,70 +61,9 @@ error.message
 
 }
 
-if(savedPin)
-setPin(savedPin);
-
 setPurchaseStateRestored(true);
 
 },[searchParams]);
-
-
-/*
-========================================
-AUTO-SUBMIT AFTER ELECTRICITY PIN AUTHORIZATION
-========================================
-*/
-
-useEffect(()=>{
-
-const authorized = searchParams.get("authorized");
-const service = searchParams.get("service");
-
-if(
-authorized !== "1" ||
-service !== "electricity" ||
-!purchaseStateRestored
-){
-return;
-}
-
-const pending =
-sessionStorage.getItem(
-  "alphaBotElectricityAuthorizationPending"
-);
-
-if(pending !== "1"){
-return;
-}
-
-if(
-!phone ||
-!disco ||
-!meterNumber ||
-!amount ||
-pin.length !== 4
-){
-return;
-}
-
-sessionStorage.removeItem(
-  "alphaBotElectricityAuthorizationPending"
-);
-
-router.replace("/electricity");
-
-payElectricity();
-
-},[
-searchParams,
-router,
-purchaseStateRestored,
-phone,
-disco,
-meterNumber,
-amount,
-pin
-]);
 
 
 const payElectricity = async()=>{
@@ -161,7 +96,6 @@ disco,
 meterNumber,
 meterType,
 amount:Number(amount),
-pin: biometricToken ? undefined : pin,
 biometricToken: biometricToken || undefined
 })
 }
@@ -174,14 +108,8 @@ const data = await res.json();
 if(res.ok){
 
 sessionStorage.removeItem(
-"alphaBotTransactionPin"
-);
-
-sessionStorage.removeItem(
 "alphaBotElectricityPurchaseState"
 );
-
-setPin("");
 
 setMessage(`✅ ${data.message}`);
 setShowSuccess(true);
@@ -431,7 +359,7 @@ Transaction PIN
   disabled={loading || biometricLoading}
   className="w-full bg-[#18181B] border border-zinc-800 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition"
 >
-  {pin ? "•••• PIN AUTHORIZED" : "🔐 Enter 4-digit PIN"}
+  🔐 Enter 4-digit PIN
 </button>
 
 

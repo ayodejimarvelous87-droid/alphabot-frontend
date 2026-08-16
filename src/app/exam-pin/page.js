@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
@@ -11,12 +11,9 @@ import { authenticateWithBiometric } from "@/lib/biometric";
 export default function Page(){
 
 const router=useRouter();
-const searchParams=useSearchParams();
-
 const [phone,setPhone]=useState("");
 const [exam,setExam]=useState("WAEC");
 const [quantity,setQuantity]=useState(1);
-const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [biometricLoading,setBiometricLoading]=useState(false);
@@ -28,9 +25,6 @@ useEffect(()=>{
 
 const savedState =
 sessionStorage.getItem("alphaBotExamPinPurchaseState");
-
-const savedPin =
-sessionStorage.getItem("alphaBotTransactionPin");
 
 if(savedState){
 
@@ -58,50 +52,9 @@ error.message
 
 }
 
-if(savedPin)
-setPin(savedPin);
-
 setPurchaseStateRestored(true);
 
 },[]);
-
-
-useEffect(()=>{
-
-const authorized = searchParams.get("authorized");
-const service = searchParams.get("service");
-
-if(
-  authorized !== "1" ||
-  service !== "exam-pin" ||
-  !purchaseStateRestored
-){
-  return;
-}
-
-const pending =
-sessionStorage.getItem(
-  "alphaBotExamPinAuthorizationPending"
-);
-
-if(pending !== "1"){
-  return;
-}
-
-sessionStorage.removeItem(
-  "alphaBotExamPinAuthorizationPending"
-);
-
-router.replace("/exam-pin");
-
-buyExamPin();
-
-},[
-searchParams,
-router,
-purchaseStateRestored
-]);
-
 
 
 const buyExamPin = async()=>{
@@ -115,7 +68,7 @@ if(
   !phone ||
   !exam ||
   !quantity ||
-  (!pin && !biometricToken)
+  !biometricToken
 ){
   setMessage("❌ Please authorize the transaction");
   return;
@@ -156,7 +109,6 @@ body:JSON.stringify({
 phone,
 exam,
 quantity:Number(quantity),
-pin: biometricToken ? undefined : pin,
 biometricToken: biometricToken || undefined
 })
 }
@@ -167,14 +119,8 @@ const data=await res.json();
 if(res.ok){
 
 sessionStorage.removeItem(
-"alphaBotTransactionPin"
-);
-
-sessionStorage.removeItem(
 "alphaBotExamPinPurchaseState"
 );
-
-setPin("");
 
 setPurchaseIdempotencyKey("");
 
@@ -304,7 +250,7 @@ onChange={(e)=>setQuantity(e.target.value)}
 }}
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
-  {pin ? "••••" : "Enter 4 digit PIN"} →
+  Enter 4 digit PIN →
 </button>
 
 

@@ -16,7 +16,6 @@ const [provider,setProvider]=useState("");
 const [smartCardNumber,setSmartCardNumber]=useState("");
 const [tvPackage,setTvPackage]=useState("");
 const [amount,setAmount]=useState("");
-const [pin,setPin]=useState("");
 
 const [plans,setPlans]=useState([]);
 const [providers,setProviders]=useState([]);
@@ -30,9 +29,6 @@ useEffect(()=>{
 
 const savedState =
 sessionStorage.getItem("alphaBotTVPurchaseState");
-
-const savedPin =
-sessionStorage.getItem("alphaBotTransactionPin");
 
 if(savedState){
 
@@ -63,119 +59,13 @@ error.message
 
 }
 
-if(savedPin)
-setPin(savedPin);
-
 setPurchaseStateRestored(true);
 
 },[]);
 
 
 
-/*
-========================================
-AUTO-SUBMIT AFTER TV PIN AUTHORIZATION
-========================================
-*/
-
 useEffect(()=>{
-
-const authorized = searchParams.get("authorized");
-const service = searchParams.get("service");
-
-if(
-authorized !== "1" ||
-service !== "tv" ||
-!purchaseStateRestored
-){
-return;
-}
-
-const pending =
-sessionStorage.getItem(
-  "alphaBotTVAuthorizationPending"
-);
-
-if(pending !== "1"){
-return;
-}
-
-if(
-!provider ||
-!smartCardNumber ||
-!tvPackage ||
-!amount ||
-pin.length !== 4
-){
-return;
-}
-
-sessionStorage.removeItem(
-  "alphaBotTVAuthorizationPending"
-);
-
-router.replace("/tv");
-
-subscribeTV();
-
-},[
-searchParams,
-router,
-purchaseStateRestored,
-provider,
-smartCardNumber,
-tvPackage,
-amount,
-pin
-]);
-
-
-useEffect(()=>{
-
-const loadPlans=async()=>{
-
-try{
-
-const token=localStorage.getItem("token");
-
-const res=await fetch(
-"https://api.alphabothq.com/tv/plans",
-{
-headers:{
-Authorization:`Bearer ${token}`
-}
-}
-);
-
-
-const data=await res.json();
-
-
-if(data.success){
-
-setPlans(data.plans);
-setProviders([...new Set(data.plans.map(item=>item.provider))]);
-setProvider(data.plans[0]?.provider || "");
-
-}
-
-
-}catch(error){
-
-console.log(error);
-
-}
-
-};
-
-
-loadPlans();
-
-},[]);
-
-
-
-
 
 const subscribeTV=async()=>{
 
@@ -211,7 +101,6 @@ provider,
 smartCardNumber,
 variation_id:tvPackage,
 amount:Number(amount),
-pin: biometricToken ? undefined : pin,
 biometricToken: biometricToken || undefined
 
 })
@@ -228,14 +117,8 @@ const data=await res.json();
 if(res.ok){
 
 sessionStorage.removeItem(
-"alphaBotTransactionPin"
-);
-
-sessionStorage.removeItem(
 "alphaBotTVPurchaseState"
 );
-
-setPin("");
 
 setMessage(`✅ ${data.message}`);
 setShowSuccess(true);

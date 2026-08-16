@@ -16,7 +16,6 @@ const searchParams = useSearchParams();
 const [phone,setPhone]=useState("");
 const [network,setNetwork]=useState("MTN");
 const [amount,setAmount]=useState("");
-const [pin,setPin]=useState("");
 const [biometricLoading,setBiometricLoading]=useState(false);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
@@ -28,10 +27,6 @@ useEffect(()=>{
 
 const savedState =
 sessionStorage.getItem("alphaBotAirtimePurchaseState");
-
-const savedPin =
-sessionStorage.getItem("alphaBotTransactionPin");
-
 if(savedState){
 
 try{
@@ -64,10 +59,6 @@ if(savedPhone)
 setPhone(savedPhone);
 
 }
-
-if(savedPin)
-setPin(savedPin);
-
 setPurchaseStateRestored(true);
 
 },[searchParams]);
@@ -101,61 +92,6 @@ loadBeneficiaries();
 },[]);
 
 
-/*
-========================================
-AUTO-SUBMIT AFTER PIN AUTHORIZATION
-========================================
-*/
-
-useEffect(()=>{
-
-const authorized = searchParams.get("authorized");
-const service = searchParams.get("service");
-
-if(
-authorized !== "1" ||
-service !== "airtime" ||
-!purchaseStateRestored
-){
-return;
-}
-
-const pending =
-sessionStorage.getItem(
-  "alphaBotAirtimeAuthorizationPending"
-);
-
-if(pending !== "1"){
-return;
-}
-
-if(
-!phone ||
-!network ||
-!amount ||
-pin.length !== 4
-){
-return;
-}
-
-sessionStorage.removeItem(
-  "alphaBotAirtimeAuthorizationPending"
-);
-
-router.replace("/airtime");
-
-buyAirtime();
-
-},[
-searchParams,
-router,
-purchaseStateRestored,
-phone,
-network,
-amount,
-pin
-]);
-
 const buyAirtime = async()=>{
 
 try{
@@ -180,7 +116,6 @@ body:JSON.stringify({
 phone,
 network,
 amount:Number(amount),
-pin: biometricToken ? undefined : pin,
 biometricToken: biometricToken || undefined
 })
 }
@@ -192,19 +127,14 @@ const data = await res.json();
 
 if(res.ok){
 
-sessionStorage.removeItem(
-"alphaBotTransactionPin"
+sessionStorage.setItem(
+  "alphaBotTransactionResult",
+  JSON.stringify(data)
 );
-
 sessionStorage.removeItem(
 "alphaBotAirtimePurchaseState"
 );
-
-setPin("");
-
-setMessage(`✅ ${data.message}`);
-setShowSuccess(true);
-setTimeout(()=>setShowSuccess(false),3000);
+router.push("/transaction-result");
 
 }else{
 
@@ -352,28 +282,24 @@ onChange={(e)=>setAmount(e.target.value)}
 Transaction PIN
 </p>
 
-
 <button
   type="button"
-  onClick={()=>{
+  onClick={() => {
+    sessionStorage.setItem(
+      "alphaBotAirtimePurchaseState",
+      JSON.stringify({
+        phone,
+        network,
+        amount
+      })
+    );
 
-  sessionStorage.setItem(
-    "alphaBotAirtimePurchaseState",
-    JSON.stringify({
-      phone,
-      network,
-      amount
-    })
-  );
-
-  router.push("/enter-pin?return=/airtime&service=airtime");
-
-}}
+    router.push("/enter-pin?return=/airtime&service=airtime");
+  }}
   className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
-  {pin ? "••••" : "Enter 4-digit PIN"} →
+  Enter 4-digit PIN →
 </button>
-
 
 </div>
 

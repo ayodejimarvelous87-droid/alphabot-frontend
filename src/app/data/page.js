@@ -21,7 +21,6 @@ const [network,setNetwork]=useState("");
 const [category,setCategory]=useState("");
 const [plans,setPlans]=useState({});
 const [selectedPlan,setSelectedPlan]=useState("");
-const [pin,setPin]=useState("");
 const [biometricLoading,setBiometricLoading]=useState(false);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
@@ -33,10 +32,6 @@ useEffect(() => {
 
   const savedState =
     sessionStorage.getItem("alphaBotDataPurchaseState");
-
-  const savedPin =
-    sessionStorage.getItem("alphaBotTransactionPin");
-
   if (savedState) {
 
     try {
@@ -78,12 +73,6 @@ useEffect(() => {
     }
 
   }
-
-  if (savedPin) {
-    setPin(savedPin);
-  }
-
-
   const loadBeneficiaries = async () => {
 
     try {
@@ -240,62 +229,6 @@ const filteredPlans =
 
   });
 
-/*
-========================================
-AUTO-SUBMIT AFTER DATA PIN AUTHORIZATION
-========================================
-*/
-
-useEffect(()=>{
-
-const authorized = searchParams.get("authorized");
-const service = searchParams.get("service");
-
-if(
-authorized !== "1" ||
-service !== "data" ||
-!purchaseStateRestored
-){
-return;
-}
-
-const pending =
-sessionStorage.getItem(
-  "alphaBotDataAuthorizationPending"
-);
-
-if(pending !== "1"){
-return;
-}
-
-if(
-!phone ||
-!network ||
-selectedPlan === "" ||
-pin.length !== 4
-){
-return;
-}
-
-sessionStorage.removeItem(
-  "alphaBotDataAuthorizationPending"
-);
-
-router.replace("/data");
-
-buyData();
-
-},[
-searchParams,
-router,
-purchaseStateRestored,
-phone,
-network,
-selectedPlan,
-pin
-]);
-
-
 const buyData = async()=>{
 
 
@@ -368,7 +301,6 @@ network:
   "",
 plan:selected.data_plan || selected.name || selected.datasize,
 amount:Number(selected.display_price || selected.reseller_price || selected.price),
-pin: biometricToken ? undefined : pin,
 biometricToken: biometricToken || undefined,
 provider:selected.provider,
 variation_id:
@@ -390,25 +322,19 @@ if(res.ok){
 localStorage.removeItem("biometricToken");
 
 sessionStorage.removeItem(
-  "alphaBotTransactionPin"
-);
-
-sessionStorage.removeItem(
   "alphaBotDataPurchaseState"
 );
 
-setPin("");
-
-setMessage(
-  "✅ Data purchase successful"
+sessionStorage.setItem(
+  "alphaBotTransactionResult",
+  JSON.stringify({
+    ...result,
+    status: result.status || "success",
+    returnPath: "/data"
+  })
 );
 
-setShowSuccess(true);
-
-setTimeout(
-  () => setShowSuccess(false),
-  3000
-);
+router.push("/transaction-result");
 
 }else{
 
@@ -689,19 +615,7 @@ className="w-full bg-zinc-900 border border-zinc-700 text-white py-3 rounded-2xl
 </button>
 
 
-<button
 
-onClick={buyData}
-
-disabled={loading}
-
-className="w-full bg-white text-black py-3 rounded-2xl font-black text-lg active:scale-95 transition"
-
->
-
-{loading ? "Processing..." : "⚡ Buy Data"}
-
-</button>
 
 
 

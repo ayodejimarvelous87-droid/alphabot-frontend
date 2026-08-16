@@ -19,7 +19,6 @@ const [provider,setProvider]=useState("");
   const [services,setServices]=useState([]);
   const [servicesLoading,setServicesLoading]=useState(true);
 const [amount,setAmount]=useState("");
-const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
@@ -32,9 +31,6 @@ useEffect(()=>{
 
 const savedState =
 sessionStorage.getItem("alphaBotBettingPurchaseState");
-
-const savedPin =
-sessionStorage.getItem("alphaBotTransactionPin");
 
 if(savedState){
 
@@ -61,9 +57,6 @@ error.message
 }
 
 }
-
-if(savedPin)
-setPin(savedPin);
 
 setPurchaseStateRestored(true);
 
@@ -111,41 +104,6 @@ setPurchaseStateRestored(true);
 
 
 
-useEffect(()=>{
-
-const authorized = searchParams.get("authorized");
-const service = searchParams.get("service");
-
-if(
-authorized !== "1" ||
-service !== "betting" ||
-!purchaseStateRestored
-){
-return;
-}
-
-const pending =
-sessionStorage.getItem(
-"alphaBotBettingAuthorizationPending"
-);
-
-if(pending !== "1"){
-return;
-}
-
-sessionStorage.removeItem(
-"alphaBotBettingAuthorizationPending"
-);
-
-router.replace("/betting");
-
-fundBetting();
-
-},[
-searchParams,
-router,
-purchaseStateRestored
-]);
 const fundBetting=async()=>{
 
 try{
@@ -157,7 +115,7 @@ if(
   !phone ||
   !provider ||
   !amount ||
-  (!pin && !biometricToken)
+  !biometricToken
 ){
   setMessage("❌ Please authorize the transaction");
   return;
@@ -200,7 +158,6 @@ body:JSON.stringify({
 customer_id:phone,
 service_id:provider,
 amount:Number(amount),
-pin: biometricToken ? undefined : pin,
 biometricToken: biometricToken || undefined
 })
 }
@@ -213,14 +170,8 @@ const data=await res.json();
   if(res.ok){
 
     sessionStorage.removeItem(
-      "alphaBotTransactionPin"
-    );
-
-    sessionStorage.removeItem(
       "alphaBotBettingPurchaseState"
     );
-
-    setPin("");
 
     setPurchaseIdempotencyKey("");
 
@@ -385,7 +336,7 @@ Betting Platform
 }}
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
-  {pin ? "••••" : "Enter 4 digit PIN"} →
+  Enter 4 digit PIN →
 </button>
 
 
