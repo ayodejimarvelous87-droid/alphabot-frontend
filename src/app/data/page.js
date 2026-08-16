@@ -132,7 +132,7 @@ const res = await fetch(
 
 const data = await res.json();
 
-const networksData = data.networks || {};
+const networksData = data.providers || {};
 
 setPlans(networksData);
 
