@@ -14,7 +14,6 @@ const [phone,setPhone]=useState("");
 const [network,setNetwork]=useState("MTN");
 const [amount,setAmount]=useState("");
 const [quantity,setQuantity]=useState(1);
-const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [epinResult,setEpinResult]=useState(null);
 const [loading,setLoading]=useState(false);
@@ -29,10 +28,6 @@ useEffect(()=>{
 
 const savedState =
 sessionStorage.getItem("alphaBotRechargePinPurchaseState");
-
-const savedPin =
-sessionStorage.getItem("alphaBotTransactionPin");
-
 if(savedState){
 
 try{
@@ -58,15 +53,6 @@ console.log(error);
 }
 
 }
-
-if(savedPin){
-
-setPin(savedPin);
-
-}
-
-sessionStorage.removeItem("alphaBotTransactionPin");
-
 
 
 const loadData=async()=>{
@@ -109,6 +95,107 @@ loadData();
 
 },[]);
 
+
+
+
+useEffect(()=>{
+
+const rawResult =
+sessionStorage.getItem(
+  "alphaBotRechargePinResult"
+);
+
+if(!rawResult) return;
+
+sessionStorage.removeItem(
+  "alphaBotRechargePinResult"
+);
+
+try{
+
+const result = JSON.parse(rawResult);
+
+if(
+  result.status === "failed" ||
+  result.status === "refunded"
+){
+
+setMessage(
+  result.status === "refunded"
+    ? "↩️ Your ePIN order was refunded."
+    : "❌ " + (
+        result.message ||
+        result.error ||
+        "Recharge PIN purchase failed"
+      )
+);
+
+return;
+
+}
+
+setEpinResult(result.epin || null);
+
+const reference =
+  result.epin?.reference ||
+  result.transaction?.reference ||
+  result.reference;
+
+const pins =
+  Array.isArray(result.epin?.pins)
+    ? result.epin.pins.filter(Boolean)
+    : [];
+
+if(
+  result.status === "processing" ||
+  !pins.length
+){
+
+if(reference){
+
+setMessage(
+  "⏳ Recharge PIN order is processing. Waiting for the PIN..."
+);
+
+startEPinPolling(reference);
+
+}else{
+
+setMessage(
+  "⏳ Recharge PIN order is processing."
+);
+
+}
+
+return;
+
+}
+
+setMessage(
+  "✅ Recharge PIN is ready!"
+);
+
+setShowSuccess(true);
+
+setTimeout(
+  ()=>setShowSuccess(false),
+  3000
+);
+
+}catch(error){
+
+console.log(
+  "Unable to restore recharge PIN result:",
+  error.message
+);
+
+setMessage(
+  "❌ Unable to read recharge PIN result"
+);
+
+}
+
+},[]);
 
 
 
@@ -279,130 +366,6 @@ const copyPin = async(pin)=>{
 };
 
 
-const buyRechargePin=async()=>{
-
-try{
-
-setLoading(true);
-setMessage("Processing...");
-setEpinResult(null);
-
-
-const idempotencyKey =
-sessionStorage.getItem("alphaBotEPinIdempotencyKey") ||
-(
-  globalThis.crypto?.randomUUID
-    ? globalThis.crypto.randomUUID()
-    : `EPIN-${Date.now()}-${Math.random().toString(36).slice(2)}`
-);
-
-sessionStorage.setItem(
-"alphaBotEPinIdempotencyKey",
-idempotencyKey
-);
-
-const res=await fetch(
-"https://api.alphabothq.com/epin/buy",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-Authorization:`Bearer ${localStorage.getItem("token")}`,
-"Idempotency-Key":idempotencyKey
-},
-
-body:JSON.stringify({
-
-phone,
-network,
-amount:Number(amount),
-quantity:Number(quantity),
-pin
-
-})
-
-}
-);
-
-
-const data=await res.json();
-
-
-if(res.ok){
-
-sessionStorage.removeItem(
-"alphaBotTransactionPin"
-);
-
-sessionStorage.removeItem(
-"alphaBotRechargePinPurchaseState"
-);
-
-sessionStorage.removeItem(
-"alphaBotEPinIdempotencyKey"
-);
-
-setPin("");
-
-
-
-setMessage(
-data.status === "processing"
-? "⏳ Recharge PIN order is processing"
-: "✅ Recharge PIN purchased successfully"
-);
-
-if(data.status !== "processing"){
-  setShowSuccess(true);
-  setTimeout(()=>setShowSuccess(false),3000);
-}
-
-setEpinResult(data.epin);
-
-const reference =
-  data.epin?.reference ||
-  data.transaction?.reference ||
-  data.reference;
-
-if(reference){
-
-  setEpinReference(reference);
-
-  if(
-    data.status === "processing" ||
-    !data.epin?.pins?.length
-  ){
-
-    setMessage(
-      "⏳ Recharge PIN order is processing. Waiting for the PIN..."
-    );
-
-    startEPinPolling(reference);
-
-  }
-
-}
-
-
-}else{
-
-setMessage("❌ "+data.message);
-
-}
-
-
-}catch(error){
-
-setMessage("❌ Connection error");
-
-}finally{
-
-setLoading(false);
-
-}
-
-
-};
 
 
 
@@ -522,27 +485,9 @@ Transaction PIN
 </p>
 
 
-<button
-  type="button"
-  onClick={()=>{
-
-    sessionStorage.setItem(
-      "alphaBotRechargePinPurchaseState",
-      JSON.stringify({
-        phone,
-        network,
-        amount,
-        quantity
-      })
-    );
-
-    router.push("/enter-pin?return=/recharge-pin&service=recharge-pin");
-
-  }}
-  className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
->
-  {pin ? "••••" : "Enter 4 digit PIN"} →
-</button>
+<div className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white">
+  Enter 4 digit PIN →
+</div>
 
 
 </div>
@@ -555,7 +500,23 @@ Transaction PIN
 
 <button
 
-onClick={buyRechargePin}
+onClick={()=>{
+
+sessionStorage.setItem(
+  "alphaBotRechargePinPurchaseState",
+  JSON.stringify({
+    phone,
+    network,
+    amount,
+    quantity
+  })
+);
+
+router.push(
+  "/enter-pin?return=/recharge-pin&service=recharge-pin"
+);
+
+}}
 
 disabled={loading}
 
@@ -563,7 +524,7 @@ className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
 
 >
 
-{loading ? "Processing..." : "⚡ Buy Recharge PIN"}
+⚡ Buy Recharge PIN
 
 </button>
 
