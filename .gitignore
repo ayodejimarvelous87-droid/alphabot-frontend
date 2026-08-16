@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local audit and recovery backups
+data-plans-audit.json
+src.before-domain-migration/
+src.before-financial-removal/
+src/app/data/page.js.before-network-category
+src/app/recharge-pin/page.js.bak
