@@ -1,15 +1,17 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 import SuccessCelebration from "@/components/success-celebration";
+import { authenticateWithBiometric } from "@/lib/biometric";
 
 export default function Page(){
 
 const router=useRouter();
+const searchParams=useSearchParams();
 
 const [phone,setPhone]=useState("");
 const [disco,setDisco]=useState("ikeja-electric");
@@ -20,6 +22,8 @@ const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
+const [biometricLoading,setBiometricLoading]=useState(false);
+const [purchaseStateRestored,setPurchaseStateRestored]=useState(false);
 
 useEffect(()=>{
 
@@ -64,7 +68,67 @@ error.message
 if(savedPin)
 setPin(savedPin);
 
-},[]);
+setPurchaseStateRestored(true);
+
+},[searchParams]);
+
+
+/*
+========================================
+AUTO-SUBMIT AFTER ELECTRICITY PIN AUTHORIZATION
+========================================
+*/
+
+useEffect(()=>{
+
+const authorized = searchParams.get("authorized");
+const service = searchParams.get("service");
+
+if(
+authorized !== "1" ||
+service !== "electricity" ||
+!purchaseStateRestored
+){
+return;
+}
+
+const pending =
+sessionStorage.getItem(
+  "alphaBotElectricityAuthorizationPending"
+);
+
+if(pending !== "1"){
+return;
+}
+
+if(
+!phone ||
+!disco ||
+!meterNumber ||
+!amount ||
+pin.length !== 4
+){
+return;
+}
+
+sessionStorage.removeItem(
+  "alphaBotElectricityAuthorizationPending"
+);
+
+router.replace("/electricity");
+
+payElectricity();
+
+},[
+searchParams,
+router,
+purchaseStateRestored,
+phone,
+disco,
+meterNumber,
+amount,
+pin
+]);
 
 
 const payElectricity = async()=>{
@@ -75,6 +139,8 @@ setLoading(true);
 setMessage("Processing...");
 
 const token = localStorage.getItem("token");
+const biometricToken =
+localStorage.getItem("biometricToken");
 
 
 const res = await fetch(
@@ -95,7 +161,8 @@ disco,
 meterNumber,
 meterType,
 amount:Number(amount),
-pin
+pin: biometricToken ? undefined : pin,
+biometricToken: biometricToken || undefined
 })
 }
 );
@@ -132,6 +199,8 @@ setMessage(`❌ ${data.message}`);
 setMessage("❌ Connection error");
 
 }finally{
+
+localStorage.removeItem("biometricToken");
 
 setLoading(false);
 
@@ -327,6 +396,18 @@ Transaction PIN
 </p>
 
 
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
 <button
   type="button"
   onClick={()=>{
@@ -342,35 +423,52 @@ Transaction PIN
     })
   );
 
-  router.push("/enter-pin?return=/electricity");
+  router.push(
+    "/enter-pin?return=/electricity&service=electricity"
+  );
 
 }}
-  className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+  disabled={loading || biometricLoading}
+  className="w-full bg-[#18181B] border border-zinc-800 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition"
 >
-  {pin ? "••••" : "Enter 4 digit PIN"} →
+  {pin ? "•••• PIN AUTHORIZED" : "🔐 Enter 4-digit PIN"}
 </button>
-
-
-</div>
-
-
-</div>
-
-
-
 
 
 <button
 
-onClick={payElectricity}
+onClick={async()=>{
 
-disabled={loading}
+try{
 
-className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg active:scale-95 transition"
+setBiometricLoading(true);
+setMessage("Touch your fingerprint...");
+
+await authenticateWithBiometric();
+
+setMessage("Fingerprint verified.");
+
+await payElectricity();
+
+}catch(error){
+
+localStorage.removeItem("biometricToken");
+setMessage("❌ " + error.message);
+
+}finally{
+
+setBiometricLoading(false);
+
+}
+
+}}
+
+disabled={loading || biometricLoading}
+
+className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition"
 
 >
-
-{loading ? "Processing..." : "⚡ Pay Electricity"}
+{biometricLoading ? "Touch fingerprint..." : "👆 Use Fingerprint"}
 
 </button>
 

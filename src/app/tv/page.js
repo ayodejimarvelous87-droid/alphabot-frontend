@@ -1,14 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import SuccessCelebration from "@/components/success-celebration";
+import { authenticateWithBiometric } from "@/lib/biometric";
 
 export default function Page(){
 
 const router=useRouter();
+const searchParams = useSearchParams();
 
 const [provider,setProvider]=useState("");
 const [smartCardNumber,setSmartCardNumber]=useState("");
@@ -21,6 +23,8 @@ const [providers,setProviders]=useState([]);
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
+const [biometricLoading,setBiometricLoading]=useState(false);
+const [purchaseStateRestored,setPurchaseStateRestored]=useState(false);
 
 useEffect(()=>{
 
@@ -62,8 +66,68 @@ error.message
 if(savedPin)
 setPin(savedPin);
 
+setPurchaseStateRestored(true);
+
 },[]);
 
+
+
+/*
+========================================
+AUTO-SUBMIT AFTER TV PIN AUTHORIZATION
+========================================
+*/
+
+useEffect(()=>{
+
+const authorized = searchParams.get("authorized");
+const service = searchParams.get("service");
+
+if(
+authorized !== "1" ||
+service !== "tv" ||
+!purchaseStateRestored
+){
+return;
+}
+
+const pending =
+sessionStorage.getItem(
+  "alphaBotTVAuthorizationPending"
+);
+
+if(pending !== "1"){
+return;
+}
+
+if(
+!provider ||
+!smartCardNumber ||
+!tvPackage ||
+!amount ||
+pin.length !== 4
+){
+return;
+}
+
+sessionStorage.removeItem(
+  "alphaBotTVAuthorizationPending"
+);
+
+router.replace("/tv");
+
+subscribeTV();
+
+},[
+searchParams,
+router,
+purchaseStateRestored,
+provider,
+smartCardNumber,
+tvPackage,
+amount,
+pin
+]);
 
 
 useEffect(()=>{
@@ -124,6 +188,9 @@ setMessage("Processing...");
 
 const token=localStorage.getItem("token");
 
+const biometricToken =
+localStorage.getItem("biometricToken");
+
 
 const res=await fetch(
 "https://api.alphabothq.com/tv/subscribe",
@@ -144,7 +211,8 @@ provider,
 smartCardNumber,
 variation_id:tvPackage,
 amount:Number(amount),
-pin
+pin: biometricToken ? undefined : pin,
+biometricToken: biometricToken || undefined
 
 })
 
@@ -187,6 +255,8 @@ setMessage("❌ Connection error");
 
 
 }finally{
+
+localStorage.removeItem("biometricToken");
 
 setLoading(false);
 
@@ -406,7 +476,9 @@ onChange={(e)=>setAmount(e.target.value)}
     })
   );
 
-  router.push("/enter-pin?return=/tv");
+  router.push(
+    "/enter-pin?return=/tv&service=tv"
+  );
 
 }}
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
@@ -421,23 +493,45 @@ onChange={(e)=>setAmount(e.target.value)}
 
 <button
 
-onClick={subscribeTV}
+type="button"
 
-disabled={loading}
+onClick={async()=>{
 
-className="w-full bg-white text-black rounded-xl py-3 font-bold disabled:bg-zinc-700 disabled:text-zinc-400 active:scale-95 transition"
+try{
 
->
+setBiometricLoading(true);
 
+setMessage("Touch your fingerprint...");
 
-{
+await authenticateWithBiometric();
 
-loading
-?"Processing..."
-:"Subscribe TV"
+setMessage("Fingerprint verified.");
+
+await subscribeTV();
+
+}catch(error){
+
+localStorage.removeItem("biometricToken");
+
+setMessage("❌ " + error.message);
+
+}finally{
+
+setBiometricLoading(false);
 
 }
 
+}}
+
+disabled={loading || biometricLoading}
+
+className="w-full bg-zinc-900 border border-zinc-700 text-white rounded-xl py-3 font-bold active:scale-95 transition"
+
+>
+
+{biometricLoading
+  ? "Touch fingerprint..."
+  : "👆 Use Fingerprint"}
 
 </button>
 

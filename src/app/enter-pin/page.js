@@ -26,7 +26,62 @@ export default function EnterPin() {
 
     sessionStorage.setItem("alphaBotTransactionPin", pin);
 
-    router.push(returnPath);
+    const service = searchParams.get("service");
+
+    if (service === "airtime") {
+      sessionStorage.setItem(
+        "alphaBotAirtimeAuthorizationPending",
+        "1"
+      );
+    }
+
+    if (service === "data") {
+      sessionStorage.setItem(
+        "alphaBotDataAuthorizationPending",
+        "1"
+      );
+    }
+
+    if (service === "electricity") {
+      sessionStorage.setItem(
+        "alphaBotElectricityAuthorizationPending",
+        "1"
+      );
+    }
+
+    if (service === "tv") {
+      sessionStorage.setItem(
+        "alphaBotTVAuthorizationPending",
+        "1"
+      );
+    }
+
+    if (service === "betting") {
+      sessionStorage.setItem(
+        "alphaBotBettingAuthorizationPending",
+        "1"
+      );
+    }
+
+    if (service === "exam-pin") {
+      sessionStorage.setItem(
+        "alphaBotExamPinAuthorizationPending",
+        "1"
+      );
+    }
+
+    if (service === "recharge-pin") {
+      sessionStorage.setItem(
+        "alphaBotEPinAuthorizationPending",
+        "1"
+      );
+    }
+
+    const separator = returnPath.includes("?") ? "&" : "?";
+
+    router.push(
+      `${returnPath}${separator}authorized=1${service ? `&service=${service}` : ""}`
+    );
   };
 
   return (

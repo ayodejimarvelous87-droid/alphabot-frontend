@@ -27,6 +27,7 @@ const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
   const [search,setSearch]=useState("");
   const [beneficiaries,setBeneficiaries]=useState([]);
+const [purchaseStateRestored,setPurchaseStateRestored]=useState(false);
 
 useEffect(() => {
 
@@ -117,7 +118,9 @@ useEffect(() => {
 
   loadBeneficiaries();
 
-}, []);
+  setPurchaseStateRestored(true);
+
+}, [searchParams]);
 
 
 useEffect(()=>{
@@ -236,6 +239,62 @@ const filteredPlans =
     );
 
   });
+
+/*
+========================================
+AUTO-SUBMIT AFTER DATA PIN AUTHORIZATION
+========================================
+*/
+
+useEffect(()=>{
+
+const authorized = searchParams.get("authorized");
+const service = searchParams.get("service");
+
+if(
+authorized !== "1" ||
+service !== "data" ||
+!purchaseStateRestored
+){
+return;
+}
+
+const pending =
+sessionStorage.getItem(
+  "alphaBotDataAuthorizationPending"
+);
+
+if(pending !== "1"){
+return;
+}
+
+if(
+!phone ||
+!network ||
+selectedPlan === "" ||
+pin.length !== 4
+){
+return;
+}
+
+sessionStorage.removeItem(
+  "alphaBotDataAuthorizationPending"
+);
+
+router.replace("/data");
+
+buyData();
+
+},[
+searchParams,
+router,
+purchaseStateRestored,
+phone,
+network,
+selectedPlan,
+pin
+]);
+
 
 const buyData = async()=>{
 
@@ -368,6 +427,8 @@ setMessage(
 
 
 }finally{
+
+localStorage.removeItem("biometricToken");
 
 setLoading(false);
 
@@ -575,7 +636,7 @@ Transaction PIN
     })
   );
 
-  router.push("/enter-pin?return=/data");
+  router.push("/enter-pin?return=/data&service=data");
 
 }}
   className="w-full mt-3 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
@@ -601,7 +662,9 @@ setMessage("Touch your fingerprint...");
 
 await authenticateWithBiometric();
 
-setMessage("✅ Fingerprint verified. Tap Buy Data.");
+setMessage("Fingerprint verified.");
+
+await buyData();
 
 }catch(error){
 

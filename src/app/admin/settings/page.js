@@ -131,25 +131,46 @@ if(pricingRes.ok){
 
 setSettings(prev=>({
 ...prev,
+
 membershipSilverPrice:
-pricing.membershipSilverPrice ?? pricing.silver ?? 1000,
+pricing.silver?.price ??
+pricing.membershipSilverPrice ??
+1000,
+
 membershipGoldPrice:
-pricing.membershipGoldPrice ?? pricing.gold ?? 2000,
+pricing.gold?.price ??
+pricing.membershipGoldPrice ??
+2000,
+
 membershipDurationDays:
-pricing.membershipDurationDays ?? 30
+pricing.silver?.durationDays ??
+pricing.membershipDurationDays ??
+30
+
 }));
 
 }
 
 if(accountRes.ok){
 
-const a=account.account || account.paymentAccount || account;
+const a =
+account.bank ||
+account.account ||
+account.paymentAccount ||
+account;
 
 setSettings(prev=>({
 ...prev,
-paymentBankName:a.bankName ?? "",
-paymentAccountName:a.accountName ?? "",
-paymentAccountNumber:a.accountNumber ?? ""
+
+paymentBankName:
+a.bankName ?? "",
+
+paymentAccountName:
+a.accountName ?? "",
+
+paymentAccountNumber:
+a.accountNumber ?? ""
+
 }));
 
 }
@@ -332,7 +353,14 @@ onChange={(e)=>setSettings({
 ...settings,
 referralPercentage:Number(e.target.value)
 })}
- />
+/>
+
+<button
+className="bg-black text-white px-5 py-3 rounded-3xl"
+onClick={saveSettings}
+>
+Save Referral Percentage
+</button>
 
 
 <label className="font-bold block">
@@ -349,6 +377,13 @@ onChange={(e)=>setSettings({
 providerMinimumBalance:e.target.value
 })}
 />
+
+<button
+className="bg-black text-white px-5 py-3 rounded-3xl"
+onClick={saveSettings}
+>
+Save Minimum Balance
+</button>
 
 
 <section className="rounded-3xl border border-zinc-800 p-5 space-y-4">

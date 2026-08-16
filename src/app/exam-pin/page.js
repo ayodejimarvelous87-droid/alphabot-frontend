@@ -1,15 +1,17 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useEffect, useState } from "react";
 import PhoneInput from "@/components/PhoneInput";
 import Link from "next/link";
 import SuccessCelebration from "@/components/success-celebration";
+import { authenticateWithBiometric } from "@/lib/biometric";
 
 export default function Page(){
 
 const router=useRouter();
+const searchParams=useSearchParams();
 
 const [phone,setPhone]=useState("");
 const [exam,setExam]=useState("WAEC");
@@ -17,6 +19,9 @@ const [quantity,setQuantity]=useState(1);
 const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
+const [biometricLoading,setBiometricLoading]=useState(false);
+const [purchaseStateRestored,setPurchaseStateRestored]=useState(false);
+const [purchaseIdempotencyKey,setPurchaseIdempotencyKey]=useState("");
 const [showSuccess,setShowSuccess]=useState(false);
 
 useEffect(()=>{
@@ -56,18 +61,87 @@ error.message
 if(savedPin)
 setPin(savedPin);
 
+setPurchaseStateRestored(true);
+
 },[]);
+
+
+useEffect(()=>{
+
+const authorized = searchParams.get("authorized");
+const service = searchParams.get("service");
+
+if(
+  authorized !== "1" ||
+  service !== "exam-pin" ||
+  !purchaseStateRestored
+){
+  return;
+}
+
+const pending =
+sessionStorage.getItem(
+  "alphaBotExamPinAuthorizationPending"
+);
+
+if(pending !== "1"){
+  return;
+}
+
+sessionStorage.removeItem(
+  "alphaBotExamPinAuthorizationPending"
+);
+
+router.replace("/exam-pin");
+
+buyExamPin();
+
+},[
+searchParams,
+router,
+purchaseStateRestored
+]);
+
 
 
 const buyExamPin = async()=>{
 
 try{
 
+const biometricToken =
+localStorage.getItem("biometricToken");
+
+if(
+  !phone ||
+  !exam ||
+  !quantity ||
+  (!pin && !biometricToken)
+){
+  setMessage("❌ Please authorize the transaction");
+  return;
+}
+
+if(Number(quantity) <= 0){
+  setMessage("❌ Enter a valid quantity");
+  return;
+}
+
 setLoading(true);
 setMessage("Processing...");
 
 const token=localStorage.getItem("token");
 
+const idempotencyKey =
+purchaseIdempotencyKey ||
+(
+  typeof crypto !== "undefined" && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random()}`
+);
+
+if(!purchaseIdempotencyKey){
+  setPurchaseIdempotencyKey(idempotencyKey);
+}
 
 const res=await fetch(
 "https://api.alphabothq.com/exam-pin",
@@ -75,20 +149,20 @@ const res=await fetch(
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-Authorization:`Bearer ${token}`
+Authorization:`Bearer ${token}`,
+"Idempotency-Key":idempotencyKey
 },
 body:JSON.stringify({
 phone,
 exam,
 quantity:Number(quantity),
-pin
+pin: biometricToken ? undefined : pin,
+biometricToken: biometricToken || undefined
 })
 }
 );
 
-
 const data=await res.json();
-
 
 if(res.ok){
 
@@ -102,22 +176,34 @@ sessionStorage.removeItem(
 
 setPin("");
 
+setPurchaseIdempotencyKey("");
+
 setMessage(`✅ ${data.message}`);
+
 setShowSuccess(true);
-setTimeout(()=>setShowSuccess(false),3000);
+
+setTimeout(
+()=>setShowSuccess(false),
+3000
+);
+
+setQuantity(1);
 
 }else{
 
-setMessage(`❌ ${data.message}`);
+setMessage(
+`❌ ${data.message || data.error || "Exam PIN purchase failed"}`
+);
 
 }
-
 
 }catch(error){
 
 setMessage("❌ Connection error");
 
 }finally{
+
+localStorage.removeItem("biometricToken");
 
 setLoading(false);
 
@@ -211,7 +297,9 @@ onChange={(e)=>setQuantity(e.target.value)}
     })
   );
 
-  router.push("/enter-pin?return=/exam-pin");
+  router.push(
+    "/enter-pin?return=/exam-pin&service=exam-pin"
+  );
 
 }}
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
@@ -220,22 +308,44 @@ onChange={(e)=>setQuantity(e.target.value)}
 </button>
 
 
-
-
 <button
-onClick={buyExamPin}
-disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold hover:scale-105 transition"
->
+type="button"
+onClick={async()=>{
 
-{
-loading
-?"Processing..."
-:"Buy Exam PIN"
+try{
+
+setBiometricLoading(true);
+
+setMessage("Touch your fingerprint...");
+
+await authenticateWithBiometric();
+
+setMessage("Fingerprint verified.");
+
+await buyExamPin();
+
+}catch(error){
+
+localStorage.removeItem("biometricToken");
+
+setMessage("❌ " + error.message);
+
+}finally{
+
+setBiometricLoading(false);
+
 }
 
-</button>
+}}
+disabled={loading || biometricLoading}
+className="w-full bg-zinc-900 border border-zinc-700 text-white py-3 rounded-xl font-bold active:scale-95 transition disabled:opacity-50"
+>
 
+{biometricLoading
+  ? "Touch fingerprint..."
+  : "👆 Use Fingerprint"}
+
+</button>
 
 
 <p className="text-center text-sm text-zinc-400">

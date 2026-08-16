@@ -288,13 +288,27 @@ setMessage("Processing...");
 setEpinResult(null);
 
 
+const idempotencyKey =
+sessionStorage.getItem("alphaBotEPinIdempotencyKey") ||
+(
+  globalThis.crypto?.randomUUID
+    ? globalThis.crypto.randomUUID()
+    : `EPIN-${Date.now()}-${Math.random().toString(36).slice(2)}`
+);
+
+sessionStorage.setItem(
+"alphaBotEPinIdempotencyKey",
+idempotencyKey
+);
+
 const res=await fetch(
 "https://api.alphabothq.com/epin/buy",
 {
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-Authorization:`Bearer ${localStorage.getItem("token")}`
+Authorization:`Bearer ${localStorage.getItem("token")}`,
+"Idempotency-Key":idempotencyKey
 },
 
 body:JSON.stringify({
@@ -322,6 +336,10 @@ sessionStorage.removeItem(
 
 sessionStorage.removeItem(
 "alphaBotRechargePinPurchaseState"
+);
+
+sessionStorage.removeItem(
+"alphaBotEPinIdempotencyKey"
 );
 
 setPin("");
@@ -518,7 +536,7 @@ Transaction PIN
       })
     );
 
-    router.push("/enter-pin?return=/recharge-pin");
+    router.push("/enter-pin?return=/recharge-pin&service=recharge-pin");
 
   }}
   className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
@@ -594,60 +612,93 @@ Waiting for PIN...
 )}
 
 
-{epinResult && (
+{epinResult &&
   Array.isArray(epinResult.pins) &&
-  epinResult.pins.length > 0
-) && (
+  epinResult.pins.length > 0 && (
 
 <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
 
-<h2 className="font-black text-xl">
-🎉 Your Recharge PIN
-</h2>
+  {/* ALPHABOT HQ */}
+
+  <div className="text-center pb-4 border-b border-zinc-800">
+
+    <p className="text-xs font-black tracking-[0.3em] text-white">
+      ALPHABOT HQ
+    </p>
+
+    <p className="text-[10px] uppercase tracking-widest text-zinc-500 mt-1">
+      Recharge PIN
+    </p>
+
+  </div>
 
 
-<p className="mt-3">
-Network: {epinResult.network?.toUpperCase()}
-</p>
+  {/* PURCHASE DETAILS */}
+
+  <div className="flex items-center justify-between gap-4 mt-4">
+
+    <div className="min-w-0">
+
+      <p className="text-xs text-zinc-500 uppercase tracking-wider">
+        Network
+      </p>
+
+      <p className="font-black text-lg mt-1 truncate">
+        {epinResult.network?.toUpperCase() || "N/A"}
+      </p>
+
+    </div>
+
+    <span className="shrink-0 text-xs text-emerald-400 font-bold">
+      READY
+    </span>
+
+  </div>
 
 
-<div className="mt-4 space-y-3">
+  {/* PIN LIST */}
 
-{epinResult.pins.map((item,index)=>(
+  <div className="mt-4 space-y-3">
 
-<div
-key={`${item}-${index}`}
-className="bg-[#050505] border border-zinc-800 rounded-2xl p-4"
->
+    {epinResult.pins.map((item, index) => (
 
-<div className="flex items-center justify-between gap-3">
+      <div
+        key={`${String(item)}-${index}`}
+        className="bg-[#050505] border border-zinc-800 rounded-2xl p-4"
+      >
 
-<div className="text-xl font-black break-all">
-{item}
+        <p className="text-xs text-zinc-500 uppercase tracking-wider mb-2">
+          PIN {index + 1}
+        </p>
+
+        <div className="flex items-center justify-between gap-3">
+
+          <div className="text-xl font-black break-all min-w-0">
+            {item}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => copyPin(item)}
+            className="shrink-0 bg-white text-black px-4 py-2 rounded-xl font-bold text-sm"
+          >
+            Copy
+          </button>
+
+        </div>
+
+      </div>
+
+    ))}
+
+  </div>
+
+
+  <p className="text-center text-[10px] text-zinc-600 mt-4">
+    Issued by ALPHABOT HQ
+  </p>
+
 </div>
-
-<button
-type="button"
-onClick={()=>copyPin(item)}
-className="shrink-0 bg-white text-black px-4 py-2 rounded-xl font-bold text-sm"
->
-Copy
-</button>
-
-</div>
-
-</div>
-
-))}
-
-</div>
-
-
-{copyMessage && (
-
-<p className="text-center text-green-400 font-bold mt-4">
-{copyMessage}
-</p>
 
 )}
 
@@ -659,9 +710,7 @@ Dial *311*PIN# to recharge
 </p>
 
 
-</div>
 
-)}
 
 
 

@@ -22,6 +22,7 @@ const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
 const [beneficiaries,setBeneficiaries]=useState([]);
+const [purchaseStateRestored,setPurchaseStateRestored]=useState(false);
 
 useEffect(()=>{
 
@@ -67,7 +68,9 @@ setPhone(savedPhone);
 if(savedPin)
 setPin(savedPin);
 
-},[]);
+setPurchaseStateRestored(true);
+
+},[searchParams]);
 
 
 useEffect(()=>{
@@ -96,6 +99,62 @@ console.log(error);
 loadBeneficiaries();
 
 },[]);
+
+
+/*
+========================================
+AUTO-SUBMIT AFTER PIN AUTHORIZATION
+========================================
+*/
+
+useEffect(()=>{
+
+const authorized = searchParams.get("authorized");
+const service = searchParams.get("service");
+
+if(
+authorized !== "1" ||
+service !== "airtime" ||
+!purchaseStateRestored
+){
+return;
+}
+
+const pending =
+sessionStorage.getItem(
+  "alphaBotAirtimeAuthorizationPending"
+);
+
+if(pending !== "1"){
+return;
+}
+
+if(
+!phone ||
+!network ||
+!amount ||
+pin.length !== 4
+){
+return;
+}
+
+sessionStorage.removeItem(
+  "alphaBotAirtimeAuthorizationPending"
+);
+
+router.replace("/airtime");
+
+buyAirtime();
+
+},[
+searchParams,
+router,
+purchaseStateRestored,
+phone,
+network,
+amount,
+pin
+]);
 
 const buyAirtime = async()=>{
 
@@ -133,8 +192,6 @@ const data = await res.json();
 
 if(res.ok){
 
-localStorage.removeItem("biometricToken");
-
 sessionStorage.removeItem(
 "alphaBotTransactionPin"
 );
@@ -161,6 +218,8 @@ setMessage(`❌ ${data.message}`);
 setMessage("❌ Connection error");
 
 }finally{
+
+localStorage.removeItem("biometricToken");
 
 setLoading(false);
 
@@ -307,7 +366,7 @@ Transaction PIN
     })
   );
 
-  router.push("/enter-pin?return=/airtime");
+  router.push("/enter-pin?return=/airtime&service=airtime");
 
 }}
   className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
@@ -336,7 +395,9 @@ setMessage("Touch your fingerprint...");
 
 await authenticateWithBiometric();
 
-setMessage("✅ Fingerprint verified. Tap Buy Airtime.");
+setMessage("Fingerprint verified.");
+
+await buyAirtime();
 
 }catch(error){
 
@@ -356,22 +417,7 @@ disabled={loading || biometricLoading}
 className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition"
 
 >
-{biometricLoading ? "Touch fingerprint..." : "👆 Use Fingerprint"}
-
-</button>
-
-
-<button
-
-onClick={buyAirtime}
-
-disabled={loading}
-
-className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg active:scale-95 transition"
-
->
-
-{loading ? "Processing..." : "⚡ Buy Airtime"}
+{biometricLoading ? "Touch fingerprint..." : "FINGERPRINT 🫆"}
 
 </button>
 

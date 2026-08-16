@@ -1,16 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useState,useEffect } from "react";
 import Link from "next/link";
 import PhoneInput from "@/components/PhoneInput";
 import Toast from "@/components/Toast";
 import SuccessCelebration from "@/components/success-celebration";
+import { authenticateWithBiometric } from "@/lib/biometric";
 
 export default function Page(){
 
 const router=useRouter();
+const searchParams = useSearchParams();
 
 const [phone,setPhone]=useState("");
 const [provider,setProvider]=useState("");
@@ -21,6 +23,9 @@ const [pin,setPin]=useState("");
 const [message,setMessage]=useState("");
 const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(false);
+const [biometricLoading,setBiometricLoading]=useState(false);
+const [purchaseStateRestored,setPurchaseStateRestored]=useState(false);
+const [purchaseIdempotencyKey,setPurchaseIdempotencyKey]=useState("");
 const [showSuccess,setShowSuccess]=useState(false);
 
 useEffect(()=>{
@@ -59,6 +64,8 @@ error.message
 
 if(savedPin)
 setPin(savedPin);
+
+setPurchaseStateRestored(true);
 
 },[]);
 
@@ -104,14 +111,57 @@ setPin(savedPin);
 
 
 
+useEffect(()=>{
+
+const authorized = searchParams.get("authorized");
+const service = searchParams.get("service");
+
+if(
+authorized !== "1" ||
+service !== "betting" ||
+!purchaseStateRestored
+){
+return;
+}
+
+const pending =
+sessionStorage.getItem(
+"alphaBotBettingAuthorizationPending"
+);
+
+if(pending !== "1"){
+return;
+}
+
+sessionStorage.removeItem(
+"alphaBotBettingAuthorizationPending"
+);
+
+router.replace("/betting");
+
+fundBetting();
+
+},[
+searchParams,
+router,
+purchaseStateRestored
+]);
 const fundBetting=async()=>{
 
 try{
 
-  if(!phone || !provider || !amount || !pin){
-    setMessage("❌ Please fill all fields");
-    return;
-  }
+  const biometricToken =
+localStorage.getItem("biometricToken");
+
+if(
+  !phone ||
+  !provider ||
+  !amount ||
+  (!pin && !biometricToken)
+){
+  setMessage("❌ Please authorize the transaction");
+  return;
+}
 
   if(Number(amount) <= 0){
     setMessage("❌ Enter a valid amount");
@@ -124,6 +174,18 @@ setMessage("Processing...");
 
 const token=localStorage.getItem("token");
 
+const idempotencyKey =
+purchaseIdempotencyKey ||
+(
+  typeof crypto !== "undefined" && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random()}`
+);
+
+if (!purchaseIdempotencyKey) {
+  setPurchaseIdempotencyKey(idempotencyKey);
+}
+
 
 const res=await fetch(
 `${process.env.NEXT_PUBLIC_API_URL}/betting/fund`,
@@ -131,13 +193,15 @@ const res=await fetch(
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-Authorization:`Bearer ${token}`
+Authorization:`Bearer ${token}`,
+"Idempotency-Key":idempotencyKey
 },
 body:JSON.stringify({
 customer_id:phone,
 service_id:provider,
 amount:Number(amount),
-pin
+pin: biometricToken ? undefined : pin,
+biometricToken: biometricToken || undefined
 })
 }
 );
@@ -157,6 +221,8 @@ const data=await res.json();
     );
 
     setPin("");
+
+    setPurchaseIdempotencyKey("");
 
     setToast(`✅ ${data.message || "Betting wallet funded successfully"}`);
 setShowSuccess(true);
@@ -183,6 +249,8 @@ setTimeout(()=>setShowSuccess(false),3000);
 setMessage("❌ Connection error");
 
 }finally{
+
+localStorage.removeItem("biometricToken");
 
 setLoading(false);
 
@@ -310,7 +378,9 @@ Betting Platform
     })
   );
 
-  router.push("/enter-pin?return=/betting");
+  router.push(
+    "/enter-pin?return=/betting&service=betting"
+  );
 
 }}
   className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
@@ -322,16 +392,41 @@ Betting Platform
 
 
 <button
-onClick={fundBetting}
-disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold hover:scale-105 active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed"
+type="button"
+onClick={async()=>{
+
+try{
+
+setBiometricLoading(true);
+
+setMessage("Touch your fingerprint...");
+
+await authenticateWithBiometric();
+
+setMessage("Fingerprint verified.");
+
+await fundBetting();
+
+}catch(error){
+
+localStorage.removeItem("biometricToken");
+
+setMessage("❌ " + error.message);
+
+}finally{
+
+setBiometricLoading(false);
+
+}
+
+}}
+disabled={loading || biometricLoading}
+className="w-full bg-zinc-900 border border-zinc-700 text-white py-3 rounded-xl font-bold active:scale-95 transition disabled:opacity-50"
 >
 
-{
-loading
-?"Processing..."
-:"Fund Betting"
-}
+{biometricLoading
+  ? "Touch fingerprint..."
+  : "👆 Use Fingerprint"}
 
 </button>
 
