@@ -156,71 +156,71 @@ export default function Events() {
 
         {/* EVENT INFORMATION */}
 
-        <div className="mt-6 rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#111111]">
+        <div className="mt-4 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#111111]">
 
           <div className="grid grid-cols-3">
 
-            <div className="p-4 border-r border-b border-zinc-200 dark:border-zinc-800">
+            <div className="p-2.5 border-r border-b border-zinc-200 dark:border-zinc-800">
               <p className="text-[9px] font-black tracking-wider text-zinc-400 uppercase">
                 Status
               </p>
 
-              <p className="text-sm font-black mt-2">
+              <p className="text-xs font-black mt-1">
                 {getStatus(event)}
               </p>
             </div>
 
 
-            <div className="p-4 border-r border-b border-zinc-200 dark:border-zinc-800">
+            <div className="p-2.5 border-r border-b border-zinc-200 dark:border-zinc-800">
               <p className="text-[9px] font-black tracking-wider text-zinc-400 uppercase">
                 Starts
               </p>
 
-              <p className="text-sm font-black mt-2">
+              <p className="text-xs font-black mt-1">
                 {formatDate(event.startsAt)}
               </p>
             </div>
 
 
-            <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="p-2.5 border-b border-zinc-200 dark:border-zinc-800">
               <p className="text-[9px] font-black tracking-wider text-zinc-400 uppercase">
                 Ends
               </p>
 
-              <p className="text-sm font-black mt-2">
+              <p className="text-xs font-black mt-1">
                 {formatDate(event.endsAt)}
               </p>
             </div>
 
 
-            <div className="p-4 border-r border-zinc-200 dark:border-zinc-800">
+            <div className="p-2.5 border-r border-zinc-200 dark:border-zinc-800">
               <p className="text-[9px] font-black tracking-wider text-zinc-400 uppercase">
                 Reward
               </p>
 
-              <p className="text-sm font-black text-yellow-500 mt-2">
+              <p className="text-xs font-black text-yellow-500 mt-1">
                 {event.reward || "To be announced"}
               </p>
             </div>
 
 
-            <div className="p-4 border-r border-zinc-200 dark:border-zinc-800">
+            <div className="p-2.5 border-r border-zinc-200 dark:border-zinc-800">
               <p className="text-[9px] font-black tracking-wider text-zinc-400 uppercase">
                 Competition
               </p>
 
-              <p className="text-sm font-black mt-2">
+              <p className="text-xs font-black mt-1">
                 {getTypeLabel(event)}
               </p>
             </div>
 
 
-            <div className="p-4">
+            <div className="p-2.5">
               <p className="text-[9px] font-black tracking-wider text-zinc-400 uppercase">
                 Users
               </p>
 
-              <p className="text-sm font-black mt-2">
+              <p className="text-xs font-black mt-1">
                 {leaderboard.length}
               </p>
             </div>
@@ -232,7 +232,7 @@ export default function Events() {
 
         {/* COUNTDOWN */}
 
-        <div className="mt-4 rounded-3xl bg-yellow-400 text-black p-5">
+        <div className="mt-3 rounded-2xl bg-yellow-400 text-black p-3">
 
           <div className="flex items-center justify-between">
 
@@ -245,12 +245,12 @@ export default function Events() {
                   : "Event ended"}
               </p>
 
-              <p className="text-2xl font-black mt-1 tabular-nums">
+              <p className="text-lg font-black mt-0.5 tabular-nums">
                 {getCountdown(event)}
               </p>
             </div>
 
-            <div className="text-3xl">
+            <div className="text-xl">
               {state === "ended"
                 ? "🏁"
                 : state === "upcoming"
@@ -426,7 +426,7 @@ export default function Events() {
         {!loading && error && (
           <div className="mt-8 rounded-3xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 p-6 text-center">
 
-            <div className="text-3xl">
+            <div className="text-xl">
               ⚠️
             </div>
 
