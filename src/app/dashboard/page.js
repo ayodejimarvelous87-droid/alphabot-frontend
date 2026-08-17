@@ -30,6 +30,11 @@ const [coinSettings,setCoinSettings]=useState({
 });
 const [notifications,setNotifications]=useState([]);
 const [unreadCount,setUnreadCount]=useState(0);
+const [eventData,setEventData]=useState(null);
+
+const [lastViewedEvent,setLastViewedEvent]=useState(()=>{
+  return localStorage.getItem("alphabotLastViewedEvent") || "";
+});
 
 const {dark,toggleTheme}=useTheme();
 
@@ -285,6 +290,55 @@ window.removeEventListener("focus", updateNotifications);
 
 
 useEffect(()=>{
+
+const loadCurrentEvent = async () => {
+
+try {
+
+const res = await fetch(
+"https://api.alphabothq.com/events",
+{
+  cache:"no-store"
+}
+);
+
+const data = await res.json();
+
+if(!res.ok){
+throw new Error(
+data?.message || "Failed to load events"
+);
+}
+
+setEventData(
+Array.isArray(data) && data.length > 0
+? data[0]
+: null
+);
+
+} catch(err) {
+
+console.error("Failed to load dashboard event:",err);
+
+setEventData(null);
+
+}
+
+};
+
+loadCurrentEvent();
+
+const interval = setInterval(
+loadCurrentEvent,
+30000
+);
+
+return ()=>clearInterval(interval);
+
+},[]);
+
+
+useEffect(()=>{
 if(toast){
 const timer=setTimeout(()=>{
 setToast("");
@@ -343,6 +397,46 @@ const services=[
 
 
 
+const currentEvent = eventData
+  ? {
+      id: eventData._id,
+      icon: eventData.icon || "🎉",
+      label: "SERVICE ACTIVITY",
+      title: eventData.title,
+      description: eventData.description,
+      reward: eventData.reward || "",
+      first: {
+        name: eventData.leaderboard?.[0]?.username || "—",
+        points: eventData.leaderboard?.[0]?.points || 0
+      },
+      second: {
+        name: eventData.leaderboard?.[1]?.username || "—",
+        points: eventData.leaderboard?.[1]?.points || 0
+      },
+      endsAt: eventData.endsAt || null,
+      unread: lastViewedEvent !== eventData._id
+    }
+  : null;
+
+
+
+const openEvents = () => {
+
+  if(!currentEvent){
+    window.location.href="/events";
+    return;
+  }
+
+  localStorage.setItem(
+    "alphabotLastViewedEvent",
+    currentEvent.id
+  );
+
+  setLastViewedEvent(currentEvent.id);
+
+  window.location.href="/events";
+
+};
 
 
 if(loading){
@@ -653,73 +747,135 @@ View all services →
 
 
 
-{/* ALPHABOT AI CARD */}
+{/* ALPHABOT EVENTS CARD */}
 
-<section className="mt-2 relative overflow-hidden bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-3">
+{currentEvent && (
+
+<section className="mt-2 relative overflow-hidden bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4">
 
 <div className="absolute -right-10 -top-10 w-40 h-40 bg-yellow-400/10 blur-3xl rounded-full"/>
 
-
 <div className="flex justify-between items-start relative">
 
-<div>
+<div className="min-w-0">
 
 <div className="flex items-center gap-2">
 
 <span className="text-lg">
-🤖
+{currentEvent.icon}
 </span>
 
 <p className="text-xs font-bold text-yellow-500">
-ALPHABOT AI
+ALPHABOT EVENTS
 </p>
 
 </div>
-
 
 <h2 className="text-base font-black mt-2">
-Smart Assistant
+{currentEvent.title}
 </h2>
 
-
 <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
-Manage payments, ask questions and control AlphaBot services faster.
+{currentEvent.description}
 </p>
 
-
 </div>
 
+<div className="relative shrink-0 w-8 h-8 rounded-xl bg-yellow-400 text-black flex items-center justify-center">
 
-<div className="w-7 h-7 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
-
-<span className="text-xl">
-AI
+<span className="text-lg">
+🏆
 </span>
 
+{currentEvent.unread && (
+<span className="absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center border-2 border-white dark:border-[#151515]">
+1
+</span>
+)}
+
+</div>
+
 </div>
 
 
+{/* EVENT REWARD */}
+
+<div className="mt-3 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 p-3">
+
+<p className="text-[9px] font-black tracking-wider text-yellow-500 uppercase">
+🏆 Reward
+</p>
+
+<p className="text-sm font-black mt-1">
+{currentEvent.reward || "To be announced"}
+</p>
+
 </div>
 
 
+{/* TOP PLAYERS */}
 
-<Link
-href="/ai"
-className="block mt-3 w-full text-center bg-black text-white dark:bg-white dark:text-black rounded-xl py-2 font-bold text-xs hover:scale-[1.02] transition"
+<div className="grid grid-cols-2 gap-2 mt-3">
+
+<div className="rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3">
+
+<p className="text-[9px] font-bold text-zinc-400">
+🥇 1ST
+</p>
+
+<p className="text-xs font-black mt-1 truncate">
+{currentEvent.first.name}
+</p>
+
+<p className="text-[10px] text-yellow-500 font-bold mt-1">
+{Number(currentEvent.first.points).toLocaleString()} pts
+</p>
+
+</div>
+
+
+<div className="rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3">
+
+<p className="text-[9px] font-bold text-zinc-400">
+🥈 2ND
+</p>
+
+<p className="text-xs font-black mt-1 truncate">
+{currentEvent.second.name}
+</p>
+
+<p className="text-[10px] text-yellow-500 font-bold mt-1">
+{Number(currentEvent.second.points).toLocaleString()} pts
+</p>
+
+</div>
+
+</div>
+
+
+<div className="flex items-center justify-between mt-3">
+
+<p className="text-[10px] text-zinc-400">
+⏱ {currentEvent.endsAt
+  ? `Ends ${new Date(currentEvent.endsAt).toLocaleDateString("en-NG", {
+      day: "numeric",
+      month: "short"
+    })}`
+  : "Event in progress"}
+</p>
+
+<button
+onClick={openEvents}
+className="text-[10px] font-bold text-yellow-500"
 >
+View Full Event →
+</button>
 
-Open AI Assistant
-
-</Link>
-
+</div>
 
 </section>
 
-
-
-
-
-
+)}
 
 {/* MEGAZORD POPULAR SERVICES */}
 

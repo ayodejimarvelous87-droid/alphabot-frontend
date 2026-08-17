@@ -123,6 +123,14 @@ className="block mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 </Link>
 
 
+<Link
+href="/admin/events"
+className="block mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
+>
+🎉 Events
+</Link>
+
+
 
 <button
 onClick={()=>setServices(!services)}
