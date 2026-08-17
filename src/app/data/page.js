@@ -567,7 +567,7 @@ Transaction PIN
 }}
   className="w-full mt-3 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
 >
-  {pin ? "••••" : "Enter 4 digit PIN"} →
+  Enter 4 digit PIN →
 </button>
 
 

@@ -94,6 +94,8 @@ loadBeneficiaries();
 
 const buyAirtime = async()=>{
 
+if(loading)return;
+
 try{
 
 setLoading(true);

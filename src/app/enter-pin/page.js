@@ -8,8 +8,10 @@ export default function EnterPin() {
   const searchParams = useSearchParams();
 
   const returnPath = searchParams.get("return") || "/dashboard";
+  const service = searchParams.get("service");
 
   const [pin, setPin] = useState("");
+  const [processing, setProcessing] = useState(false);
 
   const press = (value) => {
     if (pin.length < 4) {
@@ -24,9 +26,11 @@ export default function EnterPin() {
   const enterPin = async () => {
     if (pin.length !== 4) return;
 
-    const service = searchParams.get("service");
-
     if (service === "airtime") {
+      if (processing) return;
+
+      setProcessing(true);
+
       try {
         const savedState =
           sessionStorage.getItem("alphaBotAirtimePurchaseState");
@@ -104,6 +108,10 @@ export default function EnterPin() {
     }
 
     if (service === "data") {
+      if (processing) return;
+
+      setProcessing(true);
+
       try {
         const savedState =
           sessionStorage.getItem("alphaBotDataPurchaseState");
@@ -257,6 +265,10 @@ export default function EnterPin() {
     }
 
     if (service === "electricity") {
+      if (processing) return;
+
+      setProcessing(true);
+
       try {
         const savedState =
           sessionStorage.getItem(
@@ -345,6 +357,10 @@ export default function EnterPin() {
     }
 
     if (service === "tv") {
+      if (processing) return;
+
+      setProcessing(true);
+
       try {
         const savedState =
           sessionStorage.getItem(
@@ -432,6 +448,10 @@ export default function EnterPin() {
     }
 
     if (service === "betting") {
+      if (processing) return;
+
+      setProcessing(true);
+
       try {
         const savedState =
           sessionStorage.getItem(
@@ -520,6 +540,10 @@ export default function EnterPin() {
     }
 
     if (service === "exam-pin") {
+      if (processing) return;
+
+      setProcessing(true);
+
       try {
         const savedState =
           sessionStorage.getItem(
@@ -608,6 +632,10 @@ export default function EnterPin() {
     }
 
     if (service === "recharge-pin") {
+      if (processing) return;
+
+      setProcessing(true);
+
       try {
         const savedState =
           sessionStorage.getItem(
@@ -736,6 +764,13 @@ export default function EnterPin() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-10">
 
         <div className="text-center mb-8">
+
+          {(service === "airtime" || service === "data" || service === "electricity" || service === "tv" || service === "betting" || service === "exam-pin" || service === "recharge-pin") && processing && (
+            <div className="mb-5 text-sm font-bold text-blue-400">
+              Processing transaction...
+            </div>
+          )}
+
           <div className="text-4xl mb-4">🔐</div>
 
           <h1 className="text-2xl font-black">
