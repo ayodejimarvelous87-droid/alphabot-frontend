@@ -16,6 +16,8 @@ description:"",
 reward:"",
 icon:"🎉",
 type:"service_purchases",
+pointsUnitAmount:"",
+pointsPerUnit:"",
 startsAt:"",
 endsAt:""
 });
@@ -117,6 +119,8 @@ description:"",
 reward:"",
 icon:"🎉",
 type:"service_purchases",
+pointsUnitAmount:"",
+pointsPerUnit:"",
 startsAt:"",
 endsAt:""
 });
@@ -352,16 +356,80 @@ className="w-full bg-[#050505] border border-zinc-800 rounded-xl p-3 outline-non
 >
 
 <option value="service_purchases">
-Service Purchases
+🛒 Service Purchases
 </option>
 
-<option value="custom">
-Custom
+<option value="referral_challenge">
+Referral Challenge
+</option>
+
+<option value="ab_coins">
+🪙 AB Coins
+</option>
+
+<option value="football_picks">
+⚽ Football Picks
 </option>
 
 </select>
 
 </div>
+
+
+{form.type === "service_purchases" && (
+
+<>
+
+<div>
+
+<label className="block text-sm font-bold mb-2">
+Amount per Point Unit
+</label>
+
+<input
+required
+type="number"
+min="1"
+step="0.01"
+value={form.pointsUnitAmount}
+onChange={e=>updateField("pointsUnitAmount",e.target.value)}
+placeholder="100"
+className="w-full bg-[#050505] border border-zinc-800 rounded-xl p-3 outline-none"
+/>
+
+<p className="text-xs text-zinc-500 mt-1">
+How much qualifying service spending earns one points unit.
+</p>
+
+</div>
+
+
+<div>
+
+<label className="block text-sm font-bold mb-2">
+Points per Unit
+</label>
+
+<input
+required
+type="number"
+min="1"
+step="1"
+value={form.pointsPerUnit}
+onChange={e=>updateField("pointsPerUnit",e.target.value)}
+placeholder="5"
+className="w-full bg-[#050505] border border-zinc-800 rounded-xl p-3 outline-none"
+/>
+
+<p className="text-xs text-zinc-500 mt-1">
+How many points that spending unit is worth.
+</p>
+
+</div>
+
+</>
+
+)}
 
 
 <div className="md:col-span-2">

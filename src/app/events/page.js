@@ -346,7 +346,13 @@ export default function Events() {
                       <div className="shrink-0 text-right">
 
                         <p className="text-sm font-black text-yellow-500 tabular-nums">
-                          {Number(user.points || 0).toLocaleString()} pts
+                          {event.type === "referral_challenge"
+                            ? `${Number(user.referrals || 0).toLocaleString()} referrals`
+                            : event.type === "ab_coins"
+                            ? `${Number(user.coins || 0).toLocaleString()} AB Coins`
+                            : event.type === "football_picks"
+                            ? `${Number(user.picks || 0).toLocaleString()} picks`
+                            : `${Number(user.points || 0).toLocaleString()} pts`}
                         </p>
 
                       </div>
