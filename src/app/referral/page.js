@@ -14,6 +14,7 @@ const [referralLink,setReferralLink]=useState("");
 const [totalReferrals,setTotalReferrals]=useState(0);
 const [earnings,setEarnings]=useState(0);
 const [history,setHistory]=useState([]);
+const [referralPercentage,setReferralPercentage]=useState(1);
 
 const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
@@ -70,6 +71,27 @@ const historyData=await historyRes.json();
 if(historyRes.ok){
 
 setHistory(historyData.history || []);
+
+}
+
+
+const settingsRes=await fetch(
+"https://api.alphabothq.com/settings"
+);
+
+const settingsData=await settingsRes.json();
+
+if(settingsRes.ok){
+
+const percentage=Number(
+settingsData.referralPercentage
+);
+
+if(Number.isFinite(percentage)){
+
+setReferralPercentage(percentage);
+
+}
 
 }
 
@@ -243,12 +265,12 @@ How it works
 
 
 <p>
-3. When they complete their first qualifying purchase, you earn 1% reward.
+3. When they complete their first qualifying purchase, you earn {referralPercentage}% reward.
 </p>
 
 
 <p>
-Example: Friend buys ₦5,000 data → You earn ₦50.
+Example: Friend buys ₦5,000 data → You earn ₦{(5000 * referralPercentage / 100).toLocaleString()}.
 </p>
 
 

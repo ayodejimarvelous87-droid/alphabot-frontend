@@ -210,7 +210,9 @@ const categoryPlans =
     : [];
 
 const dataPlans =
-  categoryPlans;
+  search.trim()
+    ? Object.values(networkCategories).flat()
+    : categoryPlans;
 
 const filteredPlans =
   dataPlans.filter(plan => {

@@ -15,6 +15,12 @@ const [loading,setLoading]=useState(true);
 const [manualFunding,setManualFunding]=useState(false);
 const [flutterFunding,setFlutterFunding]=useState(false);
 const [paymentMethod,setPaymentMethod]=useState("instant");
+const [virtualAccount,setVirtualAccount]=useState(null);
+const [virtualAccountLoading,setVirtualAccountLoading]=useState(true);
+const [virtualAccountCreating,setVirtualAccountCreating]=useState(false);
+const [identityNumber,setIdentityNumber]=useState("");
+const [copiedAccount,setCopiedAccount]=useState(false);
+
 const toastType = message.startsWith("❌") || message.includes("error") || message.includes("valid") || message.includes("expired") ? "error" : "success";
 
 
@@ -72,6 +78,28 @@ setTransactions(data.slice(0,5));
 }
 
   setLoading(false);
+});
+
+fetch(
+"https://api.alphabothq.com/virtual-account",
+{
+headers:{
+Authorization:`Bearer ${token}`
+}
+}
+)
+.then(res=>res.json())
+.then(data=>{
+
+if(data.exists && data.account){
+setVirtualAccount(data.account);
+}
+
+setVirtualAccountLoading(false);
+
+})
+.catch(()=>{
+setVirtualAccountLoading(false);
 });
 
 
@@ -145,6 +173,86 @@ setMessage("Unable to refresh wallet");
 };
 
 
+
+
+const createVirtualAccount = async()=>{
+
+const token=localStorage.getItem("token");
+
+if(!identityNumber.trim()){
+setMessage("Enter your BVN");
+return;
+}
+
+try{
+
+setVirtualAccountCreating(true);
+setMessage("");
+
+const res=await fetch(
+"https://api.alphabothq.com/virtual-account/create",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+bvn:identityNumber.trim()
+})
+}
+);
+
+const data=await res.json();
+
+if(!res.ok){
+setMessage(data.message || "Unable to create virtual account");
+setVirtualAccountCreating(false);
+return;
+}
+
+if(data.account){
+setVirtualAccount(data.account);
+setIdentityNumber("");
+setMessage("Personal account created successfully");
+}
+
+setVirtualAccountCreating(false);
+
+}catch(error){
+
+setMessage("Connection error");
+setVirtualAccountCreating(false);
+
+}
+
+};
+
+const copyVirtualAccount=async()=>{
+
+if(!virtualAccount?.accountNumber){
+return;
+}
+
+try{
+
+await navigator.clipboard.writeText(
+String(virtualAccount.accountNumber)
+);
+
+setCopiedAccount(true);
+
+setTimeout(()=>{
+setCopiedAccount(false);
+},2000);
+
+}catch(error){
+
+setMessage("Unable to copy account number");
+
+}
+
+};
 
 
 const fundWithFlutterwave = async()=>{
@@ -330,19 +438,151 @@ History
 
 <section className="bg-zinc-100 dark:bg-[#121214] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
-
 <h2 className="text-xl font-bold">
 Fund Wallet
 </h2>
 
-
 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-Add money instantly or through bank transfer
+Add money to your wallet automatically or manually.
+</p>
+
+
+<div className="mt-5 bg-black rounded-2xl p-4 text-white border border-zinc-800">
+
+<div className="flex items-start justify-between gap-3">
+
+<div>
+<p className="font-bold text-base">
+🏦 Your AlphaBot Account
+</p>
+
+<p className="text-sm text-zinc-400 mt-1">
+Transfer money directly to this account and your wallet will be credited automatically.
+</p>
+</div>
+
+<span className="text-xs font-bold bg-green-500/10 text-green-400 px-2 py-1 rounded-lg whitespace-nowrap">
+Automatic
+</span>
+
+</div>
+
+
+{virtualAccountLoading ? (
+
+<div className="mt-4 animate-pulse space-y-3">
+<div className="h-12 bg-zinc-800 rounded-xl"></div>
+<div className="h-12 bg-zinc-800 rounded-xl"></div>
+<div className="h-12 bg-zinc-800 rounded-xl"></div>
+</div>
+
+) : virtualAccount ? (
+
+<div className="mt-4 space-y-3">
+
+<div className="bg-[#1A1A1E] rounded-xl p-3">
+
+<p className="text-xs text-zinc-500 uppercase font-bold">
+Bank
+</p>
+
+<p className="mt-1 font-bold">
+{virtualAccount.bankName || "Flutterwave Bank"}
+</p>
+
+</div>
+
+
+<div className="bg-[#1A1A1E] rounded-xl p-3">
+
+<p className="text-xs text-zinc-500 uppercase font-bold">
+Account Number
+</p>
+
+<div className="flex items-center justify-between gap-3">
+
+<p className="mt-1 text-xl font-black tracking-wide">
+{virtualAccount.accountNumber}
+</p>
+
+<button
+onClick={copyVirtualAccount}
+className="px-3 py-2 rounded-lg bg-zinc-800 text-xs font-bold active:scale-95 transition"
+>
+{copiedAccount ? "Copied ✓" : "Copy"}
+</button>
+
+</div>
+
+</div>
+
+
+<div className="bg-[#1A1A1E] rounded-xl p-3">
+
+<p className="text-xs text-zinc-500 uppercase font-bold">
+Account Name
+</p>
+
+<p className="mt-1 font-bold">
+{virtualAccount.accountName || "AlphaBot User"}
+</p>
+
+</div>
+
+
+<p className="text-xs text-zinc-400">
+✓ Permanent account<br/>
+✓ Automatic wallet funding after payment confirmation
+</p>
+
+</div>
+
+) : (
+
+<div className="mt-4 bg-[#1A1A1E] rounded-xl p-4">
+
+<p className="font-bold">
+Set up your personal account
+</p>
+
+<p className="text-xs text-zinc-400 mt-1">
+Create your permanent AlphaBot account for automatic wallet funding.
 </p>
 
 
 
-<label className="block mt-5 text-xs font-bold text-zinc-500 uppercase">
+
+<input
+className="w-full mt-3 p-3 rounded-xl bg-black border border-zinc-700 text-white"
+placeholder="Enter your BVN"
+type="text"
+inputMode="numeric"
+value={identityNumber}
+onChange={(e)=>setIdentityNumber(e.target.value)}
+/>
+
+
+<button
+onClick={createVirtualAccount}
+disabled={virtualAccountCreating || !identityNumber.trim()}
+className="w-full mt-3 py-3 rounded-xl bg-white text-black font-bold disabled:opacity-50 active:scale-95 transition"
+>
+{virtualAccountCreating ? "Creating Account..." : "Create Personal Account"}
+</button>
+
+</div>
+
+)}
+
+</div>
+
+
+<p className="text-sm font-bold text-zinc-500 dark:text-zinc-400 mt-6">
+Other Funding Options
+</p>
+
+
+<label className="block mt-4 text-xs font-bold text-zinc-500 uppercase">
 Funding Amount (₦)
 </label>
 
@@ -372,8 +612,6 @@ Enter a valid amount to continue
 )}
 
 
-
-
 <div className="grid grid-cols-2 mt-5 p-1 bg-zinc-200 dark:bg-black rounded-xl">
 
 
@@ -398,7 +636,7 @@ paymentMethod==="manual"
 :"text-zinc-500"
 }`}
 >
-🏦 Bank Transfer
+🏦 Manual Funding
 </button>
 
 
