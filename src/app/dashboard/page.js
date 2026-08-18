@@ -751,7 +751,7 @@ View all services →
 
 {currentEvent && (
 
-<section className="mt-2 relative overflow-hidden bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4">
+<section className="mt-2 relative overflow-hidden bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3">
 
 <div className="absolute -right-10 -top-10 w-40 h-40 bg-yellow-400/10 blur-3xl rounded-full"/>
 
@@ -771,11 +771,11 @@ ALPHABOT EVENTS
 
 </div>
 
-<h2 className="text-base font-black mt-2">
+<h2 className="text-sm font-black mt-1.5">
 {currentEvent.title}
 </h2>
 
-<p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+<p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
 {currentEvent.description}
 </p>
 
@@ -800,13 +800,13 @@ ALPHABOT EVENTS
 
 {/* EVENT REWARD */}
 
-<div className="mt-3 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 p-3">
+<div className="mt-2.5 rounded-xl bg-yellow-400/10 border border-yellow-400/20 p-2.5">
 
 <p className="text-[9px] font-black tracking-wider text-yellow-500 uppercase">
 🏆 Reward
 </p>
 
-<p className="text-sm font-black mt-1">
+<p className="text-xs font-black mt-0.5">
 {currentEvent.reward || "To be announced"}
 </p>
 
@@ -815,19 +815,19 @@ ALPHABOT EVENTS
 
 {/* TOP PLAYERS */}
 
-<div className="grid grid-cols-2 gap-2 mt-3">
+<div className="grid grid-cols-2 gap-2 mt-2.5">
 
-<div className="rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3">
+<div className="rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-2.5">
 
 <p className="text-[9px] font-bold text-zinc-400">
 🥇 1ST
 </p>
 
-<p className="text-xs font-black mt-1 truncate">
+<p className="text-[11px] font-black mt-0.5 truncate">
 {currentEvent.first.name}
 </p>
 
-<p className="text-[10px] text-yellow-500 font-bold mt-1">
+<p className="text-[9px] text-yellow-500 font-bold mt-0.5">
 {Number(currentEvent.first.points).toLocaleString()} pts
 </p>
 
@@ -853,7 +853,7 @@ ALPHABOT EVENTS
 </div>
 
 
-<div className="flex items-center justify-between mt-3">
+<div className="flex items-center justify-between mt-2.5">
 
 <p className="text-[10px] text-zinc-400">
 ⏱ {currentEvent.endsAt
@@ -876,6 +876,96 @@ View Full Event →
 </section>
 
 )}
+
+{/* COMPETITIONS */}
+
+<section className="mt-3">
+
+<Link
+href="/competitions"
+className="
+block
+relative
+overflow-hidden
+rounded-2xl
+border
+border-zinc-200
+dark:border-zinc-800
+bg-white
+dark:bg-[#151515]
+p-3
+active:scale-[0.99]
+transition-transform
+"
+>
+
+<div className="
+absolute
+-right-10
+-top-10
+w-32
+h-32
+bg-yellow-400/10
+blur-3xl
+rounded-full
+pointer-events-none
+"/>
+
+<div className="relative flex items-center gap-3">
+
+<div className="
+w-11
+h-11
+shrink-0
+rounded-2xl
+bg-yellow-400
+text-black
+flex
+items-center
+justify-center
+text-xl
+shadow-lg
+">
+🏆
+</div>
+
+<div className="min-w-0 flex-1">
+
+<p className="text-[9px] font-black tracking-[0.2em] text-yellow-500 uppercase">
+AlphaBot
+</p>
+
+<h2 className="text-sm font-black mt-0.5">
+Competitions
+</h2>
+
+<p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
+Compete, pick your side and chase rewards across AlphaBot competitions.
+</p>
+
+</div>
+
+<div className="
+shrink-0
+w-7
+h-7
+rounded-full
+bg-zinc-100
+dark:bg-zinc-900
+flex
+items-center
+justify-center
+text-sm
+">
+→
+</div>
+
+</div>
+
+</Link>
+
+</section>
+
 
 {/* MEGAZORD POPULAR SERVICES */}
 

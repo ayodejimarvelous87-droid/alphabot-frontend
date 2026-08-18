@@ -471,6 +471,9 @@ export default function Events() {
           !error &&
           events.map(renderEvent)}
 
+
+
+
       </div>
 
       <BottomNav />

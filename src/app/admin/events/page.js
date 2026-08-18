@@ -18,6 +18,7 @@ icon:"🎉",
 type:"service_purchases",
 pointsUnitAmount:"",
 pointsPerUnit:"",
+target:"",
 startsAt:"",
 endsAt:""
 });
@@ -121,6 +122,7 @@ icon:"🎉",
 type:"service_purchases",
 pointsUnitAmount:"",
 pointsPerUnit:"",
+target:"",
 startsAt:"",
 endsAt:""
 });
@@ -378,6 +380,34 @@ Referral Challenge
 </select>
 
 </div>
+
+
+{form.type === "team_rush" && (
+
+<div>
+
+<label className="block text-sm font-bold mb-2">
+Team Rush Target
+</label>
+
+<input
+required
+type="number"
+min="1"
+step="1"
+value={form.target}
+onChange={e=>updateField("target",e.target.value)}
+placeholder="10000"
+className="w-full bg-[#050505] border border-zinc-800 rounded-xl p-3 outline-none"
+/>
+
+<p className="text-xs text-zinc-500 mt-1">
+The number of members required for a team to reach the target.
+</p>
+
+</div>
+
+)}
 
 
 {form.type === "service_purchases" && (
