@@ -1,15 +1,23 @@
-
 "use client";
 
-import {useEffect} from "react";
+import {useEffect,useState} from "react";
 
 export default function Toast({message,type="info",onClose}){
 
+const [visible,setVisible]=useState(false);
+
 useEffect(()=>{
 
-if(!message) return;
+if(!message){
+setVisible(false);
+return;
+}
+
+setVisible(true);
 
 const timer=setTimeout(()=>{
+
+setVisible(false);
 
 if(onClose) onClose();
 
@@ -20,7 +28,7 @@ return ()=>clearTimeout(timer);
 },[message,onClose]);
 
 
-if(!message) return null;
+if(!message || !visible) return null;
 
 
 return(
@@ -28,7 +36,7 @@ return(
 <div
 className={`
 fixed
-bottom-8
+bottom-24
 left-1/2
 -translate-x-1/2
 z-50
