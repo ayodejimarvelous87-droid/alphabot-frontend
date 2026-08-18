@@ -105,6 +105,10 @@ export default function Events() {
       return "Service Activity";
     }
 
+    if (event.type === "purchase_referral") {
+      return "Purchase + Referral";
+    }
+
     return String(event.type || "Event")
       .replace(/_/g, " ")
       .replace(/\b\w/g, (char) => char.toUpperCase());
@@ -352,6 +356,8 @@ export default function Events() {
                             ? `${Number(user.coins || 0).toLocaleString()} AB Coins`
                             : event.type === "football_picks"
                             ? `${Number(user.picks || 0).toLocaleString()} picks`
+                            : event.type === "purchase_referral"
+                            ? `${Number(user.points || 0).toLocaleString()} pts`
                             : `${Number(user.points || 0).toLocaleString()} pts`}
                         </p>
 

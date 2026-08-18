@@ -371,6 +371,10 @@ Referral Challenge
 ⚽ Football Picks
 </option>
 
+<option value="purchase_referral">
+🤝 Purchase + Referral
+</option>
+
 </select>
 
 </div>
