@@ -19,6 +19,10 @@ const [message,setMessage] = useState("");
 const [toast,setToast] = useState("");
 const [amount,setAmount] = useState("");
 
+const [coinAmount,setCoinAmount] = useState("");
+const [coinReason,setCoinReason] = useState("");
+const [coinAction,setCoinAction] = useState(false);
+
 const [membership,setMembership] = useState(null);
 const [membershipLoading,setMembershipLoading] = useState(true);
 const [membershipAction,setMembershipAction] = useState(false);
@@ -114,6 +118,97 @@ loadMembership();
 }
 
 },[phone]);
+
+
+const coinAdjustment = async(action)=>{
+
+const numericAmount = Number(coinAmount);
+
+if(!Number.isFinite(numericAmount) || numericAmount <= 0){
+setToast("❌ Enter a valid AB Coin amount");
+return;
+}
+
+if(numericAmount > 1000000){
+setToast("❌ Coin adjustment limit exceeded");
+return;
+}
+
+if(!confirm(
+`${action === "increase" ? "Increase" : "Deduct"} ${numericAmount.toLocaleString()} AB Coins ${action === "increase" ? "for" : "from"} ${phone}?`
+)){
+return;
+}
+
+const token = localStorage.getItem("adminToken");
+
+setCoinAction(true);
+
+try{
+
+const res = await fetch(
+`https://api.alphabothq.com/admin/user/coins/${phone}`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({
+action,
+amount:numericAmount,
+reason:coinReason.trim()
+})
+}
+);
+
+const result = await res.json();
+
+if(!res.ok){
+throw new Error(result.message || "Coin adjustment failed");
+}
+
+setToast("🪙 " + result.message);
+
+setData({
+...data,
+user:{
+...data.user,
+abCoins:result.result.balanceAfter
+},
+abCoinTransactions:[
+{
+phone,
+type:"admin_adjustment",
+coins:result.result.coinsAdjusted,
+balanceBefore:result.result.balanceBefore,
+balanceAfter:result.result.balanceAfter,
+description:coinReason.trim() ||
+(
+action === "increase"
+? "Admin increased AB Coins"
+: "Admin deducted AB Coins"
+),
+createdAt:new Date().toISOString()
+},
+...(data.abCoinTransactions || [])
+]
+});
+
+setCoinAmount("");
+setCoinReason("");
+
+}catch(error){
+
+setToast("❌ " + error.message);
+
+}finally{
+
+setCoinAction(false);
+
+}
+
+};
 
 
 const walletAction = async(type)=>{
@@ -616,6 +711,137 @@ Duration: {item.durationDays || "—"} days
 </>
 
 )}
+
+</div>
+
+
+<div className="border border-zinc-800 rounded-2xl p-5 mt-5 bg-[#101012]">
+
+<h2 className="font-bold text-xl">
+🪙 AB Coins Management
+</h2>
+
+<div className="mt-4 p-4 rounded-xl bg-[#18181B] border border-zinc-800">
+
+<p className="text-sm text-zinc-500">
+Current AB Coins
+</p>
+
+<p className="text-3xl font-black text-yellow-400 mt-1">
+{Number(data.user?.abCoins || 0).toLocaleString()}
+</p>
+
+</div>
+
+
+<input
+className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-3 block mt-4 w-full"
+placeholder="🪙 AB Coins amount"
+type="number"
+min="1"
+value={coinAmount}
+onChange={(e)=>setCoinAmount(e.target.value)}
+/>
+
+
+<input
+className="bg-[#050505] text-white border border-zinc-800 rounded-xl p-3 block mt-3 w-full"
+placeholder="Reason (optional)"
+value={coinReason}
+onChange={(e)=>setCoinReason(e.target.value)}
+maxLength={500}
+/>
+
+
+<div className="flex gap-2 flex-wrap mt-4">
+
+<button
+disabled={coinAction}
+className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 disabled:opacity-50"
+onClick={()=>coinAdjustment("increase")}
+>
+🪙 Increase Coins
+</button>
+
+
+<button
+disabled={coinAction}
+className="px-4 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 disabled:opacity-50"
+onClick={()=>coinAdjustment("deduct")}
+>
+➖ Deduct Coins
+</button>
+
+</div>
+
+
+<div className="mt-6">
+
+<h3 className="font-bold">
+📜 AB Coin History
+</h3>
+
+{(!data.abCoinTransactions || data.abCoinTransactions.length === 0) ? (
+
+<p className="text-sm text-zinc-500 mt-3">
+No AB Coin transactions.
+</p>
+
+) : (
+
+<div className="mt-3 space-y-2">
+
+{data.abCoinTransactions.map((item,index)=>(
+
+<div
+key={item._id || `${item.createdAt}-${index}`}
+className="border border-zinc-800 rounded-xl p-3 bg-[#18181B]"
+>
+
+<div className="flex items-center justify-between gap-3">
+
+<span className={`font-bold ${
+Number(item.coins) >= 0
+? "text-emerald-400"
+: "text-red-400"
+}`}>
+{Number(item.coins) >= 0 ? "+" : ""}
+{Number(item.coins || 0).toLocaleString()} coins
+</span>
+
+<span className="text-xs text-zinc-500">
+{item.type || "transaction"}
+</span>
+
+</div>
+
+
+<p className="text-sm text-zinc-400 mt-1">
+{item.description || "No description"}
+</p>
+
+
+<p className="text-xs text-zinc-500 mt-1">
+Balance: {Number(item.balanceBefore || 0).toLocaleString()}
+→ {Number(item.balanceAfter || 0).toLocaleString()}
+</p>
+
+
+<p className="text-xs text-zinc-600 mt-1">
+{item.createdAt
+? new Date(item.createdAt).toLocaleString()
+: ""}
+</p>
+
+</div>
+
+))}
+
+</div>
+
+)}
+
+</div>
 
 </div>
 
