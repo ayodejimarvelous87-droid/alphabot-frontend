@@ -24,7 +24,11 @@ export default function Events() {
           throw new Error(data.message || "Failed to load events");
         }
 
-        setEvents(Array.isArray(data) ? data : []);
+        setEvents(
+          Array.isArray(data)
+            ? data.filter((event) => event.type !== "team_rush")
+            : []
+        );
       } catch (err) {
         console.error(err);
         setError("Unable to load events");
