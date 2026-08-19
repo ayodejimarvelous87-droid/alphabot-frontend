@@ -90,6 +90,16 @@ setMessage("Creating event...");
 
 try{
 
+const payload={
+...form,
+startsAt:form.startsAt
+ ?new Date(form.startsAt).toISOString()
+ :null,
+endsAt:form.endsAt
+ ?new Date(form.endsAt).toISOString()
+ :null
+};
+
 const res=await fetch(
 `${API}/admin/events`,
 {
@@ -98,7 +108,7 @@ headers:{
 "Content-Type":"application/json",
 Authorization:`Bearer ${token()}`
 },
-body:JSON.stringify(form)
+body:JSON.stringify(payload)
 }
 );
 
