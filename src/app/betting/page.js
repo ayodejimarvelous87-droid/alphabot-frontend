@@ -18,6 +18,7 @@ const searchParams = useSearchParams();
 
 const [phone,setPhone]=useState("");
 const [provider,setProvider]=useState("");
+const [customerId,setCustomerId]=useState("");
   const [services,setServices]=useState([]);
   const [servicesLoading,setServicesLoading]=useState(true);
 const [amount,setAmount]=useState("");
@@ -45,6 +46,9 @@ setPhone(state.phone);
 
 if(state.provider !== undefined)
 setProvider(state.provider);
+
+if(state.customerId !== undefined)
+setCustomerId(state.customerId);
 
 if(state.amount !== undefined)
 setAmount(state.amount);
@@ -115,6 +119,7 @@ localStorage.getItem("biometricToken");
 
 if(
   !phone ||
+  !customerId ||
   !provider ||
   !amount ||
   !biometricToken
@@ -157,7 +162,7 @@ Authorization:`Bearer ${token}`,
 "Idempotency-Key":idempotencyKey
 },
 body:JSON.stringify({
-customer_id:phone,
+customer_id:customerId,
 service_id:provider,
 amount:Number(amount),
 biometricToken: biometricToken || undefined
@@ -263,6 +268,27 @@ onChange={(value)=>setPhone(value)}
 <div>
 
 <p className="text-xs text-zinc-500 mb-2">
+Betting ID
+</p>
+
+<input
+  type="text"
+  value={customerId}
+  onChange={(e)=>setCustomerId(e.target.value)}
+  placeholder="Enter your betting account ID"
+  className="w-full bg-white text-black border border-zinc-700 rounded-xl p-3"
+/>
+
+<p className="text-xs text-zinc-500 mt-2">
+Enter the ID used by your betting platform.
+</p>
+
+</div>
+
+
+<div>
+
+<p className="text-xs text-zinc-500 mb-2">
 Betting Platform
 </p>
 
@@ -326,6 +352,7 @@ Betting Platform
     "alphaBotBettingPurchaseState",
     JSON.stringify({
       phone,
+      customerId,
       provider,
       amount
     })

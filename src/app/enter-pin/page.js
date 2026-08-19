@@ -494,7 +494,7 @@ export default function EnterPin() {
               "Idempotency-Key": idempotencyKey
             },
             body: JSON.stringify({
-              customer_id: state.phone,
+              customer_id: state.customerId,
               service_id: state.provider,
               amount: Number(state.amount),
               pin
