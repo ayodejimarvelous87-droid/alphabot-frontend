@@ -392,6 +392,12 @@ className="w-full p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-white"
 />
 </div>
 
+<div className="mb-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 px-3 py-2.5">
+<p className="text-[11px] leading-relaxed text-yellow-400">
+⚠️ Some plans may not work on every number due to network eligibility. This is especially common with Awoof plans. If a plan fails, please try another plan.
+</p>
+</div>
+
 <div className="max-w-md mx-auto space-y-2 scale-[0.88] origin-top pb-4">
 
 
