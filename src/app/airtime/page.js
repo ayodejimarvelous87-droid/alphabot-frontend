@@ -131,7 +131,10 @@ if(res.ok){
 
 sessionStorage.setItem(
   "alphaBotTransactionResult",
-  JSON.stringify(data)
+  JSON.stringify({
+    ...data,
+    status: data.status || "success"
+  })
 );
 sessionStorage.removeItem(
 "alphaBotAirtimePurchaseState"
