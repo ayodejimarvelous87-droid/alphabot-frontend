@@ -138,6 +138,57 @@ setMessage(`❌ ${error.message}`);
 };
 
 
+const updateTeamRushTarget=async(id,target)=>{
+
+if(!target || Number(target)<=0){
+
+setMessage("❌ Enter a valid Team Rush target.");
+
+return;
+
+}
+
+setMessage("Updating Team Rush target...");
+
+try{
+
+const res=await fetch(
+`${API}/admin/events/${id}/team-rush`,
+{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token()}`
+},
+body:JSON.stringify({
+target:Number(target)
+})
+}
+);
+
+const data=await res.json();
+
+if(!res.ok){
+
+throw new Error(
+data?.message || "Failed to update Team Rush target"
+);
+
+}
+
+setMessage("✅ Team Rush target updated.");
+
+await loadEvents();
+
+}catch(error){
+
+setMessage(`❌ ${error.message}`);
+
+}
+
+};
+
+
 const updateStatus=async(id,status)=>{
 
 setMessage("Updating event...");
@@ -375,6 +426,10 @@ Referral Challenge
 
 <option value="purchase_referral">
 🤝 Purchase + Referral
+</option>
+
+<option value="team_rush">
+⚔️ Team Rush
 </option>
 
 </select>
@@ -647,6 +702,58 @@ className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5"
 <p className="text-sm text-zinc-400 mt-3">
 {event.description}
 </p>
+
+)}
+
+
+{event.type === "team_rush" && (
+
+<div className="mt-4 bg-[#050505] border border-zinc-800 rounded-2xl p-4">
+
+<div className="flex flex-col md:flex-row md:items-end gap-3">
+
+<div className="flex-1">
+
+<label className="block text-xs font-bold text-zinc-500 uppercase mb-2">
+Team Rush Target
+</label>
+
+<input
+type="number"
+min="1"
+step="1"
+defaultValue={event.target || ""}
+id={`team-rush-target-${event._id}`}
+placeholder="10000"
+className="w-full bg-[#18181B] border border-zinc-800 rounded-xl p-3 outline-none"
+/>
+
+</div>
+
+<button
+type="button"
+onClick={()=>{
+const input=document.getElementById(
+`team-rush-target-${event._id}`
+);
+
+updateTeamRushTarget(
+event._id,
+input?.value
+);
+}}
+className="px-5 py-3 rounded-xl bg-yellow-400 text-black font-black hover:bg-yellow-300"
+>
+Update Target
+</button>
+
+</div>
+
+<p className="text-xs text-zinc-500 mt-2">
+Current target: {event.target || "Not set"} members
+</p>
+
+</div>
 
 )}
 
