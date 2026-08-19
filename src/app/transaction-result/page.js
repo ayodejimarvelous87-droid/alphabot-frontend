@@ -37,7 +37,7 @@ export default function TransactionResultPage() {
     );
   }
 
-  const successful = result.status === "success";
+  const successful = result.status === "success" || result.status === "successful";
   const processing = result.status === "processing";
 
   const title = successful
