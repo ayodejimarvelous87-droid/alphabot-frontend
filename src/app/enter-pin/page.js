@@ -1,5 +1,7 @@
 "use client";
 
+const API = "https://api.alphabothq.com";
+
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -483,7 +485,7 @@ export default function EnterPin() {
             : `${Date.now()}-${Math.random()}`;
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/betting/fund`,
+          `${API}/betting/fund`,
           {
             method: "POST",
             headers: {

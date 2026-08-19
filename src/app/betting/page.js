@@ -9,6 +9,8 @@ import Toast from "@/components/Toast";
 import SuccessCelebration from "@/components/success-celebration";
 import { authenticateWithBiometric } from "@/lib/biometric";
 
+const API = "https://api.alphabothq.com";
+
 export default function Page(){
 
 const router=useRouter();
@@ -68,7 +70,7 @@ setPurchaseStateRestored(true);
 
       try{
 
-          const url = `${process.env.NEXT_PUBLIC_API_URL}/betting/services`;
+          const url = `${API}/betting/services`;
 
           
 
@@ -146,7 +148,7 @@ if (!purchaseIdempotencyKey) {
 
 
 const res=await fetch(
-`${process.env.NEXT_PUBLIC_API_URL}/betting/fund`,
+`${API}/betting/fund`,
 {
 method:"POST",
 headers:{
