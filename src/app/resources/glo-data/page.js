@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Glo Data Plans in Nigeria | Glo Data Bundles | AlphaBot",
+  title: "Glo Data Plans in Nigeria | Bundles & Prices | AlphaBot",
   description:
-    "Explore Glo data plans and data bundles in Nigeria. Learn how to choose a Glo bundle based on your internet usage, budget and validity needs.",
+    "Explore Glo data plans and bundles in Nigeria. Learn about Glo internet options, bundle validity, pricing and how to choose the right data plan.",
+  keywords: [
+    "Glo data plans",
+    "Glo data Nigeria",
+    "Glo data bundles",
+    "Glo internet bundles",
+    "Glo data plans Nigeria",
+    "Glo data prices",
+    "buy Glo data",
+    "cheap Glo data",
+    "Glo internet Nigeria",
+    "AlphaBot Glo data",
+  ],
 };
 
 export default function GloDataPage() {

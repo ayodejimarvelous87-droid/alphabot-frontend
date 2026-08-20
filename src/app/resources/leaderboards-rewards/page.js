@@ -1,9 +1,20 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "AlphaBot Leaderboards & Rewards | Rankings and Prizes",
+  title: "AlphaBot Leaderboards & Rewards | Rankings & Prizes",
   description:
-    "Explore AlphaBot leaderboards, user rankings, competitions, activity and available rewards.",
+    "Explore AlphaBot leaderboards, user rankings, competitions and rewards. Track your activity, compete with other users and see how rewards are earned.",
+  keywords: [
+    "AlphaBot leaderboard",
+    "AlphaBot leaderboards",
+    "AlphaBot rankings",
+    "AlphaBot rewards",
+    "user leaderboard Nigeria",
+    "competition leaderboard",
+    "online rankings",
+    "leaderboard prizes",
+    "AlphaBot competitions",
+  ],
 };
 
 export default function LeaderboardsRewardsPage() {

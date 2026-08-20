@@ -1,9 +1,22 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Buy Airtime Online in Nigeria | Airtime Top Up | AlphaBot",
+  title: "Buy Airtime Online in Nigeria | Top Up MTN, Airtel, Glo & 9mobile",
   description:
-    "Learn how to buy airtime online in Nigeria for MTN, Airtel, Glo and 9mobile. Explore convenient airtime top up options and useful tips.",
+    "Buy airtime online in Nigeria with a convenient digital top-up. Learn about MTN, Airtel, Glo and 9mobile airtime, payment options and useful tips.",
+  keywords: [
+    "buy airtime online Nigeria",
+    "buy airtime Nigeria",
+    "airtime top up Nigeria",
+    "airtime recharge Nigeria",
+    "MTN airtime",
+    "Airtel airtime",
+    "Glo airtime",
+    "9mobile airtime",
+    "cheap airtime Nigeria",
+    "online airtime recharge",
+    "AlphaBot airtime",
+  ],
 };
 
 export default function BuyAirtimeNigeriaPage() {

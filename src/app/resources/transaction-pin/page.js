@@ -1,9 +1,20 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Transaction PIN Security | AlphaBot",
+  title: "Transaction PIN | How to Secure Your AlphaBot Wallet",
   description:
-    "Learn what a transaction PIN is, how it protects your AlphaBot account and how to keep your PIN secure.",
+    "Learn what an AlphaBot transaction PIN is, how it protects payments and your wallet, and how to keep your PIN private and secure.",
+  keywords: [
+    "AlphaBot transaction PIN",
+    "transaction PIN",
+    "AlphaBot PIN",
+    "wallet security",
+    "secure transaction PIN",
+    "payment PIN security",
+    "digital wallet PIN",
+    "protect transaction PIN",
+    "AlphaBot wallet security",
+  ],
 };
 
 export default function TransactionPinPage() {

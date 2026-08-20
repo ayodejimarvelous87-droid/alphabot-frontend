@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Awoof Data in Nigeria | Affordable Data Offers | AlphaBot",
+  title: "Awoof Data in Nigeria | Cheap & Affordable Data Offers",
   description:
-    "Learn about awoof data in Nigeria, promotional data offers and affordable internet bundles. Discover what to check before choosing an awoof data deal.",
+    "Find awoof data in Nigeria and learn about cheap and promotional data offers from Nigerian networks. Compare data deals, validity and eligibility before buying.",
+  keywords: [
+    "awoof data",
+    "awoof data Nigeria",
+    "cheap awoof data",
+    "awoof data offers",
+    "free data Nigeria",
+    "cheap data Nigeria",
+    "promotional data Nigeria",
+    "affordable data Nigeria",
+    "data offers Nigeria",
+    "AlphaBot awoof data",
+  ],
 };
 
 export default function AwoofDataPage() {

@@ -1,9 +1,20 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Buy Data in Nigeria | Affordable Data Bundles | AlphaBot",
+  title: "Buy Data in Nigeria Online | MTN, Airtel, Glo & 9mobile",
   description:
-    "Learn how to buy data in Nigeria online. Explore MTN, Airtel, Glo and 9mobile data bundles and discover a simple way to get connected with AlphaBot.",
+    "Buy data in Nigeria online with AlphaBot. Explore MTN, Airtel, Glo and 9mobile data bundles, compare options and choose a convenient data plan.",
+  keywords: [
+    "buy data in Nigeria",
+    "buy data online Nigeria",
+    "data bundles Nigeria",
+    "MTN data Nigeria",
+    "Airtel data Nigeria",
+    "Glo data Nigeria",
+    "9mobile data Nigeria",
+    "cheap data Nigeria",
+    "AlphaBot data",
+  ],
 };
 
 export default function BuyDataNigeriaPage() {

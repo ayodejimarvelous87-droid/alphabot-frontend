@@ -1,9 +1,19 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Cheap Data in Nigeria | Affordable Data Bundles | AlphaBot",
+  title: "Cheap Data in Nigeria | Affordable Data Bundles",
   description:
-    "Looking for cheap data in Nigeria? Learn how to compare affordable data bundles, network options, validity and value when buying data online.",
+    "Find cheap data in Nigeria with AlphaBot. Learn how to compare affordable data bundles, network options, prices and validity before buying data online.",
+  keywords: [
+    "cheap data in Nigeria",
+    "cheapest data Nigeria",
+    "affordable data Nigeria",
+    "cheap data bundles Nigeria",
+    "cheap internet data Nigeria",
+    "data bundles Nigeria",
+    "buy cheap data Nigeria",
+    "AlphaBot data",
+  ],
 };
 
 export default function CheapDataNigeriaPage() {

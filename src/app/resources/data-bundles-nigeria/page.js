@@ -1,9 +1,23 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Data Bundles in Nigeria | Compare Data Plans | AlphaBot",
+  title: "Data Bundles in Nigeria | Plans, Prices & Options | AlphaBot",
   description:
-    "Learn about mobile data bundles in Nigeria, how data plans work, what to consider when choosing a bundle and how to buy data online.",
+    "Explore data bundles in Nigeria, including network plans, prices, validity and options for different data needs. Learn how to choose and buy the right bundle online.",
+  keywords: [
+    "data bundles Nigeria",
+    "data plans Nigeria",
+    "data bundle prices Nigeria",
+    "internet bundles Nigeria",
+    "mobile data Nigeria",
+    "cheap data bundles Nigeria",
+    "buy data bundles Nigeria",
+    "MTN data bundles",
+    "Airtel data bundles",
+    "Glo data bundles",
+    "9mobile data bundles",
+    "AlphaBot data bundles",
+  ],
 };
 
 export default function DataBundlesNigeriaPage() {

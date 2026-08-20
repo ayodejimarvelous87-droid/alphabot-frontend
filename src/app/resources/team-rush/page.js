@@ -1,9 +1,20 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Team Rush | AlphaBot Team Competition",
+  title: "Team Rush | AlphaBot Team Competition & Rewards",
   description:
-    "Learn how AlphaBot Team Rush works, how to join a team, track progress and compete for rewards.",
+    "Discover AlphaBot Team Rush, a team-based competition where users join teams, grow their membership, track progress and compete for rewards.",
+  keywords: [
+    "AlphaBot Team Rush",
+    "Team Rush competition",
+    "team competition Nigeria",
+    "AlphaBot team competition",
+    "team challenge",
+    "team rewards",
+    "online team competition",
+    "AlphaBot competitions",
+    "AlphaBot rewards",
+  ],
 };
 
 export default function TeamRushPage() {

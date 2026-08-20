@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Airtel Data Plans in Nigeria | Airtel Data Bundles | AlphaBot",
+  title: "Airtel Data Plans in Nigeria | Bundles & Prices | AlphaBot",
   description:
-    "Explore Airtel data plans and data bundles in Nigeria. Learn how to choose an Airtel bundle based on your usage, budget and validity needs.",
+    "Explore Airtel data plans and bundles in Nigeria. Learn about Airtel internet options, bundle validity, pricing and how to choose the right data plan.",
+  keywords: [
+    "Airtel data plans",
+    "Airtel data Nigeria",
+    "Airtel data bundles",
+    "Airtel internet bundles",
+    "Airtel data plans Nigeria",
+    "Airtel data prices",
+    "buy Airtel data",
+    "cheap Airtel data",
+    "Airtel internet Nigeria",
+    "AlphaBot Airtel data",
+  ],
 };
 
 export default function AirtelDataPage() {

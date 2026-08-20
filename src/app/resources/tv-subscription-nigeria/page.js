@@ -3,7 +3,20 @@ import Link from "next/link";
 export const metadata = {
   title: "TV Subscription in Nigeria | Pay TV Online | AlphaBot",
   description:
-    "Learn how to pay TV subscriptions online in Nigeria and manage supported television services digitally with AlphaBot.",
+    "Pay TV subscriptions online in Nigeria with AlphaBot. Learn about digital TV payments, subscription options, renewal and convenient ways to manage your TV service.",
+  keywords: [
+    "TV subscription Nigeria",
+    "pay TV online Nigeria",
+    "TV subscription payment Nigeria",
+    "TV payment Nigeria",
+    "online TV subscription",
+    "pay TV subscription online",
+    "DSTV subscription Nigeria",
+    "GOtv subscription Nigeria",
+    "TV renewal Nigeria",
+    "digital TV payment Nigeria",
+    "AlphaBot TV subscription",
+  ],
 };
 
 export default function TVSubscriptionNigeriaPage() {

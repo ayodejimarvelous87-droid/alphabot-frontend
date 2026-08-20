@@ -1,9 +1,20 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "AI Features | AlphaBot",
+  title: "AI Features | AI-Powered Digital Services | AlphaBot",
   description:
-    "Learn how AlphaBot uses artificial intelligence to improve digital services, assistance and the user experience.",
+    "Explore AlphaBot AI features and learn how artificial intelligence can improve digital services, assistance, automation and the overall user experience.",
+  keywords: [
+    "AlphaBot AI",
+    "AlphaBot AI features",
+    "AI digital services",
+    "AI features Nigeria",
+    "AI-powered services",
+    "artificial intelligence AlphaBot",
+    "AI assistant Nigeria",
+    "AI automation",
+    "AlphaBot technology",
+  ],
 };
 
 export default function AIFeaturesPage() {

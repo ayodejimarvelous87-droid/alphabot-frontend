@@ -1,9 +1,22 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Best VTU Services in Nigeria | VTU Platform Guide | AlphaBot",
+  title: "Best VTU Services in Nigeria | VTU Platform Guide",
   description:
-    "Learn what to look for in the best VTU services in Nigeria, including data, airtime, bills payment, reliability, security, pricing and convenience.",
+    "Discover what makes a good VTU platform in Nigeria. Compare data, airtime, bills payment, pricing, reliability, security and convenience before choosing a VTU service.",
+  keywords: [
+    "best VTU in Nigeria",
+    "best VTU platform Nigeria",
+    "VTU services Nigeria",
+    "VTU platform Nigeria",
+    "cheap VTU Nigeria",
+    "reliable VTU Nigeria",
+    "data VTU Nigeria",
+    "airtime VTU Nigeria",
+    "bills payment VTU",
+    "online VTU Nigeria",
+    "AlphaBot VTU",
+  ],
 };
 
 export default function BestVTUNigeriaPage() {

@@ -3,7 +3,19 @@ import Link from "next/link";
 export const metadata = {
   title: "How to Secure Your AlphaBot Account | Account Security",
   description:
-    "Learn how to protect your AlphaBot account, password, transaction PIN, OTP and wallet from unauthorized access.",
+    "Learn how to secure your AlphaBot account with a strong password, transaction PIN and OTP protection. Follow practical steps to protect your wallet and account.",
+  keywords: [
+    "AlphaBot account security",
+    "secure AlphaBot account",
+    "AlphaBot security",
+    "account security Nigeria",
+    "protect online account",
+    "transaction PIN security",
+    "OTP security",
+    "wallet security",
+    "digital wallet security",
+    "AlphaBot account protection",
+  ],
 };
 
 export default function AccountSecurityPage() {

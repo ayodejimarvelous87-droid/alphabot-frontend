@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "AlphaBot API | VTU & Digital Services API",
+  title: "AlphaBot API | VTU, Data, Airtime & Digital Services API",
   description:
-    "Learn about the AlphaBot API for integrating supported VTU, data, airtime and digital services into applications.",
+    "Explore the AlphaBot API for integrating supported VTU, data, airtime and digital services into applications. Learn about API access and available services.",
+  keywords: [
+    "AlphaBot API",
+    "VTU API Nigeria",
+    "data API Nigeria",
+    "airtime API Nigeria",
+    "digital services API",
+    "VTU API integration",
+    "data bundle API",
+    "airtime API integration",
+    "AlphaBot developer API",
+    "Nigeria VTU API",
+  ],
 };
 
 export default function AlphaBotApiPage() {

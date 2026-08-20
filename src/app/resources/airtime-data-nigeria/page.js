@@ -1,9 +1,23 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Airtime & Data in Nigeria | Buy Airtime and Data Online | AlphaBot",
+  title: "Airtime & Data in Nigeria | Buy Airtime & Data Online",
   description:
-    "Learn how to buy airtime and mobile data online in Nigeria. Compare airtime and data needs, supported networks and convenient digital options.",
+    "Buy airtime and data online in Nigeria with AlphaBot. Learn about airtime top-ups, mobile data bundles, supported networks and convenient digital options.",
+  keywords: [
+    "airtime and data Nigeria",
+    "buy airtime and data Nigeria",
+    "airtime data bundles Nigeria",
+    "buy airtime online Nigeria",
+    "buy data online Nigeria",
+    "airtime recharge Nigeria",
+    "mobile data Nigeria",
+    "MTN airtime and data",
+    "Airtel airtime and data",
+    "Glo airtime and data",
+    "9mobile airtime and data",
+    "AlphaBot airtime and data",
+  ],
 };
 
 export default function AirtimeDataNigeriaPage() {

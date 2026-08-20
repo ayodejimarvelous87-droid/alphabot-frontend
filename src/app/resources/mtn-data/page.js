@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "MTN Data Plans in Nigeria | MTN Data Bundles | AlphaBot",
+  title: "MTN Data Plans in Nigeria | Bundles & Prices | AlphaBot",
   description:
-    "Explore MTN data plans and data bundles in Nigeria. Learn how to choose an MTN bundle based on your data usage, budget and validity needs.",
+    "Explore MTN data plans and bundles in Nigeria. Learn about MTN internet options, bundle validity, pricing and how to choose the right data plan.",
+  keywords: [
+    "MTN data plans",
+    "MTN data Nigeria",
+    "MTN data bundles",
+    "MTN internet bundles",
+    "MTN data plans Nigeria",
+    "MTN data prices",
+    "buy MTN data",
+    "cheap MTN data",
+    "MTN internet Nigeria",
+    "AlphaBot MTN data",
+  ],
 };
 
 export default function MTNDataPage() {

@@ -1,9 +1,20 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Football Arena | AlphaBot Football Experience",
+  title: "Football Arena | Football Community, Rankings & Rewards | AlphaBot",
   description:
-    "Explore the AlphaBot Football Arena, football features, rankings, discussions, rewards and competitions.",
+    "Explore AlphaBot Football Arena for football discussions, rankings, competitions and rewards. Join the community and experience football beyond the match.",
+  keywords: [
+    "football arena",
+    "football community Nigeria",
+    "football discussions",
+    "football rankings",
+    "football competitions",
+    "football rewards",
+    "football fans Nigeria",
+    "AlphaBot football",
+    "AlphaBot Football Arena",
+  ],
 };
 
 export default function FootballArenaPage() {

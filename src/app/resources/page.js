@@ -196,9 +196,21 @@ const categories = [
 ];
 
 export const metadata = {
-  title: "Explore AlphaBot | Data, VTU, Football, API & Digital Services",
+  title: "AlphaBot Resources | Data, VTU, Football, API & More",
   description:
-    "Explore AlphaBot guides covering data bundles, VTU services, football, competitions, API, account security, rewards and digital services in Nigeria.",
+    "Explore AlphaBot resources for data bundles, cheap data, Awoof data, VTU services, football, competitions, API, security, rewards and digital services in Nigeria.",
+  keywords: [
+    "AlphaBot",
+    "data bundles Nigeria",
+    "cheap data Nigeria",
+    "Awoof data",
+    "VTU Nigeria",
+    "football Nigeria",
+    "VTU API",
+    "digital services Nigeria",
+    "AlphaBot API",
+    "data plans Nigeria",
+  ],
 };
 
 export default function ResourcesPage() {

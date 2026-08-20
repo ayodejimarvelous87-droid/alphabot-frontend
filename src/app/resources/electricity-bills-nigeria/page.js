@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Electricity Bill Payment in Nigeria | AlphaBot",
+  title: "Electricity Bill Payment in Nigeria | Pay Bills Online",
   description:
-    "Learn how to pay electricity bills online in Nigeria, check your meter details and make supported electricity payments digitally.",
+    "Learn how to pay electricity bills online in Nigeria with AlphaBot. Explore digital electricity payments, meter details, supported services and convenient payment options.",
+  keywords: [
+    "electricity bill payment Nigeria",
+    "pay electricity bill online Nigeria",
+    "electricity payment Nigeria",
+    "electricity bills online",
+    "online electricity bill payment",
+    "pay electricity online",
+    "meter payment Nigeria",
+    "electricity recharge Nigeria",
+    "digital electricity payment",
+    "AlphaBot electricity bills",
+  ],
 };
 
 export default function ElectricityBillsNigeriaPage() {

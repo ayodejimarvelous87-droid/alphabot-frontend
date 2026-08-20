@@ -3,7 +3,19 @@ import Link from "next/link";
 export const metadata = {
   title: "Bills Payment in Nigeria | Pay Bills Online | AlphaBot",
   description:
-    "Learn about paying bills online in Nigeria, including electricity, TV subscriptions and other supported digital services.",
+    "Pay bills online in Nigeria with AlphaBot. Learn about electricity bills, TV subscriptions and other digital bill payments, including convenience and payment options.",
+  keywords: [
+    "bills payment Nigeria",
+    "pay bills online Nigeria",
+    "bill payment Nigeria",
+    "online bills payment",
+    "electricity bill payment Nigeria",
+    "TV subscription payment Nigeria",
+    "digital bill payment Nigeria",
+    "pay electricity online Nigeria",
+    "pay TV subscription online Nigeria",
+    "AlphaBot bills payment",
+  ],
 };
 
 export default function BillsPaymentNigeriaPage() {

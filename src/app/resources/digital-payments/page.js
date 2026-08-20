@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Digital Payments in Nigeria | AlphaBot",
+  title: "Digital Payments in Nigeria | Online Payments & Wallets",
   description:
-    "Learn about digital payments, wallets, airtime, data and other payment services available through AlphaBot in Nigeria.",
+    "Explore digital payments in Nigeria with AlphaBot. Learn about online payments, digital wallets, airtime, data, bills and convenient payment services.",
+  keywords: [
+    "digital payments Nigeria",
+    "online payments Nigeria",
+    "digital wallet Nigeria",
+    "digital payment services",
+    "online payment platform Nigeria",
+    "mobile payments Nigeria",
+    "airtime payments Nigeria",
+    "data payments Nigeria",
+    "bills payment Nigeria",
+    "AlphaBot digital payments",
+  ],
 };
 
 export default function DigitalPaymentsPage() {

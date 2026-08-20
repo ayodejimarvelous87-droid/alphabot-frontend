@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "WhatsApp Data Bot in Nigeria | AlphaBot",
+  title: "WhatsApp Data Bot in Nigeria | Buy Data via WhatsApp | AlphaBot",
   description:
-    "Learn how a WhatsApp data bot can make buying data and accessing digital services easier in Nigeria with AlphaBot.",
+    "Explore the AlphaBot WhatsApp Data Bot for buying data and accessing digital services through WhatsApp. Learn how the bot works and what services are available.",
+  keywords: [
+    "WhatsApp data bot",
+    "WhatsApp data bot Nigeria",
+    "buy data via WhatsApp",
+    "data bot Nigeria",
+    "WhatsApp VTU bot",
+    "WhatsApp airtime bot",
+    "buy airtime via WhatsApp",
+    "WhatsApp digital services",
+    "AlphaBot WhatsApp bot",
+    "AlphaBot data bot",
+  ],
 };
 
 export default function WhatsAppDataBotPage() {

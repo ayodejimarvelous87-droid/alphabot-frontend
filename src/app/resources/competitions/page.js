@@ -1,9 +1,20 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "AlphaBot Competitions | Challenges & Rewards",
+  title: "AlphaBot Competitions | Challenges, Teams & Rewards",
   description:
-    "Explore AlphaBot competitions, challenges, team events, leaderboards and rewards for active users.",
+    "Explore AlphaBot competitions, challenges, team events, leaderboards and rewards. Join challenges, compete with other users and earn rewards.",
+  keywords: [
+    "AlphaBot competitions",
+    "online competitions Nigeria",
+    "AlphaBot challenges",
+    "team competitions",
+    "user competitions",
+    "competition rewards",
+    "AlphaBot team events",
+    "leaderboard competitions",
+    "AlphaBot rewards",
+  ],
 };
 
 export default function CompetitionsPage() {

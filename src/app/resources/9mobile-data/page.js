@@ -1,9 +1,21 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "9mobile Data Plans in Nigeria | 9mobile Data Bundles | AlphaBot",
+  title: "9mobile Data Plans in Nigeria | Bundles & Prices | AlphaBot",
   description:
-    "Explore 9mobile data plans and data bundles in Nigeria. Learn how to choose a 9mobile bundle based on your internet usage, budget and validity needs.",
+    "Explore 9mobile data plans and bundles in Nigeria. Learn about 9mobile internet options, bundle validity, pricing and how to choose the right data plan.",
+  keywords: [
+    "9mobile data plans",
+    "9mobile data Nigeria",
+    "9mobile data bundles",
+    "9mobile internet bundles",
+    "9mobile data plans Nigeria",
+    "9mobile data prices",
+    "buy 9mobile data",
+    "cheap 9mobile data",
+    "9mobile internet Nigeria",
+    "AlphaBot 9mobile data",
+  ],
 };
 
 export default function NineMobileDataPage() {
