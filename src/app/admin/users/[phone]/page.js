@@ -218,7 +218,7 @@ const walletAction = async(type)=>{
 const token = localStorage.getItem("adminToken");
 
 const res = await fetch(
-`http://localhost:5000/admin/wallet/${type}`,
+`https://api.alphabothq.com/admin/wallet/${type}`,
 {
 method:"POST",
 headers:{
