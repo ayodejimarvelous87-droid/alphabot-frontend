@@ -133,7 +133,8 @@ sessionStorage.setItem(
   "alphaBotTransactionResult",
   JSON.stringify({
     ...data,
-    status: data.status || "success"
+    status: "successful",
+      returnPath: "/airtime"
   })
 );
 sessionStorage.removeItem(
