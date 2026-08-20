@@ -290,6 +290,36 @@ export default function Home(){
       </section>
 
 
+      {/* RESOURCES SECTION */}
+      <section className="px-6 pb-16 max-w-5xl mx-auto">
+
+        <div className="rounded-3xl border border-zinc-800 bg-[#111113] p-6 sm:p-8">
+
+          <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold">
+            Explore AlphaBot
+          </p>
+
+          <h3 className="text-2xl sm:text-3xl font-black mt-2">
+            Discover more with AlphaBot.
+          </h3>
+
+          <p className="text-sm sm:text-base text-zinc-400 mt-3 leading-7 max-w-2xl">
+            Explore guides and useful information about data, VTU services,
+            football, competitions, technology, account security and more.
+          </p>
+
+          <Link
+            href="/resources"
+            className="inline-flex mt-5 text-sm font-bold text-zinc-200 hover:text-white transition"
+          >
+            Explore AlphaBot →
+          </Link>
+
+        </div>
+
+      </section>
+
+
       {/* TRUST SECTION */}
       <section className="px-6 pb-20 max-w-5xl mx-auto">
 
