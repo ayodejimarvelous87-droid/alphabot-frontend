@@ -17,7 +17,14 @@ export default function TransactionResultPage() {
     }
 
     try {
-      setResult(JSON.parse(saved));
+      const parsed = JSON.parse(saved);
+
+      console.log("========== ALPHABOT TRANSACTION RESULT ==========");
+      console.log("FULL RESULT:", parsed);
+      console.log("STATUS:", parsed.status);
+      console.log("MESSAGE:", parsed.message);
+
+      setResult(parsed);
     } catch (error) {
       sessionStorage.removeItem(
         "alphaBotTransactionResult"

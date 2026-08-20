@@ -18,7 +18,8 @@ import Toast from "@/components/Toast";
 export default function Register(){
 
   const [form,setForm] = useState({
-    name:"",
+    firstName:"",
+    lastName:"",
     phone:"",
     email:"",
     password:"",
@@ -60,11 +61,25 @@ referralCode:ref
 
 
   const sendOTP=async()=>{
+      const firstName = form.firstName.trim();
+      const lastName = form.lastName.trim();
 
-    if(!form.name || !form.phone || !form.email || !form.password){
-      setMessage("Please fill all required fields");
-      return;
-    }
+      if(!firstName || !lastName || !form.phone || !form.email || !form.password){
+        setMessage("Please fill all required fields");
+        return;
+      }
+
+      if(firstName.length < 3 || lastName.length < 3){
+        setMessage("First name and last name must be at least 3 characters.");
+        return;
+      }
+
+      const namePattern = /^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ -][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/;
+
+      if(!namePattern.test(firstName) || !namePattern.test(lastName)){
+        setMessage("Names can only contain letters, spaces, or hyphens.");
+        return;
+      }
 
     setLoading(true);
     setMessage("");
@@ -78,7 +93,10 @@ referralCode:ref
           headers:{
             "Content-Type":"application/json"
           },
-          body:JSON.stringify(form)
+            body:JSON.stringify({
+              ...form,
+              name:`${form.firstName.trim()} ${form.lastName.trim()}`
+            })
         }
       );
 
@@ -263,12 +281,29 @@ referralCode:ref
 
 
 
-        <input
-          name="name"
-          placeholder="Full name"
-          className={inputStyle}
-          onChange={update}
-        />
+          <div className="grid grid-cols-2 gap-3 mt-4">
+
+            <input
+              name="firstName"
+              placeholder="First name"
+              minLength={3}
+              maxLength={40}
+              autoComplete="given-name"
+              className="w-full p-3.5 rounded-xl bg-[#050505] text-white border border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-500"
+              onChange={update}
+            />
+
+            <input
+              name="lastName"
+              placeholder="Last name"
+              minLength={3}
+              maxLength={40}
+              autoComplete="family-name"
+              className="w-full p-3.5 rounded-xl bg-[#050505] text-white border border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-500"
+              onChange={update}
+            />
+
+          </div>
 
 
         <div className="mt-4">
