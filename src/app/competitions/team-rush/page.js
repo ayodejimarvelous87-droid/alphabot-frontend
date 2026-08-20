@@ -539,6 +539,7 @@ export default function TeamRush() {
             {/* ALPHA */}
 
             <button
+                type="button"
               onClick={() => {
                 if (!selectedTeam) joinTeam("alpha");
               }}
@@ -645,6 +646,7 @@ export default function TeamRush() {
             {/* BETA */}
 
             <button
+                type="button"
               onClick={() => {
                 if (!selectedTeam) joinTeam("beta");
               }}
