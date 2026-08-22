@@ -21,23 +21,31 @@ const data=await res.json();
 
 let all=[];
 
-if(data.networks){
+const source = data.providers || data.networks || {};
 
-Object.keys(data.networks).forEach(network=>{
+Object.keys(source).forEach(group=>{
 
-Object.keys(data.networks[network]).forEach(category=>{
+  const groupData = source[group];
 
-data.networks[network][category].forEach(plan=>{
+  if(!groupData || typeof groupData !== "object"){
+    return;
+  }
 
-all.push(plan);
+  Object.keys(groupData).forEach(category=>{
+
+    const plans = groupData[category];
+
+    if(!Array.isArray(plans)){
+      return;
+    }
+
+    plans.forEach(plan=>{
+      all.push(plan);
+    });
+
+  });
 
 });
-
-});
-
-});
-
-}
 
 setPlans(all);
 
