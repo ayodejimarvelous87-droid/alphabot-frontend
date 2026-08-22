@@ -19,6 +19,10 @@ const res=await fetch(
 
 const data=await res.json();
 
+console.log("🔥 ADMIN DATA PLANS RESPONSE:", data);
+console.log("🔥 PROVIDERS:", data.providers);
+console.log("🔥 NETWORKS:", data.networks);
+
 let all=[];
 
 const source = data.providers || data.networks || {};
@@ -46,6 +50,9 @@ Object.keys(source).forEach(group=>{
   });
 
 });
+
+console.log("🔥 ADMIN DATA PLANS FINAL COUNT:", all.length);
+console.log("🔥 ADMIN DATA PLANS:", all);
 
 setPlans(all);
 
