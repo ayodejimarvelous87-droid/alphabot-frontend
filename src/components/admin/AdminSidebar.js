@@ -49,6 +49,13 @@ className={`block rounded-lg px-3 py-2 ${active("/admin")}`}
 📊 Dashboard
 </Link>
 
+<Link
+href="/admin/referral-contest"
+className="block mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
+>
+🏆 Referral Contest
+</Link>
+
 
 <button
 onClick={()=>setUsers(!users)}
