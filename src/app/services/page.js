@@ -152,7 +152,7 @@ desc="Mobile service"
 🧾 Bills
 </h2>
 <div className="grid-cols-2 grid gap-3 mt-3">
-{products.filter(p=>!["airtime","data","tv","electricity","exam-pin","epin","waec","jamb","neco"].includes(p.type)).map(p=>(
+{products.filter(p=>!["airtime","data","tv","electricity","exam-pin","epin","waec","jamb","neco","bank"].includes(p.type)).map(p=>(
 <ServiceCard key={p._id} icon={getIcon(p)} title={getDisplayName(p)} link={getServiceLink(p.type)} desc={p.type} />
 ))}
 </div>
