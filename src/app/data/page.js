@@ -462,7 +462,10 @@ setSelectedPlan("");
 Select Category
 </option>
 
-{categories.map(name=>(
+{[
+  ...categories.filter(name => name === "ALPHA"),
+  ...categories.filter(name => name !== "ALPHA")
+].map(name=>(
 
 <option key={name} value={name}>
 {name}
