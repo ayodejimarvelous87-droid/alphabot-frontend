@@ -29,7 +29,10 @@ type="tel"
 className="flex-1 min-w-0 p-3 rounded-r-xl bg-white dark:bg-black border"
 placeholder="Phone number"
 value={value.replace("+234","")}
-onChange={(e)=>onChange("+234"+e.target.value.replace(/\D/g,""))}
+onChange={(e)=>{
+const digits = e.target.value.replace(/\D/g,"").slice(0,11);
+onChange("+234" + digits);
+}}
 />
 
 </div>
