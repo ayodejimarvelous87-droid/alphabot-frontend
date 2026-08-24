@@ -149,7 +149,7 @@ return (
 
 <p>🔗 Referral Code: {partner.code}</p>
 
-<p>👥 Total Users: {partner.totalUsers || 0}</p>
+<p>👥 Total Users: {partner.referredUsers ?? partner.totalUsers ?? 0}</p>
 
 <p>💰 Total Earned: ₦{partner.totalEarned || 0}</p>
 
