@@ -235,6 +235,7 @@ export default function EnterPin() {
             ...result,
             status:
               result.status ||
+              result.transaction?.status ||
               (res.ok ? "success" : "failed"),
             returnPath: "/data"
           })

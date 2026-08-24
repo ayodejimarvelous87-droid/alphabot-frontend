@@ -376,374 +376,494 @@ return(
 }
 
 
-return(
+  return(
+    <main className="min-h-screen bg-[#050505] text-white px-4 py-6 pb-28">
 
-<main className="min-h-screen bg-white text-black dark:bg-[#0A0A0A] dark:text-white px-4 py-8 pb-24">
+      <div className="max-w-md mx-auto space-y-4">
 
-<div className="max-w-md mx-auto space-y-6">
+        {/* HEADER */}
+        <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-[#111113] to-black p-5">
 
+          <div className="absolute -right-12 -top-12 w-36 h-36 rounded-full bg-yellow-400/10 blur-3xl pointer-events-none" />
 
-<header>
+          <div className="relative flex items-center justify-between">
 
-<h1 className="text-3xl font-black">
-My Wallet 💳
-</h1>
+            <div>
+              <p className="text-[9px] font-black tracking-[0.22em] text-yellow-400 uppercase">
+                AlphaBot
+              </p>
 
-<p className="text-zinc-500 dark:text-zinc-400 mt-1">
-Manage your AlphaBot balance
-</p>
+              <h1 className="text-2xl font-black mt-1">
+                My Wallet
+              </h1>
 
-</header>
+              <p className="text-[10px] text-zinc-400 mt-1">
+                Fund your wallet and manage your balance
+              </p>
+            </div>
 
+            <div className="w-11 h-11 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center text-xl">
+              💳
+            </div>
 
+          </div>
+        </div>
 
 
-<section className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-zinc-800 rounded-2xl p-4 shadow-xl text-white">
+        {/* WARNING / MESSAGE — ALWAYS AT THE TOP */}
+        {message && (
+          <div
+            className={`rounded-2xl border px-4 py-3 text-center text-xs font-bold ${
+              message.startsWith("❌") ||
+              message.includes("error") ||
+              message.includes("valid") ||
+              message.includes("expired")
+                ? "bg-red-500/10 border-red-500/20 text-red-400"
+                : "bg-yellow-400/10 border-yellow-400/20 text-yellow-400"
+            }`}
+          >
+            {message}
+          </div>
+        )}
 
-<p className="text-xs text-zinc-400">
-💳 AlphaBot Premium Wallet
-</p>
 
+        {/* BALANCE */}
+        <section className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 p-5 text-black shadow-xl shadow-yellow-400/10">
 
-<p className="mt-2 text-sm text-zinc-400">
-Available Balance
-</p>
+          <div className="absolute -right-10 -bottom-12 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
 
+          <div className="relative">
 
-<h2 className="text-2xl font-black mt-1">
-₦{balance.toLocaleString()}
-</h2>
+            <div className="flex items-center justify-between">
 
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.18em] opacity-60">
+                  Available Balance
+                </p>
 
+                <h2 className="text-4xl font-black tracking-tight mt-2">
+                  ₦{Number(balance || 0).toLocaleString("en-NG")}
+                </h2>
+              </div>
 
-<div className="flex gap-3 mt-4">
+              <div className="w-12 h-12 rounded-2xl bg-black/10 flex items-center justify-center text-2xl">
+                ₦
+              </div>
 
-<Link
-href="/transactions"
-className="flex-1 text-center bg-zinc-800 text-white py-2.5 rounded-xl font-bold border border-zinc-700 active:scale-95 transition"
->
-History
-</Link>
+            </div>
 
+            <div className="flex gap-2 mt-5">
 
+              <Link
+                href="/transactions"
+                className="flex-1 text-center bg-black text-white py-3 rounded-2xl text-xs font-black active:scale-95 transition"
+              >
+                Transaction History
+              </Link>
 
+              <button
+                type="button"
+                onClick={refreshWallet}
+                className="w-12 bg-black/10 rounded-2xl flex items-center justify-center text-lg active:scale-90 transition"
+                aria-label="Refresh wallet"
+              >
+                ↻
+              </button>
 
-</div>
+            </div>
 
+          </div>
+        </section>
 
-</section>
 
+        {/* FUND WALLET */}
+        <section className="rounded-3xl border border-zinc-800 bg-[#111113] p-4 space-y-4">
 
+          <div className="flex items-center justify-between">
 
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-zinc-500">
+                Add Money
+              </p>
+
+              <h2 className="text-lg font-black mt-1">
+                Fund Wallet
+              </h2>
+
+              <p className="text-[10px] text-zinc-500 mt-0.5">
+                Choose how you want to fund your account
+              </p>
+            </div>
+
+            <span className="px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-[8px] font-black text-green-400">
+              SECURE
+            </span>
+
+          </div>
+
+
+          {/* AMOUNT */}
+          <div>
 
-<section className="bg-zinc-100 dark:bg-[#121214] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
+            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500 mb-2">
+              Amount
+            </p>
+
+            <div className="grid grid-cols-4 gap-2 mb-2">
+
+              {[1000,2000,5000,10000].map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setAmount(String(value))}
+                  className={`rounded-xl border py-2.5 text-[10px] font-black transition active:scale-95 ${
+                    String(amount) === String(value)
+                      ? "border-yellow-400 bg-yellow-400 text-black"
+                      : "border-zinc-800 bg-[#080809] text-zinc-400"
+                  }`}
+                >
+                  ₦{value.toLocaleString("en-NG")}
+                </button>
+              ))}
+
+            </div>
+
+            <div className="relative">
+
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">
+                ₦
+              </span>
+
+              <input
+                className="w-full pl-9 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+                placeholder="Enter amount"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+
+            </div>
+
+          </div>
+
+
+          {/* PAYMENT METHOD */}
+          <div>
+
+            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500 mb-2">
+              Funding Method
+            </p>
+
+            <div className="grid grid-cols-2 gap-2">
+
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("instant")}
+                className={`rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
+                  paymentMethod === "instant"
+                    ? "border-yellow-400/60 bg-yellow-400/10"
+                    : "border-zinc-800 bg-[#080809]"
+                }`}
+              >
+                <div className="text-lg">⚡</div>
+
+                <p className="text-xs font-black mt-1">
+                  Instant
+                </p>
+
+                <p className="text-[9px] text-zinc-500 mt-0.5">
+                  Pay online
+                </p>
+              </button>
 
-<h2 className="text-xl font-bold">
-Fund Wallet
-</h2>
 
-<p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-Add money to your wallet automatically or manually.
-</p>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("manual")}
+                className={`rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
+                  paymentMethod === "manual"
+                    ? "border-yellow-400/60 bg-yellow-400/10"
+                    : "border-zinc-800 bg-[#080809]"
+                }`}
+              >
+                <div className="text-lg">🏦</div>
 
+                <p className="text-xs font-black mt-1">
+                  Bank Transfer
+                </p>
 
-<div className="mt-5 bg-black rounded-2xl p-4 text-white border border-zinc-800">
+                <p className="text-[9px] text-zinc-500 mt-0.5">
+                  Use your account
+                </p>
+              </button>
 
-<div className="flex items-start justify-between gap-3">
+            </div>
 
-<div>
-<p className="font-bold text-base">
-🏦 Your AlphaBot Account
-</p>
+          </div>
 
-<p className="text-sm text-zinc-400 mt-1">
-Transfer money directly to this account and your wallet will be credited automatically.
-</p>
-</div>
 
-<span className="text-xs font-bold bg-green-500/10 text-green-400 px-2 py-1 rounded-lg whitespace-nowrap">
-Automatic
-</span>
+          {/* INSTANT PAYMENT */}
+          {paymentMethod === "instant" && (
+            <button
+              type="button"
+              onClick={fundWithFlutterwave}
+              disabled={flutterFunding || !amount}
+              className="w-full rounded-2xl bg-yellow-400 text-black py-4 font-black text-sm active:scale-[0.98] disabled:opacity-50 transition"
+            >
+              {flutterFunding
+                ? "Opening payment..."
+                : "⚡ Fund Wallet Instantly"}
+            </button>
+          )}
 
-</div>
 
+          {/* MANUAL FUNDING */}
+          {paymentMethod === "manual" && (
+            <button
+              type="button"
+              onClick={requestManualFunding}
+              disabled={manualFunding || !amount}
+              className="w-full rounded-2xl bg-zinc-900 border border-zinc-700 text-white py-4 font-black text-sm active:scale-[0.98] disabled:opacity-50 transition"
+            >
+              {manualFunding
+                ? "Submitting request..."
+                : "🏦 Request Manual Funding"}
+            </button>
+          )}
 
-{virtualAccountLoading ? (
+        </section>
 
-<div className="mt-4 animate-pulse space-y-3">
-<div className="h-12 bg-zinc-800 rounded-xl"></div>
-<div className="h-12 bg-zinc-800 rounded-xl"></div>
-<div className="h-12 bg-zinc-800 rounded-xl"></div>
-</div>
 
-) : virtualAccount ? (
+        {/* VIRTUAL ACCOUNT */}
+        <section className="rounded-3xl border border-zinc-800 bg-[#111113] p-4">
 
-<div className="mt-4 space-y-3">
+          <div className="flex items-start justify-between gap-3">
 
-<div className="bg-[#1A1A1E] rounded-xl p-3">
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-yellow-400">
+                Personal Account
+              </p>
 
-<p className="text-xs text-zinc-500 uppercase font-bold">
-Bank
-</p>
+              <h2 className="text-lg font-black mt-1">
+                Your AlphaBot Bank Account
+              </h2>
 
-<p className="mt-1 font-bold">
-{virtualAccount.bankName || "Flutterwave Bank"}
-</p>
+              <p className="text-[10px] text-zinc-500 mt-1">
+                Transfer money here and your wallet is credited automatically.
+              </p>
+            </div>
 
-</div>
+            <span className="px-2 py-1 rounded-lg bg-green-500/10 text-green-400 text-[8px] font-black whitespace-nowrap">
+              AUTO
+            </span>
 
+          </div>
 
-<div className="bg-[#1A1A1E] rounded-xl p-3">
 
-<p className="text-xs text-zinc-500 uppercase font-bold">
-Account Number
-</p>
+          {virtualAccountLoading ? (
 
-<div className="flex items-center justify-between gap-3">
+            <div className="mt-4 animate-pulse space-y-2">
+              <div className="h-14 bg-zinc-900 rounded-2xl" />
+              <div className="h-14 bg-zinc-900 rounded-2xl" />
+              <div className="h-14 bg-zinc-900 rounded-2xl" />
+            </div>
 
-<p className="mt-1 text-xl font-black tracking-wide">
-{virtualAccount.accountNumber}
-</p>
+          ) : virtualAccount ? (
 
-<button
-onClick={copyVirtualAccount}
-className="px-3 py-2 rounded-lg bg-zinc-800 text-xs font-bold active:scale-95 transition"
->
-{copiedAccount ? "Copied ✓" : "Copy"}
-</button>
+            <div className="mt-4 space-y-2">
 
-</div>
+              <div className="rounded-2xl bg-[#080809] border border-zinc-800 p-3">
 
-</div>
+                <p className="text-[8px] uppercase font-black tracking-wider text-zinc-500">
+                  Bank
+                </p>
 
+                <p className="text-sm font-black mt-1">
+                  {virtualAccount.bankName || "Flutterwave Bank"}
+                </p>
 
-<div className="bg-[#1A1A1E] rounded-xl p-3">
+              </div>
 
-<p className="text-xs text-zinc-500 uppercase font-bold">
-Account Name
-</p>
 
-<p className="mt-1 font-bold">
-{virtualAccount.accountName || "AlphaBot User"}
-</p>
+              <div className="rounded-2xl bg-[#080809] border border-zinc-800 p-3">
 
-</div>
+                <div className="flex items-center justify-between">
 
+                  <div>
+                    <p className="text-[8px] uppercase font-black tracking-wider text-zinc-500">
+                      Account Number
+                    </p>
 
-<p className="text-xs text-zinc-400">
-✓ Permanent account<br/>
-✓ Automatic wallet funding after payment confirmation
-</p>
+                    <p className="text-xl font-black tracking-wider mt-1">
+                      {virtualAccount.accountNumber}
+                    </p>
+                  </div>
 
-</div>
+                  <button
+                    type="button"
+                    onClick={copyVirtualAccount}
+                    className="px-3 py-2 rounded-xl bg-yellow-400 text-black text-[9px] font-black active:scale-95 transition"
+                  >
+                    {copiedAccount ? "Copied!" : "Copy"}
+                  </button>
 
-) : (
+                </div>
 
-<div className="mt-4 bg-[#1A1A1E] rounded-xl p-4">
+              </div>
 
-<p className="font-bold">
-Set up your personal account
-</p>
 
-<p className="text-xs text-zinc-400 mt-1">
-Create your permanent AlphaBot account for automatic wallet funding.
-</p>
+              <div className="rounded-2xl bg-yellow-400/5 border border-yellow-400/10 p-3">
 
+                <p className="text-[9px] text-yellow-400 font-bold">
+                  💡 Transfer directly to this account. Your wallet balance will update automatically.
+                </p>
 
+              </div>
 
+            </div>
 
-<input
-className="w-full mt-3 p-3 rounded-xl bg-black border border-zinc-700 text-white"
-placeholder="Enter your BVN"
-type="text"
-inputMode="numeric"
-value={identityNumber}
-onChange={(e)=>setIdentityNumber(e.target.value)}
-/>
+          ) : (
 
+            <div className="mt-4 rounded-2xl bg-[#080809] border border-zinc-800 p-4">
 
-<button
-onClick={createVirtualAccount}
-disabled={virtualAccountCreating || !identityNumber.trim()}
-className="w-full mt-3 py-3 rounded-xl bg-white text-black font-bold disabled:opacity-50 active:scale-95 transition"
->
-{virtualAccountCreating ? "Creating Account..." : "Create Personal Account"}
-</button>
+              <p className="text-sm font-bold">
+                Create your personal account
+              </p>
 
-</div>
+              <p className="text-[10px] text-zinc-500 mt-1">
+                Enter your BVN to generate your dedicated funding account.
+              </p>
 
-)}
+              <input
+                type="text"
+                inputMode="numeric"
+                value={identityNumber}
+                onChange={(e) => setIdentityNumber(e.target.value)}
+                placeholder="Enter BVN"
+                className="w-full mt-3 bg-[#111113] border border-zinc-800 rounded-2xl px-4 py-3 text-sm outline-none focus:border-yellow-400/60"
+              />
 
-</div>
+              <button
+                type="button"
+                onClick={createVirtualAccount}
+                disabled={virtualAccountCreating}
+                className="w-full mt-2 rounded-2xl bg-yellow-400 text-black py-3 font-black text-xs disabled:opacity-50 active:scale-[0.98] transition"
+              >
+                {virtualAccountCreating
+                  ? "Creating account..."
+                  : "Create Personal Account"}
+              </button>
 
+            </div>
 
-<p className="text-sm font-bold text-zinc-500 dark:text-zinc-400 mt-6">
-Other Funding Options
-</p>
+          )}
 
+        </section>
 
-<label className="block mt-4 text-xs font-bold text-zinc-500 uppercase">
-Funding Amount (₦)
-</label>
 
+        {/* RECENT TRANSACTIONS */}
+        <section className="rounded-3xl border border-zinc-800 bg-[#111113] p-4">
 
-<input
+          <div className="flex items-center justify-between mb-3">
 
-className="w-full mt-2 p-3.5 rounded-xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-800 text-black dark:text-white"
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+                Activity
+              </p>
 
-placeholder="Enter amount"
+              <h2 className="text-lg font-black mt-1">
+                Recent Transactions
+              </h2>
+            </div>
 
-type="number"
+            <Link
+              href="/transactions"
+              className="text-[9px] font-black text-yellow-400"
+            >
+              View All →
+            </Link>
 
-value={amount}
+          </div>
 
-onChange={(e)=>setAmount(e.target.value)}
 
-/>
+          {transactions.length === 0 ? (
 
+            <div className="rounded-2xl bg-[#080809] border border-zinc-800 p-6 text-center">
 
+              <div className="text-2xl mb-2">
+                🧾
+              </div>
 
-{(!amount || Number(amount)<=0) && (
+              <p className="text-xs font-bold text-zinc-400">
+                No transactions yet
+              </p>
 
-<p className="text-sm text-red-500 mt-2">
-Enter a valid amount to continue
-</p>
+            </div>
 
-)}
+          ) : (
 
+            <div className="space-y-2">
 
-<div className="grid grid-cols-2 mt-5 p-1 bg-zinc-200 dark:bg-black rounded-xl">
+              {transactions.map((transaction, index) => (
 
+                <div
+                  key={transaction.id || transaction.reference || index}
+                  className="flex items-center justify-between rounded-2xl bg-[#080809] border border-zinc-800 p-3"
+                >
 
-<button
-onClick={()=>setPaymentMethod("instant")}
-className={`py-3 rounded-xl text-sm font-bold active:scale-95 transition ${
-paymentMethod==="instant"
-?"bg-white dark:bg-zinc-800 shadow"
-:"text-zinc-500"
-}`}
->
-⚡ Instant Pay
-</button>
+                  <div className="flex items-center gap-3 min-w-0">
 
+                    <div className="w-9 h-9 shrink-0 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                      💳
+                    </div>
 
+                    <div className="min-w-0">
 
-<button
-onClick={()=>setPaymentMethod("manual")}
-className={`py-3 rounded-xl text-sm font-bold active:scale-95 transition ${
-paymentMethod==="manual"
-?"bg-white dark:bg-zinc-800 shadow"
-:"text-zinc-500"
-}`}
->
-🏦 Manual Funding
-</button>
+                      <p className="text-xs font-bold truncate">
+                        {transaction.description ||
+                          transaction.service ||
+                          transaction.type ||
+                          "Transaction"}
+                      </p>
 
+                      <p className="text-[9px] text-zinc-600 mt-0.5">
+                        {transaction.createdAt ||
+                          transaction.date ||
+                          transaction.created_at ||
+                          ""}
+                      </p>
 
-</div>
+                    </div>
 
+                  </div>
 
+                  <p className="text-xs font-black whitespace-nowrap ml-2">
+                    ₦{Number(
+                      transaction.amount || 0
+                    ).toLocaleString("en-NG")}
+                  </p>
 
+                </div>
 
+              ))}
 
-{paymentMethod==="instant" ? (
+            </div>
 
-<div className="mt-5 bg-black rounded-2xl p-4 text-white">
+          )}
 
-<p className="font-bold">
-⚡ Flutterwave
-</p>
+        </section>
 
 
-<p className="text-sm text-zinc-400 mt-2">
-Secure payment and automatic wallet credit.
-</p>
+        <Link
+          href="/dashboard"
+          className="block text-center text-zinc-500 text-xs py-2"
+        >
+          ← Dashboard
+        </Link>
 
+      </div>
 
-<button
-
-onClick={fundWithFlutterwave}
-
-disabled={flutterFunding || !amount || Number(amount)<=0}
-
-className="w-full mt-4 py-3 rounded-xl bg-white text-black font-bold disabled:opacity-50 active:scale-95 transition"
-
->
-
-{flutterFunding ? "Processing..." : "Pay with Flutterwave"}
-
-</button>
-
-
-</div>
-
-
-) : (
-
-
-<div className="mt-5 bg-black rounded-2xl p-4 text-white">
-
-
-<p className="font-bold">
-🏦 Manual Funding
-</p>
-
-
-
-<div className="mt-3 bg-[#1A1A1E] rounded-xl p-3 text-sm">
-
-<p>Bank: Moniepoint</p>
-
-<p>Account Number: 9037120624</p>
-
-<p>Name: Marvelous Oluwasegun Ayodeji</p>
-
-</div>
-
-
-
-<p className="text-xs text-zinc-400 mt-3">
-Wallet will be credited after approval.
-</p>
-
-
-
-<button
-
-onClick={requestManualFunding}
-
-disabled={manualFunding || !amount || Number(amount)<=0}
-
-className="w-full mt-4 py-3 rounded-xl bg-yellow-400 text-black font-bold disabled:opacity-50 active:scale-95 transition"
-
->
-
-{manualFunding ? "Processing..." : "Confirm Manual Transfer"}
-
-</button>
-
-
-</div>
-
-
-)}
-
-
-
-<Toast message={message} type={toastType} />
-
-
-</section>
-
-
-</div>
-
-
-<BottomNav />
-
-
-</main>
-
-);
+    </main>
+  )
 
 }

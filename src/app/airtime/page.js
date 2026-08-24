@@ -173,221 +173,267 @@ message="🎉 Airtime purchase successful!"
 />
 
 
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
+  <main className="min-h-screen bg-[#050505] text-white px-4 py-5 pb-24">
 
-<div className="max-w-md mx-auto space-y-5">
+    <div className="max-w-md mx-auto space-y-4">
 
+      {/* HEADER */}
+      <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-[#111113] to-black p-5">
 
-<div>
+        <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-yellow-400/10 blur-3xl pointer-events-none" />
 
-<h1 className="text-3xl font-black">
-📱 Airtime
-</h1>
+        <div className="relative flex items-center justify-between">
 
-<p className="text-zinc-400 mt-2">
-Instant airtime recharge for all networks
-</p>
+          <div>
+            <p className="text-[9px] font-black tracking-[0.22em] text-yellow-400 uppercase">
+              AlphaBot
+            </p>
 
-</div>
+            <h1 className="text-2xl font-black mt-1">
+              Airtime
+            </h1>
 
+            <p className="text-[10px] text-zinc-400 mt-1">
+              Instant recharge across all networks
+            </p>
+          </div>
 
+          <div className="w-11 h-11 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center text-xl">
+            📱
+          </div>
 
+        </div>
 
+      </div>
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-5">
 
+      {/* PURCHASE FORM */}
+      <div className="rounded-3xl border border-zinc-800 bg-[#111113] p-4 space-y-4">
 
-<div>
+        {/* NETWORK */}
+        <div>
 
-<p className="text-xs text-zinc-500 uppercase">
-Network Provider
-</p>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+              Network
+            </p>
 
+            <span className="text-[9px] text-zinc-600">
+              Select provider
+            </span>
+          </div>
 
-<select
+          <div className="grid grid-cols-4 gap-2">
 
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+            {["MTN","AIRTEL","GLO","9MOBILE"].map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setNetwork(item)}
+                className={`rounded-2xl border px-2 py-3 text-[10px] font-black transition active:scale-95 ${
+                  network === item
+                    ? "border-yellow-400 bg-yellow-400 text-black shadow-lg shadow-yellow-400/10"
+                    : "border-zinc-800 bg-[#080809] text-zinc-400 hover:border-zinc-700"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
 
-value={network}
+          </div>
 
-onChange={(e)=>setNetwork(e.target.value)}
+        </div>
 
->
 
-<option>MTN</option>
-<option>AIRTEL</option>
-<option>GLO</option>
-<option>9MOBILE</option>
+        {/* RECEIVER */}
+        <div>
 
-</select>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+              Receiver
+            </p>
 
+            <span className="text-[9px] text-zinc-600">
+              Phone number
+            </span>
+          </div>
 
-</div>
+          <div className="rounded-2xl border border-zinc-800 bg-[#080809] p-1">
 
+            <PhoneInput
+              value={phone}
+              onChange={setPhone}
+              beneficiaries={beneficiaries}
+              service="airtime"
+            />
 
+          </div>
 
+        </div>
 
 
-<div>
+        {/* AMOUNT */}
+        <div>
+
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+              Amount
+            </p>
+
+            <span className="text-[9px] text-zinc-600">
+              Enter or choose
+            </span>
+          </div>
 
-<p className="text-xs text-zinc-500 uppercase">
-Receiver
-</p>
+          <div className="grid grid-cols-4 gap-2 mb-2">
 
+            {[100,200,500,1000].map((value) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setAmount(String(value))}
+                className={`rounded-xl border py-2 text-[10px] font-bold transition active:scale-95 ${
+                  String(amount) === String(value)
+                    ? "border-yellow-400/60 bg-yellow-400/10 text-yellow-400"
+                    : "border-zinc-800 bg-[#080809] text-zinc-500"
+                }`}
+              >
+                ₦{value.toLocaleString()}
+              </button>
+            ))}
 
-<PhoneInput
+          </div>
 
-value={phone}
+          <div className="relative">
 
-onChange={setPhone}
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">
+              ₦
+            </span>
+
+            <input
+              className="w-full pl-9 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+              placeholder="Enter amount"
+              type="number"
+              value={amount}
+              onChange={(e)=>setAmount(e.target.value)}
+            />
 
-beneficiaries={beneficiaries}
+          </div>
 
-service="airtime"
+        </div>
 
-/>
 
+        {/* PIN */}
+        <div>
 
-</div>
+          <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500 mb-2">
+            Transaction PIN
+          </p>
 
+          <button
+            type="button"
+            onClick={() => {
+              sessionStorage.setItem(
+                "alphaBotAirtimePurchaseState",
+                JSON.stringify({
+                  phone,
+                  network,
+                  amount
+                })
+              );
 
+              router.push("/enter-pin?return=/airtime&service=airtime");
+            }}
+            className="w-full flex items-center justify-between rounded-2xl border border-zinc-800 bg-[#080809] px-4 py-4 text-left active:scale-[0.98] transition"
+          >
 
+            <div>
+              <p className="text-sm font-bold">
+                Enter transaction PIN
+              </p>
 
+              <p className="text-[9px] text-zinc-500 mt-0.5">
+                Required before purchase
+              </p>
+            </div>
 
-<div>
+            <span className="text-zinc-500 text-lg">
+              →
+            </span>
 
-<p className="text-xs text-zinc-500 uppercase">
-Amount
-</p>
+          </button>
 
+        </div>
 
-<input
+      </div>
 
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
 
-placeholder="Enter amount"
+      {/* FINGERPRINT CTA */}
+      <button
+        onClick={async()=>{
+          try{
 
-type="number"
+            setBiometricLoading(true);
+            setMessage("Touch your fingerprint...");
 
-value={amount}
+            await authenticateWithBiometric();
 
-onChange={(e)=>setAmount(e.target.value)}
+            setMessage("Fingerprint verified.");
+            await buyAirtime();
 
-/>
+          }catch(error){
 
+            localStorage.removeItem("biometricToken");
+            setMessage("❌ " + error.message);
 
-</div>
+          }finally{
 
+            setBiometricLoading(false);
 
+          }
+        }}
+        disabled={loading || biometricLoading}
+        className="relative w-full overflow-hidden rounded-2xl bg-yellow-400 text-black py-4 font-black text-base active:scale-[0.98] transition disabled:opacity-60"
+      >
 
+        <span className="relative z-10 flex items-center justify-center gap-2">
 
+          {biometricLoading ? (
+            <>
+              <span className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
+              Touch fingerprint...
+            </>
+          ) : (
+            <>
+              👆
+              Confirm with Fingerprint
+            </>
+          )}
 
-<div>
+        </span>
 
-<p className="text-xs text-zinc-500 uppercase">
-Transaction PIN
-</p>
+      </button>
 
-<button
-  type="button"
-  onClick={() => {
-    sessionStorage.setItem(
-      "alphaBotAirtimePurchaseState",
-      JSON.stringify({
-        phone,
-        network,
-        amount
-      })
-    );
 
-    router.push("/enter-pin?return=/airtime&service=airtime");
-  }}
-  className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
->
-  Enter 4-digit PIN →
-</button>
+      {/* STATUS */}
+      {message && (
+        <div className="rounded-2xl border border-zinc-800 bg-[#111113] px-4 py-3 text-center text-xs text-zinc-300">
+          {message}
+        </div>
+      )}
 
-</div>
 
+      {/* BACK */}
+      <Link
+        href="/dashboard"
+        className="flex items-center justify-center gap-2 text-[11px] font-bold text-zinc-500 hover:text-white transition py-2"
+      >
+        ← Dashboard
+      </Link>
 
-</div>
+    </div>
 
-
-
-
-
-<button
-
-onClick={async()=>{
-
-try{
-
-setBiometricLoading(true);
-setMessage("Touch your fingerprint...");
-
-await authenticateWithBiometric();
-
-setMessage("Fingerprint verified.");
-
-await buyAirtime();
-
-}catch(error){
-
-localStorage.removeItem("biometricToken");
-setMessage("❌ " + error.message);
-
-}finally{
-
-setBiometricLoading(false);
-
-}
-
-}}
-
-disabled={loading || biometricLoading}
-
-className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition"
-
->
-{biometricLoading ? "Touch fingerprint..." : "FINGERPRINT 🫆"}
-
-</button>
-
-
-
-
-
-{message && (
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4 text-center text-sm">
-
-{message}
-
-</div>
-
-)}
-
-
-
-
-
-<Link
-
-href="/dashboard"
-
-className="block text-center text-zinc-400 mt-6"
-
->
-
-← Dashboard
-
-</Link>
-
-
-
-</div>
-
-</main>
+  </main>
 
 </>
 );

@@ -45,16 +45,26 @@ export default function TransactionResultPage() {
   }
 
   const successful = result.status === "success" || result.status === "successful";
-  const processing = result.status === "processing";
+  const pending =
+    result.status === "pending" ||
+    result.transaction?.status === "pending";
+
+  const processing =
+    result.status === "processing" ||
+    result.transaction?.status === "processing";
 
   const title = successful
     ? "Transaction Successful"
+    : pending
+    ? "Awaiting Admin Approval"
     : processing
     ? "Transaction Processing"
     : "Transaction Failed";
 
   const icon = successful
     ? "✓"
+    : pending
+    ? "⏳"
     : processing
     ? "..."
     : "×";
@@ -103,6 +113,8 @@ export default function TransactionResultPage() {
             className={`mx-auto w-20 h-20 rounded-full border flex items-center justify-center text-4xl font-black ${
               successful
                 ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+                : pending
+                ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
                 : processing
                 ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
                 : "border-red-500/40 bg-red-500/10 text-red-400"
@@ -118,6 +130,8 @@ export default function TransactionResultPage() {
           <p className="text-zinc-400 mt-3 leading-6">
             {successful
               ? "Thank you for choosing AlphaBot. Your transaction has been completed successfully."
+              : pending
+              ? "Your transaction has been received and is awaiting admin approval. Your wallet has not been debited."
               : processing
               ? "Thank you for choosing AlphaBot. Your transaction is currently being processed."
               : "We are sorry, but your transaction could not be completed."}

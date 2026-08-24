@@ -162,34 +162,72 @@ setLoading(false);
 return(
 <>
 <SuccessCelebration
-show={showSuccess}
-message="🎉 Exam PIN purchase successful!"
+  show={showSuccess}
+  message="🎉 Exam PIN purchase successful!"
 />
 
-
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
-
+<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white px-4 py-6 pb-28">
 
 <div className="max-w-md mx-auto space-y-5">
 
+{/* HEADER */}
 
-<h1 className="text-3xl font-black">
-🎓 Exam PIN
-</h1>
+<header className="pt-2">
 
+<Link
+href="/dashboard"
+className="inline-flex items-center text-sm text-zinc-500 dark:text-zinc-400 mb-5"
+>
+← Dashboard
+</Link>
 
-<p className="text-zinc-400">
-Get your examination PIN instantly
+<p className="text-[10px] font-black tracking-[0.25em] text-yellow-500 uppercase">
+AlphaBot Services
 </p>
 
+<h1 className="text-3xl font-black tracking-tight mt-1">
+Exam PIN
+</h1>
+
+<p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+Get examination PINs instantly and securely.
+</p>
+
+</header>
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-4">
+{/* HERO */}
 
+<section className="relative overflow-hidden bg-gradient-to-br from-[#1B1B1F] via-[#111113] to-[#080808] border border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
 
+<div className="absolute -top-20 -right-20 w-44 h-44 rounded-full bg-yellow-400/10 blur-3xl" />
+
+<div className="relative">
+
+<div className="flex items-center gap-3 mb-6">
+
+<div className="w-12 h-12 rounded-2xl bg-yellow-400 text-black flex items-center justify-center text-2xl">
+🎓
+</div>
 
 <div>
-<p className="text-xs text-zinc-500 mb-2">
+<h2 className="font-black text-lg">
+Examination PIN
+</h2>
+
+<p className="text-xs text-zinc-500">
+Instant digital delivery
+</p>
+</div>
+
+</div>
+
+
+{/* PHONE */}
+
+<div className="mb-4">
+
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
 Candidate Phone
 </p>
 
@@ -201,58 +239,122 @@ onChange={(value)=>setPhone(value)}
 </div>
 
 
+{/* EXAM TYPE */}
 
+<div className="mb-5">
 
-<select
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-value={exam}
-onChange={(e)=>setExam(e.target.value)}
->
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
+Examination
+</p>
 
-<option>WAEC</option>
-<option>NECO</option>
-<option>JAMB</option>
+<div className="grid grid-cols-3 gap-2">
 
-</select>
-
-
-
-
-<input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-placeholder="Quantity"
-type="number"
-min="1"
-value={quantity}
-onChange={(e)=>setQuantity(e.target.value)}
-/>
-
-
-
+{["WAEC","NECO","JAMB"].map((item)=>(
 
 <button
-  type="button"
-  onClick={()=>{
-
-  sessionStorage.setItem(
-    "alphaBotExamPinPurchaseState",
-    JSON.stringify({
-      phone,
-      exam,
-      quantity
-    })
-  );
-
-  router.push(
-    "/enter-pin?return=/exam-pin&service=exam-pin"
-  );
-
-}}
-  className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+key={item}
+type="button"
+onClick={()=>setExam(item)}
+className={`py-3.5 rounded-2xl border font-black text-sm transition ${
+exam === item
+? "bg-yellow-400 text-black border-yellow-400 shadow-lg shadow-yellow-400/10"
+: "bg-[#050505] text-zinc-400 border-zinc-800 active:scale-95"
+}`}
 >
-  Enter 4 digit PIN →
+{item}
 </button>
 
+))}
+
+</div>
+
+</div>
+
+
+{/* QUANTITY */}
+
+<div className="mb-5">
+
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
+Quantity
+</p>
+
+<div className="flex items-center gap-3">
+
+<button
+type="button"
+onClick={()=>setQuantity(Math.max(1, Number(quantity) - 1))}
+className="w-14 h-14 rounded-2xl bg-[#050505] border border-zinc-800 text-xl font-black active:scale-90 transition"
+>
+−
+</button>
+
+<div className="flex-1 h-14 rounded-2xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+
+<span className="text-xl font-black">
+{quantity}
+</span>
+
+<span className="text-xs text-zinc-600 ml-2">
+PIN{Number(quantity) === 1 ? "" : "s"}
+</span>
+
+</div>
+
+<button
+type="button"
+onClick={()=>setQuantity(Number(quantity) + 1)}
+className="w-14 h-14 rounded-2xl bg-[#050505] border border-zinc-800 text-xl font-black active:scale-90 transition"
+>
++
+</button>
+
+</div>
+
+</div>
+
+
+{/* SECURITY */}
+
+<div className="flex items-center gap-2 px-3 py-3 rounded-2xl bg-green-500/5 border border-green-500/10 mb-5">
+
+<span>🔒</span>
+
+<p className="text-[10px] text-zinc-500">
+Secure transaction verification protects every purchase.
+</p>
+
+</div>
+
+
+{/* PIN */}
+
+<button
+type="button"
+onClick={()=>{
+
+sessionStorage.setItem(
+"alphaBotExamPinPurchaseState",
+JSON.stringify({
+phone,
+exam,
+quantity
+})
+);
+
+router.push(
+"/enter-pin?return=/exam-pin&service=exam-pin"
+);
+
+}}
+disabled={loading || biometricLoading}
+className="w-full bg-yellow-400 text-black py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
+>
+{loading ? "Processing..." : "🔐 Continue with PIN"}
+</button>
+
+
+{/* BIOMETRIC */}
 
 <button
 type="button"
@@ -261,7 +363,6 @@ onClick={async()=>{
 try{
 
 setBiometricLoading(true);
-
 setMessage("Touch your fingerprint...");
 
 await authenticateWithBiometric();
@@ -284,37 +385,70 @@ setBiometricLoading(false);
 
 }}
 disabled={loading || biometricLoading}
-className="w-full bg-zinc-900 border border-zinc-700 text-white py-3 rounded-xl font-bold active:scale-95 transition disabled:opacity-50"
+className="w-full mt-3 bg-[#050505] border border-zinc-800 text-white py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
 >
 
 {biometricLoading
-  ? "Touch fingerprint..."
-  : "👆 Use Fingerprint"}
+? "Touch fingerprint..."
+: "👆 Buy with Fingerprint"}
 
 </button>
 
 
-<p className="text-center text-sm text-zinc-400">
+{/* MESSAGE */}
+
+{message && (
+
+<div className="mt-4 bg-[#050505] border border-zinc-800 rounded-2xl p-4 text-center text-sm">
+
 {message}
+
+</div>
+
+)}
+
+</div>
+
+</section>
+
+
+{/* INFO CARDS */}
+
+<div className="grid grid-cols-3 gap-2">
+
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
+
+<p className="text-lg">⚡</p>
+
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+INSTANT
 </p>
 
+</div>
 
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
+
+<p className="text-lg">🔒</p>
+
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+SECURE
+</p>
 
 </div>
 
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
 
+<p className="text-lg">🎓</p>
 
-<Link
-href="/dashboard"
-className="block text-center text-zinc-400 mt-6"
->
-← Dashboard
-</Link>
-
-
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+EXAMS
+</p>
 
 </div>
 
+</div>
+
+</div>
 
 </main>
 

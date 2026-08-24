@@ -140,41 +140,76 @@ setLoading(false);
 return(
 <>
 <SuccessCelebration
-show={showSuccess}
-message="🎉 Electricity payment successful!"
+  show={showSuccess}
+  message="🎉 Electricity payment successful!"
 />
 
-
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
+<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white px-4 py-6 pb-28">
 
 <div className="max-w-md mx-auto space-y-5">
 
+{/* HEADER */}
 
-<div>
+<header className="pt-2">
 
-<h1 className="text-3xl font-black">
-⚡ Electricity
+<Link
+href="/dashboard"
+className="inline-flex items-center text-sm text-zinc-500 dark:text-zinc-400 mb-5"
+>
+← Dashboard
+</Link>
+
+<p className="text-[10px] font-black tracking-[0.25em] text-yellow-500 uppercase">
+AlphaBot Services
+</p>
+
+<h1 className="text-3xl font-black tracking-tight mt-1">
+Electricity
 </h1>
 
-<p className="text-zinc-400 mt-2">
-Pay your electricity bills securely
+<p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+Pay your electricity bill quickly and securely.
 </p>
+
+</header>
+
+
+{/* PAYMENT CARD */}
+
+<section className="relative overflow-hidden bg-gradient-to-br from-[#1B1B1F] via-[#111113] to-[#080808] border border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+
+<div className="absolute -top-20 -right-20 w-44 h-44 rounded-full bg-yellow-400/10 blur-3xl" />
+
+<div className="relative">
+
+{/* SERVICE TITLE */}
+
+<div className="flex items-center gap-3 mb-6">
+
+<div className="w-12 h-12 rounded-2xl bg-yellow-400 text-black flex items-center justify-center text-2xl">
+⚡
+</div>
+
+<div>
+<h2 className="font-black text-lg">
+Electricity Payment
+</h2>
+
+<p className="text-xs text-zinc-500">
+Secure utility payment
+</p>
+</div>
 
 </div>
 
 
+{/* PHONE */}
 
+<div className="mb-4">
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-5">
-
-
-
-<div>
-
-<p className="text-xs text-zinc-500 uppercase">
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
 Phone Number
 </p>
-
 
 <PhoneInput
 value={phone}
@@ -184,24 +219,18 @@ onChange={(value)=>setPhone(value)}
 </div>
 
 
+{/* DISCO */}
 
+<div className="mb-4">
 
-
-<div>
-
-<p className="text-xs text-zinc-500 uppercase">
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
 Distribution Company
 </p>
 
-
 <select
-
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
-
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white outline-none focus:border-yellow-400 transition"
 value={disco}
-
 onChange={(e)=>setDisco(e.target.value)}
-
 >
 
 <option value="ikeja-electric">Ikeja Electric (IKEDC)</option>
@@ -219,152 +248,141 @@ onChange={(e)=>setDisco(e.target.value)}
 
 </select>
 
-
 </div>
 
 
+{/* METER NUMBER */}
 
+<div className="mb-4">
 
-
-<div>
-
-<p className="text-xs text-zinc-500 uppercase">
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
 Meter Number
 </p>
 
-
 <input
-
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
-
+className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white placeholder:text-zinc-600 outline-none focus:border-yellow-400 transition"
 placeholder="Enter meter number"
-
 value={meterNumber}
-
 onChange={(e)=>setMeterNumber(e.target.value)}
-
 />
-
 
 </div>
 
 
+{/* METER TYPE */}
 
+<div className="mb-4">
 
-
-<div>
-
-<p className="text-xs text-zinc-500 uppercase">
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
 Meter Type
 </p>
 
+<div className="grid grid-cols-2 gap-3">
 
-<select
-
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
-
-value={meterType}
-
-onChange={(e)=>setMeterType(e.target.value)}
-
+<button
+type="button"
+onClick={()=>setMeterType("prepaid")}
+className={`p-4 rounded-2xl border font-bold transition ${
+meterType === "prepaid"
+? "bg-yellow-400 text-black border-yellow-400"
+: "bg-[#050505] text-zinc-400 border-zinc-800"
+}`}
 >
-
-
-<option value="prepaid">
 Prepaid
-</option>
+</button>
 
-
-<option value="postpaid">
+<button
+type="button"
+onClick={()=>setMeterType("postpaid")}
+className={`p-4 rounded-2xl border font-bold transition ${
+meterType === "postpaid"
+? "bg-yellow-400 text-black border-yellow-400"
+: "bg-[#050505] text-zinc-400 border-zinc-800"
+}`}
+>
 Postpaid
-</option>
+</button>
 
-
-</select>
-
+</div>
 
 </div>
 
 
+{/* AMOUNT */}
 
+<div className="mb-5">
 
-
-<div>
-
-<p className="text-xs text-zinc-500 uppercase">
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
 Amount
 </p>
 
+<div className="relative">
+
+<span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">
+₦
+</span>
 
 <input
-
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
-
-placeholder="Amount"
-
+className="w-full p-4 pl-9 rounded-2xl bg-[#050505] border border-zinc-800 text-white placeholder:text-zinc-600 outline-none focus:border-yellow-400 transition"
+placeholder="Enter amount"
 type="number"
-
 value={amount}
-
 onChange={(e)=>setAmount(e.target.value)}
-
 />
 
+</div>
 
 </div>
 
 
+{/* SECURITY */}
 
+<div className="flex items-center gap-2 px-3 py-3 rounded-2xl bg-green-500/5 border border-green-500/10 mb-5">
 
+<span>🔒</span>
 
-<div>
-
-<p className="text-xs text-zinc-500 uppercase">
-Transaction PIN
+<p className="text-[10px] text-zinc-500">
+Your payment is protected by AlphaBot secure transaction verification.
 </p>
 
-
-
-
-
 </div>
 
 
-</div>
-
-
-
-
+{/* PIN */}
 
 <button
-  type="button"
-  onClick={()=>{
+type="button"
+onClick={()=>{
 
-  sessionStorage.setItem(
-    "alphaBotElectricityPurchaseState",
-    JSON.stringify({
-      phone,
-      disco,
-      meterNumber,
-      meterType,
-      amount
-    })
-  );
+sessionStorage.setItem(
+"alphaBotElectricityPurchaseState",
+JSON.stringify({
+phone,
+disco,
+meterNumber,
+meterType,
+amount
+})
+);
 
-  router.push(
-    "/enter-pin?return=/electricity&service=electricity"
-  );
+router.push(
+"/enter-pin?return=/electricity&service=electricity"
+);
 
 }}
-  disabled={loading || biometricLoading}
-  className="w-full bg-[#18181B] border border-zinc-800 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition"
+disabled={loading || biometricLoading}
+className="w-full bg-yellow-400 text-black py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
 >
-  🔐 Enter 4-digit PIN
+
+{loading ? "Processing..." : "🔐 Continue with PIN"}
+
 </button>
 
 
-<button
+{/* FINGERPRINT */}
 
+<button
+type="button"
 onClick={async()=>{
 
 try{
@@ -381,6 +399,7 @@ await payElectricity();
 }catch(error){
 
 localStorage.removeItem("biometricToken");
+
 setMessage("❌ " + error.message);
 
 }finally{
@@ -390,23 +409,22 @@ setBiometricLoading(false);
 }
 
 }}
-
 disabled={loading || biometricLoading}
-
-className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition"
-
+className="w-full mt-3 bg-[#050505] border border-zinc-800 text-white py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
 >
-{biometricLoading ? "Touch fingerprint..." : "👆 Use Fingerprint"}
+
+{biometricLoading
+? "Touch fingerprint..."
+: "👆 Pay with Fingerprint"}
 
 </button>
 
 
-
-
+{/* MESSAGE */}
 
 {message && (
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4 text-center">
+<div className="mt-4 bg-[#050505] border border-zinc-800 rounded-2xl p-4 text-center text-sm">
 
 {message}
 
@@ -414,23 +432,48 @@ className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl
 
 )}
 
+</div>
+
+</section>
 
 
+{/* TRUST CARDS */}
+
+<div className="grid grid-cols-3 gap-2">
+
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
+
+<p className="text-lg">⚡</p>
+
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+FAST
+</p>
+
+</div>
 
 
-<Link
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
 
-href="/dashboard"
+<p className="text-lg">🔒</p>
 
-className="block text-center text-zinc-400 mt-6"
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+SECURE
+</p>
 
->
-
-← Dashboard
-
-</Link>
+</div>
 
 
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
+
+<p className="text-lg">✓</p>
+
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+RELIABLE
+</p>
+
+</div>
+
+</div>
 
 </div>
 
@@ -438,6 +481,5 @@ className="block text-center text-zinc-400 mt-6"
 
 </>
 );
-
 
 }

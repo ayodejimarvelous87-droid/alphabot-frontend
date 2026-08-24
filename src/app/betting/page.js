@@ -221,37 +221,76 @@ setLoading(false);
 return(
 <>
 <SuccessCelebration
-show={showSuccess}
-message="🎉 Betting wallet funded successfully!"
+  show={showSuccess}
+  message="🎉 Betting wallet funded successfully!"
 />
 
-
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
-
+<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white px-4 py-6 pb-28">
 
 <div className="max-w-md mx-auto space-y-5">
 
+{/* HEADER */}
 
+<header className="pt-2">
 
-<h1 className="text-3xl font-black">
-🎮 Betting
-</h1>
+<Link
+href="/dashboard"
+className="inline-flex items-center text-sm text-zinc-500 dark:text-zinc-400 mb-5"
+>
+← Dashboard
+</Link>
 
-
-<p className="text-zinc-400">
-Fund your betting wallet instantly
+<p className="text-[10px] font-black tracking-[0.25em] text-yellow-500 uppercase">
+AlphaBot Services
 </p>
 
+<h1 className="text-3xl font-black tracking-tight mt-1">
+Betting
+</h1>
+
+<p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+Fund your betting wallet quickly and securely.
+</p>
+
+</header>
 
 
+{/* MAIN CARD */}
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-4">
+<section className="relative overflow-hidden bg-gradient-to-br from-[#1B1B1F] via-[#111113] to-[#080808] border border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
 
+<div className="absolute -top-20 -right-20 w-44 h-44 rounded-full bg-yellow-400/10 blur-3xl" />
 
+<div className="relative">
+
+{/* HERO */}
+
+<div className="flex items-center gap-3 mb-6">
+
+<div className="w-12 h-12 rounded-2xl bg-yellow-400 text-black flex items-center justify-center text-2xl shadow-lg shadow-yellow-400/10">
+🎮
+</div>
 
 <div>
 
-<p className="text-xs text-zinc-500 mb-2">
+<h2 className="font-black text-lg">
+Betting Wallet
+</h2>
+
+<p className="text-xs text-zinc-500">
+Instant wallet funding
+</p>
+
+</div>
+
+</div>
+
+
+{/* PHONE */}
+
+<div className="mb-5">
+
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
 Phone Number
 </p>
 
@@ -263,113 +302,193 @@ onChange={(value)=>setPhone(value)}
 </div>
 
 
+{/* BETTING ID */}
 
+<div className="mb-5">
 
-<div>
-
-<p className="text-xs text-zinc-500 mb-2">
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
 Betting ID
 </p>
 
 <input
-  type="text"
-  value={customerId}
-  onChange={(e)=>setCustomerId(e.target.value)}
-  placeholder="Enter your betting account ID"
-  className="w-full bg-white text-black border border-zinc-700 rounded-xl p-3"
+type="text"
+value={customerId}
+onChange={(e)=>setCustomerId(e.target.value)}
+placeholder="Enter your betting account ID"
+className="w-full bg-[#050505] text-white border border-zinc-800 rounded-2xl p-4 outline-none focus:border-yellow-400 transition"
 />
 
-<p className="text-xs text-zinc-500 mt-2">
-Enter the ID used by your betting platform.
+<p className="text-[10px] text-zinc-600 mt-2">
+Use the customer ID registered on your betting platform.
 </p>
 
 </div>
 
 
-<div>
+{/* PLATFORM */}
 
-<p className="text-xs text-zinc-500 mb-2">
+<div className="mb-5">
+
+<div className="flex items-center justify-between mb-2">
+
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
 Betting Platform
 </p>
 
-
-<select
-  className="w-full bg-white text-black border border-zinc-700 rounded-xl p-3"
-  value={provider}
-  onChange={(e)=>setProvider(e.target.value)}
->
-
-    <option value="">Select platform</option>
-
-  {services.map((item)=>(
-    <option
-      key={item._id}
-      value={item.service}
-    >
-      {item.service}
-    </option>
-  ))}
-</select>
-
-  <p className="text-xs text-red-500">
-
-  </p>
+{servicesLoading && (
+<span className="text-[9px] text-yellow-500 animate-pulse">
+Loading...
+</span>
+)}
 
 </div>
 
 
+{servicesLoading ? (
 
+<div className="w-full h-14 rounded-2xl bg-[#050505] border border-zinc-800 animate-pulse" />
 
-  <div className="flex gap-2 flex-wrap">
-    {[100,200,500,1000].map((value)=>(
-      <button
-      key={value}
-      type="button"
-      onClick={()=>setAmount(String(value))}
-      className="bg-zinc-800 px-4 py-2 rounded-xl text-sm hover:bg-zinc-700"
-      >
-        ₦{value}
-      </button>
-    ))}
-  </div>
+) : services.length > 0 ? (
 
-  <input
-  className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-  placeholder="Amount"
-  type="number"
-  value={amount}
-  onChange={(e)=>setAmount(e.target.value)}
-  />
+<div className="grid grid-cols-2 gap-2">
 
-
-
+{services.map((item)=>(
 
 <button
-  type="button"
-  onClick={()=>{
+key={item._id}
+type="button"
+onClick={()=>setProvider(item.service)}
+className={`min-h-[56px] px-3 rounded-2xl border text-sm font-black transition active:scale-[0.97] ${
+provider === item.service
+? "bg-yellow-400 text-black border-yellow-400 shadow-lg shadow-yellow-400/10"
+: "bg-[#050505] text-zinc-300 border-zinc-800 hover:border-zinc-600"
+}`}
+>
+{item.service}
+</button>
 
-  sessionStorage.setItem(
-    "alphaBotBettingPurchaseState",
-    JSON.stringify({
-      phone,
-      customerId,
-      provider,
-      amount
-    })
-  );
+))}
 
-  router.push(
-    "/enter-pin?return=/betting&service=betting"
-  );
+</div>
+
+) : (
+
+<div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-4 text-center">
+
+<p className="text-xs text-red-400">
+No betting platforms are currently available.
+</p>
+
+</div>
+
+)}
+
+</div>
+
+
+{/* AMOUNT */}
+
+<div className="mb-5">
+
+<p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
+Funding Amount
+</p>
+
+
+<div className="grid grid-cols-4 gap-2 mb-3">
+
+{[100,200,500,1000].map((value)=>(
+
+<button
+key={value}
+type="button"
+onClick={()=>setAmount(String(value))}
+className={`py-3 rounded-2xl border text-xs font-black transition active:scale-95 ${
+Number(amount) === value
+? "bg-yellow-400 text-black border-yellow-400"
+: "bg-[#050505] text-zinc-400 border-zinc-800 hover:border-zinc-600"
+}`}
+>
+₦{value.toLocaleString()}
+</button>
+
+))}
+
+</div>
+
+
+<div className="relative">
+
+<span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-black">
+₦
+</span>
+
+<input
+className="w-full bg-[#050505] border border-zinc-800 rounded-2xl py-4 pl-9 pr-4 text-white font-bold outline-none focus:border-yellow-400 transition"
+placeholder="Enter amount"
+type="number"
+min="1"
+value={amount}
+onChange={(e)=>setAmount(e.target.value)}
+/>
+
+</div>
+
+</div>
+
+
+{/* SECURITY */}
+
+<div className="flex items-center gap-3 rounded-2xl bg-green-500/5 border border-green-500/10 p-3 mb-5">
+
+<div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center">
+🔒
+</div>
+
+<div>
+
+<p className="text-xs font-bold text-zinc-300">
+Secure transaction
+</p>
+
+<p className="text-[9px] text-zinc-600 mt-0.5">
+Your payment requires transaction authorization.
+</p>
+
+</div>
+
+</div>
+
+
+{/* PIN */}
+
+<button
+type="button"
+onClick={()=>{
+
+sessionStorage.setItem(
+"alphaBotBettingPurchaseState",
+JSON.stringify({
+phone,
+customerId,
+provider,
+amount
+})
+);
+
+router.push(
+"/enter-pin?return=/betting&service=betting"
+);
 
 }}
-  className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+disabled={loading || biometricLoading}
+className="w-full bg-yellow-400 text-black py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
 >
-  Enter 4 digit PIN →
+{loading ? "Processing..." : "🔐 Continue with PIN"}
 </button>
 
 
-
+{/* FINGERPRINT */}
 
 <button
 type="button"
@@ -378,7 +497,6 @@ onClick={async()=>{
 try{
 
 setBiometricLoading(true);
-
 setMessage("Touch your fingerprint...");
 
 await authenticateWithBiometric();
@@ -401,44 +519,79 @@ setBiometricLoading(false);
 
 }}
 disabled={loading || biometricLoading}
-className="w-full bg-zinc-900 border border-zinc-700 text-white py-3 rounded-xl font-bold active:scale-95 transition disabled:opacity-50"
+className="w-full mt-3 bg-[#050505] border border-zinc-800 text-white py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
 >
 
 {biometricLoading
-  ? "Touch fingerprint..."
-  : "👆 Use Fingerprint"}
+? "Touch fingerprint..."
+: "👆 Fund with Fingerprint"}
 
 </button>
 
 
+{/* MESSAGE */}
 
-<p className="text-center text-sm text-zinc-400">
+{message && (
+
+<div className="mt-4 bg-[#050505] border border-zinc-800 rounded-2xl p-4 text-center text-sm">
+
 {message}
+
+</div>
+
+)}
+
+</div>
+
+</section>
+
+
+{/* INFO */}
+
+<div className="grid grid-cols-3 gap-2">
+
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
+
+<p className="text-lg">⚡</p>
+
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+INSTANT
 </p>
 
+</div>
 
+
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
+
+<p className="text-lg">🔒</p>
+
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+SECURE
+</p>
 
 </div>
 
 
+<div className="rounded-2xl bg-zinc-100 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 p-3 text-center">
 
+<p className="text-lg">🎮</p>
 
-<Link
-href="/dashboard"
-className="block text-center text-zinc-400 mt-6"
->
-← Dashboard
-</Link>
-
-
+<p className="text-[9px] text-zinc-500 mt-1 font-bold">
+BETTING
+</p>
 
 </div>
+
+</div>
+
 
 <Toast
 message={toast}
 type="success"
 onClose={()=>setToast("")}
 />
+
+</div>
 
 </main>
 

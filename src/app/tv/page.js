@@ -183,151 +183,243 @@ export default function Page() {
     }
   };
 
-  return (
-    <>
-      <SuccessCelebration
-        show={showSuccess}
-        message="🎉 TV subscription successful!"
-      />
+      return (
+      <>
+        <SuccessCelebration
+          show={showSuccess}
+          message="🎉 TV subscription successful!"
+        />
 
-      <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
-        <div className="max-w-md mx-auto space-y-5">
+        <main className="min-h-screen bg-[#050505] text-white px-4 py-5 pb-24">
+          <div className="max-w-md mx-auto space-y-4">
 
-          <h1 className="text-3xl font-black">
-            📺 TV Subscription
-          </h1>
+            {/* HEADER */}
+            <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-[#111113] to-black p-5">
 
-          <p className="text-zinc-400">
-            Renew your entertainment package instantly
-          </p>
+              <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-yellow-400/10 blur-3xl pointer-events-none" />
 
-          <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-5">
+              <div className="relative flex items-center justify-between">
 
-            <div>
-              <p className="text-xs text-zinc-500 mb-2">
-                TV Provider
-              </p>
+                <div>
+                  <p className="text-[9px] font-black tracking-[0.22em] text-yellow-400 uppercase">
+                    AlphaBot
+                  </p>
 
-              <select
-                className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-                value={provider}
-                onChange={(e) => {
-                  setProvider(e.target.value);
-                  setTvPackage("");
-                  setAmount("");
-                }}
-              >
-                {providers.map((item) => (
-                  <option key={item} value={item}>
-                    {item.toUpperCase()}
-                  </option>
-                ))}
-              </select>
+                  <h1 className="text-2xl font-black mt-1">
+                    TV Subscription
+                  </h1>
+
+                  <p className="text-[10px] text-zinc-400 mt-1">
+                    Renew your entertainment package instantly
+                  </p>
+                </div>
+
+                <div className="w-11 h-11 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center text-xl">
+                  📺
+                </div>
+
+              </div>
             </div>
 
-            <div>
-              <p className="text-xs text-zinc-500 mb-2">
-                Smart Card Number
-              </p>
+            {/* PURCHASE FORM */}
+            <div className="rounded-3xl border border-zinc-800 bg-[#111113] p-4 space-y-4">
 
-              <input
-                className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-                placeholder="Enter IUC number"
-                value={smartCardNumber}
-                onChange={(e) =>
-                  setSmartCardNumber(e.target.value)
-                }
-              />
-            </div>
+              {/* PROVIDER */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+                    TV Provider
+                  </p>
 
-            <div>
-              <p className="text-xs text-zinc-500 mb-2">
-                Choose Package
-              </p>
+                  <span className="text-[9px] text-zinc-600">
+                    Select provider
+                  </span>
+                </div>
 
-              <select
-                className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-                value={tvPackage}
-                onChange={(e) => {
-                  const selected = plans.find(
-                    (p) =>
-                      p.variation_id === e.target.value
-                  );
-
-                  setTvPackage(e.target.value);
-
-                  if (selected) {
-                    setAmount(selected.sellingPrice);
-                  }
-                }}
-              >
-                <option value="">
-                  Select Package
-                </option>
-
-                {plans
-                  .filter(
-                    (p) => p.provider === provider
-                  )
-                  .map((plan) => (
-                    <option
-                      key={plan.variation_id}
-                      value={plan.variation_id}
+                <div className="grid grid-cols-2 gap-2">
+                  {providers.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => {
+                        setProvider(item);
+                        setTvPackage("");
+                        setAmount("");
+                      }}
+                      className={`rounded-2xl border px-3 py-3 text-[10px] font-black transition active:scale-95 ${
+                        provider === item
+                          ? "border-yellow-400 bg-yellow-400 text-black shadow-lg shadow-yellow-400/10"
+                          : "border-zinc-800 bg-[#080809] text-zinc-400 hover:border-zinc-700"
+                      }`}
                     >
-                      {plan.name} - ₦
-                      {Number(
-                        plan.sellingPrice
-                      ).toLocaleString("en-NG")}
-                    </option>
+                      📺 {item.toUpperCase()}
+                    </button>
                   ))}
-              </select>
+                </div>
+              </div>
+
+              {/* SMART CARD */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+                    Receiver
+                  </p>
+
+                  <span className="text-[9px] text-zinc-600">
+                    Smart card / IUC
+                  </span>
+                </div>
+
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
+                    #
+                  </span>
+
+                  <input
+                    className="w-full pl-9 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+                    placeholder="Enter IUC number"
+                    value={smartCardNumber}
+                    onChange={(e) =>
+                      setSmartCardNumber(e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* PACKAGE */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+                    Package
+                  </p>
+
+                  <span className="text-[9px] text-zinc-600">
+                    Choose your plan
+                  </span>
+                </div>
+
+                <select
+                  className="w-full bg-[#080809] border border-zinc-800 rounded-2xl p-4 text-white outline-none focus:border-yellow-400/60 transition"
+                  value={tvPackage}
+                  onChange={(e) => {
+                    const selected = plans.find(
+                      (p) =>
+                        p.variation_id === e.target.value
+                    );
+
+                    setTvPackage(e.target.value);
+
+                    if (selected) {
+                      setAmount(selected.sellingPrice);
+                    }
+                  }}
+                >
+                  <option value="">
+                    Select Package
+                  </option>
+
+                  {plans
+                    .filter(
+                      (p) => p.provider === provider
+                    )
+                    .map((plan) => (
+                      <option
+                        key={plan.variation_id}
+                        value={plan.variation_id}
+                      >
+                        {plan.name} - ₦
+                        {Number(
+                          plan.sellingPrice
+                        ).toLocaleString("en-NG")}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* AMOUNT */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+                    Amount
+                  </p>
+
+                  <span className="text-[9px] text-zinc-600">
+                    Package price
+                  </span>
+                </div>
+
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">
+                    ₦
+                  </span>
+
+                  <input
+                    className="w-full pl-9 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+                    placeholder="Enter amount"
+                    type="number"
+                    value={amount}
+                    onChange={(e) =>
+                      setAmount(e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* PIN */}
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500 mb-2">
+                  Transaction PIN
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handlePin}
+                  disabled={loading || biometricLoading}
+                  className="w-full flex items-center justify-between rounded-2xl border border-zinc-800 bg-[#080809] px-4 py-4 text-left active:scale-[0.98] transition"
+                >
+                  <div>
+                    <p className="text-sm font-bold">
+                      Enter transaction PIN
+                    </p>
+
+                    <p className="text-[9px] text-zinc-500 mt-0.5">
+                      Required before purchase
+                    </p>
+                  </div>
+
+                  <span className="text-zinc-500 text-lg">
+                    →
+                  </span>
+                </button>
+              </div>
+
             </div>
 
-            <input
-              className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
-              placeholder="Amount"
-              type="number"
-              value={amount}
-              onChange={(e) =>
-                setAmount(e.target.value)
-              }
-            />
-
-            <button
-              type="button"
-              onClick={handlePin}
-              disabled={loading || biometricLoading}
-              className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
-            >
-              Enter 4 digit PIN →
-            </button>
-
+            {/* FINGERPRINT */}
             <button
               type="button"
               onClick={handleBiometric}
               disabled={loading || biometricLoading}
-              className="w-full bg-zinc-900 border border-zinc-700 text-white rounded-xl py-3 font-bold active:scale-95 transition"
+              className="w-full rounded-2xl bg-yellow-400 text-black py-4 font-black text-sm shadow-lg shadow-yellow-400/10 active:scale-[0.98] transition disabled:opacity-50"
             >
               {biometricLoading
                 ? "Touch fingerprint..."
                 : "👆 Use Fingerprint"}
             </button>
 
-            <p className="text-center text-sm text-zinc-400">
-              {message}
-            </p>
+            {/* MESSAGE */}
+            {message && (
+              <div className="rounded-2xl border border-zinc-800 bg-[#111113] px-4 py-3 text-center text-xs text-zinc-400">
+                {message}
+              </div>
+            )}
+
+            <div className="text-center text-[10px] text-zinc-600 pb-2">
+              Secure payment • Instant TV activation
+            </div>
 
           </div>
-
-          <Link
-            href="/dashboard"
-            className="block text-center text-zinc-400 mt-6"
-          >
-            ← Dashboard
-          </Link>
-
-        </div>
-      </main>
-    </>
-  );
+        </main>
+      </>
+    );
 }

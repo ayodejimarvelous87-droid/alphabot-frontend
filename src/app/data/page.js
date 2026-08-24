@@ -331,7 +331,10 @@ sessionStorage.setItem(
   "alphaBotTransactionResult",
   JSON.stringify({
     ...result,
-    status: result.status || "success",
+    status:
+      result.status ||
+      result.transaction?.status ||
+      "success",
     returnPath: "/data"
   })
 );
@@ -374,87 +377,168 @@ show={showSuccess}
 message="🎉 Data purchase completed successfully!"
 />
 
-<ServiceLayout
-icon="🌐"
-title="Buy Data"
-subtitle="Fast internet bundles with instant delivery"
-message={message}
-setMessage={setMessage}
->
+<main className="min-h-screen bg-[#050505] text-white px-4 py-5 pb-24">
 
-<div className="mb-2">
+<div className="max-w-md mx-auto space-y-4">
+
+{/* HEADER */}
+
+<div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-[#111113] to-black p-5">
+
+<div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-yellow-400/10 blur-3xl pointer-events-none" />
+
+<div className="relative flex items-center justify-between">
+
+<div>
+
+<p className="text-[9px] font-black tracking-[0.22em] text-yellow-400 uppercase">
+AlphaBot
+</p>
+
+<h1 className="text-2xl font-black mt-1">
+Data
+</h1>
+
+<p className="text-[10px] text-zinc-400 mt-1">
+Fast internet bundles with instant delivery
+</p>
+
+</div>
+
+<div className="w-11 h-11 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center text-xl">
+🌐
+</div>
+
+</div>
+
+</div>
+
+
+{/* WARNING — ALWAYS AT TOP */}
+
+<div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/10 px-4 py-3">
+
+<div className="flex gap-3 items-start">
+
+<span className="text-base">
+⚠️
+</span>
+
+<p className="text-[10px] leading-relaxed text-yellow-400">
+Some plans may not work on every number due to network eligibility.
+This is especially common with Awoof plans. If a plan fails,
+please try another plan.
+</p>
+
+</div>
+
+</div>
+
+
+{/* PURCHASE FORM */}
+
+<div className="rounded-3xl border border-zinc-800 bg-[#111113] p-4 space-y-4">
+
+
+{/* NETWORK */}
+
+<div>
+
+<div className="flex items-center justify-between mb-2">
+
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+Network
+</p>
+
+<span className="text-[9px] text-zinc-600">
+Select provider
+</span>
+
+</div>
+
+<div className="grid grid-cols-4 gap-2">
+
+{networks.map((item)=>(
+<button
+key={item}
+type="button"
+onClick={()=>{
+setNetwork(item);
+setSelectedPlan("");
+setCategory("");
+}}
+className={`rounded-2xl border px-2 py-3 text-[10px] font-black transition active:scale-95 ${
+network === item
+? "border-yellow-400 bg-yellow-400 text-black shadow-lg shadow-yellow-400/10"
+: "border-zinc-800 bg-[#080809] text-zinc-400 hover:border-zinc-700"
+}`}
+>
+{item}
+</button>
+))}
+
+</div>
+
+</div>
+
+
+{/* SEARCH */}
+
+<div>
+
+<div className="flex items-center justify-between mb-2">
+
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+Search Plans
+</p>
+
+<span className="text-[9px] text-zinc-600">
+Find a bundle
+</span>
+
+</div>
+
+<div className="relative">
+
+<span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
+🔎
+</span>
+
 <input
 type="text"
 value={search}
 onChange={(e)=>setSearch(e.target.value)}
 placeholder="Search data plans..."
-className="w-full p-3 rounded-xl bg-zinc-900 border border-zinc-700 text-white"
+className="w-full pl-10 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
 />
+
 </div>
 
-<div className="mb-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 px-3 py-2.5">
-<p className="text-[11px] leading-relaxed text-yellow-400">
-⚠️ Some plans may not work on every number due to network eligibility. This is especially common with Awoof plans. If a plan fails, please try another plan.
-</p>
 </div>
 
-<div className="max-w-md mx-auto space-y-2 scale-[0.88] origin-top pb-4">
 
-
-
-
-
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-3 space-y-2">
-
+{/* CATEGORY */}
 
 <div>
 
-<p className="text-xs text-zinc-500 uppercase">
-Network
-</p>
+<div className="flex items-center justify-between mb-2">
 
-<select
-className="w-full mt-2 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white"
-value={network}
-onChange={(e)=>{
-
-const selectedNetwork=e.target.value;
-
-setNetwork(selectedNetwork);
-setSelectedPlan("");
-setCategory("");
-
-}}
->
-
-{networks.map(net=>(
-
-<option key={net} value={net}>
-{net}
-</option>
-
-))}
-
-</select>
-
-</div>
-
-
-<div>
-
-<p className="text-xs text-zinc-500 uppercase">
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
 Category
 </p>
 
+<span className="text-[9px] text-zinc-600">
+Choose bundle type
+</span>
+
+</div>
+
 <select
-className="w-full mt-2 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full p-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
 value={category}
 onChange={(e)=>{
-
 setCategory(e.target.value);
 setSelectedPlan("");
-
 }}
 >
 
@@ -463,14 +547,12 @@ Select Category
 </option>
 
 {[
-  ...categories.filter(name => name === "ALPHA"),
-  ...categories.filter(name => name !== "ALPHA")
+...categories.filter(name=>name==="ALPHA"),
+...categories.filter(name=>name!=="ALPHA")
 ].map(name=>(
-
 <option key={name} value={name}>
 {name}
 </option>
-
 ))}
 
 </select>
@@ -478,44 +560,49 @@ Select Category
 </div>
 
 
+{/* DATA PLAN */}
+
 <div>
 
-<p className="text-xs text-zinc-500 uppercase">
+<div className="flex items-center justify-between mb-2">
+
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
 Data Plan
 </p>
 
+<span className="text-[9px] text-zinc-600">
+Select bundle
+</span>
+
+</div>
 
 <select
-className="w-full mt-2 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full p-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
 value={selectedPlan}
 onChange={(e)=>setSelectedPlan(e.target.value)}
 >
 
 <option value="">
-Select Bundle
+Select Data Bundle
 </option>
 
 {filteredPlans.map((plan,index)=>(
-
 <option
 key={`${plan.network}-${plan.name}-${plan.id || plan.plan_id || index}`}
 value={index}
 >
 
 {plan.data_plan || plan.name}
-
-- ₦{plan.display_price ||
-plan.reseller_price ||
-plan.price}
+{" - ₦"}
+{plan.display_price || plan.reseller_price || plan.price}
 
 {plan.validity
-  ? `(${plan.validity})`
-  : plan.day
-    ? `(${plan.day} Days)`
-    : ""}
+? ` (${plan.validity})`
+: plan.day
+? ` (${plan.day} Days)`
+: ""}
 
 </option>
-
 ))}
 
 </select>
@@ -523,18 +610,23 @@ plan.price}
 </div>
 
 
+{/* RECEIVER */}
+
+<div>
+
+<div className="flex items-center justify-between mb-2">
+
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+Receiver
+</p>
+
+<span className="text-[9px] text-zinc-600">
+Phone number
+</span>
+
 </div>
 
-
-
-
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-3">
-
-<h2 className="font-bold mb-3">
-📱 Receiver
-</h2>
-
+<div className="rounded-2xl border border-zinc-800 bg-[#080809] p-1">
 
 <PhoneInput
 value={phone}
@@ -543,55 +635,65 @@ beneficiaries={beneficiaries}
 service="data"
 />
 
+</div>
 
 </div>
 
 
+{/* PIN */}
 
+<div>
 
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-3">
-
-
-<p className="text-xs text-zinc-500 uppercase">
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500 mb-2">
 Transaction PIN
 </p>
 
-
 <button
-  type="button"
-  onClick={() => {
+type="button"
+onClick={()=>{
+sessionStorage.setItem(
+"alphaBotDataPurchaseState",
+JSON.stringify({
+phone,
+network,
+category,
+selectedPlan,
+search
+})
+);
 
-  sessionStorage.setItem(
-    "alphaBotDataPurchaseState",
-    JSON.stringify({
-      phone,
-      network,
-      category,
-      selectedPlan,
-      search
-    })
-  );
-
-  router.push("/enter-pin?return=/data&service=data");
-
+router.push("/enter-pin?return=/data&service=data");
 }}
-  className="w-full mt-3 p-3 rounded-xl bg-[#050505] border border-zinc-800 text-white text-left active:scale-[0.98] active:opacity-70 transition-transform duration-100"
+className="w-full flex items-center justify-between rounded-2xl border border-zinc-800 bg-[#080809] px-4 py-4 text-left active:scale-[0.98] transition"
 >
-  Enter 4 digit PIN →
+
+<div>
+
+<p className="text-sm font-bold">
+Enter transaction PIN
+</p>
+
+<p className="text-[9px] text-zinc-500 mt-0.5">
+Required before purchase
+</p>
+
+</div>
+
+<span className="text-zinc-500 text-lg">
+→
+</span>
+
 </button>
 
+</div>
 
 </div>
 
 
-
-
+{/* FINGERPRINT */}
 
 <button
-
 onClick={async()=>{
-
 try{
 
 setBiometricLoading(true);
@@ -613,60 +715,45 @@ setMessage("❌ " + error.message);
 setBiometricLoading(false);
 
 }
-
 }}
-
 disabled={loading || biometricLoading}
-
-className="w-full bg-zinc-900 border border-zinc-700 text-white py-3 rounded-2xl font-black text-lg active:scale-95 transition"
-
+className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition disabled:opacity-50"
 >
-{biometricLoading ? "Touch fingerprint..." : "👆 Use Fingerprint"}
+
+{biometricLoading
+? "Touch fingerprint..."
+: loading
+? "Processing..."
+: "👆 Use Fingerprint"}
 
 </button>
 
 
-
-
-
-
-
+{/* STATUS */}
 
 {message && (
-
-<div className="bg-[#18181B] border border-zinc-800 rounded-xl p-3 text-center">
-
+<div className="rounded-2xl border border-zinc-800 bg-[#111113] p-4 text-center text-sm">
 {message}
-
 </div>
-
 )}
 
 
-
-
-
-<Link
-
-href="/dashboard"
-
-className="block text-center text-zinc-400 mt-3"
-
->
-
-← Dashboard
-
-</Link>
-
-
-
+<div className="text-center text-[10px] text-zinc-600">
+Secure payment • Instant data delivery
 </div>
 
 
+<Link
+href="/dashboard"
+className="block text-center text-zinc-400 mt-5"
+>
+← Dashboard
+</Link>
 
-</ServiceLayout>
+</div>
+
+</main>
 </>
-
 );
 
 
