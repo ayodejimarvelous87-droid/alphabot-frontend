@@ -28,7 +28,8 @@ bestService:"N/A",
   masterWallet:{
     oplug:0,
     blitzpay:0,
-    vtu:0
+    vtu:0,
+    gsubz:0
   },
 salesChart:[],
 profitChart:[],
@@ -207,6 +208,13 @@ return(
   <h2 className="text-zinc-400 text-sm">🟢 VTU.ng Wallet</h2>
   <p className="text-3xl font-black mt-3">
   ₦{Number(data.masterWallet?.vtu || 0).toFixed(2)}
+  </p>
+  </div>
+
+  <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+  <h2 className="text-zinc-400 text-sm">🟠 GSUBZ Wallet</h2>
+  <p className="text-3xl font-black mt-3">
+  ₦{Number(data.masterWallet?.gsubz || 0).toFixed(2)}
   </p>
   </div>
 
