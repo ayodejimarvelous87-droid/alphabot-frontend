@@ -619,16 +619,91 @@ return(
 
           {/* MANUAL FUNDING */}
           {paymentMethod === "manual" && (
-            <button
-              type="button"
-              onClick={requestManualFunding}
-              disabled={manualFunding || !amount}
-              className="w-full rounded-2xl bg-zinc-900 border border-zinc-700 text-white py-4 font-black text-sm active:scale-[0.98] disabled:opacity-50 transition"
-            >
-              {manualFunding
-                ? "Submitting request..."
-                : "🏦 Request Manual Funding"}
-            </button>
+            <div className="space-y-3">
+
+              {/* MANUAL BANK ACCOUNT */}
+              <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/5 p-4">
+
+                <div className="flex items-center justify-between gap-3">
+
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.18em] text-yellow-400">
+                      Transfer To
+                    </p>
+
+                    <p className="text-lg font-black mt-1">
+                      Moniepoint
+                    </p>
+                  </div>
+
+                  <span className="px-2 py-1 rounded-lg bg-green-500/10 border border-green-500/20 text-[8px] font-black text-green-400">
+                    MANUAL
+                  </span>
+
+                </div>
+
+                <div className="mt-3 rounded-2xl bg-[#080809] border border-zinc-800 p-3">
+
+                  <p className="text-[8px] uppercase font-black tracking-wider text-zinc-500">
+                    Account Number
+                  </p>
+
+                  <div className="flex items-center justify-between gap-3 mt-1">
+
+                    <p className="text-2xl font-black tracking-wider">
+                      9037120624
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText("9037120624");
+                          setMessage("Account number copied");
+                        } catch {
+                          setMessage("Unable to copy account number");
+                        }
+                      }}
+                      className="px-3 py-2 rounded-xl bg-yellow-400 text-black text-[9px] font-black active:scale-95 transition"
+                    >
+                      Copy
+                    </button>
+
+                  </div>
+
+                </div>
+
+                <div className="mt-2 rounded-2xl bg-[#080809] border border-zinc-800 p-3">
+
+                  <p className="text-[8px] uppercase font-black tracking-wider text-zinc-500">
+                    Account Name
+                  </p>
+
+                  <p className="text-sm font-black mt-1">
+                    Marvelous Oluwasegun Ayodeji
+                  </p>
+
+                </div>
+
+                <p className="text-[9px] text-zinc-500 mt-3 leading-relaxed">
+                  Transfer the exact amount you entered above to this account,
+                  then submit your funding request below.
+                </p>
+
+              </div>
+
+              <button
+                type="button"
+                onClick={requestManualFunding}
+                disabled={manualFunding || !amount}
+                className="w-full rounded-2xl bg-zinc-900 border border-zinc-700 text-white py-4 font-black text-sm active:scale-[0.98] disabled:opacity-50 transition"
+              >
+                {manualFunding
+                  ? "Submitting request..."
+                  : "🏦 Request Manual Funding"}
+              </button>
+
+            </div>
           )}
 
         </section>
