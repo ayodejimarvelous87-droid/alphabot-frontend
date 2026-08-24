@@ -66,14 +66,19 @@ export const requestNotificationPermission = async()=>{
   } = await import("firebase/messaging");
 
 
+  const registration =
+    await navigator.serviceWorker.register("/sw.js");
+
+  await navigator.serviceWorker.ready;
+
   const token = await getToken(
     messaging,
     {
       vapidKey:
-      "BOjqXybfZjY6vS2EtJPbfu-ZVuBbp7UvMrqIfMdxWNdkgHRO3bKhk-sLsHZmj67LXABJdZGs_gyUM_0_b66FSe8"
+      "BOjqXybfZjY6sV2EtJPbfu-ZVuBbp7UvMrqIfMdxWNdkgHRO3bKhk-sLsHZmj67LXABJdZGs_gyUM_0_b66FSe8",
+      serviceWorkerRegistration: registration
     }
   );
-
 
   return token;
 
