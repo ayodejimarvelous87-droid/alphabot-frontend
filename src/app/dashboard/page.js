@@ -38,6 +38,7 @@ localStorage.setItem("showBalance", showBalance);
 const [transactionCount,setTransactionCount]=useState(0);
 const [totalSpent,setTotalSpent]=useState(0);
 const [referralEarnings,setReferralEarnings]=useState(0);
+const [totalReferrals,setTotalReferrals]=useState(0);
 
 const [coinSettings,setCoinSettings]=useState({
   target:1000,
@@ -160,6 +161,26 @@ phone:profile.phone
 });
 
 
+
+
+fetch(
+`https://api.alphabothq.com/referrals/${data.phone}`
+)
+.then(res=>res.json())
+.then(referralData=>{
+
+if(referralData && referralData.totalReferrals !== undefined){
+
+setTotalReferrals(
+Number(referralData.totalReferrals) || 0
+);
+
+}
+
+})
+.catch(()=>{
+  // Keep dashboard stable if referral service is temporarily unavailable.
+});
 
 
 fetch(
@@ -1017,7 +1038,7 @@ width:`${Math.min(
         </p>
 
         <p className="text-sm font-black text-yellow-500 mt-0.5 truncate">
-          ₦{Number(referralEarnings || 0).toLocaleString()}
+          {Number(totalReferrals || 0).toLocaleString()}
         </p>
 
       </div>
