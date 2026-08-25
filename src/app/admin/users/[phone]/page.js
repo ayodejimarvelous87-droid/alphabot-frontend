@@ -272,15 +272,37 @@ const withdrawals = data.withdrawals || [];
 
 
 const totalDeposits = transactions
-.filter(tx=>tx.direction==="credit")
+.filter(tx =>
+tx.type === "fund" &&
+tx.direction === "credit" &&
+tx.status === "successful"
+)
 .reduce(
 (sum,tx)=>sum + Number(tx.amount || 0),
 0
 );
 
 
+const spendingTypes = new Set([
+"purchase",
+"airtime",
+"data",
+"airtime_cash",
+"electricity",
+"tv",
+"betting",
+"exam_pin",
+"recharge_pin",
+"recurring"
+]);
+
+
 const totalSpent = transactions
-.filter(tx=>tx.direction==="debit")
+.filter(tx =>
+spendingTypes.has(tx.type) &&
+tx.direction === "debit" &&
+tx.status === "successful"
+)
 .reduce(
 (sum,tx)=>sum + Number(tx.amount || 0),
 0
@@ -288,6 +310,7 @@ const totalSpent = transactions
 
 
 const totalWithdrawn = withdrawals
+.filter(item => item.status === "successful")
 .reduce(
 (sum,item)=>sum + Number(item.amount || 0),
 0
