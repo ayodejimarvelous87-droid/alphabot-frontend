@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "AlphaBot",
-  description: "AlphaBot VTU Services",
+  title: "AlphaBot — Powering Possibilities.",
+  description: "AlphaBot — Powering Possibilities. Fast, affordable and convenient digital services.",
   manifest: "/manifest.json",
   themeColor: "#facc15",
   icons: {

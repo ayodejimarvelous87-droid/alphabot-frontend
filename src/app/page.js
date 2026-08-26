@@ -34,11 +34,11 @@ export default function Home(){
 
         <div className="flex items-center gap-3">
 
-          <div className="w-10 h-10 rounded-xl bg-[#18181B] border border-zinc-700 flex items-center justify-center">
-            <span className="text-xl font-black bg-gradient-to-br from-white to-zinc-400 bg-clip-text text-transparent">
-              A
-            </span>
-          </div>
+          <img
+            src="/alphabot-logo.jpg"
+            alt="AlphaBot"
+            className="w-10 h-10 rounded-xl object-contain"
+          />
 
           <h1 className="text-xl font-bold">
             AlphaBot
