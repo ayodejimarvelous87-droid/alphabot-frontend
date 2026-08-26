@@ -487,6 +487,53 @@ export default function Profile() {
               </div>
             </section>
 
+            {/* SERVICES */}
+            <section>
+              <p className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-3 px-1">
+                Services
+              </p>
+
+              <div className="bg-[#18181B] border border-zinc-800 rounded-[24px] overflow-hidden">
+
+                <Link
+                  href="/network-status"
+                  className="flex items-center gap-4 p-4 active:bg-zinc-900 transition"
+                >
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                    📡
+                  </span>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm">Network Status</p>
+                    <p className="text-[11px] text-zinc-500 mt-1">
+                      Check AlphaBot service availability
+                    </p>
+                  </div>
+
+                  <span className="text-zinc-600 text-xl">›</span>
+                </Link>
+
+                <Link
+                  href="/resources/alphabot-api"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                >
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                    🔑
+                  </span>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm">Developer API</p>
+                    <p className="text-[11px] text-zinc-500 mt-1">
+                      Integrate AlphaBot services with your application
+                    </p>
+                  </div>
+
+                  <span className="text-zinc-600 text-xl">›</span>
+                </Link>
+
+              </div>
+            </section>
+
             {/* APP */}
             <section>
               <p className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-3 px-1">
@@ -525,6 +572,42 @@ export default function Profile() {
                     <p className="font-bold text-sm">About AlphaBot</p>
                     <p className="text-[11px] text-zinc-500 mt-1">
                       Learn more about AlphaBot
+                    </p>
+                  </div>
+
+                  <span className="text-zinc-600 text-xl">›</span>
+                </Link>
+
+                <Link
+                  href="/privacy"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                >
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                    🔒
+                  </span>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm">Privacy Policy</p>
+                    <p className="text-[11px] text-zinc-500 mt-1">
+                      Learn how AlphaBot protects your information
+                    </p>
+                  </div>
+
+                  <span className="text-zinc-600 text-xl">›</span>
+                </Link>
+
+                <Link
+                  href="/terms"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                >
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                    📄
+                  </span>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm">Terms & Conditions</p>
+                    <p className="text-[11px] text-zinc-500 mt-1">
+                      AlphaBot terms of service
                     </p>
                   </div>
 
