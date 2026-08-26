@@ -13,6 +13,40 @@ export default function Login(){
 const [toast,setToast] = useState("");
   const [showPassword,setShowPassword] = useState(false);
   const [loading,setLoading] = useState(false);
+  const [showPinPrompt,setShowPinPrompt] = useState(false);
+
+
+  const checkPinAfterLogin = async () => {
+    try {
+      const authToken = localStorage.getItem("token");
+
+      const res = await fetch(
+        "https://api.alphabothq.com/pin/status",
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok && !data.hasPin) {
+        setShowPinPrompt(true);
+        return true;
+      }
+
+    } catch (error) {
+      console.error("PIN STATUS CHECK ERROR:", error);
+    }
+
+    return false;
+  };
+
+
+  const continueToDashboard = () => {
+    window.location.href = "/dashboard";
+  };
 
 
   const biometricLogin = async () => {
@@ -102,8 +136,12 @@ const [toast,setToast] = useState("");
 
       setLoading(false);
 
-      setTimeout(() => {
-        window.location.href = "/dashboard";
+      setTimeout(async () => {
+        const pinPromptShown = await checkPinAfterLogin();
+
+        if (!pinPromptShown) {
+          window.location.href = "/dashboard";
+        }
       }, 700);
 
     } catch (error) {
@@ -171,9 +209,13 @@ const [toast,setToast] = useState("");
 
           setLoading(false);
 
-          setTimeout(()=>{
-            window.location.href="/dashboard";
-          },1000);
+          setTimeout(async () => {
+            const pinPromptShown = await checkPinAfterLogin();
+
+            if (!pinPromptShown) {
+              continueToDashboard();
+            }
+          },500);
 
 
       }else{
@@ -483,6 +525,61 @@ const [toast,setToast] = useState("");
 
       </div>
 
+
+    {showPinPrompt && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-5">
+        <div className="relative w-full max-w-md rounded-3xl border border-zinc-800 bg-gradient-to-b from-[#18181B] to-[#101012] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+
+          <button
+            onClick={continueToDashboard}
+            className="absolute right-5 top-5 h-9 w-9 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xl hover:text-white transition"
+          >
+            ×
+          </button>
+
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-black border border-zinc-700">
+            <span className="text-2xl">🔐</span>
+          </div>
+
+          <h2 className="text-2xl font-black tracking-tight">
+            Secure Your Account
+          </h2>
+
+          <p className="mt-2 text-sm leading-6 text-zinc-400">
+            Set up your transaction PIN to protect your wallet and
+            authorize payments securely.
+          </p>
+
+          <div className="mt-5 rounded-2xl border border-zinc-800 bg-[#0b0b0d] p-4">
+            <p className="text-sm font-bold text-zinc-200">
+              🔢 4-digit Transaction PIN
+            </p>
+
+            <p className="mt-1 text-xs leading-5 text-zinc-500">
+              You'll use this PIN whenever AlphaBot needs to authorize
+              a transaction.
+            </p>
+          </div>
+
+          <button
+            onClick={() => {
+              window.location.href = "/transaction-pin";
+            }}
+            className="mt-6 w-full rounded-2xl bg-white py-4 font-black text-black transition hover:bg-zinc-200"
+          >
+            Create Transaction PIN
+          </button>
+
+          <button
+            onClick={continueToDashboard}
+            className="mt-3 w-full py-3 text-sm font-bold text-zinc-500 hover:text-white transition"
+          >
+            I'll do it later
+          </button>
+
+        </div>
+      </div>
+    )}
 
     <Toast
 message={toast}
