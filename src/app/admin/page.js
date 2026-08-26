@@ -23,6 +23,8 @@ totalUsers:0,
 walletBalance:0,
 todaySales:0,
 todayProfit:0,
+totalSalesAllTime:0,
+totalProfitAllTime:0,
 monthProfit:0,
 bestService:"N/A",
   masterWallet:{
@@ -167,6 +169,20 @@ return(
 
 
 <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<h2 className="text-zinc-400 text-sm">💰 Total Sales All Time</h2>
+<p className="text-3xl font-black mt-3">
+₦{Number(data.totalSalesAllTime || 0).toFixed(2)}
+</p>
+</div>
+
+<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 hover:border-zinc-600 transition">
+<h2 className="text-zinc-400 text-sm">📈 Total Profit All Time</h2>
+<p className="text-3xl font-black mt-3">
+₦{Number(data.totalProfitAllTime || 0).toFixed(2)}
+</p>
+</div>
+
 <h2 className="text-zinc-400 text-sm">📅 Monthly Profit</h2>
 <p className="text-3xl font-black mt-3">
 ₦{data.monthProfit}
