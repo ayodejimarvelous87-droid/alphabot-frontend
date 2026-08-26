@@ -414,7 +414,23 @@ Fast internet bundles with instant delivery
 </div>
 
 
+{/* WARNING — ALWAYS AT TOP */}
 
+<div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/10 px-4 py-3">
+
+<div className="flex gap-3 items-start">
+
+<span className="text-base">
+⚠️
+</span>
+
+<p className="text-[10px] leading-relaxed text-yellow-400">
+Some plans may not work on every number due to network eligibility.
+This is especially common with Awoof plans. If a plan fails,
+please try another plan.
+</p>
+
+</div>
 
 </div>
 
