@@ -5,6 +5,9 @@ import {useEffect,useState} from "react";
 const API =
   "https://api.alphabothq.com/admin/daily-data/plans";
 
+const PROVIDER_API =
+  "https://api.alphabothq.com/admin/daily-data/provider-plans";
+
 const emptyForm = {
   name:"",
   network:"MTN",
@@ -26,6 +29,8 @@ export default function AdminDailyData(){
   const [loading,setLoading] = useState(true);
   const [saving,setSaving] = useState(false);
   const [message,setMessage] = useState("");
+  const [providerPlans,setProviderPlans] = useState([]);
+  const [loadingProviderPlans,setLoadingProviderPlans] = useState(false);
 
   const token =
     typeof window !== "undefined"
@@ -83,6 +88,61 @@ export default function AdminDailyData(){
   },[]);
 
 
+  const loadProviderPlans = async(provider, network) => {
+
+    setLoadingProviderPlans(true);
+
+    try {
+
+      const params =
+        new URLSearchParams({
+          provider,
+          network
+        });
+
+      const res =
+        await fetch(
+          `${PROVIDER_API}?${params.toString()}`,
+          {
+            headers:{
+              Authorization:`Bearer ${token}`
+            }
+          }
+        );
+
+      const data = await res.json();
+
+      if(!res.ok){
+        throw new Error(
+          data.message ||
+          "Failed to load provider plans"
+        );
+      }
+
+      setProviderPlans(
+        Array.isArray(data)
+          ? data
+          : data.plans || []
+      );
+
+    } catch(error) {
+
+      console.log(
+        "PROVIDER PLANS LOAD ERROR:",
+        error
+      );
+
+      setProviderPlans([]);
+
+    } finally {
+
+      setLoadingProviderPlans(false);
+
+    }
+
+  };
+
+
   const updateField=(name,value)=>{
 
     setForm(prev=>({
@@ -91,6 +151,16 @@ export default function AdminDailyData(){
     }));
 
   };
+
+
+  useEffect(()=>{
+
+    loadProviderPlans(
+      form.provider,
+      form.network
+    );
+
+  },[form.provider,form.network]);
 
 
   const resetForm=()=>{
@@ -478,24 +548,105 @@ export default function AdminDailyData(){
 
 
           <div>
+  <label className={labelClass}>
+    Provider Plan *
+  </label>
 
-            <label className={labelClass}>
-              Provider Variation ID *
-            </label>
+  <select
+    className={inputClass}
+    value={form.variationId}
+    onChange={e => {
 
-            <input
-              className={inputClass}
-              placeholder="e.g. 12345"
-              value={form.variationId}
-              onChange={e=>
-                updateField(
-                  "variationId",
-                  e.target.value
-                )
-              }
-            />
+      const selected =
+        providerPlans.find(
+          plan =>
+            String(
+              plan.id ??
+              plan.value ??
+              plan.variation_id ??
+              plan.plan_id ??
+              ""
+            ) === e.target.value
+        );
 
-          </div>
+      updateField(
+        "variationId",
+        e.target.value
+      );
+
+      if(form.provider === "gsubz"){
+        updateField(
+          "providerServiceId",
+          selected?.gsubz_service_id || ""
+        );
+      }
+
+      if(selected){
+        updateField(
+          "name",
+          selected.name ||
+          selected.displayName ||
+          selected.data_plan ||
+          form.name
+        );
+      }
+
+    }}
+  >
+    <option value="">
+      {loadingProviderPlans
+        ? "Loading plans..."
+        : "Select provider plan"}
+    </option>
+
+    {providerPlans.map((plan,index) => {
+
+      const id = String(
+        plan.id ??
+        plan.value ??
+        plan.variation_id ??
+        plan.plan_id ??
+        index
+      );
+
+      const name =
+        plan.name ||
+        plan.displayName ||
+        plan.data_plan ||
+        `${form.network} DATA`;
+
+      const price =
+        plan.price ??
+        plan.reseller_price ??
+        plan.costPrice;
+
+      return (
+        <option
+          key={`${id}-${index}`}
+          value={id}
+        >
+          {name}
+          {price !== undefined
+            ? ` — ₦${price}`
+            : ""}
+          {plan.gsubz_service_id
+            ? ` — ${plan.gsubz_service_id}`
+            : ""}
+        </option>
+      );
+
+    })}
+
+  </select>
+
+  {form.provider === "gsubz" &&
+    form.providerServiceId && (
+      <p className="text-xs text-zinc-500 mt-2">
+        GSUBZ Service: {form.providerServiceId}
+      </p>
+    )}
+
+</div>
 
 
           <div>

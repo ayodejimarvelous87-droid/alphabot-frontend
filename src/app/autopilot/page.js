@@ -36,10 +36,17 @@ export default function AutoPilot() {
           );
         }
 
-        setPlans(
+        const availablePlans =
           Array.isArray(data)
-            ? data.filter((plan) => plan.active !== false)
-            : []
+            ? data
+            : Array.isArray(data.plans)
+              ? data.plans
+              : [];
+
+        setPlans(
+          availablePlans.filter(
+            (plan) => plan.active !== false
+          )
         );
       } catch (error) {
         console.error("AUTOPILOT PLANS ERROR:", error);
