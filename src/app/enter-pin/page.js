@@ -109,6 +109,112 @@ export default function EnterPin() {
       return;
     }
 
+    if (service === "autopilot") {
+      if (processing) return;
+
+      setProcessing(true);
+
+      try {
+        const savedState =
+          sessionStorage.getItem(
+            "alphaBotAutoPilotPurchaseState"
+          );
+
+        if (!savedState) {
+          sessionStorage.setItem(
+            "alphaBotTransactionResult",
+            JSON.stringify({
+              status: "failed",
+              message:
+                "AutoPilot subscription information was not found.",
+              returnPath: "/autopilot"
+            })
+          );
+
+          router.push("/transaction-result");
+          return;
+        }
+
+        const state = JSON.parse(savedState);
+
+        const token =
+          localStorage.getItem("token");
+
+        const biometricToken =
+          localStorage.getItem("biometricToken");
+
+        const idempotencyKey =
+          typeof crypto !== "undefined" &&
+          crypto.randomUUID
+            ? crypto.randomUUID()
+            : `${Date.now()}-${Math.random()}`;
+
+        const res = await fetch(
+          "https://api.alphabothq.com/daily-data/subscribe",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+              "Idempotency-Key": idempotencyKey
+            },
+
+            body: JSON.stringify({
+              planId: state.planId,
+              targetPhone: state.targetPhone,
+              pin,
+              biometricToken:
+                biometricToken || undefined
+            })
+          }
+        );
+
+        const result = await res.json();
+
+        sessionStorage.setItem(
+          "alphaBotTransactionResult",
+          JSON.stringify({
+            ...result,
+            status:
+              result.status ||
+              (res.ok ? "success" : "failed"),
+            returnPath: "/autopilot"
+          })
+        );
+
+        sessionStorage.removeItem(
+          "alphaBotAutoPilotPurchaseState"
+        );
+
+        router.push("/transaction-result");
+
+      } catch (error) {
+
+        console.error(
+          "AUTOPILOT PURCHASE ERROR:",
+          error
+        );
+
+        sessionStorage.setItem(
+          "alphaBotTransactionResult",
+          JSON.stringify({
+            status: "failed",
+            message: "Connection error",
+            returnPath: "/autopilot"
+          })
+        );
+
+        sessionStorage.removeItem(
+          "alphaBotAutoPilotPurchaseState"
+        );
+
+        router.push("/transaction-result");
+      }
+
+      return;
+    }
+
     if (service === "data") {
       if (processing) return;
 

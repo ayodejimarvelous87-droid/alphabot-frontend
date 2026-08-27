@@ -147,6 +147,7 @@ return(
 </div>
 
   <section className="mt-6">
+
 <div className="flex items-center gap-2 mb-3">
 
   <div className="w-8 h-8 rounded-xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center text-sm">
@@ -159,7 +160,7 @@ return(
     </h2>
 
     <p className="text-[9px] text-zinc-500 dark:text-zinc-500">
-      Airtime & data
+      Airtime, data & automation
     </p>
   </div>
 
@@ -181,7 +182,15 @@ link="/data"
 desc="Mobile service"
 />
 
+<ServiceCard
+icon="🤖"
+title="AB AutoPilot"
+link="/autopilot"
+desc="Daily data automation"
+/>
+
 </div>
+
 </section>
 
 <section className="mt-5">

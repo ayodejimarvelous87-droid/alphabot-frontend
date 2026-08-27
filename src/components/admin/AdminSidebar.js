@@ -155,6 +155,10 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 📦 Data Plans
 </Link>
 
+<Link href="/admin/daily-data" className="block p-2 hover:bg-[#18181B] rounded">
+📅 Daily Data
+</Link>
+
 <Link href="/admin/airtime" className="block p-2 hover:bg-[#18181B] rounded">
 📱 Airtime
 </Link>
