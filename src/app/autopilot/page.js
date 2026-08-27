@@ -346,37 +346,76 @@ export default function AutoPilot() {
             </p>
 
                 {showPin && (
-              <div className="grid grid-cols-3 gap-3">
+                  <div className="mt-4 max-w-xs mx-auto">
 
-                  {[1,2,3,4,5,6,7,8,9].map((number) => (
+                    {/* PIN display */}
+                    <div className="flex justify-center gap-3 mb-5">
+                      {[0, 1, 2, 3].map((i) => (
+                        <div
+                          key={i}
+                          className={`w-3 h-3 rounded-full border-2 ${
+                            pin.length > i
+                              ? "bg-yellow-400 border-yellow-400"
+                              : "border-zinc-400 dark:border-zinc-600"
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Phone-style keypad */}
+                    <div className="grid grid-cols-3 gap-3">
+
+                      {[1,2,3,4,5,6,7,8,9].map((number) => (
+                        <button
+                          key={number}
+                          type="button"
+                          onClick={() => {
+                            if (pin.length < 4) {
+                              setPin((prev) => prev + String(number));
+                            }
+                          }}
+                          className="h-14 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-black text-xl shadow-sm active:scale-95 transition-all"
+                        >
+                          {number}
+                        </button>
+                      ))}
+
+                      <button
+                        type="button"
+                        onClick={() => setPin((prev) => prev.slice(0, -1))}
+                        className="h-14 rounded-2xl bg-zinc-200 dark:bg-zinc-800 font-bold text-xs active:scale-95 transition-all"
+                      >
+                        Delete
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (pin.length < 4) {
+                            setPin((prev) => prev + "0");
+                          }
+                        }}
+                        className="h-14 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-black text-xl shadow-sm active:scale-95 transition-all"
+                      >
+                        0
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowPin(false)}
+                        className="h-14 rounded-2xl bg-zinc-200 dark:bg-zinc-800 font-bold text-xs active:scale-95 transition-all"
+                      >
+                        Cancel
+                      </button>
+
+                    </div>
+
                     <button
-                      key={number}
                       type="button"
                       onClick={() => {
-                        if (pin.length < 4) {
-                          setPin((prev) => prev + String(number));
-                        }
-                      }}
-                      className="h-12 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-black text-lg active:scale-95"
-                    >
-                      {number}
-                    </button>
-                  ))}
+                        if (pin.length < 4) return;
 
-                  <button
-                    type="button"
-                    onClick={() => setShowPin(false)}
-                    className="h-12 rounded-xl bg-zinc-200 dark:bg-zinc-800 font-bold text-xs"
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (pin.length < 4) return;
-
-                      if (processing) return;
+                        if (processing) return;
 
                       setProcessing(true);
                       setMessage("");
@@ -455,18 +494,6 @@ export default function AutoPilot() {
                     className="h-12 rounded-xl bg-yellow-400 text-black font-black disabled:opacity-40 active:scale-95"
                   >
                     {processing ? "..." : "✓"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setPin((prev) =>
-                        prev.slice(0, -1)
-                      )
-                    }
-                    className="h-12 rounded-xl bg-zinc-200 dark:bg-zinc-800 font-bold text-lg active:scale-95"
-                  >
-                    ⌫
                   </button>
 
                 </div>
