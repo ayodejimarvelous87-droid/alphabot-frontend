@@ -332,17 +332,9 @@ export default function AutoPilot() {
                   return;
                 }
 
-                sessionStorage.setItem(
-                  "alphaBotAutoPilotPurchaseState",
-                  JSON.stringify({
-                    planId: selectedPlan._id,
-                    targetPhone: destination
-                  })
-                );
-
-                router.push(
-                  "/enter-pin?return=/autopilot&service=autopilot"
-                );
+                setPin("");
+                setMessage("");
+                setShowPin(true);
               }}
               className="w-full mt-4 bg-yellow-400 text-black rounded-2xl py-4 font-black disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
             >
