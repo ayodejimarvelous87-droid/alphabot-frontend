@@ -65,7 +65,7 @@ setChat(prev=>[
 ...prev,
 {
 role:"ai",
-text:"AI connection failed"
+text:"Orion connection failed"
 }
 ]);
 
@@ -105,11 +105,11 @@ className="text-yellow-500 font-semibold"
 <div>
 
 <h1 className="text-2xl font-black">
-AlphaBot AI
+Orion
 </h1>
 
 <p className="text-zinc-400 text-sm">
-Your smart AlphaBot assistant
+Your AlphaBot support assistant
 </p>
 
 </div>
@@ -124,7 +124,7 @@ Your smart AlphaBot assistant
 {chat.length===0 && (
 
 <div className="text-center text-zinc-500 text-sm mt-10">
-Ask AlphaBot anything 🚀
+HI 👋 I'M ORION. How can I help you today?
 </div>
 
 )}
@@ -167,7 +167,7 @@ item.role==="user"
 <div className="flex justify-start">
 
 <div className="bg-zinc-800 rounded-2xl px-4 py-3 text-zinc-400">
-AlphaBot is typing...
+Orion is typing...
 </div>
 
 </div>
@@ -185,7 +185,7 @@ AlphaBot is typing...
 <textarea
 value={message}
 onChange={(e)=>setMessage(e.target.value)}
-placeholder="Message AlphaBot..."
+placeholder="Message Orion..."
 className="w-full p-3 rounded-xl bg-white text-black"
 />
 
