@@ -185,8 +185,8 @@ return(
 
 <main className="
 min-h-screen
-bg-[#050505]
-text-white
+bg-zinc-50 dark:bg-[#050505]
+text-zinc-950 dark:text-white
 px-6
 py-6
 pb-24
@@ -208,9 +208,9 @@ mb-4
 
 
 <div className="
-bg-[#18181B]
+bg-white dark:bg-[#18181B]
 border
-border-zinc-800
+border-zinc-200 dark:border-zinc-800
 rounded-3xl
 p-5
 shadow-xl
@@ -228,7 +228,7 @@ mt-2
 Football Chat Arena
 </h1>
 
-<p className="text-zinc-400 text-sm mt-3 flex items-center gap-2">
+<p className="text-zinc-500 dark:text-zinc-400 text-sm mt-3 flex items-center gap-2">
 
 <span className="
 w-2
@@ -243,7 +243,7 @@ animate-pulse
 
 </p>
 
-<p className="text-zinc-500 text-sm mt-1">
+<p className="text-zinc-500 dark:text-zinc-500 text-sm mt-1">
 🔥 Discuss matches • 🏆 Predictions • ⚽ Football banter
 </p>
 
@@ -256,7 +256,7 @@ animate-pulse
 
 <div className="
 mt-4
-bg-[#18181B]
+bg-white dark:bg-[#18181B]
 border
 border-yellow-400/20
 rounded-3xl
@@ -271,7 +271,7 @@ text-sm
 📌 Arena Rules
 </p>
 
-<p className="text-zinc-400 text-sm mt-3">
+<p className="text-zinc-500 dark:text-zinc-400 text-sm mt-3">
 ⚽ Keep it football<br/>
 🚫 No spam or fake links<br/>
 🤝 Respect other fans<br/>
@@ -282,7 +282,7 @@ text-sm
 
 
 
-<p className="text-zinc-400 text-sm mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 text-sm mt-2">
 Discuss matches, predictions and football
 </p>
 
@@ -298,9 +298,9 @@ box.scrollHeight - box.scrollTop - box.clientHeight < 50;
 }}
 className="
 mt-6
-bg-[#18181B]
+bg-white dark:bg-[#18181B]
 border
-border-zinc-800
+border-zinc-200 dark:border-zinc-800
 rounded-3xl
 p-4
 h-[450px]
@@ -326,7 +326,7 @@ rounded-2xl
 p-3
 ${currentUser?.id?.toString() === msg.user?.toString()
 ? "bg-yellow-400 text-black"
-: "bg-black border border-zinc-900 text-white"}
+: "bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-black dark:border-zinc-900 dark:text-white"}
 `}
 >
 
@@ -369,7 +369,7 @@ text-[10px]
 mt-2
 ${currentUser?.id?.toString() === msg.user?.toString()
 ? "text-black/60"
-: "text-zinc-500"}
+: "text-zinc-500 dark:text-zinc-500"}
 `}>
 {new Date(msg.createdAt).toLocaleTimeString([],{
 hour:"2-digit",
@@ -398,9 +398,9 @@ placeholder="Type message..."
 rows="1"
 className="
 flex-1
-bg-[#18181B]
+bg-white dark:bg-[#18181B]
 border
-border-zinc-800
+border-zinc-200 dark:border-zinc-800
 rounded-xl
 px-4
 py-3

@@ -92,7 +92,7 @@ return "◈";
 
 return(
 
-<main className="min-h-screen bg-[#050505] text-white px-5 py-7 pb-24">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-5 py-7 pb-24">
 
 <div className="max-w-md mx-auto space-y-5">
 
@@ -102,7 +102,7 @@ return(
 
 <Link
 href="/profile"
-className="text-sm text-zinc-500 hover:text-white transition"
+className="text-sm text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition"
 >
 ← Back to Profile
 </Link>
@@ -115,7 +115,7 @@ AlphaBot Account
 Transaction History
 </h1>
 
-<p className="text-zinc-400 mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 mt-2">
 View your wallet and payment activities
 </p>
 
@@ -124,7 +124,7 @@ View your wallet and payment activities
 
 {/* SUMMARY */}
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
+<div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 <div className="flex items-center justify-between">
 
@@ -140,7 +140,7 @@ Total Activities
 
 </div>
 
-<div className="w-12 h-12 rounded-2xl bg-[#050505] border border-zinc-800 flex items-center justify-center text-xl">
+<div className="w-12 h-12 rounded-2xl bg-zinc-50 dark:bg-[#050505] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-xl">
 📜
 </div>
 
@@ -161,9 +161,9 @@ Recent Activity
 
 {loading && (
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5">
+<div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5">
 
-<p className="text-zinc-400">
+<p className="text-zinc-500 dark:text-zinc-400">
 Loading transactions...
 </p>
 
@@ -174,7 +174,7 @@ Loading transactions...
 
 {!loading && error && (
 
-<div className="bg-[#18181B] border border-red-900 rounded-2xl p-5">
+<div className="bg-white dark:bg-[#18181B] border border-red-200 dark:border-red-900 rounded-2xl p-5">
 
 <p className="text-red-400">
 {error}
@@ -187,7 +187,7 @@ Loading transactions...
 
 {!loading && !error && transactions.length === 0 && (
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-6 text-center">
+<div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 text-center">
 
 <div className="text-3xl mb-3">
 📭
@@ -214,12 +214,12 @@ return(
 
 <div
 key={item._id || item.id || item.reference || index}
-className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
+className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4"
 >
 
 <div className="flex items-start gap-3">
 
-<div className="w-11 h-11 shrink-0 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+<div className="w-11 h-11 shrink-0 rounded-xl bg-zinc-50 dark:bg-[#050505] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
 {getTypeIcon(item)}
 </div>
 
@@ -236,7 +236,7 @@ className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
 
 {item.createdAt && (
 
-<p className="text-xs text-zinc-600 mt-2">
+<p className="text-xs text-zinc-500 dark:text-zinc-600 mt-2">
 {new Date(item.createdAt).toLocaleString("en-NG")}
 </p>
 
@@ -244,7 +244,7 @@ className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
 
 {item.reference && (
 
-<p className="text-xs text-zinc-600 mt-1 truncate">
+<p className="text-xs text-zinc-500 dark:text-zinc-600 mt-1 truncate">
 Ref: {item.reference}
 </p>
 
@@ -258,7 +258,7 @@ Ref: {item.reference}
 <p className={`font-black ${
 credit
 ? "text-green-400"
-: "text-white"
+: "text-zinc-950 dark:text-white"
 }`}>
 
 {credit ? "+" : "-"}₦{formatAmount(item.amount)}
@@ -282,13 +282,13 @@ credit
 
 {/* INFO */}
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
+<div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 <p className="font-bold">
 Transaction Types
 </p>
 
-<div className="mt-4 space-y-3 text-sm text-zinc-400">
+<div className="mt-4 space-y-3 text-sm text-zinc-500 dark:text-zinc-400">
 
 <div className="flex gap-3">
 <span>💰</span>

@@ -214,9 +214,9 @@ export default function AccountUpgrade() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#050505] text-white px-5 py-8">
+      <main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-5 py-8">
         <div className="max-w-md mx-auto">
-          <p className="text-zinc-400">
+          <p className="text-zinc-500 dark:text-zinc-400">
             Loading membership...
           </p>
         </div>
@@ -225,12 +225,12 @@ export default function AccountUpgrade() {
   }
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-28">
+    <main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-5 py-8 pb-28">
       <div className="max-w-md mx-auto">
 
         <Link
           href="/profile"
-          className="text-zinc-400 text-sm"
+          className="text-zinc-500 dark:text-zinc-400 text-sm"
         >
           ← Account
         </Link>
@@ -244,14 +244,14 @@ export default function AccountUpgrade() {
             Upgrade your account
           </h1>
 
-          <p className="text-zinc-400 mt-2 leading-relaxed">
+          <p className="text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
             Choose a membership plan and submit your payment
             for approval.
           </p>
         </div>
 
         {/* Current membership */}
-        <div className="mt-6 rounded-3xl border border-zinc-800 bg-[#111113] p-5">
+        <div className="mt-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-5">
           <p className="text-xs uppercase tracking-widest text-zinc-500">
             Current membership
           </p>
@@ -263,13 +263,13 @@ export default function AccountUpgrade() {
               </h2>
 
               {expiresAt && tier !== "normal" && (
-                <p className="text-sm text-zinc-400 mt-1">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                   Expires {formatDate(expiresAt)}
                 </p>
               )}
             </div>
 
-            <span className="text-xs px-3 py-2 rounded-xl bg-zinc-800 text-zinc-300 font-bold">
+            <span className="text-xs px-3 py-2 rounded-xl bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-bold">
               ACTIVE
             </span>
           </div>
@@ -282,7 +282,7 @@ export default function AccountUpgrade() {
               Payment awaiting approval
             </p>
 
-            <p className="text-sm text-zinc-300 mt-2">
+            <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-2">
               Your {String(pendingRequest.tier).toUpperCase()}
               {" "}membership payment of{" "}
               ₦{Number(pendingRequest.amount || 0).toLocaleString()}
@@ -318,7 +318,7 @@ export default function AccountUpgrade() {
                   className={
                     active
                       ? "text-left rounded-3xl p-5 border border-white bg-white text-black"
-                      : "text-left rounded-3xl p-5 border border-zinc-800 bg-[#18181B] text-white"
+                      : "text-left rounded-3xl p-5 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#18181B] text-zinc-950 dark:text-white"
                   }
                 >
                   <p className="text-xs uppercase tracking-widest opacity-60">
@@ -351,7 +351,7 @@ export default function AccountUpgrade() {
 
         {/* Benefits */}
         {selectedMembership && (
-          <div className="mt-5 rounded-3xl border border-zinc-800 bg-[#111113] p-5">
+          <div className="mt-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-5">
             <p className="text-xs uppercase tracking-widest text-zinc-500 font-bold">
               {selectedTier === "silver" ? "Silver" : "Gold"} benefits
             </p>
@@ -362,7 +362,7 @@ export default function AccountUpgrade() {
                 []).map(benefit => (
                   <div
                     key={benefit}
-                    className="flex gap-3 text-sm text-zinc-300"
+                    className="flex gap-3 text-sm text-zinc-600 dark:text-zinc-300"
                   >
                     <span className="text-yellow-400 font-black">
                       ✓
@@ -377,21 +377,21 @@ export default function AccountUpgrade() {
 
         {/* Payment account */}
         {paymentAccount && (
-          <div className="mt-5 rounded-3xl border border-zinc-800 bg-[#111113] p-5">
+          <div className="mt-5 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-5">
 
             <p className="text-xs uppercase tracking-widest text-zinc-500 font-bold">
               Payment details
             </p>
 
-            <p className="text-sm text-zinc-400 mt-2">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
               Transfer exactly{" "}
-              <span className="text-white font-bold">
+              <span className="text-zinc-950 dark:text-white font-bold">
                 ₦{Number(selectedMembership?.price || 0).toLocaleString()}
               </span>
               {" "}to the account below.
             </p>
 
-            <div className="mt-4 rounded-2xl bg-[#050505] border border-zinc-800 p-4">
+            <div className="mt-4 rounded-2xl bg-zinc-50 dark:bg-[#050505] border border-zinc-200 dark:border-zinc-800 p-4">
 
               {paymentAccount.bankName && (
                 <div className="flex justify-between gap-4">
@@ -425,7 +425,7 @@ export default function AccountUpgrade() {
 
                   <div className="flex items-center gap-2 mt-2">
 
-                    <div className="flex-1 rounded-xl bg-zinc-900 px-4 py-3 font-black tracking-wider">
+                    <div className="flex-1 rounded-xl bg-zinc-100 dark:bg-zinc-900 px-4 py-3 font-black tracking-wider">
                       {paymentAccount.accountNumber}
                     </div>
 
@@ -464,9 +464,9 @@ export default function AccountUpgrade() {
             </h3>
           </div>
 
-          <p className="text-sm text-zinc-300 mt-3 leading-relaxed">
+          <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-3 leading-relaxed">
             All membership payments are final and
-            <span className="font-bold text-white">
+            <span className="font-bold text-zinc-950 dark:text-white">
               {" "}non-refundable{" "}
             </span>
             once submitted. Please confirm that you have

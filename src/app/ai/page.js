@@ -80,7 +80,7 @@ setLoading(false);
 
 return(
 
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
+<main className="min-h-screen bg-white text-black dark:bg-[#050505] dark:text-white px-5 py-8">
 
 <div className="max-w-md mx-auto">
 
@@ -93,7 +93,7 @@ className="text-yellow-500 font-semibold"
 </Link>
 
 
-<div className="mt-6 bg-gradient-to-br from-zinc-900 to-black text-white rounded-3xl p-5 border border-zinc-800 shadow-xl">
+<div className="mt-6 bg-gradient-to-br from-zinc-100 via-white to-zinc-50 text-zinc-950 dark:from-zinc-900 dark:to-black dark:text-white rounded-3xl p-5 border border-zinc-200 dark:border-zinc-800 shadow-xl">
 
 
 <div className="flex items-center gap-3">
@@ -108,7 +108,7 @@ className="text-yellow-500 font-semibold"
 Orion
 </h1>
 
-<p className="text-zinc-400 text-sm">
+<p className="text-zinc-500 dark:text-zinc-400 text-sm">
 Your AlphaBot support assistant
 </p>
 
@@ -118,7 +118,7 @@ Your AlphaBot support assistant
 
 
 
-<div className="mt-6 h-[420px] overflow-y-auto space-y-4 bg-black/40 rounded-2xl p-4">
+<div className="mt-6 h-[420px] overflow-y-auto space-y-4 bg-zinc-50 dark:bg-black/40 border border-zinc-200 dark:border-transparent rounded-2xl p-4">
 
 
 {chat.length===0 && (
@@ -149,7 +149,7 @@ item.role==="user"
 ?
 "bg-yellow-400 text-black rounded-2xl rounded-br-sm px-4 py-3 max-w-[80%]"
 :
-"bg-zinc-800 text-white rounded-2xl rounded-bl-sm px-4 py-3 max-w-[80%]"
+"bg-zinc-100 text-zinc-950 dark:bg-zinc-800 dark:text-white rounded-2xl rounded-bl-sm px-4 py-3 max-w-[80%]"
 }
 >
 
@@ -166,7 +166,7 @@ item.role==="user"
 
 <div className="flex justify-start">
 
-<div className="bg-zinc-800 rounded-2xl px-4 py-3 text-zinc-400">
+<div className="bg-zinc-100 dark:bg-zinc-800 rounded-2xl px-4 py-3 text-zinc-500 dark:text-zinc-400">
 Orion is typing...
 </div>
 
@@ -186,7 +186,7 @@ Orion is typing...
 value={message}
 onChange={(e)=>setMessage(e.target.value)}
 placeholder="Message Orion..."
-className="w-full p-3 rounded-xl bg-white text-black"
+className="w-full p-3 rounded-xl bg-white text-zinc-950 border border-zinc-200 dark:bg-zinc-900 dark:text-white dark:border-zinc-800"
 />
 
 

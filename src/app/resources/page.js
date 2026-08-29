@@ -215,13 +215,13 @@ export const metadata = {
 
 export default function ResourcesPage() {
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
+    <main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white">
 
       {/* NAVBAR */}
-      <nav className="flex justify-between items-center px-6 py-5 border-b border-zinc-800">
+      <nav className="flex justify-between items-center px-6 py-5 border-b border-zinc-200 dark:border-zinc-800">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#18181B] border border-zinc-700 flex items-center justify-center">
-            <span className="text-xl font-black bg-gradient-to-br from-white to-zinc-400 bg-clip-text text-transparent">
+          <div className="w-10 h-10 rounded-xl bg-zinc-50 dark:bg-[#18181B] border border-zinc-300 dark:border-zinc-700 flex items-center justify-center">
+            <span className="text-xl font-black bg-gradient-to-br from-zinc-950 to-zinc-500 dark:from-white dark:to-zinc-400 bg-clip-text text-transparent">
               A
             </span>
           </div>
@@ -231,12 +231,12 @@ export default function ResourcesPage() {
           </span>
         </Link>
 
-        <div className="flex gap-5 text-sm text-zinc-400">
-          <Link href="/about" className="hover:text-white transition">
+        <div className="flex gap-5 text-sm text-zinc-600 dark:text-zinc-400">
+          <Link href="/about" className="hover:text-zinc-950 dark:hover:text-white transition">
             About
           </Link>
 
-          <Link href="/login" className="hover:text-white transition">
+          <Link href="/login" className="hover:text-zinc-950 dark:hover:text-white transition">
             Login
           </Link>
         </div>
@@ -254,7 +254,7 @@ export default function ResourcesPage() {
           Explore AlphaBot
         </h1>
 
-        <p className="text-zinc-400 max-w-2xl mt-5 leading-7">
+        <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mt-5 leading-7">
           Guides, services, features and useful information about AlphaBot,
           digital services and everyday technology.
         </p>
@@ -271,12 +271,12 @@ export default function ResourcesPage() {
 
             <section
               key={category.title}
-              className="rounded-3xl border border-zinc-800 bg-[#111113] p-6 sm:p-8"
+              className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-6 sm:p-8"
             >
 
               <div className="flex items-start gap-4">
 
-                <div className="w-12 h-12 shrink-0 rounded-xl bg-[#18181B] border border-zinc-800 flex items-center justify-center text-xl">
+                <div className="w-12 h-12 shrink-0 rounded-xl bg-zinc-50 dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-xl">
                   {category.icon}
                 </div>
 
@@ -300,10 +300,10 @@ export default function ResourcesPage() {
                   <Link
                     key={resource.href}
                     href={resource.href}
-                    className="group rounded-2xl border border-zinc-800 p-4 hover:border-zinc-600 hover:bg-[#18181B] transition"
+                    className="group rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-[#18181B] transition"
                   >
 
-                    <h3 className="font-bold group-hover:text-white">
+                    <h3 className="font-bold group-hover:text-zinc-950 dark:hover:text-white">
                       {resource.title}
                     </h3>
 
@@ -311,7 +311,7 @@ export default function ResourcesPage() {
                       {resource.description}
                     </p>
 
-                    <p className="text-xs text-zinc-300 font-semibold mt-3">
+                    <p className="text-xs text-zinc-700 dark:text-zinc-300 font-semibold mt-3">
                       Explore guide →
                     </p>
 
@@ -333,13 +333,13 @@ export default function ResourcesPage() {
       {/* CTA */}
       <section className="px-6 pb-20 max-w-5xl mx-auto">
 
-        <div className="rounded-3xl border border-zinc-800 bg-[#18181B] p-6 sm:p-8">
+        <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#18181B] p-6 sm:p-8">
 
           <h2 className="text-2xl font-black">
             Ready to use AlphaBot?
           </h2>
 
-          <p className="text-zinc-400 mt-3 leading-7 max-w-2xl">
+          <p className="text-zinc-600 dark:text-zinc-400 mt-3 leading-7 max-w-2xl">
             Access data, airtime, bills, payments, competitions and other
             digital services from one platform.
           </p>
@@ -357,7 +357,7 @@ export default function ResourcesPage() {
 
 
       {/* FOOTER */}
-      <footer className="border-t border-zinc-800 px-6 py-10">
+      <footer className="border-t border-zinc-200 dark:border-zinc-800 px-6 py-10">
 
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between gap-4">
 
@@ -372,19 +372,19 @@ export default function ResourcesPage() {
           </div>
 
           <div className="flex gap-5 text-xs text-zinc-500">
-            <Link href="/about" className="hover:text-white transition">
+            <Link href="/about" className="hover:text-zinc-950 dark:hover:text-white transition">
               About
             </Link>
 
-            <Link href="/support" className="hover:text-white transition">
+            <Link href="/support" className="hover:text-zinc-950 dark:hover:text-white transition">
               Support
             </Link>
 
-            <Link href="/contact" className="hover:text-white transition">
+            <Link href="/contact" className="hover:text-zinc-950 dark:hover:text-white transition">
               Contact
             </Link>
 
-            <Link href="/" className="hover:text-white transition">
+            <Link href="/" className="hover:text-zinc-950 dark:hover:text-white transition">
               Home
             </Link>
           </div>

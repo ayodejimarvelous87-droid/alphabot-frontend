@@ -141,7 +141,7 @@ export default function Profile() {
             </header>
 
             {/* PROFILE HERO */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-[#1B1B1F] via-[#111113] to-[#080808] border border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+            <section className="relative overflow-hidden bg-gradient-to-br from-zinc-100 via-white to-zinc-50 dark:from-[#1B1B1F] dark:via-[#111113] dark:to-[#080808] border border-zinc-200 dark:border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
 
               <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-yellow-400/10 blur-3xl" />
 
@@ -279,7 +279,7 @@ export default function Profile() {
                       balanceVisible ? "Hide balance" : "Show balance"
                     }
                     onClick={() => setBalanceVisible(prev => !prev)}
-                    className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 active:scale-90 transition"
+                    className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500 dark:text-zinc-400 active:scale-90 transition"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -325,7 +325,7 @@ export default function Profile() {
             {/* MEMBERSHIP */}
             <Link
               href="/account-upgrade"
-              className="group relative overflow-hidden block bg-[#18181B] border border-zinc-800 rounded-[26px] p-5 active:scale-[0.99] transition"
+              className="group relative overflow-hidden block bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-[26px] p-5 active:scale-[0.99] transition"
             >
               <div className="absolute right-0 top-0 w-28 h-28 bg-yellow-400/10 blur-3xl rounded-full" />
 
@@ -356,13 +356,13 @@ export default function Profile() {
                 Account
               </p>
 
-              <div className="bg-[#18181B] border border-zinc-800 rounded-[24px] overflow-hidden">
+              <div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-[24px] overflow-hidden">
 
                 <Link
                   href="/edit-profile"
-                  className="flex items-center gap-4 p-4 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     ✏️
                   </span>
 
@@ -378,9 +378,9 @@ export default function Profile() {
 
                 <Link
                   href="/settings"
-                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-200 dark:border-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     ⚙️
                   </span>
 
@@ -396,9 +396,9 @@ export default function Profile() {
 
                 <Link
                   href="/transactions"
-                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-200 dark:border-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     📜
                   </span>
 
@@ -423,9 +423,9 @@ export default function Profile() {
 
               <Link
                 href="/referral"
-                className="flex items-center gap-4 bg-[#18181B] border border-zinc-800 rounded-[24px] p-4 active:scale-[0.99] transition"
+                className="flex items-center gap-4 bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-[24px] p-4 active:scale-[0.99] transition"
               >
-                <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center text-lg">
+                <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-lg">
                   🎁
                 </span>
 
@@ -446,13 +446,13 @@ export default function Profile() {
                 Support
               </p>
 
-              <div className="bg-[#18181B] border border-zinc-800 rounded-[24px] overflow-hidden">
+              <div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-[24px] overflow-hidden">
 
                 <Link
                   href="/support"
-                  className="flex items-center gap-4 p-4 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     🎧
                   </span>
 
@@ -468,9 +468,9 @@ export default function Profile() {
 
                 <Link
                   href="/ai"
-                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-200 dark:border-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     🤖
                   </span>
 
@@ -493,13 +493,13 @@ export default function Profile() {
                 Services
               </p>
 
-              <div className="bg-[#18181B] border border-zinc-800 rounded-[24px] overflow-hidden">
+              <div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-[24px] overflow-hidden">
 
                 <Link
                   href="/network-status"
-                  className="flex items-center gap-4 p-4 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     📡
                   </span>
 
@@ -515,9 +515,9 @@ export default function Profile() {
 
                 <Link
                   href="/resources/alphabot-api"
-                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-200 dark:border-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     🔑
                   </span>
 
@@ -540,13 +540,13 @@ export default function Profile() {
                 App & Information
               </p>
 
-              <div className="bg-[#18181B] border border-zinc-800 rounded-[24px] overflow-hidden">
+              <div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-[24px] overflow-hidden">
 
                 <Link
                   href="/rate-us"
-                  className="flex items-center gap-4 p-4 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     ⭐
                   </span>
 
@@ -562,9 +562,9 @@ export default function Profile() {
 
                 <Link
                   href="/about"
-                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-200 dark:border-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     ℹ️
                   </span>
 
@@ -580,9 +580,9 @@ export default function Profile() {
 
                 <Link
                   href="/privacy"
-                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-200 dark:border-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     🔒
                   </span>
 
@@ -598,9 +598,9 @@ export default function Profile() {
 
                 <Link
                   href="/terms"
-                  className="flex items-center gap-4 p-4 border-t border-zinc-800 active:bg-zinc-900 transition"
+                  className="flex items-center gap-4 p-4 border-t border-zinc-200 dark:border-zinc-800 active:bg-zinc-100 dark:active:bg-zinc-900 transition"
                 >
-                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-[#0A0A0A] border border-zinc-800 flex items-center justify-center">
+                  <span className="w-11 h-11 shrink-0 rounded-2xl bg-zinc-50 dark:bg-[#0A0A0A] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                     📄
                   </span>
 
