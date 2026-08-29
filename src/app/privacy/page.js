@@ -407,10 +407,10 @@ export default function Privacy() {
             </p>
 
             <a
-              href="mailto:ayodejimarvelous679@gmail.com"
+              href="mailto:alphabothq@gmail.com"
               className="text-yellow-600 dark:text-yellow-400 hover:underline break-all"
             >
-              ayodejimarvelous679@gmail.com
+              alphabothq@gmail.com
             </a>
           </section>
 
