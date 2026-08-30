@@ -312,7 +312,7 @@ String(value || "").toLowerCase().includes(search)
 
 return(
 
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-5 py-8 pb-24">
 
 <div className="max-w-md mx-auto space-y-5">
 
@@ -322,13 +322,13 @@ return(
 </h1>
 
 
-<p className="text-zinc-400">
+<p className="text-zinc-500 dark:text-zinc-400">
 Automate your airtime and data subscriptions
 </p>
 
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-4">
+<div className="bg-white border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-3xl p-6 space-y-4">
 
 
 <div>
@@ -338,7 +338,7 @@ Service
 </p>
 
 <select
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3"
 value={service}
 onChange={(e)=>{
 
@@ -377,7 +377,7 @@ type="search"
 placeholder="🔎 Search data plans..."
 value={planSearch}
 onChange={(e)=>setPlanSearch(e.target.value)}
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-white outline-none focus:border-yellow-400"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3 outline-none focus:border-yellow-400"
 />
 
 <p className="text-xs text-zinc-500">
@@ -386,7 +386,7 @@ className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3 text-white 
 
 
 <select
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3"
 value={selectedPlan ? (
 selectedPlan.variation_id ||
 selectedPlan.providerPlanId ||
@@ -473,7 +473,7 @@ value={id}
 )}
 
 <input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3"
 placeholder="Phone number"
 type="tel"
 value={targetPhone}
@@ -487,7 +487,7 @@ onChange={(e)=>setTargetPhone(e.target.value)}
 {service === "airtime" && (
 
 <input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3"
 placeholder="Amount"
 type="number"
 value={amount}
@@ -498,7 +498,7 @@ onChange={(e)=>setAmount(e.target.value)}
 
 {service === "data" && selectedPlan && (
 
-<div className="bg-[#050505] border border-zinc-700 rounded-xl p-3">
+<div className="bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3">
 
 <p className="font-bold">
 {selectedPlan.network ||
@@ -509,7 +509,7 @@ onChange={(e)=>setAmount(e.target.value)}
 "Data plan"}
 </p>
 
-<p className="text-zinc-400 text-sm mt-1">
+<p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
 
 ₦{Number(
 selectedPlan.display_price ||
@@ -532,7 +532,7 @@ selectedPlan.reseller_price ||
 
 
 <select
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3"
 value={frequency}
 onChange={(e)=>setFrequency(e.target.value)}
 >
@@ -564,7 +564,7 @@ className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 </button>
 
 
-<p className="text-center text-sm text-zinc-400">
+<p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
 {message}
 </p>
 
@@ -587,7 +587,7 @@ payments.map(item=>(
 
 <div
 key={item._id}
-className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
+className="bg-white border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-2xl p-4"
 >
 
 <p className="font-bold">
@@ -598,11 +598,11 @@ className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4"
 
 <div className="mt-2 space-y-1">
 
-<p className="text-zinc-300">
+<p className="text-zinc-700 dark:text-zinc-300">
 Data subscription
 </p>
 
-<p className="text-zinc-400">
+<p className="text-zinc-500 dark:text-zinc-400">
 ₦{Number(item.amount).toLocaleString()} • {item.frequency}
 </p>
 
@@ -612,11 +612,11 @@ Data subscription
 
 <div className="mt-2 space-y-1">
 
-<p className="text-zinc-300">
+<p className="text-zinc-700 dark:text-zinc-300">
 Airtime subscription
 </p>
 
-<p className="text-zinc-400">
+<p className="text-zinc-500 dark:text-zinc-400">
 ₦{Number(item.amount).toLocaleString()} • {item.frequency}
 </p>
 
@@ -648,7 +648,7 @@ Cancel
 
 <Link
 href="/dashboard"
-className="block text-center text-yellow-400 mt-6"
+className="block text-center text-yellow-500 dark:text-yellow-400 mt-6"
 >
 ← Dashboard
 </Link>

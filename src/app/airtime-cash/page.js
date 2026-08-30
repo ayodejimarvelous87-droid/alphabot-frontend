@@ -269,7 +269,7 @@ message="🎉 Airtime converted successfully!"
 />
 
 
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-5 py-8 pb-24">
 
 <div className="max-w-md mx-auto space-y-5">
 
@@ -279,13 +279,13 @@ message="🎉 Airtime converted successfully!"
 </h1>
 
 
-<p className="text-zinc-400">
+<p className="text-zinc-500 dark:text-zinc-400">
 Convert unused airtime into cash
 </p>
 
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-4">
+<div className="bg-white border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-3xl p-6 space-y-4">
 
 
 <p className="text-xs text-zinc-500">
@@ -306,7 +306,7 @@ Network Provider
 
 
 <select
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3"
 value={network}
 onChange={(e)=>setNetwork(e.target.value)}
 >
@@ -326,7 +326,7 @@ onChange={(e)=>setNetwork(e.target.value)}
 <button
 onClick={generateOTP}
 disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold"
+className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 >
 Generate OTP
 </button>
@@ -341,7 +341,7 @@ otpSent && !otpVerified &&
 <>
 
 <input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3"
 placeholder="Enter OTP"
 value={otp}
 onChange={(e)=>setOtp(e.target.value)}
@@ -351,7 +351,7 @@ onChange={(e)=>setOtp(e.target.value)}
 <button
 onClick={verifyOTP}
 disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold"
+className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 >
 Verify OTP
 </button>
@@ -375,7 +375,7 @@ This is your network airtime PIN, not your AlphaBot transaction PIN.
 
 
 <input
-className="w-full bg-[#050505] border border-zinc-700 rounded-xl p-3"
+className="w-full bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-700 dark:text-white rounded-xl p-3"
 placeholder="Airtime amount"
 type="number"
 value={amount}
@@ -390,7 +390,7 @@ onChange={(e)=>setAmount(e.target.value)}
 <button
 onClick={convert}
 disabled={loading}
-className="w-full bg-white text-black py-3 rounded-xl font-bold"
+className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 >
 Convert Airtime
 </button>
@@ -401,7 +401,7 @@ Convert Airtime
 
 
 
-<p className="text-center text-sm text-zinc-400">
+<p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
 {message}
 </p>
 
@@ -410,7 +410,7 @@ Convert Airtime
 
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
+<div className="bg-white border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-3xl p-5">
 
 <h2 className="font-bold text-lg mb-4">
 📄 My Airtime Cash Requests
@@ -432,14 +432,14 @@ requests.map((item)=>(
 
 <div
 key={item._id}
-className="border-b border-zinc-800 py-3"
+className="border-b border-zinc-200 dark:border-zinc-800 py-3"
 >
 
 <p>
 {item.network} - ₦{item.amount}
 </p>
 
-<p className="text-sm text-zinc-400">
+<p className="text-sm text-zinc-500 dark:text-zinc-400">
 Cash Amount: ₦{item.cashAmount}
 </p>
 
@@ -459,7 +459,7 @@ Status: {item.status==="approved" ? "✅ Approved":"⏳ Pending"}
 
 <Link
 href="/dashboard"
-className="block text-center text-zinc-400 mt-6"
+className="block text-center text-zinc-500 dark:text-zinc-400 mt-6"
 >
 ← Dashboard
 </Link>

@@ -364,12 +364,12 @@ setManualFunding(false);
 
 if(loading){
 return(
-<main className="min-h-screen bg-white text-black dark:bg-black dark:text-white px-5 py-8">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-5 py-8">
 <div className="max-w-md mx-auto animate-pulse">
-<div className="h-8 w-40 bg-zinc-300 dark:bg-zinc-800 rounded mb-6"></div>
-<div className="h-40 bg-zinc-300 dark:bg-zinc-800 rounded-3xl"></div>
-<div className="h-20 bg-zinc-300 dark:bg-zinc-800 rounded-2xl mt-6"></div>
-<div className="h-20 bg-zinc-300 dark:bg-zinc-800 rounded-2xl mt-4"></div>
+<div className="h-8 w-40 bg-zinc-200 dark:bg-zinc-800 rounded mb-6"></div>
+<div className="h-40 bg-zinc-200 dark:bg-zinc-800 rounded-3xl"></div>
+<div className="h-20 bg-zinc-200 dark:bg-zinc-800 rounded-2xl mt-6"></div>
+<div className="h-20 bg-zinc-200 dark:bg-zinc-800 rounded-2xl mt-4"></div>
 </div>
 </main>
 );
@@ -377,12 +377,12 @@ return(
 
 
   return(
-    <main className="min-h-screen bg-[#050505] text-white px-4 py-6 pb-28">
+    <main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-4 py-6 pb-28">
 
       <div className="max-w-md mx-auto space-y-4">
 
         {/* HEADER */}
-        <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-[#111113] to-black p-5">
+        <div className="relative overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-gradient-to-br from-zinc-100 via-white to-zinc-50 dark:from-zinc-900 dark:via-[#111113] dark:to-[#050505] p-5">
 
           <div className="absolute -right-12 -top-12 w-36 h-36 rounded-full bg-yellow-400/10 blur-3xl pointer-events-none" />
 
@@ -397,7 +397,7 @@ return(
                 My Wallet
               </h1>
 
-              <p className="text-[10px] text-zinc-400 mt-1">
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
                 Fund your wallet and manage your balance
               </p>
             </div>
@@ -428,7 +428,7 @@ return(
 
 
         {/* BALANCE */}
-        <section className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 p-5 text-black shadow-xl shadow-yellow-400/10">
+        <section className="relative overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-500 p-5 text-black shadow-xl shadow-yellow-400/10">
 
           <div className="absolute -right-10 -bottom-12 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
 
@@ -456,7 +456,7 @@ return(
 
               <Link
                 href="/transactions"
-                className="flex-1 text-center bg-black text-white py-3 rounded-2xl text-xs font-black active:scale-95 transition"
+                className="flex-1 text-center bg-zinc-950 dark:bg-black text-white py-3 rounded-2xl text-xs font-black active:scale-95 transition"
               >
                 Transaction History
               </Link>
@@ -477,7 +477,7 @@ return(
 
 
         {/* FUND WALLET */}
-        <section className="rounded-3xl border border-zinc-800 bg-[#111113] p-4 space-y-4">
+        <section className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-4 space-y-4">
 
           <div className="flex items-center justify-between">
 
@@ -519,7 +519,7 @@ return(
                   className={`rounded-xl border py-2.5 text-[10px] font-black transition active:scale-95 ${
                     String(amount) === String(value)
                       ? "border-yellow-400 bg-yellow-400 text-black"
-                      : "border-zinc-800 bg-[#080809] text-zinc-400"
+                      : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#080809] text-zinc-500 dark:text-zinc-400"
                   }`}
                 >
                   ₦{value.toLocaleString("en-NG")}
@@ -535,7 +535,7 @@ return(
               </span>
 
               <input
-                className="w-full pl-9 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+                className="w-full pl-9 pr-4 py-4 rounded-2xl bg-zinc-50 dark:bg-[#080809] border border-zinc-200 dark:border-zinc-800 text-zinc-950 dark:text-white outline-none focus:border-yellow-400/60 transition"
                 placeholder="Enter amount"
                 type="number"
                 value={amount}
@@ -562,7 +562,7 @@ return(
                 className={`rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
                   paymentMethod === "instant"
                     ? "border-yellow-400/60 bg-yellow-400/10"
-                    : "border-zinc-800 bg-[#080809]"
+                    : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#080809]"
                 }`}
               >
                 <div className="text-lg">⚡</div>
@@ -583,7 +583,7 @@ return(
                 className={`rounded-2xl border p-3 text-left transition active:scale-[0.98] ${
                   paymentMethod === "manual"
                     ? "border-yellow-400/60 bg-yellow-400/10"
-                    : "border-zinc-800 bg-[#080809]"
+                    : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#080809]"
                 }`}
               >
                 <div className="text-lg">🏦</div>
@@ -642,7 +642,7 @@ return(
 
                 </div>
 
-                <div className="mt-3 rounded-2xl bg-[#080809] border border-zinc-800 p-3">
+                <div className="mt-3 rounded-2xl bg-zinc-50 dark:bg-[#080809] border border-zinc-200 dark:border-zinc-800 p-3">
 
                   <p className="text-[8px] uppercase font-black tracking-wider text-zinc-500">
                     Account Number
@@ -673,7 +673,7 @@ return(
 
                 </div>
 
-                <div className="mt-2 rounded-2xl bg-[#080809] border border-zinc-800 p-3">
+                <div className="mt-2 rounded-2xl bg-zinc-50 dark:bg-[#080809] border border-zinc-200 dark:border-zinc-800 p-3">
 
                   <p className="text-[8px] uppercase font-black tracking-wider text-zinc-500">
                     Account Name
@@ -696,7 +696,7 @@ return(
                 type="button"
                 onClick={requestManualFunding}
                 disabled={manualFunding || !amount}
-                className="w-full rounded-2xl bg-zinc-900 border border-zinc-700 text-white py-4 font-black text-sm active:scale-[0.98] disabled:opacity-50 transition"
+                className="w-full rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-zinc-950 dark:text-white py-4 font-black text-sm active:scale-[0.98] disabled:opacity-50 transition"
               >
                 {manualFunding
                   ? "Submitting request..."
@@ -710,7 +710,7 @@ return(
 
 
         {/* VIRTUAL ACCOUNT */}
-        <section className="rounded-3xl border border-zinc-800 bg-[#111113] p-4">
+        <section className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-4">
 
           <div className="flex items-start justify-between gap-3">
 
@@ -738,16 +738,16 @@ return(
           {virtualAccountLoading ? (
 
             <div className="mt-4 animate-pulse space-y-2">
-              <div className="h-14 bg-zinc-900 rounded-2xl" />
-              <div className="h-14 bg-zinc-900 rounded-2xl" />
-              <div className="h-14 bg-zinc-900 rounded-2xl" />
+              <div className="h-14 bg-zinc-100 dark:bg-zinc-900 rounded-2xl" />
+              <div className="h-14 bg-zinc-100 dark:bg-zinc-900 rounded-2xl" />
+              <div className="h-14 bg-zinc-100 dark:bg-zinc-900 rounded-2xl" />
             </div>
 
           ) : virtualAccount ? (
 
             <div className="mt-4 space-y-2">
 
-              <div className="rounded-2xl bg-[#080809] border border-zinc-800 p-3">
+              <div className="rounded-2xl bg-zinc-50 dark:bg-[#080809] border border-zinc-200 dark:border-zinc-800 p-3">
 
                 <p className="text-[8px] uppercase font-black tracking-wider text-zinc-500">
                   Bank
@@ -760,7 +760,7 @@ return(
               </div>
 
 
-              <div className="rounded-2xl bg-[#080809] border border-zinc-800 p-3">
+              <div className="rounded-2xl bg-zinc-50 dark:bg-[#080809] border border-zinc-200 dark:border-zinc-800 p-3">
 
                 <div className="flex items-center justify-between">
 
@@ -799,7 +799,7 @@ return(
 
           ) : (
 
-            <div className="mt-4 rounded-2xl bg-[#080809] border border-zinc-800 p-4">
+            <div className="mt-4 rounded-2xl bg-zinc-50 dark:bg-[#080809] border border-zinc-200 dark:border-zinc-800 p-4">
 
               <p className="text-sm font-bold">
                 Create your personal account
@@ -815,7 +815,7 @@ return(
                 value={identityNumber}
                 onChange={(e) => setIdentityNumber(e.target.value)}
                 placeholder="Enter BVN"
-                className="w-full mt-3 bg-[#111113] border border-zinc-800 rounded-2xl px-4 py-3 text-sm outline-none focus:border-yellow-400/60"
+                className="w-full mt-3 bg-white dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-2xl px-4 py-3 text-sm outline-none focus:border-yellow-400/60"
               />
 
               <button
@@ -837,7 +837,7 @@ return(
 
 
         {/* RECENT TRANSACTIONS */}
-        <section className="rounded-3xl border border-zinc-800 bg-[#111113] p-4">
+        <section className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-4">
 
           <div className="flex items-center justify-between mb-3">
 
@@ -863,13 +863,13 @@ return(
 
           {transactions.length === 0 ? (
 
-            <div className="rounded-2xl bg-[#080809] border border-zinc-800 p-6 text-center">
+            <div className="rounded-2xl bg-zinc-50 dark:bg-[#080809] border border-zinc-200 dark:border-zinc-800 p-6 text-center">
 
               <div className="text-2xl mb-2">
                 🧾
               </div>
 
-              <p className="text-xs font-bold text-zinc-400">
+              <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
                 No transactions yet
               </p>
 
@@ -883,12 +883,12 @@ return(
 
                 <div
                   key={transaction.id || transaction.reference || index}
-                  className="flex items-center justify-between rounded-2xl bg-[#080809] border border-zinc-800 p-3"
+                  className="flex items-center justify-between rounded-2xl bg-zinc-50 dark:bg-[#080809] border border-zinc-200 dark:border-zinc-800 p-3"
                 >
 
                   <div className="flex items-center gap-3 min-w-0">
 
-                    <div className="w-9 h-9 shrink-0 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                    <div className="w-9 h-9 shrink-0 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
                       💳
                     </div>
 

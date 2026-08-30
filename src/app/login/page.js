@@ -241,8 +241,8 @@ const [toast,setToast] = useState("");
 
     <main className="
     min-h-screen
-    bg-[#050505]
-    text-white
+    bg-zinc-50 dark:bg-[#050505]
+    text-zinc-950 dark:text-white
     flex
     items-center
     justify-center
@@ -259,7 +259,7 @@ const [toast,setToast] = useState("");
       from-[#18181B]
       to-[#101012]
       border
-      border-zinc-800
+      border-zinc-200 dark:border-zinc-800
       rounded-3xl
       p-8
       shadow-[0_20px_50px_rgba(0,0,0,0.5)]
@@ -278,9 +278,9 @@ const [toast,setToast] = useState("");
           w-14
           h-14
           rounded-2xl
-          bg-black
+          bg-zinc-100 dark:bg-black
           border
-          border-zinc-700
+          border-zinc-300 dark:border-zinc-700
           flex
           items-center
           justify-center
@@ -316,7 +316,7 @@ const [toast,setToast] = useState("");
 
         <p className="
         text-center
-        text-zinc-400
+        text-zinc-500 dark:text-zinc-400
         text-sm
         mt-2
         ">
@@ -342,13 +342,13 @@ const [toast,setToast] = useState("");
 
           className="
           w-full
-          bg-[#050505]
+          bg-zinc-50 dark:bg-[#050505]
           border
-          border-zinc-800
+          border-zinc-200 dark:border-zinc-800
           rounded-xl
           px-4
           py-3.5
-          text-white
+          text-zinc-950 dark:text-white
           placeholder:text-zinc-500
           focus:outline-none
           focus:border-zinc-400
@@ -384,7 +384,7 @@ const [toast,setToast] = useState("");
           right-4
           top-1/2
           -translate-y-1/2
-          text-zinc-400
+          text-zinc-500 dark:text-zinc-400
           text-sm
           "
 
@@ -450,12 +450,12 @@ const [toast,setToast] = useState("");
         mt-3
         bg-zinc-900
         border
-        border-zinc-700
-        text-white
+        border-zinc-300 dark:border-zinc-700
+        text-zinc-950 dark:text-white
         py-3.5
         rounded-xl
         font-bold
-        hover:bg-zinc-800
+        hover:bg-zinc-200 dark:hover:bg-zinc-800
         transition
         disabled:opacity-50
         "
@@ -478,7 +478,7 @@ const [toast,setToast] = useState("");
         text-center
         text-sm
         mt-4
-        text-zinc-400
+        text-zinc-500 dark:text-zinc-400
         ">
           {message}
         </p>
@@ -495,14 +495,14 @@ const [toast,setToast] = useState("");
 
           <a
           href="/forgot-password"
-          className="text-zinc-400"
+          className="text-zinc-500 dark:text-zinc-400"
           >
             Forgot password?
           </a>
 
 
 
-          <p className="text-zinc-400">
+          <p className="text-zinc-500 dark:text-zinc-400">
 
             Don't have an account?
 
@@ -510,7 +510,7 @@ const [toast,setToast] = useState("");
             href="/register"
             className="
             ml-1
-            text-white
+            text-zinc-950 dark:text-white
             font-semibold
             "
             >
@@ -527,17 +527,17 @@ const [toast,setToast] = useState("");
 
 
     {showPinPrompt && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-5">
-        <div className="relative w-full max-w-md rounded-3xl border border-zinc-800 bg-gradient-to-b from-[#18181B] to-[#101012] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 dark:bg-black/70 backdrop-blur-sm px-5">
+        <div className="relative w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-gradient-to-b from-zinc-50 to-white dark:from-[#18181B] dark:to-[#101012] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
 
           <button
             onClick={continueToDashboard}
-            className="absolute right-5 top-5 h-9 w-9 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xl hover:text-white transition"
+            className="absolute right-5 top-5 h-9 w-9 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 text-xl hover:text-zinc-950 dark:hover:text-white transition"
           >
             ×
           </button>
 
-          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-black border border-zinc-700">
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-black border border-zinc-300 dark:border-zinc-700">
             <span className="text-2xl">🔐</span>
           </div>
 
@@ -545,13 +545,13 @@ const [toast,setToast] = useState("");
             Secure Your Account
           </h2>
 
-          <p className="mt-2 text-sm leading-6 text-zinc-400">
+          <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">
             Set up your transaction PIN to protect your wallet and
             authorize payments securely.
           </p>
 
-          <div className="mt-5 rounded-2xl border border-zinc-800 bg-[#0b0b0d] p-4">
-            <p className="text-sm font-bold text-zinc-200">
+          <div className="mt-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-[#0b0b0d] p-4">
+            <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
               🔢 4-digit Transaction PIN
             </p>
 
@@ -565,14 +565,14 @@ const [toast,setToast] = useState("");
             onClick={() => {
               window.location.href = "/transaction-pin";
             }}
-            className="mt-6 w-full rounded-2xl bg-white py-4 font-black text-black transition hover:bg-zinc-200"
+            className="mt-6 w-full rounded-2xl bg-zinc-950 py-4 dark:bg-white font-black text-white transition dark:text-black hover:bg-zinc-200 dark:hover:bg-zinc-200"
           >
             Create Transaction PIN
           </button>
 
           <button
             onClick={continueToDashboard}
-            className="mt-3 w-full py-3 text-sm font-bold text-zinc-500 hover:text-white transition"
+            className="mt-3 w-full py-3 text-sm font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition"
           >
             I'll do it later
           </button>

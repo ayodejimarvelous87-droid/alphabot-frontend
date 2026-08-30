@@ -44,7 +44,7 @@ setLoading(false);
 
   return(
 
-<main className="min-h-screen bg-[#050505] text-white px-6 py-6 pb-24">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-6 py-6 pb-24">
 
 <div className="max-w-md mx-auto">
 
@@ -63,7 +63,7 @@ Leaderboard
 </h1>
 
 
-<p className="text-zinc-400 mt-2 text-sm">
+<p className="text-zinc-500 dark:text-zinc-400 mt-2 text-sm">
 Top football predictors this week.
 </p>
 
@@ -75,7 +75,7 @@ Top football predictors this week.
 
 {loading ? (
 
-<p className="mt-8 text-zinc-400">
+<p className="mt-8 text-zinc-500 dark:text-zinc-400">
 Loading leaderboard...
 </p>
 
@@ -83,7 +83,7 @@ Loading leaderboard...
 ) : players.length===0 ? (
 
 
-<div className="mt-8 bg-[#18181B] border border-zinc-800 rounded-3xl p-5 text-center">
+<div className="mt-8 bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 text-center">
 
 No players yet ⚽
 
@@ -101,14 +101,14 @@ No players yet ⚽
 
 <div
 key={player._id}
-className="bg-[#18181B] border border-zinc-800 rounded-2xl p-5 flex justify-between items-center"
+className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 flex justify-between items-center"
 >
 
 
 <div className="flex items-center gap-3">
 
 
-<div className="w-10 h-10 rounded-xl bg-[#050505] border border-zinc-800 flex items-center justify-center">
+<div className="w-10 h-10 rounded-xl bg-zinc-50 dark:bg-[#050505] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
 
 {index===0 ? "🥇" : index===1 ? "🥈" : index===2 ? "🥉" : "🏅"}
 

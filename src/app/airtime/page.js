@@ -173,12 +173,12 @@ message="🎉 Airtime purchase successful!"
 />
 
 
-  <main className="min-h-screen bg-[#050505] text-white px-4 py-5 pb-24">
+  <main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-4 py-5 pb-24">
 
     <div className="max-w-md mx-auto space-y-4">
 
       {/* HEADER */}
-      <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-[#111113] to-black p-5">
+      <div className="relative overflow-hidden rounded-3xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-gradient-to-br dark:from-zinc-900 dark:via-[#111113] dark:to-black p-5">
 
         <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-yellow-400/10 blur-3xl pointer-events-none" />
 
@@ -193,12 +193,12 @@ message="🎉 Airtime purchase successful!"
               Airtime
             </h1>
 
-            <p className="text-[10px] text-zinc-400 mt-1">
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
               Instant recharge across all networks
             </p>
           </div>
 
-          <div className="w-11 h-11 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center text-xl">
+          <div className="w-11 h-11 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 dark:border-yellow-400/20 flex items-center justify-center text-xl">
             📱
           </div>
 
@@ -208,17 +208,17 @@ message="🎉 Airtime purchase successful!"
 
 
       {/* PURCHASE FORM */}
-      <div className="rounded-3xl border border-zinc-800 bg-[#111113] p-4 space-y-4">
+      <div className="rounded-3xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-[#111113] p-4 space-y-4">
 
         {/* NETWORK */}
         <div>
 
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
               Network
             </p>
 
-            <span className="text-[9px] text-zinc-600">
+            <span className="text-[9px] text-zinc-500 dark:text-zinc-600">
               Select provider
             </span>
           </div>
@@ -233,7 +233,7 @@ message="🎉 Airtime purchase successful!"
                 className={`rounded-2xl border px-2 py-3 text-[10px] font-black transition active:scale-95 ${
                   network === item
                     ? "border-yellow-400 bg-yellow-400 text-black shadow-lg shadow-yellow-400/10"
-                    : "border-zinc-800 bg-[#080809] text-zinc-400 hover:border-zinc-700"
+                    : "border-zinc-200 bg-zinc-50 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:bg-[#080809] dark:text-zinc-400 dark:hover:border-zinc-700"
                 }`}
               >
                 {item}
@@ -249,16 +249,16 @@ message="🎉 Airtime purchase successful!"
         <div>
 
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
               Receiver
             </p>
 
-            <span className="text-[9px] text-zinc-600">
+            <span className="text-[9px] text-zinc-500 dark:text-zinc-600">
               Phone number
             </span>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-[#080809] p-1">
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-[#080809] p-1">
 
             <PhoneInput
               value={phone}
@@ -276,11 +276,11 @@ message="🎉 Airtime purchase successful!"
         <div>
 
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+            <p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
               Amount
             </p>
 
-            <span className="text-[9px] text-zinc-600">
+            <span className="text-[9px] text-zinc-500 dark:text-zinc-600">
               Enter or choose
             </span>
           </div>
@@ -295,7 +295,7 @@ message="🎉 Airtime purchase successful!"
                 className={`rounded-xl border py-2 text-[10px] font-bold transition active:scale-95 ${
                   String(amount) === String(value)
                     ? "border-yellow-400/60 bg-yellow-400/10 text-yellow-400"
-                    : "border-zinc-800 bg-[#080809] text-zinc-500"
+                    : "border-zinc-200 bg-zinc-50 text-zinc-600 dark:border-zinc-800 dark:bg-[#080809] dark:text-zinc-500"
                 }`}
               >
                 ₦{value.toLocaleString()}
@@ -311,7 +311,7 @@ message="🎉 Airtime purchase successful!"
             </span>
 
             <input
-              className="w-full pl-9 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+              className="w-full pl-9 pr-4 py-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 outline-none dark:bg-[#080809] dark:border-zinc-800 dark:text-white focus:border-yellow-400/60 transition"
               placeholder="Enter amount"
               type="number"
               value={amount}
@@ -326,7 +326,7 @@ message="🎉 Airtime purchase successful!"
         {/* PIN */}
         <div>
 
-          <p className="text-[9px] font-black uppercase tracking-wider text-zinc-500 mb-2">
+          <p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500 mb-2">
             Transaction PIN
           </p>
 
@@ -344,7 +344,7 @@ message="🎉 Airtime purchase successful!"
 
               router.push("/enter-pin?return=/airtime&service=airtime");
             }}
-            className="w-full flex items-center justify-between rounded-2xl border border-zinc-800 bg-[#080809] px-4 py-4 text-left active:scale-[0.98] transition"
+            className="w-full flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4 text-left dark:border-zinc-800 dark:bg-[#080809] active:scale-[0.98] transition"
           >
 
             <div>
@@ -352,12 +352,12 @@ message="🎉 Airtime purchase successful!"
                 Enter transaction PIN
               </p>
 
-              <p className="text-[9px] text-zinc-500 mt-0.5">
+              <p className="text-[9px] text-zinc-500 dark:text-zinc-500 mt-0.5">
                 Required before purchase
               </p>
             </div>
 
-            <span className="text-zinc-500 text-lg">
+            <span className="text-zinc-500 dark:text-zinc-500 text-lg">
               →
             </span>
 
@@ -417,7 +417,7 @@ message="🎉 Airtime purchase successful!"
 
       {/* STATUS */}
       {message && (
-        <div className="rounded-2xl border border-zinc-800 bg-[#111113] px-4 py-3 text-center text-xs text-zinc-300">
+        <div className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-center text-xs text-zinc-700 dark:border-zinc-800 dark:bg-[#111113] dark:text-zinc-300">
           {message}
         </div>
       )}
@@ -426,7 +426,7 @@ message="🎉 Airtime purchase successful!"
       {/* BACK */}
       <Link
         href="/dashboard"
-        className="flex items-center justify-center gap-2 text-[11px] font-bold text-zinc-500 hover:text-white transition py-2"
+        className="flex items-center justify-center gap-2 text-[11px] font-bold text-zinc-500 hover:text-zinc-950 dark:hover:text-white transition py-2"
       >
         ← Dashboard
       </Link>

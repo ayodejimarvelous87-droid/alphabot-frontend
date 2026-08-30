@@ -7,12 +7,12 @@ export default function Arena(){
 
 
   return(
-    <main className="min-h-screen bg-[#050505] text-white px-4 py-6 pb-28">
+    <main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-4 py-6 pb-28">
 
       <div className="max-w-md mx-auto space-y-4">
 
         {/* HEADER */}
-        <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-[#111113] to-black p-5">
+        <div className="relative overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-gradient-to-br from-zinc-100 via-white to-zinc-50 dark:from-zinc-900 dark:via-[#111113] dark:to-[#050505] p-5">
 
           <div className="absolute -right-12 -top-12 w-36 h-36 rounded-full bg-yellow-400/10 blur-3xl pointer-events-none" />
 
@@ -27,7 +27,7 @@ export default function Arena(){
                 Arena+
               </h1>
 
-              <p className="text-[10px] text-zinc-400 mt-1">
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
                 Predict. Compete. Earn.
               </p>
             </div>
@@ -43,7 +43,7 @@ export default function Arena(){
         {/* LIVE ARENA HERO */}
         <Link
           href="/arena/football"
-          className="group relative block overflow-hidden rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-yellow-400/15 via-[#151515] to-[#0A0A0A] p-5 active:scale-[0.98] transition"
+          className="group relative block overflow-hidden rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-yellow-400/20 via-yellow-50 to-white dark:from-yellow-400/15 dark:via-[#151515] dark:to-[#0A0A0A] p-5 active:scale-[0.98] transition"
         >
 
           <div className="absolute -right-16 -bottom-16 w-40 h-40 rounded-full bg-yellow-400/10 blur-3xl" />
@@ -74,7 +74,7 @@ export default function Arena(){
               </span>
             </h2>
 
-            <p className="text-xs text-zinc-400 mt-3 leading-relaxed max-w-[290px]">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed max-w-[290px]">
               Make your predictions, collect points and climb the AlphaBot Arena leaderboard.
             </p>
 
@@ -90,7 +90,7 @@ export default function Arena(){
         {/* ARENA STATS */}
         <div className="grid grid-cols-3 gap-2">
 
-          <div className="rounded-2xl border border-zinc-800 bg-[#111113] p-3 text-center">
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-3 text-center">
             <div className="text-lg">⚽</div>
             <p className="text-[9px] text-zinc-500 mt-1">
               Predictions
@@ -100,7 +100,7 @@ export default function Arena(){
             </p>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-[#111113] p-3 text-center">
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-3 text-center">
             <div className="text-lg">🏆</div>
             <p className="text-[9px] text-zinc-500 mt-1">
               Rankings
@@ -110,7 +110,7 @@ export default function Arena(){
             </p>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800 bg-[#111113] p-3 text-center">
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-3 text-center">
             <div className="text-lg">🎁</div>
             <p className="text-[9px] text-zinc-500 mt-1">
               Rewards
@@ -128,7 +128,7 @@ export default function Arena(){
 
           <Link
             href="/arena/leaderboard"
-            className="group rounded-3xl border border-zinc-800 bg-[#111113] p-4 active:scale-[0.98] transition"
+            className="group rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-4 active:scale-[0.98] transition"
           >
 
             <div className="w-11 h-11 rounded-2xl bg-yellow-400/10 border border-yellow-400/10 flex items-center justify-center text-xl group-hover:scale-105 transition">
@@ -152,7 +152,7 @@ export default function Arena(){
 
           <Link
             href="/arena/rewards"
-            className="group rounded-3xl border border-zinc-800 bg-[#111113] p-4 active:scale-[0.98] transition"
+            className="group rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-4 active:scale-[0.98] transition"
           >
 
             <div className="w-11 h-11 rounded-2xl bg-yellow-400/10 border border-yellow-400/10 flex items-center justify-center text-xl group-hover:scale-105 transition">
@@ -177,7 +177,7 @@ export default function Arena(){
 
 
         {/* DAILY CHALLENGE */}
-        <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-[#111113] p-5">
+        <div className="relative overflow-hidden rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-5">
 
           <div className="absolute -right-10 -top-10 w-28 h-28 rounded-full bg-yellow-400/5 blur-2xl" />
 
@@ -207,7 +207,7 @@ export default function Arena(){
 
             <div className="mt-4 flex items-center gap-2">
 
-              <div className="flex-1 h-2 rounded-full bg-zinc-800 overflow-hidden">
+              <div className="flex-1 h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
                 <div className="h-full w-[35%] rounded-full bg-yellow-400" />
               </div>
 
@@ -222,7 +222,7 @@ export default function Arena(){
 
 
         {/* HOW IT WORKS */}
-        <div className="rounded-3xl border border-zinc-800 bg-[#111113] p-5">
+        <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] p-5">
 
           <p className="text-[9px] font-black uppercase tracking-[0.18em] text-zinc-500">
             Arena+

@@ -176,7 +176,7 @@ Pay your electricity bill quickly and securely.
 
 {/* PAYMENT CARD */}
 
-<section className="relative overflow-hidden bg-gradient-to-br from-[#1B1B1F] via-[#111113] to-[#080808] border border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+<section className="relative overflow-hidden bg-white border border-zinc-200 dark:bg-gradient-to-br dark:from-[#1B1B1F] dark:via-[#111113] dark:to-[#080808] dark:border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
 
 <div className="absolute -top-20 -right-20 w-44 h-44 rounded-full bg-yellow-400/10 blur-3xl" />
 
@@ -195,7 +195,7 @@ Pay your electricity bill quickly and securely.
 Electricity Payment
 </h2>
 
-<p className="text-xs text-zinc-500">
+<p className="text-xs text-zinc-500 dark:text-zinc-400">
 Secure utility payment
 </p>
 </div>
@@ -228,7 +228,7 @@ Distribution Company
 </p>
 
 <select
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white outline-none focus:border-yellow-400 transition"
+className="w-full p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white outline-none focus:border-yellow-400 transition"
 value={disco}
 onChange={(e)=>setDisco(e.target.value)}
 >
@@ -260,7 +260,7 @@ Meter Number
 </p>
 
 <input
-className="w-full p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white placeholder:text-zinc-600 outline-none focus:border-yellow-400 transition"
+className="w-full p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-yellow-400 transition"
 placeholder="Enter meter number"
 value={meterNumber}
 onChange={(e)=>setMeterNumber(e.target.value)}
@@ -285,7 +285,7 @@ onClick={()=>setMeterType("prepaid")}
 className={`p-4 rounded-2xl border font-bold transition ${
 meterType === "prepaid"
 ? "bg-yellow-400 text-black border-yellow-400"
-: "bg-[#050505] text-zinc-400 border-zinc-800"
+: "bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-[#050505] dark:text-zinc-400 dark:border-zinc-800"
 }`}
 >
 Prepaid
@@ -297,7 +297,7 @@ onClick={()=>setMeterType("postpaid")}
 className={`p-4 rounded-2xl border font-bold transition ${
 meterType === "postpaid"
 ? "bg-yellow-400 text-black border-yellow-400"
-: "bg-[#050505] text-zinc-400 border-zinc-800"
+: "bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-[#050505] dark:text-zinc-400 dark:border-zinc-800"
 }`}
 >
 Postpaid
@@ -323,7 +323,7 @@ Amount
 </span>
 
 <input
-className="w-full p-4 pl-9 rounded-2xl bg-[#050505] border border-zinc-800 text-white placeholder:text-zinc-600 outline-none focus:border-yellow-400 transition"
+className="w-full p-4 pl-9 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 outline-none focus:border-yellow-400 transition"
 placeholder="Enter amount"
 type="number"
 value={amount}
@@ -410,7 +410,7 @@ setBiometricLoading(false);
 
 }}
 disabled={loading || biometricLoading}
-className="w-full mt-3 bg-[#050505] border border-zinc-800 text-white py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
+className="w-full mt-3 bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
 >
 
 {biometricLoading
@@ -424,7 +424,7 @@ className="w-full mt-3 bg-[#050505] border border-zinc-800 text-white py-4 round
 
 {message && (
 
-<div className="mt-4 bg-[#050505] border border-zinc-800 rounded-2xl p-4 text-center text-sm">
+<div className="mt-4 bg-white border border-zinc-200 text-zinc-700 dark:bg-[#050505] dark:border-zinc-800 dark:text-white rounded-2xl p-4 text-center text-sm">
 
 {message}
 

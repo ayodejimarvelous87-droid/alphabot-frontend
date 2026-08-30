@@ -377,7 +377,7 @@ message="🎉 Recharge PIN purchased successfully!"
 />
 
 
-<main className="min-h-screen bg-[#050505] text-white px-5 py-8 pb-24">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-5 py-8 pb-24">
 
 
 <div className="max-w-md mx-auto space-y-5">
@@ -389,7 +389,7 @@ message="🎉 Recharge PIN purchased successfully!"
 💳 Recharge PIN
 </h1>
 
-<p className="text-zinc-400 mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 mt-2">
 Buy recharge PIN instantly for all networks
 </p>
 
@@ -397,7 +397,7 @@ Buy recharge PIN instantly for all networks
 
 
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 space-y-5">
+<div className="bg-white border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-3xl p-6 space-y-5">
 
 
 
@@ -408,7 +408,7 @@ Network Provider
 </p>
 
 <select
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white"
 value={network}
 onChange={(e)=>setNetwork(e.target.value)}
 >
@@ -438,7 +438,7 @@ Amount
 
 <input
 
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white"
 
 placeholder="Enter amount"
 
@@ -463,7 +463,7 @@ Quantity
 
 <input
 
-className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white"
+className="w-full mt-2 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white"
 
 type="number"
 
@@ -485,7 +485,7 @@ Transaction PIN
 </p>
 
 
-<div className="w-full mt-2 p-4 rounded-2xl bg-[#050505] border border-zinc-800 text-white">
+<div className="w-full mt-2 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white">
   Enter 4 digit PIN →
 </div>
 
@@ -520,7 +520,7 @@ router.push(
 
 disabled={loading}
 
-className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
+className="w-full bg-yellow-400 text-black py-4 rounded-2xl font-black text-lg shadow-lg shadow-yellow-400/10 active:scale-[0.98] transition disabled:opacity-50"
 
 >
 
@@ -533,7 +533,7 @@ className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
 
 {message && (
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-2xl p-4 text-center text-sm">
+<div className="bg-white border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-2xl p-4 text-center text-sm">
 
 {message}
 
@@ -546,7 +546,7 @@ className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
 
 {polling && (
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5 text-center">
+<div className="bg-white border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-3xl p-5 text-center">
 
 <div className="text-4xl mb-3">
 ⏳
@@ -556,7 +556,7 @@ className="w-full bg-white text-black py-4 rounded-2xl font-black text-lg"
 Your Recharge PIN is Processing
 </h2>
 
-<p className="text-zinc-400 mt-3 text-sm">
+<p className="text-zinc-500 dark:text-zinc-400 mt-3 text-sm">
 Your payment was received and the PIN is being generated.
 </p>
 
@@ -577,13 +577,13 @@ Waiting for PIN...
   Array.isArray(epinResult.pins) &&
   epinResult.pins.length > 0 && (
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
+<div className="bg-white border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-3xl p-5">
 
   {/* ALPHABOT HQ */}
 
-  <div className="text-center pb-4 border-b border-zinc-800">
+  <div className="text-center pb-4 border-b border-zinc-200 dark:border-zinc-800">
 
-    <p className="text-xs font-black tracking-[0.3em] text-white">
+    <p className="text-xs font-black tracking-[0.3em] text-zinc-950 dark:text-white">
       ALPHABOT HQ
     </p>
 
@@ -625,7 +625,7 @@ Waiting for PIN...
 
       <div
         key={`${String(item)}-${index}`}
-        className="bg-[#050505] border border-zinc-800 rounded-2xl p-4"
+        className="bg-zinc-50 border border-zinc-200 dark:bg-[#050505] dark:border-zinc-800 rounded-2xl p-4"
       >
 
         <p className="text-xs text-zinc-500 uppercase tracking-wider mb-2">
@@ -664,7 +664,7 @@ Waiting for PIN...
 )}
 
 
-<p className="text-zinc-400 mt-4 text-sm">
+<p className="text-zinc-500 dark:text-zinc-400 mt-4 text-sm">
 
 Dial *311*PIN# to recharge
 
@@ -680,7 +680,7 @@ Dial *311*PIN# to recharge
 
 href="/dashboard"
 
-className="block text-center text-zinc-400 mt-6"
+className="block text-center text-zinc-500 dark:text-zinc-400 mt-6"
 
 >
 

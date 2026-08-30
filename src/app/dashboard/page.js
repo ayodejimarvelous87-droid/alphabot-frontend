@@ -675,7 +675,7 @@ return(
 
 <Link
 href="/transactions"
-className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 active:scale-95 transition"
+className="bg-white dark:bg-[#1A1A1E] border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-white hover:scale-105 active:scale-95 transition"
 >
 💳
 </Link>
@@ -684,7 +684,7 @@ className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 ac
 
 <Link
 href="/notifications"
-className="relative bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:scale-105 active:scale-95 transition"
+className="relative bg-white dark:bg-[#1A1A1E] border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-white hover:scale-105 active:scale-95 transition"
 >
 
 🔔
@@ -701,7 +701,7 @@ className="relative bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 hover:sca
 
 <button
 onClick={toggleTheme}
-className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 active:scale-95 transition"
+className="bg-white dark:bg-[#1A1A1E] border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 text-zinc-900 dark:text-white active:scale-95 transition"
 >
 {dark ? "☀️" : "🌙"}
 </button>
@@ -716,7 +716,7 @@ className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 active:scale-95 tr
 
 {/* WALLET HUB */}
 
-<section className="mt-5 relative overflow-hidden bg-[#1A1A1E] border border-zinc-800 rounded-3xl p-4 shadow-xl shadow-black/20">
+<section className="mt-5 relative overflow-hidden bg-white dark:bg-[#1A1A1E] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4 shadow-xl shadow-black/10 dark:shadow-black/20">
 
   <div className="absolute -right-16 -top-16 w-44 h-44 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none" />
 
@@ -760,14 +760,14 @@ className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 active:scale-95 tr
 
     <div className="flex items-center justify-between gap-3 mt-5">
 
-      <h2 className="text-2xl sm:text-3xl font-black text-white truncate">
+      <h2 className="text-2xl sm:text-3xl font-black text-zinc-950 dark:text-white truncate">
         {showBalance ? `₦${balance.toLocaleString()}` : "₦••••••"}
       </h2>
 
       <button
         onClick={()=>setShowBalance(!showBalance)}
         aria-label={showBalance ? "Hide balance" : "Show balance"}
-        className="shrink-0 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-[10px] font-bold text-zinc-300 active:scale-95 transition"
+        className="shrink-0 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[10px] font-bold text-zinc-700 dark:text-zinc-300 active:scale-95 transition"
       >
         {showBalance ? "Hide" : "Show"}
       </button>
@@ -787,7 +787,7 @@ className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 active:scale-95 tr
 
       <Link
         href="/data"
-        className="flex items-center justify-center gap-2 bg-zinc-900 border border-zinc-800 text-white py-3 rounded-xl text-xs font-bold active:scale-[0.97] transition"
+        className="flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white py-3 rounded-xl text-xs font-bold active:scale-[0.97] transition"
       >
         <span>🌐</span>
         Data
@@ -816,7 +816,7 @@ className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 active:scale-95 tr
 
 {/* ALPHABOT COINS */}
 
-<section className="mt-3 relative overflow-hidden bg-[#151515] border border-zinc-800 rounded-3xl p-4 shadow-lg">
+<section className="mt-3 relative overflow-hidden bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4 shadow-lg">
 
 <div className="absolute -right-10 -top-10 w-32 h-32 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none"/>
 
@@ -836,7 +836,7 @@ className="bg-[#1A1A1E] border border-zinc-800 rounded-xl p-3 active:scale-95 tr
 AB COINS
 </p>
 
-<p className="text-sm font-bold mt-1">
+<p className="text-sm font-bold mt-1 text-zinc-950 dark:text-white">
 {Number(user?.abCoins || 0).toLocaleString()} / {coinSettings.target.toLocaleString()}
 </p>
 
@@ -846,7 +846,7 @@ AB COINS
 
 <Link
 href="/coins"
-className="text-xs bg-white text-black px-4 py-2 rounded-xl font-bold active:scale-95 transition"
+className="text-xs bg-zinc-950 dark:bg-white text-white dark:text-black px-4 py-2 rounded-xl font-bold active:scale-95 transition"
 >
 View
 </Link>
@@ -855,7 +855,7 @@ View
 
 <div className="mt-4">
 
-<div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+<div className="h-2 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
 
 <div
 className="h-full bg-yellow-400 rounded-full transition-all"

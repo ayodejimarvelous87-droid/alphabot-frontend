@@ -42,7 +42,7 @@ setLoading(false);
 
   return(
 
-<main className="min-h-screen bg-[#050505] text-white px-6 py-6 pb-24">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-6 py-6 pb-24">
 
 <div className="max-w-md mx-auto">
 
@@ -61,7 +61,7 @@ Rewards
 </h1>
 
 
-<p className="text-zinc-400 mt-2 text-sm">
+<p className="text-zinc-500 dark:text-zinc-400 mt-2 text-sm">
 Your football prediction rewards.
 </p>
 
@@ -74,7 +74,7 @@ Your football prediction rewards.
 
 {loading ? (
 
-<p className="mt-8 text-zinc-400">
+<p className="mt-8 text-zinc-500 dark:text-zinc-400">
 Loading rewards...
 </p>
 
@@ -82,7 +82,7 @@ Loading rewards...
 ) : rewards.length===0 ? (
 
 
-<div className="mt-8 bg-[#18181B] border border-zinc-800 rounded-3xl p-5 text-center">
+<div className="mt-8 bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 text-center">
 
 No rewards yet ⚽
 
@@ -100,7 +100,7 @@ No rewards yet ⚽
 
 <div
 key={item._id || index}
-className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5"
+className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5"
 >
 
 
@@ -110,7 +110,7 @@ className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5"
 
 
 
-<div className="mt-4 bg-[#050505] border border-zinc-800 rounded-2xl p-4">
+<div className="mt-4 bg-zinc-50 dark:bg-[#050505] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4">
 
 
 <p className="text-yellow-400 text-2xl font-black">
@@ -122,7 +122,7 @@ className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5"
 </p>
 
 
-<p className="text-zinc-400 text-sm mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 text-sm mt-2">
 Reward type: {item.rewardType}
 </p>
 
@@ -132,7 +132,7 @@ Reward type: {item.rewardType}
 
 
 
-<p className="text-zinc-400 mt-4">
+<p className="text-zinc-500 dark:text-zinc-400 mt-4">
 Week: {item.week}
 </p>
 

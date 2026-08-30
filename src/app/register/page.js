@@ -186,15 +186,15 @@ referralCode:ref
 
 
   const inputStyle =
-  "w-full mt-4 p-3.5 rounded-xl bg-[#050505] text-white border border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-500";
+  "w-full mt-4 p-3.5 rounded-xl bg-white dark:bg-[#050505] text-zinc-950 dark:text-white border border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500";
 
 
   return(
 
     <main className="
     min-h-screen 
-    bg-[#050505] 
-    text-white 
+    bg-zinc-50 dark:bg-[#050505] 
+    text-zinc-950 dark:text-white 
     flex 
     items-center 
     justify-center 
@@ -210,7 +210,7 @@ referralCode:ref
       from-[#18181B] 
       to-[#101012]
       border 
-      border-zinc-800
+      border-zinc-200 dark:border-zinc-800
       rounded-3xl 
       p-8
       shadow-[0_20px_50px_rgba(0,0,0,0.5)]
@@ -225,9 +225,9 @@ referralCode:ref
           w-14 
           h-14 
           rounded-2xl 
-          bg-black 
+          bg-zinc-100 dark:bg-black 
           border 
-          border-zinc-700
+          border-zinc-300 dark:border-zinc-700
           flex 
           items-center 
           justify-center
@@ -262,7 +262,7 @@ referralCode:ref
 
         <p className="
         text-center 
-        text-zinc-400 
+        text-zinc-500 dark:text-zinc-400 
         mt-2 
         text-sm
         ">
@@ -289,7 +289,7 @@ referralCode:ref
               minLength={3}
               maxLength={40}
               autoComplete="given-name"
-              className="w-full p-3.5 rounded-xl bg-[#050505] text-white border border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-500"
+              className="w-full p-3.5 rounded-xl bg-white dark:bg-[#050505] text-zinc-950 dark:text-white border border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               onChange={update}
             />
 
@@ -299,7 +299,7 @@ referralCode:ref
               minLength={3}
               maxLength={40}
               autoComplete="family-name"
-              className="w-full p-3.5 rounded-xl bg-[#050505] text-white border border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-500"
+              className="w-full p-3.5 rounded-xl bg-white dark:bg-[#050505] text-zinc-950 dark:text-white border border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
               onChange={update}
             />
 
@@ -349,7 +349,7 @@ referralCode:ref
             absolute 
             right-4 
             top-8 
-            text-zinc-400
+            text-zinc-500 dark:text-zinc-400
             "
           >
 
@@ -400,8 +400,8 @@ referralCode:ref
           className="
           w-full
           mt-6
-          bg-white
-          text-black
+          bg-zinc-950 dark:bg-white
+          text-white dark:text-black
           py-3.5
           rounded-xl
           font-bold
@@ -481,8 +481,8 @@ referralCode:ref
           className="
           w-full
           mt-4
-          bg-zinc-200
-          text-black
+          bg-zinc-950 dark:bg-zinc-200
+          text-white dark:text-black
           py-3.5
           rounded-xl
           font-bold
@@ -499,7 +499,7 @@ referralCode:ref
         text-center 
         text-sm 
         mt-5 
-        text-zinc-400
+        text-zinc-500 dark:text-zinc-400
         ">
           {message}
         </p>
@@ -511,7 +511,7 @@ referralCode:ref
         text-center 
         text-sm 
         mt-6 
-        text-zinc-400
+        text-zinc-500 dark:text-zinc-400
         ">
 
           Already have an account?
@@ -519,7 +519,7 @@ referralCode:ref
           <Link
           href="/login"
           className="
-          text-white
+          text-zinc-950 dark:text-white
           ml-1
           font-semibold
           "

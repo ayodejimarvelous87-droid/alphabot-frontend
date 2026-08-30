@@ -257,7 +257,7 @@ Fund your betting wallet quickly and securely.
 
 {/* MAIN CARD */}
 
-<section className="relative overflow-hidden bg-gradient-to-br from-[#1B1B1F] via-[#111113] to-[#080808] border border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+<section className="relative overflow-hidden bg-white border border-zinc-200 dark:bg-gradient-to-br dark:from-[#1B1B1F] dark:via-[#111113] dark:to-[#080808] dark:border-zinc-800 rounded-[30px] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
 
 <div className="absolute -top-20 -right-20 w-44 h-44 rounded-full bg-yellow-400/10 blur-3xl" />
 
@@ -315,7 +315,7 @@ type="text"
 value={customerId}
 onChange={(e)=>setCustomerId(e.target.value)}
 placeholder="Enter your betting account ID"
-className="w-full bg-[#050505] text-white border border-zinc-800 rounded-2xl p-4 outline-none focus:border-yellow-400 transition"
+className="w-full bg-zinc-50 text-zinc-950 border border-zinc-200 dark:bg-[#050505] dark:text-white dark:border-zinc-800 rounded-2xl p-4 outline-none focus:border-yellow-400 transition"
 />
 
 <p className="text-[10px] text-zinc-600 mt-2">
@@ -346,7 +346,7 @@ Loading...
 
 {servicesLoading ? (
 
-<div className="w-full h-14 rounded-2xl bg-[#050505] border border-zinc-800 animate-pulse" />
+<div className="w-full h-14 rounded-2xl bg-zinc-50 border border-zinc-200 dark:bg-[#050505] dark:border-zinc-800 animate-pulse" />
 
 ) : services.length > 0 ? (
 
@@ -361,7 +361,7 @@ onClick={()=>setProvider(item.service)}
 className={`min-h-[56px] px-3 rounded-2xl border text-sm font-black transition active:scale-[0.97] ${
 provider === item.service
 ? "bg-yellow-400 text-black border-yellow-400 shadow-lg shadow-yellow-400/10"
-: "bg-[#050505] text-zinc-300 border-zinc-800 hover:border-zinc-600"
+: "bg-zinc-50 text-zinc-600 border-zinc-200 hover:border-zinc-300 dark:bg-[#050505] dark:text-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-600"
 }`}
 >
 {item.service}
@@ -406,7 +406,7 @@ onClick={()=>setAmount(String(value))}
 className={`py-3 rounded-2xl border text-xs font-black transition active:scale-95 ${
 Number(amount) === value
 ? "bg-yellow-400 text-black border-yellow-400"
-: "bg-[#050505] text-zinc-400 border-zinc-800 hover:border-zinc-600"
+: "bg-zinc-50 text-zinc-600 border-zinc-200 hover:border-zinc-300 dark:bg-[#050505] dark:text-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
 }`}
 >
 ₦{value.toLocaleString()}
@@ -424,7 +424,7 @@ Number(amount) === value
 </span>
 
 <input
-className="w-full bg-[#050505] border border-zinc-800 rounded-2xl py-4 pl-9 pr-4 text-white font-bold outline-none focus:border-yellow-400 transition"
+className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-4 pl-9 pr-4 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white font-bold outline-none focus:border-yellow-400 transition"
 placeholder="Enter amount"
 type="number"
 min="1"
@@ -447,7 +447,7 @@ onChange={(e)=>setAmount(e.target.value)}
 
 <div>
 
-<p className="text-xs font-bold text-zinc-300">
+<p className="text-xs font-bold text-zinc-700 dark:text-zinc-300">
 Secure transaction
 </p>
 
@@ -519,7 +519,7 @@ setBiometricLoading(false);
 
 }}
 disabled={loading || biometricLoading}
-className="w-full mt-3 bg-[#050505] border border-zinc-800 text-white py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
+className="w-full mt-3 bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#050505] dark:border-zinc-800 dark:text-white py-4 rounded-2xl font-black text-base active:scale-[0.98] transition disabled:opacity-50"
 >
 
 {biometricLoading
@@ -533,7 +533,7 @@ className="w-full mt-3 bg-[#050505] border border-zinc-800 text-white py-4 round
 
 {message && (
 
-<div className="mt-4 bg-[#050505] border border-zinc-800 rounded-2xl p-4 text-center text-sm">
+<div className="mt-4 bg-white border border-zinc-200 text-zinc-700 dark:bg-[#050505] dark:border-zinc-800 dark:text-white rounded-2xl p-4 text-center text-sm">
 
 {message}
 

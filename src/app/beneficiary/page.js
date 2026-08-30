@@ -174,7 +174,7 @@ setToast("❌ Delete failed");
 
 return(
 
-<main className="min-h-screen bg-white dark:bg-black text-black dark:text-white px-5 py-8 pb-24">
+<main className="min-h-screen bg-zinc-50 dark:bg-[#050505] text-zinc-950 dark:text-white px-5 py-8 pb-24">
 
 
 <div className="max-w-md mx-auto">
@@ -185,31 +185,31 @@ return(
 </h1>
 
 
-<p className="text-zinc-500 mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 mt-2">
 Save numbers for faster purchases
 </p>
 
 
 
-<div className="mt-8 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-900 dark:to-black rounded-3xl p-6 shadow-xl space-y-4">
+<div className="mt-8 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-900 dark:to-[#080808] rounded-3xl p-6 shadow-xl space-y-4">
 
 <h2 className="font-bold text-xl">
 ➕ Add New Beneficiary
 </h2>
 
-<p className="text-sm text-zinc-500">
+<p className="text-sm text-zinc-500 dark:text-zinc-400">
 Save a number for faster airtime, data and bill payments
 </p>
 
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700 focus:ring-2 focus:ring-yellow-400 outline-none"
+className="w-full p-4 rounded-2xl bg-white border border-zinc-200 text-zinc-950 dark:bg-[#080809] dark:border-zinc-800 dark:text-white focus:ring-2 focus:ring-yellow-400 outline-none"
 placeholder="Beneficiary name"
 value={name}
 onChange={e=>setName(e.target.value)}
 />
 
 <input
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700 focus:ring-2 focus:ring-yellow-400 outline-none"
+className="w-full p-4 rounded-2xl bg-white border border-zinc-200 text-zinc-950 dark:bg-[#080809] dark:border-zinc-800 dark:text-white focus:ring-2 focus:ring-yellow-400 outline-none"
 placeholder="Phone number (90XXXXXXXXX)"
 value={beneficiaryPhone}
 onChange={e=>{
@@ -226,7 +226,7 @@ onChange={e=>{
 </div>
 
 <select
-className="w-full p-4 rounded-2xl bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700"
+className="w-full p-4 rounded-2xl bg-white border border-zinc-200 text-zinc-950 dark:bg-[#080809] dark:border-zinc-800 dark:text-white"
 value={service}
 onChange={e=>setService(e.target.value)}
 >
@@ -266,7 +266,7 @@ Saved Numbers
 
 {list.length===0 ? (
 
-<div className="bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6 text-center text-zinc-500">
+<div className="bg-zinc-100 border border-zinc-200 dark:bg-[#18181B] dark:border-zinc-800 rounded-3xl p-6 text-center text-zinc-500">
 No beneficiaries saved yet 🚀
 </div>
 
@@ -278,7 +278,7 @@ list.map((item,index)=>(
 
 <div
 key={index}
-className="bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-900 dark:to-black rounded-3xl p-5 border border-zinc-200 dark:border-zinc-800 shadow-lg"
+className="bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-900 dark:to-[#080808] rounded-3xl p-5 border border-zinc-200 dark:border-zinc-800 shadow-lg"
 >
 
 <div className="flex items-center justify-between">
@@ -288,7 +288,7 @@ className="bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-900 dark:t
 {item.name}
 </h3>
 
-<p className="text-zinc-500 mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 mt-2">
 📞 {item.beneficiary_phone}
 </p>
 

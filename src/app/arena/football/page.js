@@ -202,14 +202,14 @@ return p?.choice;
 
   return(
 
-<main className="min-h-screen bg-[#050505] text-white px-6 py-6 pb-24">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-6 py-6 pb-24">
 
 <div className="max-w-md mx-auto">
 
 
 {/* HERO */}
 
-<div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6 shadow-xl">
+<div className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-xl">
 
 
 <p className="text-yellow-400 text-xs font-bold">
@@ -222,7 +222,7 @@ Football Predictions
 </h1>
 
 
-<p className="text-sm text-zinc-400 mt-3 leading-relaxed">
+<p className="text-sm text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed">
 Week {currentWeek} • Predict matches • Earn points • Climb the leaderboard
 </p>
 
@@ -237,55 +237,55 @@ className="mt-5 w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
 
 <button
 onClick={()=>router.push("/arena/football/chat")}
-className="mt-3 w-full bg-[#050505] border border-zinc-700 py-3 rounded-xl font-bold"
+className="mt-3 w-full bg-zinc-50 dark:bg-[#050505] border border-zinc-300 dark:border-zinc-700 py-3 rounded-xl font-bold"
 >
 💬 Football Chat Arena
 </button>
 
 {showRules && (
 
-<div className="mt-4 bg-[#050505] border border-zinc-800 rounded-2xl p-4 text-sm text-zinc-400">
+<div className="mt-4 bg-zinc-50 dark:bg-[#050505] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 text-sm text-zinc-500 dark:text-zinc-400">
 
-<p className="font-bold text-white mb-3">
+<p className="font-bold text-zinc-950 dark:text-white mb-3">
 🏆 Arena+ Competition Rules
 </p>
 
 <ul className="space-y-3">
 
 <li>
-⚽ <b className="text-white">Make predictions:</b> Choose Home, Draw, or Away for each football match.
+⚽ <b className="text-zinc-950 dark:text-white">Make predictions:</b> Choose Home, Draw, or Away for each football match.
 </li>
 
 <li>
-🎯 <b className="text-white">Daily limit:</b> Each player can submit a maximum of 20 predictions per day.
+🎯 <b className="text-zinc-950 dark:text-white">Daily limit:</b> Each player can submit a maximum of 20 predictions per day.
 </li>
 
 <li>
-1️⃣ <b className="text-white">One prediction per match:</b> Only one outcome can be selected for each match.
+1️⃣ <b className="text-zinc-950 dark:text-white">One prediction per match:</b> Only one outcome can be selected for each match.
 </li>
 
 <li>
-⏰ <b className="text-white">Prediction deadline:</b> Predictions close automatically when the match starts.
+⏰ <b className="text-zinc-950 dark:text-white">Prediction deadline:</b> Predictions close automatically when the match starts.
 </li>
 
 <li>
-⭐ <b className="text-white">Scoring:</b> Correct predictions earn 2 points. Wrong predictions earn 0 points.
+⭐ <b className="text-zinc-950 dark:text-white">Scoring:</b> Correct predictions earn 2 points. Wrong predictions earn 0 points.
 </li>
 
 <li>
-📊 <b className="text-white">Leaderboard:</b> Players are ranked based on their total points.
+📊 <b className="text-zinc-950 dark:text-white">Leaderboard:</b> Players are ranked based on their total points.
 </li>
 
 <li>
-🎁 <b className="text-white">Rewards:</b> Top-performing players qualify for Arena+ rewards.
+🎁 <b className="text-zinc-950 dark:text-white">Rewards:</b> Top-performing players qualify for Arena+ rewards.
 </li>
 
 <li>
-🚫 <b className="text-white">No changes:</b> Predictions cannot be edited after submission.
+🚫 <b className="text-zinc-950 dark:text-white">No changes:</b> Predictions cannot be edited after submission.
 </li>
 
 <li>
-🔥 <b className="text-white">Compete fairly:</b> Stay consistent and climb the Arena+ rankings.
+🔥 <b className="text-zinc-950 dark:text-white">Compete fairly:</b> Stay consistent and climb the Arena+ rankings.
 </li>
 
 </ul>
@@ -302,7 +302,7 @@ className="mt-3 w-full bg-[#050505] border border-zinc-700 py-3 rounded-xl font-
 
 
 {/* WEEKLY REWARDS */}
-<div className="mt-6 bg-gradient-to-b from-[#18181B] to-[#101012] border border-zinc-800 rounded-3xl p-5">
+<div className="mt-6 bg-gradient-to-b from-zinc-100 to-zinc-50 dark:from-[#18181B] dark:to-[#101012] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 <p className="text-yellow-400 font-black text-sm mb-4">
 🏆 Weekly Arena+ Rewards
@@ -310,9 +310,9 @@ className="mt-3 w-full bg-[#050505] border border-zinc-700 py-3 rounded-xl font-
 
 <div className="grid grid-cols-2 gap-4">
 
-<div className="bg-black border border-zinc-800 rounded-2xl p-4 text-center">
+<div className="bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 text-center">
 <p className="text-2xl">🥇</p>
-<p className="text-zinc-400 text-xs mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 text-xs mt-2">
 1st Place
 </p>
 <p className="font-black text-xl mt-1">
@@ -320,9 +320,9 @@ className="mt-3 w-full bg-[#050505] border border-zinc-700 py-3 rounded-xl font-
 </p>
 </div>
 
-<div className="bg-black border border-zinc-800 rounded-2xl p-4 text-center">
+<div className="bg-zinc-50 dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 text-center">
 <p className="text-2xl">🥈</p>
-<p className="text-zinc-400 text-xs mt-2">
+<p className="text-zinc-500 dark:text-zinc-400 text-xs mt-2">
 2nd Place
 </p>
 <p className="font-black text-xl mt-1">
@@ -346,7 +346,7 @@ className="mt-3 w-full bg-[#050505] border border-zinc-700 py-3 rounded-xl font-
 
 <div
 key={match._id}
-className="bg-[#18181B] border border-zinc-800 rounded-3xl p-5"
+className="bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5"
 >
 
 
@@ -376,7 +376,7 @@ Your pick: {getPredictionChoice(match._id).toUpperCase()}
 
 
 
-<div className="text-center mt-4 text-sm text-zinc-400">
+<div className="text-center mt-4 text-sm text-zinc-500 dark:text-zinc-400">
 
 
 {match.status==="IN_PLAY" && (
@@ -418,7 +418,7 @@ hasPredicted(match._id) && getPredictionChoice(match._id)==="home"
 ?
 "bg-yellow-400 text-black rounded-2xl py-4 font-black shadow-lg"
 :
-"bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold hover:border-yellow-400 transition"
+"bg-zinc-50 dark:bg-[#050505] border border-zinc-300 dark:border-zinc-700 rounded-2xl py-4 font-bold hover:border-yellow-400 transition"
 }
 >
 <p className="text-xl">🏠</p>
@@ -440,7 +440,7 @@ hasPredicted(match._id) && getPredictionChoice(match._id)==="draw"
 ?
 "bg-yellow-400 text-black rounded-2xl py-4 font-black shadow-lg"
 :
-"bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold hover:border-yellow-400 transition"
+"bg-zinc-50 dark:bg-[#050505] border border-zinc-300 dark:border-zinc-700 rounded-2xl py-4 font-bold hover:border-yellow-400 transition"
 }
 >
 <p className="text-xl">🤝</p>
@@ -462,7 +462,7 @@ hasPredicted(match._id) && getPredictionChoice(match._id)==="away"
 ?
 "bg-yellow-400 text-black rounded-2xl py-4 font-black shadow-lg"
 :
-"bg-[#050505] border border-zinc-700 rounded-2xl py-4 font-bold hover:border-yellow-400 transition"
+"bg-zinc-50 dark:bg-[#050505] border border-zinc-300 dark:border-zinc-700 rounded-2xl py-4 font-bold hover:border-yellow-400 transition"
 }
 >
 <p className="text-xl">✈️</p>
@@ -493,7 +493,7 @@ hasPredicted(match._id) && getPredictionChoice(match._id)==="away"
 {/* LEADERBOARD */}
 
 
-<div className="mt-8 bg-[#18181B] border border-zinc-800 rounded-3xl p-5">
+<div className="mt-8 bg-white dark:bg-[#18181B] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
 
 
 <h2 className="text-xl font-bold mb-4">
@@ -516,7 +516,7 @@ leaderboard.map((player,index)=>(
 
 <div
 key={player._id || index}
-className="flex justify-between py-3 border-b border-zinc-800"
+className="flex justify-between py-3 border-b border-zinc-200 dark:border-zinc-800"
 >
 
 <p>

@@ -377,13 +377,13 @@ show={showSuccess}
 message="🎉 Data purchase completed successfully!"
 />
 
-<main className="min-h-screen bg-[#050505] text-white px-4 py-5 pb-24">
+<main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-[#050505] dark:text-white px-4 py-5 pb-24">
 
 <div className="max-w-md mx-auto space-y-4">
 
 {/* HEADER */}
 
-<div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-[#111113] to-black p-5">
+<div className="relative overflow-hidden rounded-3xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-gradient-to-br dark:from-zinc-900 dark:via-[#111113] dark:to-black p-5">
 
 <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-yellow-400/10 blur-3xl pointer-events-none" />
 
@@ -399,7 +399,7 @@ AlphaBot
 Data
 </h1>
 
-<p className="text-[10px] text-zinc-400 mt-1">
+<p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
 Fast internet bundles with instant delivery
 </p>
 
@@ -419,7 +419,7 @@ Fast internet bundles with instant delivery
 
 {/* PURCHASE FORM */}
 
-<div className="rounded-3xl border border-zinc-800 bg-[#111113] p-4 space-y-4">
+<div className="rounded-3xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-[#111113] p-4 space-y-4">
 
 
 {/* NETWORK */}
@@ -428,11 +428,11 @@ Fast internet bundles with instant delivery
 
 <div className="flex items-center justify-between mb-2">
 
-<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
 Network
 </p>
 
-<span className="text-[9px] text-zinc-600">
+<span className="text-[9px] text-zinc-500 dark:text-zinc-600">
 Select provider
 </span>
 
@@ -452,7 +452,7 @@ setCategory("");
 className={`rounded-2xl border px-2 py-3 text-[10px] font-black transition active:scale-95 ${
 network === item
 ? "border-yellow-400 bg-yellow-400 text-black shadow-lg shadow-yellow-400/10"
-: "border-zinc-800 bg-[#080809] text-zinc-400 hover:border-zinc-700"
+: "border-zinc-200 bg-zinc-50 text-zinc-600 hover:border-zinc-300 dark:border-zinc-800 dark:bg-[#080809] dark:text-zinc-400 dark:hover:border-zinc-700"
 }`}
 >
 {item}
@@ -470,11 +470,11 @@ network === item
 
 <div className="flex items-center justify-between mb-2">
 
-<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
 Search Plans
 </p>
 
-<span className="text-[9px] text-zinc-600">
+<span className="text-[9px] text-zinc-500 dark:text-zinc-600">
 Find a bundle
 </span>
 
@@ -491,7 +491,7 @@ type="text"
 value={search}
 onChange={(e)=>setSearch(e.target.value)}
 placeholder="Search data plans..."
-className="w-full pl-10 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+className="w-full pl-10 pr-4 py-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#080809] dark:border-zinc-800 dark:text-white outline-none focus:border-yellow-400/60 transition"
 />
 
 </div>
@@ -505,18 +505,18 @@ className="w-full pl-10 pr-4 py-4 rounded-2xl bg-[#080809] border border-zinc-80
 
 <div className="flex items-center justify-between mb-2">
 
-<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
 Category
 </p>
 
-<span className="text-[9px] text-zinc-600">
+<span className="text-[9px] text-zinc-500 dark:text-zinc-600">
 Choose bundle type
 </span>
 
 </div>
 
 <select
-className="w-full p-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+className="w-full p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#080809] dark:border-zinc-800 dark:text-white outline-none focus:border-yellow-400/60 transition"
 value={category}
 onChange={(e)=>{
 setCategory(e.target.value);
@@ -548,18 +548,18 @@ Select Category
 
 <div className="flex items-center justify-between mb-2">
 
-<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
 Data Plan
 </p>
 
-<span className="text-[9px] text-zinc-600">
+<span className="text-[9px] text-zinc-500 dark:text-zinc-600">
 Select bundle
 </span>
 
 </div>
 
 <select
-className="w-full p-4 rounded-2xl bg-[#080809] border border-zinc-800 text-white outline-none focus:border-yellow-400/60 transition"
+className="w-full p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-zinc-950 dark:bg-[#080809] dark:border-zinc-800 dark:text-white outline-none focus:border-yellow-400/60 transition"
 value={selectedPlan}
 onChange={(e)=>setSelectedPlan(e.target.value)}
 >
@@ -598,17 +598,17 @@ value={index}
 
 <div className="flex items-center justify-between mb-2">
 
-<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500">
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
 Receiver
 </p>
 
-<span className="text-[9px] text-zinc-600">
+<span className="text-[9px] text-zinc-500 dark:text-zinc-600">
 Phone number
 </span>
 
 </div>
 
-<div className="rounded-2xl border border-zinc-800 bg-[#080809] p-1">
+<div className="rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-[#080809] p-1">
 
 <PhoneInput
 value={phone}
@@ -626,7 +626,7 @@ service="data"
 
 <div>
 
-<p className="text-[9px] font-black uppercase tracking-wider text-zinc-500 mb-2">
+<p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500 mb-2">
 Transaction PIN
 </p>
 
@@ -646,7 +646,7 @@ search
 
 router.push("/enter-pin?return=/data&service=data");
 }}
-className="w-full flex items-center justify-between rounded-2xl border border-zinc-800 bg-[#080809] px-4 py-4 text-left active:scale-[0.98] transition"
+className="w-full flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-[#080809] px-4 py-4 text-left active:scale-[0.98] transition"
 >
 
 <div>
@@ -661,7 +661,7 @@ Required before purchase
 
 </div>
 
-<span className="text-zinc-500 text-lg">
+<span className="text-zinc-500 dark:text-zinc-500 text-lg">
 →
 </span>
 
@@ -699,7 +699,7 @@ setBiometricLoading(false);
 }
 }}
 disabled={loading || biometricLoading}
-className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition disabled:opacity-50"
+className="w-full bg-zinc-100 border border-zinc-300 text-zinc-950 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition disabled:opacity-50"
 >
 
 {biometricLoading
@@ -714,20 +714,20 @@ className="w-full bg-zinc-900 border border-zinc-700 text-white py-4 rounded-2xl
 {/* STATUS */}
 
 {message && (
-<div className="rounded-2xl border border-zinc-800 bg-[#111113] p-4 text-center text-sm">
+<div className="rounded-2xl border border-zinc-200 bg-white p-4 text-center text-sm text-zinc-700 dark:border-zinc-800 dark:bg-[#111113] dark:text-white">
 {message}
 </div>
 )}
 
 
-<div className="text-center text-[10px] text-zinc-600">
+<div className="text-center text-[10px] text-zinc-500 dark:text-zinc-600">
 Secure payment • Instant data delivery
 </div>
 
 
 <Link
 href="/dashboard"
-className="block text-center text-zinc-400 mt-5"
+className="block text-center text-zinc-500 dark:text-zinc-400 mt-5"
 >
 ← Dashboard
 </Link>
