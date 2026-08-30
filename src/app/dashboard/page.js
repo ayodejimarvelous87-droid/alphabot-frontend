@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { requestNotificationPermission } from "@/firebase";
+import { requestNotificationPermission, listenForMessages } from "@/firebase";
 import BottomNav from "@/components/BottomNav";
 import Toast from "@/components/Toast";
 import { useTheme } from "@/components/ThemeProvider";
@@ -135,6 +135,8 @@ Authorization:`Bearer ${token}`
 if(profile && !profile.message){
 setUser(profile);
 localStorage.setItem("user",JSON.stringify(profile));
+
+await listenForMessages();
 
 const fcmToken = await requestNotificationPermission();
 

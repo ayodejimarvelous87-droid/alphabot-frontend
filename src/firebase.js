@@ -55,6 +55,8 @@ export const requestNotificationPermission = async()=>{
   const permission =
     await Notification.requestPermission();
 
+  console.log("🔔 Notification permission:", permission);
+
 
   if(permission !== "granted"){
     return null;
@@ -71,6 +73,8 @@ export const requestNotificationPermission = async()=>{
 
   await navigator.serviceWorker.ready;
 
+  console.log("🔔 Getting Firebase token...");
+
   const token = await getToken(
     messaging,
     {
@@ -78,6 +82,11 @@ export const requestNotificationPermission = async()=>{
       "BOjqXybfZjY6sV2EtJPbfu-ZVuBbp7UvMrqIfMdxWNdkgHRO3bKhk-sLsHZmj67LXABJdZGs_gyUM_0_b66FSe8",
       serviceWorkerRegistration: registration
     }
+  );
+
+  console.log(
+    "🔔 Firebase token result:",
+    token ? token.slice(0, 20) + "..." : "NO TOKEN"
   );
 
   return token;
@@ -93,11 +102,9 @@ export const listenForMessages = async()=>{
     return;
   }
 
-
   const {
     onMessage
   } = await import("firebase/messaging");
-
 
   onMessage(messaging,(payload)=>{
 
@@ -105,6 +112,30 @@ export const listenForMessages = async()=>{
       "Firebase notification:",
       payload
     );
+
+    const title =
+      payload.notification?.title ||
+      payload.data?.title ||
+      "AlphaBot";
+
+    const body =
+      payload.notification?.body ||
+      payload.data?.body ||
+      "";
+
+    if(
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      Notification.permission === "granted"
+    ){
+
+      new Notification(title,{
+        body,
+        icon:"/icon-192.png",
+        badge:"/icon-192.png"
+      });
+
+    }
 
   });
 

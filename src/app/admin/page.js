@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {useEffect,useState} from "react";
-import { requestNotificationPermission } from "@/firebase";
+import { requestNotificationPermission, listenForMessages } from "@/firebase";
 import {
 LineChart,
 Line,
@@ -85,6 +85,8 @@ setMessage("Connection error");
 
 load();
 
+listenForMessages();
+
 requestNotificationPermission().then(async(token)=>{
 
   console.log("Firebase notification token:", token);
@@ -96,7 +98,8 @@ requestNotificationPermission().then(async(token)=>{
       {
         method:"POST",
         headers:{
-          "Content-Type":"application/json"
+          "Content-Type":"application/json",
+          Authorization:`Bearer ${localStorage.getItem("adminToken")}`
         },
         body:JSON.stringify({
           token
