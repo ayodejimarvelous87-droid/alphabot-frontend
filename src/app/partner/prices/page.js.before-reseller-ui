@@ -1,0 +1,161 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+const services = [
+  {
+    name: "Data",
+    icon: "📶",
+    description: "Set your selling prices for data plans.",
+  },
+  {
+    name: "Airtime",
+    icon: "📱",
+    description: "Set your airtime selling price.",
+  },
+  {
+    name: "TV",
+    icon: "📺",
+    description: "Set your TV subscription prices.",
+  },
+  {
+    name: "Electricity",
+    icon: "💡",
+    description: "Set your electricity service pricing.",
+  },
+  {
+    name: "ePIN",
+    icon: "🎓",
+    description: "Set your examination PIN prices.",
+  },
+];
+
+export default function PartnerPrices() {
+  const router = useRouter();
+
+  const [selected, setSelected] = useState("Data");
+
+  return (
+    <main className="min-h-screen bg-[#050505] text-white px-5 py-8 md:px-8">
+      <div className="max-w-5xl mx-auto">
+
+        <button
+          onClick={() => router.push("/partner/dashboard")}
+          className="text-zinc-400 hover:text-white text-sm mb-6"
+        >
+          ← Dashboard
+        </button>
+
+        <h1 className="text-3xl font-bold">
+          My Prices
+        </h1>
+
+        <p className="text-zinc-400 mt-2">
+          Set the prices your customers will pay.
+        </p>
+
+        <div className="
+          mt-8
+          grid
+          grid-cols-1
+          md:grid-cols-5
+          gap-3
+        ">
+          {services.map((service) => (
+            <button
+              key={service.name}
+              onClick={() => setSelected(service.name)}
+              className={`
+                rounded-2xl
+                border
+                p-4
+                text-left
+                transition
+                ${
+                  selected === service.name
+                    ? "bg-white text-black border-white"
+                    : "bg-[#101012] border-zinc-800 hover:border-zinc-500"
+                }
+              `}
+            >
+              <div className="text-2xl">
+                {service.icon}
+              </div>
+
+              <p className="font-semibold mt-2">
+                {service.name}
+              </p>
+            </button>
+          ))}
+        </div>
+
+        <section className="
+          mt-6
+          bg-gradient-to-b
+          from-[#18181B]
+          to-[#101012]
+          border
+          border-zinc-800
+          rounded-3xl
+          p-6
+        ">
+
+          <div className="flex items-center justify-between gap-4">
+
+            <div>
+              <p className="text-xl font-bold">
+                {services.find(
+                  (service) => service.name === selected
+                )?.icon}{" "}
+                {selected}
+              </p>
+
+              <p className="text-zinc-500 text-sm mt-1">
+                {services.find(
+                  (service) => service.name === selected
+                )?.description}
+              </p>
+            </div>
+
+            <span className="
+              text-xs
+              px-3
+              py-1
+              rounded-full
+              bg-zinc-800
+              text-zinc-400
+            ">
+              Coming soon
+            </span>
+
+          </div>
+
+          <div className="
+            mt-6
+            rounded-2xl
+            border
+            border-zinc-800
+            bg-[#080808]
+            p-5
+          ">
+
+            <p className="text-zinc-400 text-sm">
+              Pricing controls
+            </p>
+
+            <p className="text-zinc-600 text-sm mt-3">
+              Your service plans and current prices will
+              appear here. You will be able to set your own
+              customer price while AlphaBot continues to
+              handle the actual transaction.
+            </p>
+
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+  );
+}

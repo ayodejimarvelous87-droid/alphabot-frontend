@@ -1,0 +1,247 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+export default function ResellerTransactions() {
+  const router = useRouter();
+
+  const [filter, setFilter] = useState("All");
+
+  const transactions = [
+    {
+      id: "AB1001",
+      service: "Data",
+      description: "MTN 1GB",
+      customer: "0803••••123",
+      amount: 380,
+      profit: 30,
+      status: "Successful",
+      date: "Today, 10:42 AM",
+    },
+    {
+      id: "AB1002",
+      service: "Airtime",
+      description: "Airtime",
+      customer: "0812••••456",
+      amount: 1000,
+      profit: 50,
+      status: "Successful",
+      date: "Today, 9:18 AM",
+    },
+    {
+      id: "AB1003",
+      service: "Data",
+      description: "Airtel 1GB",
+      customer: "0901••••789",
+      amount: 360,
+      profit: 30,
+      status: "Successful",
+      date: "Yesterday, 7:35 PM",
+    },
+    {
+      id: "AB1004",
+      service: "TV",
+      description: "DStv Compact",
+      customer: "Account ••••901",
+      amount: 12500,
+      profit: 500,
+      status: "Successful",
+      date: "Yesterday, 4:12 PM",
+    },
+  ];
+
+  const filteredTransactions =
+    filter === "All"
+      ? transactions
+      : transactions.filter(
+          (transaction) => transaction.service === filter
+        );
+
+  const totalSales = transactions.reduce(
+    (sum, transaction) => sum + transaction.amount,
+    0
+  );
+
+  const totalProfit = transactions.reduce(
+    (sum, transaction) => sum + transaction.profit,
+    0
+  );
+
+  return (
+    <main className="min-h-screen bg-[#050505] text-white px-5 py-8 md:px-8">
+      <div className="max-w-6xl mx-auto">
+
+        <button
+          onClick={() => router.push("/partner/dashboard")}
+          className="text-zinc-400 hover:text-white text-sm mb-6"
+        >
+          ← Dashboard
+        </button>
+
+        <div>
+          <h1 className="text-3xl font-bold">
+            Transactions
+          </h1>
+
+          <p className="text-zinc-400 mt-2">
+            Track your customer sales and profit.
+          </p>
+        </div>
+
+        {/* Summary */}
+        <div className="grid grid-cols-2 gap-4 mt-8">
+
+          <div className="
+            bg-gradient-to-b
+            from-[#18181B]
+            to-[#101012]
+            border
+            border-zinc-800
+            rounded-3xl
+            p-5
+          ">
+            <p className="text-zinc-500 text-sm">
+              Total Sales
+            </p>
+
+            <p className="text-2xl font-bold mt-2">
+              ₦{totalSales.toLocaleString()}
+            </p>
+          </div>
+
+          <div className="
+            bg-gradient-to-b
+            from-[#18181B]
+            to-[#101012]
+            border
+            border-zinc-800
+            rounded-3xl
+            p-5
+          ">
+            <p className="text-zinc-500 text-sm">
+              Total Profit
+            </p>
+
+            <p className="text-2xl font-bold mt-2">
+              ₦{totalProfit.toLocaleString()}
+            </p>
+          </div>
+
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-2 overflow-x-auto mt-8 pb-2">
+          {["All", "Data", "Airtime", "TV", "Electricity", "ePIN"].map(
+            (item) => (
+              <button
+                key={item}
+                onClick={() => setFilter(item)}
+                className={`
+                  whitespace-nowrap
+                  px-4
+                  py-2
+                  rounded-full
+                  border
+                  text-sm
+                  transition
+                  ${
+                    filter === item
+                      ? "bg-white text-black border-white"
+                      : "bg-[#101012] text-zinc-400 border-zinc-800 hover:border-zinc-500"
+                  }
+                `}
+              >
+                {item}
+              </button>
+            )
+          )}
+        </div>
+
+        {/* Transactions */}
+        <div className="mt-5 space-y-3">
+
+          {filteredTransactions.length === 0 ? (
+            <div className="
+              bg-[#101012]
+              border
+              border-zinc-800
+              rounded-3xl
+              p-8
+              text-center
+              text-zinc-500
+            ">
+              No transactions found.
+            </div>
+          ) : (
+            filteredTransactions.map((transaction) => (
+              <div
+                key={transaction.id}
+                className="
+                  bg-gradient-to-b
+                  from-[#18181B]
+                  to-[#101012]
+                  border
+                  border-zinc-800
+                  rounded-3xl
+                  p-5
+                "
+              >
+
+                <div className="flex items-start justify-between gap-4">
+
+                  <div className="min-w-0">
+
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-bold">
+                        {transaction.description}
+                      </h2>
+
+                      <span className="
+                        text-[10px]
+                        px-2
+                        py-1
+                        rounded-full
+                        bg-white
+                        text-black
+                        font-bold
+                      ">
+                        {transaction.status}
+                      </span>
+                    </div>
+
+                    <p className="text-zinc-500 text-sm mt-1">
+                      {transaction.service} •{" "}
+                      {transaction.customer}
+                    </p>
+
+                    <p className="text-zinc-600 text-xs mt-2">
+                      {transaction.id} • {transaction.date}
+                    </p>
+
+                  </div>
+
+                  <div className="text-right shrink-0">
+
+                    <p className="font-bold">
+                      ₦{transaction.amount.toLocaleString()}
+                    </p>
+
+                    <p className="text-sm text-zinc-400 mt-1">
+                      +₦{transaction.profit.toLocaleString()} profit
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+            ))
+          )}
+
+        </div>
+
+      </div>
+    </main>
+  );
+}
