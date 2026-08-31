@@ -22,7 +22,7 @@ export default function PartnerElectricityPrices() {
     const load = async () => {
       try {
         const res = await fetch(
-          "https://api.alphabothq.com/blog-partner/reseller-prices",
+          "https://api.alphabothq.com/reseller-prices",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ export default function PartnerElectricityPrices() {
 
     try {
       const res = await fetch(
-        "https://api.alphabothq.com/blog-partner/reseller-prices",
+        "https://api.alphabothq.com/reseller-prices",
         {
           method: "PUT",
           headers: {
