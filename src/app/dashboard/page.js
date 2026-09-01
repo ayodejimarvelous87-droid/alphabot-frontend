@@ -880,56 +880,50 @@ width:`${Math.min(
 </section>
 
 
-  {/* ALPHABOT EVENT */}
+  {/* MARKETPLACE */}
 
-  {currentEvent && (
-    <section className="mt-3">
+  <section className="mt-3">
 
-      <button
-        onClick={openEvents}
-        className="w-full text-left relative overflow-hidden bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 active:scale-[0.99] transition-transform"
-      >
+    <Link
+      href="/marketplace"
+      className="group flex items-center gap-3 w-full bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 active:scale-[0.99] transition-transform relative overflow-hidden"
+    >
 
-        <div className="absolute -right-8 -top-8 w-24 h-24 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none"/>
+      <div className="absolute -right-8 -top-8 w-24 h-24 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none"/>
 
-        <div className="relative flex items-center gap-3">
+      <div className="w-10 h-10 shrink-0 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg relative">
+        🛍️
+      </div>
 
-          <div className="w-10 h-10 shrink-0 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg">
-            {currentEvent.icon || "🏆"}
-          </div>
+      <div className="min-w-0 flex-1 relative">
 
-          <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <p className="text-[9px] font-black tracking-[0.16em] text-yellow-500 uppercase">
+            ALPHABOT
+          </p>
 
-            <div className="flex items-center gap-2">
-              <p className="text-[9px] font-black tracking-[0.16em] text-yellow-500 uppercase">
-                ALPHABOT EVENT
-              </p>
-
-              {currentEvent.unread && (
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500"/>
-              )}
-            </div>
-
-            <h2 className="text-sm font-black truncate mt-0.5">
-              {currentEvent.title}
-            </h2>
-
-            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
-              {currentEvent.reward || currentEvent.description || "Tap to view event"}
-            </p>
-
-          </div>
-
-          <div className="shrink-0 w-7 h-7 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-sm">
-            →
-          </div>
-
+          <span className="text-[8px] text-zinc-500">
+            NEW
+          </span>
         </div>
 
-      </button>
+        <h2 className="text-sm font-black truncate mt-0.5">
+          Marketplace
+        </h2>
 
-    </section>
-  )}
+        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
+          Discover products, deals and more
+        </p>
+
+      </div>
+
+      <div className="shrink-0 w-7 h-7 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-sm group-active:translate-x-0.5 transition-transform relative">
+        →
+      </div>
+
+    </Link>
+
+  </section>
 
 {/* COMPETITIONS */}
 
