@@ -12,6 +12,7 @@ const [open,setOpen] = useState(false);
 const [users,setUsers] = useState(false);
 const [finance,setFinance] = useState(false);
 const [services,setServices] = useState(false);
+const [marketplace,setMarketplace] = useState(false);
 
 
 const active=(path)=>
@@ -112,6 +113,35 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 )}
 
 
+
+<button
+onClick={()=>setMarketplace(!marketplace)}
+className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
+>
+🛍️ Marketplace {marketplace?"▼":"▶"}
+</button>
+
+{marketplace && (
+
+<div className="ml-3 mt-2 space-y-2">
+
+<Link
+href="/admin/marketplace/sellers"
+className="block p-2 hover:bg-[#18181B] rounded"
+>
+🏪 Seller Applications
+</Link>
+
+<Link
+href="/admin/marketplace/products"
+className="block p-2 hover:bg-[#18181B] rounded"
+>
+📦 Product Review
+</Link>
+
+</div>
+
+)}
 
 <Link
 href="/admin/orders"
