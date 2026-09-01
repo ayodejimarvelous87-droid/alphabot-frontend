@@ -40,10 +40,10 @@ export default function CheckoutPage() {
     0
   );
 
-  const deliveryFee = cart.length > 0 ? 1500 : 0;
-  const total = subtotal + deliveryFee;
+  const deliveryFee = 0;
+  const total = subtotal;
 
-  const handlePlaceOrder = (e) => {
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
     if (!form.name || !form.phone || !form.address || !form.city) {
@@ -51,39 +51,151 @@ export default function CheckoutPage() {
       return;
     }
 
-    const order = {
-      id: `AB-${Date.now()}`,
-      items: cart,
-      customer: form,
-      subtotal,
-      deliveryFee,
-      total,
-      createdAt: new Date().toISOString(),
-      status: "Pending",
-    };
+    if (!cart.length) {
+      alert("Your cart is empty.");
+      return;
+    }
 
-    const savedOrders = JSON.parse(
-      localStorage.getItem("alphabotMarketplaceOrders") || "[]"
-    );
+    try {
+      const token = localStorage.getItem("token");
 
-    const updatedOrders = [
-      order,
-      ...savedOrders.filter((savedOrder) => savedOrder.id !== order.id),
-    ];
+      if (!token) {
+        alert("Please log in before placing an order.");
+        return;
+      }
 
-    localStorage.setItem(
-      "alphabotMarketplaceOrders",
-      JSON.stringify(updatedOrders)
-    );
+      const createdOrders = [];
 
-    localStorage.setItem(
-      "alphabotMarketplaceLastOrder",
-      JSON.stringify(order)
-    );
+      for (const item of cart) {
+        const res = await fetch(
+          "https://api.alphabothq.com/marketplace/orders",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              productId: item.id,
+              quantity: Number(item.quantity || 1),
+            }),
+          }
+        );
 
-    localStorage.removeItem("alphabotMarketplaceCart");
+        const data = await res.json();
 
-    setPlaced(true);
+        if (!res.ok || !data.order) {
+          throw new Error(
+            data.message || `Failed to create order for ${item.name}.`
+          );
+        }
+
+        createdOrders.push(data.order);
+      }
+
+      // Create one payment checkout for the entire cart
+      const checkoutRes = await fetch(
+        "https://api.alphabothq.com/marketplace/orders/checkout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            orderIds: createdOrders.map(
+              (order) => order._id
+            ),
+          }),
+        }
+      );
+
+      const checkoutData = await checkoutRes.json();
+
+      if (!checkoutRes.ok || !checkoutData.checkout) {
+        throw new Error(
+          checkoutData.message ||
+            "Failed to create Marketplace payment checkout."
+        );
+      }
+
+      const checkout = checkoutData.checkout;
+
+      const localOrder = {
+        id: `AB-${Date.now()}`,
+        items: cart,
+        customer: form,
+        subtotal,
+        deliveryFee,
+        total,
+        createdAt: new Date().toISOString(),
+        status: "Pending",
+        marketplaceOrders: createdOrders.map(
+          (order) => order._id
+        ),
+        checkoutId: checkout._id,
+      };
+
+      const savedOrders = JSON.parse(
+        localStorage.getItem("alphabotMarketplaceOrders") || "[]"
+      );
+
+      const updatedOrders = [
+        localOrder,
+        ...savedOrders.filter(
+          (savedOrder) => savedOrder.id !== localOrder.id
+        ),
+      ];
+
+      localStorage.setItem(
+        "alphabotMarketplaceOrders",
+        JSON.stringify(updatedOrders)
+      );
+
+      localStorage.setItem(
+        "alphabotMarketplaceLastOrder",
+        JSON.stringify(localOrder)
+      );
+
+      // Initialize one Flutterwave payment for the entire cart
+      const paymentRes = await fetch(
+        `https://api.alphabothq.com/marketplace/orders/checkout/${checkout._id}/pay`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const paymentData = await paymentRes.json();
+
+      if (!paymentRes.ok || !paymentData.paymentLink) {
+        throw new Error(
+          paymentData.message ||
+            "Failed to initialize Marketplace payment."
+        );
+      }
+
+      // Save checkout reference before leaving for Flutterwave
+      localStorage.setItem(
+        "alphabotMarketplaceActiveCheckout",
+        JSON.stringify({
+          checkoutId: checkout._id,
+          txRef: paymentData.txRef,
+          orderIds: createdOrders.map(
+            (order) => order._id
+          ),
+        })
+      );
+
+      // Redirect buyer to Flutterwave
+      window.location.href = paymentData.paymentLink;
+    } catch (error) {
+      console.error("CREATE MARKETPLACE ORDER ERROR:", error);
+      alert(error.message || "Unable to place order. Please try again.");
+    }
   };
 
   if (!mounted) {

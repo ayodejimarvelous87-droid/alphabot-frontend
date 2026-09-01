@@ -25,48 +25,63 @@ export default function ProductPage({ params }) {
   }, [id]);
 
   const addToCart = () => {
-    if (!product) {
-      return;
-    }
-
-    const savedCart = JSON.parse(
-      localStorage.getItem("alphabotMarketplaceCart") || "[]"
-    );
-
-    const existing = savedCart.find(
-      (item) => String(item.id) === String(product._id)
-    );
-
-    let updatedCart;
-
-    if (existing) {
-      updatedCart = savedCart.map((item) =>
-        String(item.id) === String(product._id)
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+    try {
+      const savedCart = JSON.parse(
+        localStorage.getItem("alphabotMarketplaceCart") || "[]"
       );
-    } else {
-      updatedCart = [
-        ...savedCart,
-        {
-          id: product._id,
-          name: product.name,
-          price: Number(product.price || 0),
-          category: product.category,
-          image: product.image || "",
-          quantity: 1,
-          sellerId: product.sellerId || null,
-          sellerName: product.sellerName || "AlphaBot Seller",
-        },
-      ];
+
+      const existingCart = Array.isArray(savedCart)
+        ? savedCart
+        : [];
+
+      const existingItem = existingCart.find(
+        (item) => item.id === product._id
+      );
+
+      const availableStock = Number(product.stock);
+
+      if (
+        Number.isInteger(availableStock) &&
+        availableStock > 0 &&
+        existingItem &&
+        Number(existingItem.quantity) >= availableStock
+      ) {
+        alert("You have reached the available stock for this product.");
+        return;
+      }
+
+      const updatedCart = existingItem
+        ? existingCart.map((item) =>
+            item.id === product._id
+              ? {
+                  ...item,
+                  quantity: Number(item.quantity || 1) + 1,
+                  stock: product.stock,
+                }
+              : item
+          )
+        : [
+            ...existingCart,
+            {
+              id: product._id,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              stock: product.stock,
+              quantity: 1,
+            },
+          ];
+
+      localStorage.setItem(
+        "alphabotMarketplaceCart",
+        JSON.stringify(updatedCart)
+      );
+
+      alert("Product added to cart.");
+    } catch (error) {
+      console.error("ADD TO CART ERROR:", error);
+      alert("Unable to add product to cart.");
     }
-
-    localStorage.setItem(
-      "alphabotMarketplaceCart",
-      JSON.stringify(updatedCart)
-    );
-
-    window.location.href = "/marketplace/cart";
   };
 
   if (!mounted) {
@@ -168,6 +183,20 @@ export default function ProductPage({ params }) {
             ₦{Number(product.price || 0).toLocaleString()}
           </p>
 
+          {Number.isInteger(Number(product.deliveryDays)) &&
+            Number(product.deliveryDays) >= 1 && (
+              <div className="mt-4 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4">
+                <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                  DELIVERY
+                </p>
+
+                <p className="text-sm font-black mt-1">
+                  🚚 {product.deliveryDays}{" "}
+                  {Number(product.deliveryDays) === 1 ? "day" : "days"}
+                </p>
+              </div>
+            )}
+
           <div className="h-px bg-zinc-200 dark:bg-zinc-800 my-5" />
 
           <h2 className="text-sm font-black">
@@ -194,24 +223,44 @@ export default function ProductPage({ params }) {
             <div className="flex items-center gap-3 mt-3">
 
               <div className="w-10 h-10 rounded-full bg-yellow-400 text-black flex items-center justify-center font-black">
-                {(product.sellerName || "A").charAt(0).toUpperCase()}
+                {(product.seller?.storeName || product.sellerName || "A")
+                  .charAt(0)
+                  .toUpperCase()}
               </div>
 
-              <div>
+              <div className="min-w-0">
 
-                <p className="text-sm font-black">
-                  {product.sellerName || "AlphaBot Seller"}
+                <p className="text-sm font-black truncate">
+                  {product.seller?.storeName ||
+                    product.sellerName ||
+                    "AlphaBot Seller"}
                 </p>
 
-                {product.sellerVerified !== false && (
-                  <p className="text-[10px] text-green-600 dark:text-green-400 font-bold">
-                    ✓ Verified seller
-                  </p>
+                {product.seller?.businessPhone && (
+                  <a
+                    href={`tel:${product.seller.businessPhone}`}
+                    className="text-xs text-zinc-600 dark:text-zinc-300 font-bold mt-1 inline-flex items-center gap-1"
+                  >
+                    📞 {product.seller.businessPhone}
+                  </a>
                 )}
+
+                {product.seller?.status === "approved" &&
+                  product.seller?.businessPhone && (
+                    <p className="text-[10px] text-green-600 dark:text-green-400 font-bold mt-1">
+                      ✓ Verified seller
+                    </p>
+                  )}
 
               </div>
 
             </div>
+
+            {product.seller?.description && (
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-5 mt-3">
+                {product.seller.description}
+              </p>
+            )}
 
           </div>
 

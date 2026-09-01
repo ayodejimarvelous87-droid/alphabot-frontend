@@ -33,14 +33,29 @@ export default function MarketplaceCart() {
 
   const updateQuantity = (id, change) => {
     const updatedCart = cart
-      .map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: Math.max(1, item.quantity + change),
-            }
-          : item
-      );
+      .map((item) => {
+        if (item.id !== id) {
+          return item;
+        }
+
+        const currentQuantity = Number(item.quantity) || 1;
+        const stock = Number(item.stock);
+
+        const maxQuantity =
+          Number.isInteger(stock) && stock > 0
+            ? stock
+            : Infinity;
+
+        const nextQuantity = Math.min(
+          maxQuantity,
+          Math.max(1, currentQuantity + change)
+        );
+
+        return {
+          ...item,
+          quantity: nextQuantity,
+        };
+      });
 
     saveCart(updatedCart);
   };
@@ -174,6 +189,13 @@ export default function MarketplaceCart() {
                         ₦{Number(item.price).toLocaleString()}
                       </p>
 
+                      {Number.isInteger(Number(item.stock)) &&
+                        Number(item.stock) > 0 && (
+                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
+                            {item.stock} available
+                          </p>
+                        )}
+
                       <div className="flex items-center justify-between mt-3">
 
                         <div className="flex items-center border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden">
@@ -191,7 +213,12 @@ export default function MarketplaceCart() {
 
                           <button
                             onClick={() => updateQuantity(item.id, 1)}
-                            className="w-9 h-8 flex items-center justify-center font-black active:bg-zinc-100 dark:active:bg-zinc-800"
+                            disabled={
+                              Number.isInteger(Number(item.stock)) &&
+                              Number(item.stock) > 0 &&
+                              Number(item.quantity) >= Number(item.stock)
+                            }
+                            className="w-9 h-8 flex items-center justify-center font-black active:bg-zinc-100 dark:active:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed"
                           >
                             +
                           </button>

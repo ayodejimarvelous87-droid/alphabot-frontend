@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  MARKETPLACE_CATEGORY_NAMES,
+  getMarketplaceCategory,
+} from "@/lib/marketplaceCategories";
+import { NIGERIA_STATES } from "@/lib/nigeriaStates";
 
 export default function AddProductPage() {
   const [mounted, setMounted] = useState(false);
@@ -11,11 +16,34 @@ export default function AddProductPage() {
   const [form, setForm] = useState({
     name: "",
     price: "",
-    category: "Phones",
+    category: MARKETPLACE_CATEGORY_NAMES[0],
     image: "",
     description: "",
     stock: 0,
+    deliveryDays: "",
+    location: {
+      state: "",
+      exact: "",
+    },
+    attributes: {},
   });
+
+  const selectedCategoryConfig = getMarketplaceCategory(form.category);
+
+  const categoryFilters =
+    selectedCategoryConfig?.filters?.filter(
+      (filter) => filter !== "Price"
+    ) || [];
+
+  const updateAttribute = (name, value) => {
+    setForm((current) => ({
+      ...current,
+      attributes: {
+        ...current.attributes,
+        [name]: value,
+      },
+    }));
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -62,8 +90,15 @@ export default function AddProductPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.price || !form.description) {
-      alert("Please complete the product details.");
+    if (
+      !form.name ||
+      !form.price ||
+      !form.description ||
+      Number(form.stock) < 1
+    ) {
+      alert(
+        "Please complete the product details and enter at least 1 available unit."
+      );
       return;
     }
 
@@ -85,6 +120,9 @@ export default function AddProductPage() {
             image: form.image.trim(),
             description: form.description.trim(),
             stock: Number(form.stock),
+            deliveryDays: Number(form.deliveryDays),
+            location: form.location,
+            attributes: form.attributes,
           }),
         }
       );
@@ -264,22 +302,116 @@ export default function AddProductPage() {
 
           <div>
             <label className="text-xs font-black">
+              Quantity available
+            </label>
+
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
+              How many units of this product do you currently have?
+            </p>
+
+            <input
+              value={form.stock}
+              onChange={(e) => updateField("stock", e.target.value)}
+              placeholder="e.g. 10"
+              inputMode="numeric"
+              type="number"
+              min="1"
+              step="1"
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-black">
+              Delivery time
+            </label>
+
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
+              How many days before you can deliver this product?
+            </p>
+
+            <input
+              value={form.deliveryDays}
+              onChange={(e) => updateField("deliveryDays", e.target.value)}
+              placeholder="e.g. 2"
+              inputMode="numeric"
+              type="number"
+              min="1"
+              step="1"
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-black">
               Category
             </label>
 
             <select
               value={form.category}
-              onChange={(e) => updateField("category", e.target.value)}
+              onChange={(e) => {
+                const category = e.target.value;
+
+                setForm((current) => ({
+                  ...current,
+                  category,
+                  attributes: {},
+                }));
+              }}
               className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
             >
-              <option>Phones</option>
-              <option>Electronics</option>
-              <option>Fashion</option>
-              <option>Computers</option>
-              <option>Accessories</option>
-              <option>Home</option>
+              {MARKETPLACE_CATEGORY_NAMES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
             </select>
+
+
           </div>
+
+          {categoryFilters.length > 0 && (
+            <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#111111] p-4">
+
+              <div className="mb-4">
+                <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                  PRODUCT DETAILS
+                </p>
+
+                <h3 className="text-sm font-black mt-1">
+                  {form.category} details
+                </h3>
+
+                <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-1">
+                  Add details to help buyers find your product.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                {categoryFilters.map((filterName) => (
+                  <div key={filterName}>
+
+                    <label className="text-xs font-black">
+                      {filterName}
+                    </label>
+
+                    <input
+                      value={form.attributes?.[filterName] || ""}
+                      onChange={(e) =>
+                        updateAttribute(filterName, e.target.value)
+                      }
+                      placeholder={`Enter ${filterName.toLowerCase()}`}
+                      className="mt-2 w-full h-11 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                    />
+
+                  </div>
+                ))}
+
+              </div>
+
+            </div>
+          )}
 
           <div>
             <label className="text-xs font-black">
@@ -314,6 +446,82 @@ export default function AddProductPage() {
               className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
             />
           </div>
+
+          {/* LOCATION */}
+
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#151515] p-4">
+
+            <div className="mb-4">
+              <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                LOCATION
+              </p>
+
+              <h3 className="text-sm font-black mt-1">
+                Where is this product located?
+              </h3>
+
+              <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-1">
+                Buyers can use the state to find products near them.
+              </p>
+            </div>
+
+            <div>
+              <label className="text-xs font-black">
+                State
+              </label>
+
+              <select
+                value={form.location?.state || ""}
+                onChange={(e) =>
+                  setForm((current) => ({
+                    ...current,
+                    location: {
+                      ...current.location,
+                      state: e.target.value,
+                    },
+                  }))
+                }
+                className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              >
+                <option value="">
+                  Select state
+                </option>
+
+                {NIGERIA_STATES.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mt-4">
+              <label className="text-xs font-black">
+                Exact location
+              </label>
+
+              <input
+                value={form.location?.exact || ""}
+                onChange={(e) =>
+                  setForm((current) => ({
+                    ...current,
+                    location: {
+                      ...current.location,
+                      exact: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="e.g. Ikeja, Allen Avenue"
+                className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              />
+
+              <p className="text-[9px] text-zinc-500 mt-2">
+                Enter the area, street or other useful location details.
+              </p>
+            </div>
+
+          </div>
+
 
           <div>
             <label className="text-xs font-black">

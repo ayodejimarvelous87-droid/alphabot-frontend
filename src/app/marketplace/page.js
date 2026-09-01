@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import {
+  MARKETPLACE_CATEGORIES,
+  MARKETPLACE_CATEGORY_NAMES,
+  getMarketplaceCategory,
+} from "@/lib/marketplaceCategories";
 
 export default function Marketplace() {
 
@@ -10,6 +15,15 @@ export default function Marketplace() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [backendProducts, setBackendProducts] = useState([]);
   const [mounted, setMounted] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const [draftFilters, setDraftFilters] = useState({});
+  const [appliedFilters, setAppliedFilters] = useState({});
+
+  const [marketplaceLocations, setMarketplaceLocations] = useState([]);
+  const [showLocations, setShowLocations] = useState(false);
+  const [locationSearch, setLocationSearch] = useState("");
+  const [locationsLoading, setLocationsLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -29,16 +43,72 @@ export default function Marketplace() {
       });
   }, []);
 
-  const categories = [
-    { name: "Phones", icon: "📱" },
-    { name: "Electronics", icon: "🎧" },
-    { name: "Fashion", icon: "👕" },
-    { name: "Computers", icon: "💻" },
-    { name: "Accessories", icon: "⌚" },
-    { name: "Home", icon: "🏠" },
-  ];
+  useEffect(() => {
+    setLocationsLoading(true);
+
+    fetch("https://api.alphabothq.com/marketplace/locations")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setMarketplaceLocations(data.locations || []);
+        }
+      })
+      .catch((error) => {
+        console.error("Marketplace locations error:", error);
+      })
+      .finally(() => {
+        setLocationsLoading(false);
+      });
+  }, []);
+
+  const categoryIcons = {
+    "Vehicles": "🚗",
+    "Property": "🏠",
+    "Phones & Tablets": "📱",
+    "Electronics": "🎧",
+    "Home & Furniture": "🛋️",
+    "Fashion": "👕",
+    "Beauty & Personal Care": "💄",
+    "Services": "🛠️",
+    "Repair": "🔧",
+    "Commercial Equipment": "🏭",
+    "Leisure & Activities": "🎯",
+    "Babies & Kids": "🧸",
+    "Food": "🍔",
+    "Animals & Pets": "🐕",
+    "Jobs": "💼",
+  };
+
+  const categories = MARKETPLACE_CATEGORIES.map((category) => ({
+    ...category,
+    icon: categoryIcons[category.name] || "📦",
+  }));
 
   const allProducts = backendProducts;
+
+  const activeCategory =
+    selectedCategory === "All"
+      ? null
+      : getMarketplaceCategory(selectedCategory);
+
+  const updateDraftFilter = (name, value) => {
+    setDraftFilters((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const applyFilters = () => {
+    setAppliedFilters(draftFilters);
+    setShowFilters(false);
+  };
+
+  const clearFilters = () => {
+    setDraftFilters({});
+    setAppliedFilters({});
+    setLocationSearch("");
+    setShowLocations(false);
+  };
 
   const filteredProducts = allProducts.filter((product) => {
     const matchesSearch = product.name
@@ -49,7 +119,56 @@ export default function Marketplace() {
       selectedCategory === "All" ||
       product.category === selectedCategory;
 
-    return matchesSearch && matchesCategory;
+    const matchesFilters = Object.entries(appliedFilters).every(
+      ([filterName, filterValue]) => {
+        if (!filterValue) return true;
+
+        if (filterName === "Location") {
+          return (
+            String(product.location?.state || "").toLowerCase() ===
+            String(filterValue).toLowerCase()
+          );
+        }
+
+        const productValue =
+          product.attributes?.[filterName] ??
+          product[filterName] ??
+          product[filterName.toLowerCase().replace(/\s+/g, "")];
+
+        if (
+          filterName === "Price" &&
+          typeof product.price === "number"
+        ) {
+          const [min, max] = String(filterValue)
+            .split("-")
+            .map(Number);
+
+          if (!Number.isNaN(min) && product.price < min) {
+            return false;
+          }
+
+          if (
+            !Number.isNaN(max) &&
+            max > 0 &&
+            product.price > max
+          ) {
+            return false;
+          }
+
+          return true;
+        }
+
+        if (productValue === undefined || productValue === null) {
+          return false;
+        }
+
+        return String(productValue)
+          .toLowerCase()
+          .includes(String(filterValue).toLowerCase());
+      }
+    );
+
+    return matchesSearch && matchesCategory && matchesFilters;
   });
 
   if (!mounted) {
@@ -133,13 +252,379 @@ export default function Marketplace() {
                 Shop products, discover deals and connect with sellers.
               </p>
 
-              <button className="mt-4 bg-yellow-400 text-black px-4 py-2.5 rounded-xl text-xs font-black active:scale-95 transition">
+              <Link
+                href="#featured-deals"
+                className="inline-flex mt-4 bg-yellow-400 text-black px-4 py-2.5 rounded-xl text-xs font-black active:scale-95 transition"
+              >
                 Explore deals →
-              </button>
+              </Link>
 
             </div>
 
           </div>
+
+        </section>
+
+
+        {/* FILTERS */}
+
+        <section className="mt-5">
+
+          <button
+            type="button"
+            onClick={() => setShowFilters((current) => !current)}
+            className="w-full flex items-center justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#151515] px-4 py-3 active:scale-[0.99] transition"
+          >
+
+            <div className="flex items-center gap-3">
+
+              <div className="w-9 h-9 rounded-xl bg-yellow-400 text-black flex items-center justify-center">
+                ⚙️
+              </div>
+
+              <div className="text-left">
+
+                <p className="text-xs font-black">
+                  Filters
+                </p>
+
+                <p className="text-[9px] text-zinc-500 dark:text-zinc-400">
+                  Narrow down products
+                </p>
+
+              </div>
+
+            </div>
+
+            <span
+              className={`text-sm transition-transform ${
+                showFilters ? "rotate-180" : ""
+              }`}
+            >
+              ▼
+            </span>
+
+          </button>
+
+
+          {showFilters && (
+
+            <div className="mt-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#151515] p-4">
+
+              <div className="flex items-center justify-between">
+
+                <div>
+                  <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                    FILTER PRODUCTS
+                  </p>
+
+                  <h3 className="text-sm font-black mt-1">
+                    Find exactly what you want
+                  </h3>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="text-[9px] font-black text-red-500"
+                >
+                  CLEAR
+                </button>
+
+              </div>
+
+
+              {/* CATEGORY */}
+
+              <div className="mt-5">
+
+                <label className="text-[10px] font-black uppercase tracking-wide">
+                  Category
+                </label>
+
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => {
+                    const category = e.target.value;
+                    setSelectedCategory(category);
+                    setDraftFilters({});
+                    setAppliedFilters({});
+                  }}
+                  className="mt-2 w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                >
+
+                  <option value="All">
+                    All categories
+                  </option>
+
+                  {MARKETPLACE_CATEGORY_NAMES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+
+                </select>
+
+              </div>
+
+
+              {/* LOCATION */}
+
+              <div className="mt-5">
+
+                <label className="text-[10px] font-black uppercase tracking-wide">
+                  Location
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => setShowLocations((current) => !current)}
+                  className="mt-2 w-full min-h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-3 text-left text-xs outline-none focus:border-yellow-400 flex items-center justify-between gap-3"
+                >
+
+                  <div className="flex items-center gap-3 min-w-0">
+
+                    <span className="text-base">
+                      📍
+                    </span>
+
+                    <div className="min-w-0">
+
+                      <p className="font-bold truncate">
+                        {draftFilters.Location || "Choose a location"}
+                      </p>
+
+                      <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-0.5">
+                        {draftFilters.Location
+                          ? "Products available in this state"
+                          : "Browse products by state"}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <span
+                    className={`transition-transform ${
+                      showLocations ? "rotate-180" : ""
+                    }`}
+                  >
+                    ▼
+                  </span>
+
+                </button>
+
+                {showLocations && (
+
+                  <div className="mt-2 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-3">
+
+                    <input
+                      value={locationSearch}
+                      onChange={(e) => setLocationSearch(e.target.value)}
+                      placeholder="Search states..."
+                      className="w-full h-10 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateDraftFilter("Location", "");
+                        setLocationSearch("");
+                        setShowLocations(false);
+                      }}
+                      className="mt-3 w-full flex items-center justify-between px-3 py-3 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-left"
+                    >
+
+                      <span className="text-xs font-black">
+                        All locations
+                      </span>
+
+                      <span className="text-[9px] text-zinc-500">
+                        All
+                      </span>
+
+                    </button>
+
+                    <div className="mt-2 max-h-72 overflow-y-auto space-y-1">
+
+                      {locationsLoading ? (
+
+                        <div className="py-6 text-center text-[10px] text-zinc-500">
+                          Loading locations...
+                        </div>
+
+                      ) : (
+
+                        marketplaceLocations
+                          .filter((location) =>
+                            location.state
+                              .toLowerCase()
+                              .includes(locationSearch.toLowerCase())
+                          )
+                          .map((location) => (
+
+                            <button
+                              key={location.state}
+                              type="button"
+                              onClick={() => {
+                                updateDraftFilter(
+                                  "Location",
+                                  location.state
+                                );
+                                setLocationSearch("");
+                                setShowLocations(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-3 py-3 rounded-xl text-left transition ${
+                                draftFilters.Location === location.state
+                                  ? "bg-yellow-400 text-black"
+                                  : "bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800"
+                              }`}
+                            >
+
+                              <span className="text-xs font-bold">
+                                {location.state}
+                              </span>
+
+                              <span
+                                className={`text-[9px] font-black ${
+                                  draftFilters.Location === location.state
+                                    ? "text-black"
+                                    : "text-zinc-500 dark:text-zinc-400"
+                                }`}
+                              >
+                                {location.count}{" "}
+                                {location.count === 1 ? "product" : "products"}
+                              </span>
+
+                            </button>
+
+                          ))
+
+                      )}
+
+                    </div>
+
+                  </div>
+
+                )}
+
+              </div>
+
+
+              {/* CATEGORY-SPECIFIC FILTERS */}
+
+              {activeCategory && activeCategory.filters?.length > 0 && (
+
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                  {activeCategory.filters.map((filterName) => {
+
+                    if (filterName === "Price") {
+                      return (
+                        <div key={filterName} className="sm:col-span-2">
+
+                          <label className="text-[10px] font-black uppercase tracking-wide">
+                            Price range
+                          </label>
+
+                          <div className="grid grid-cols-2 gap-2 mt-2">
+
+                            <input
+                              type="number"
+                              min="0"
+                              placeholder="Minimum"
+                              value={
+                                draftFilters.Price?.split("-")[0] || ""
+                              }
+                              onChange={(e) => {
+                                const max =
+                                  draftFilters.Price?.split("-")[1] || "";
+
+                                updateDraftFilter(
+                                  "Price",
+                                  `${e.target.value}-${max}`
+                                );
+                              }}
+                              className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                            />
+
+                            <input
+                              type="number"
+                              min="0"
+                              placeholder="Maximum"
+                              value={
+                                draftFilters.Price?.split("-")[1] || ""
+                              }
+                              onChange={(e) => {
+                                const min =
+                                  draftFilters.Price?.split("-")[0] || "";
+
+                                updateDraftFilter(
+                                  "Price",
+                                  `${min}-${e.target.value}`
+                                );
+                              }}
+                              className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                            />
+
+                          </div>
+
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={filterName}>
+
+                        <label className="text-[10px] font-black uppercase tracking-wide">
+                          {filterName}
+                        </label>
+
+                        <input
+                          value={draftFilters[filterName] || ""}
+                          onChange={(e) =>
+                            updateDraftFilter(
+                              filterName,
+                              e.target.value
+                            )
+                          }
+                          placeholder={`Enter ${filterName.toLowerCase()}`}
+                          className="mt-2 w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                        />
+
+                      </div>
+                    );
+                  })}
+
+                </div>
+
+              )}
+
+
+              {selectedCategory === "All" && (
+
+                <div className="mt-5 rounded-xl bg-zinc-50 dark:bg-zinc-900 p-3">
+
+                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                    Select a category to see filters specific to that type of product.
+                  </p>
+
+                </div>
+
+              )}
+
+
+              <button
+                type="button"
+                onClick={applyFilters}
+                className="mt-5 w-full h-11 rounded-xl bg-yellow-400 text-black text-xs font-black active:scale-[0.98] transition"
+              >
+                APPLY FILTERS
+              </button>
+
+            </div>
+
+          )}
 
         </section>
 
@@ -150,69 +635,157 @@ export default function Marketplace() {
 
           <div className="flex items-center justify-between mb-3">
 
-            <h2 className="text-sm font-black">
-              Categories
-            </h2>
+            <div>
+              <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                SHOP BY
+              </p>
 
-            <button className="text-[10px] font-bold text-yellow-600 dark:text-yellow-400">
-              View all
+              <h2 className="text-sm font-black">
+                Categories
+              </h2>
+            </div>
+
+            <button
+              type="button"
+              onClick={() =>
+                setShowAllCategories((current) => !current)
+              }
+              className="text-[10px] font-black text-yellow-600 dark:text-yellow-400"
+            >
+              {showAllCategories ? "Show less" : "View all"}
             </button>
 
           </div>
 
-          <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
 
-            <button
-              onClick={() => setSelectedCategory("All")}
-              className={`min-w-[82px] rounded-2xl border p-3 active:scale-95 transition ${
-                selectedCategory === "All"
-                  ? "bg-yellow-400 border-yellow-400 text-black"
-                  : "bg-white dark:bg-[#151515] border-zinc-200 dark:border-zinc-800"
-              }`}
-            >
+          {showAllCategories ? (
 
-              <div className="text-xl">
-                🛍️
-              </div>
-
-              <p className="text-[10px] font-bold mt-2 whitespace-nowrap">
-                All
-              </p>
-
-            </button>
-
-            {categories.map((category) => (
+            <div className="grid grid-cols-3 gap-3">
 
               <button
-                key={category.name}
-                onClick={() => setSelectedCategory(category.name)}
-                className={`min-w-[82px] rounded-2xl border p-3 active:scale-95 transition ${
-                  selectedCategory === category.name
+                type="button"
+                onClick={() => {
+                  setSelectedCategory("All");
+                  setDraftFilters({});
+                  setAppliedFilters({});
+                }}
+                className={`rounded-2xl border p-3 active:scale-95 transition ${
+                  selectedCategory === "All"
                     ? "bg-yellow-400 border-yellow-400 text-black"
                     : "bg-white dark:bg-[#151515] border-zinc-200 dark:border-zinc-800"
                 }`}
               >
 
                 <div className="text-xl">
-                  {category.icon}
+                  🛍️
                 </div>
 
-                <p className="text-[10px] font-bold mt-2 whitespace-nowrap">
-                  {category.name}
+                <p className="text-[10px] font-bold mt-2">
+                  All
                 </p>
 
               </button>
 
-            ))}
 
-          </div>
+              {categories.map((category) => (
+
+                <button
+                  type="button"
+                  key={category.name}
+                  onClick={() => {
+                    setSelectedCategory(category.name);
+                    setDraftFilters({});
+                    setAppliedFilters({});
+                  }}
+                  className={`rounded-2xl border p-3 active:scale-95 transition ${
+                    selectedCategory === category.name
+                      ? "bg-yellow-400 border-yellow-400 text-black"
+                      : "bg-white dark:bg-[#151515] border-zinc-200 dark:border-zinc-800"
+                  }`}
+                >
+
+                  <div className="text-xl">
+                    {category.icon}
+                  </div>
+
+                  <p className="text-[10px] font-bold mt-2 leading-tight">
+                    {category.name}
+                  </p>
+
+                </button>
+
+              ))}
+
+            </div>
+
+          ) : (
+
+            <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategory("All");
+                  setDraftFilters({});
+                  setAppliedFilters({});
+                }}
+                className={`min-w-[82px] rounded-2xl border p-3 active:scale-95 transition ${
+                  selectedCategory === "All"
+                    ? "bg-yellow-400 border-yellow-400 text-black"
+                    : "bg-white dark:bg-[#151515] border-zinc-200 dark:border-zinc-800"
+                }`}
+              >
+
+                <div className="text-xl">
+                  🛍️
+                </div>
+
+                <p className="text-[10px] font-bold mt-2 whitespace-nowrap">
+                  All
+                </p>
+
+              </button>
+
+
+              {categories.slice(0, 6).map((category) => (
+
+                <button
+                  type="button"
+                  key={category.name}
+                  onClick={() => {
+                    setSelectedCategory(category.name);
+                    setDraftFilters({});
+                    setAppliedFilters({});
+                  }}
+                  className={`min-w-[82px] rounded-2xl border p-3 active:scale-95 transition ${
+                    selectedCategory === category.name
+                      ? "bg-yellow-400 border-yellow-400 text-black"
+                      : "bg-white dark:bg-[#151515] border-zinc-200 dark:border-zinc-800"
+                  }`}
+                >
+
+                  <div className="text-xl">
+                    {category.icon}
+                  </div>
+
+                  <p className="text-[10px] font-bold mt-2 whitespace-nowrap">
+                    {category.name}
+                  </p>
+
+                </button>
+
+              ))}
+
+            </div>
+
+          )}
 
         </section>
 
 
         {/* FEATURED DEALS */}
 
-        <section className="mt-7">
+        <section id="featured-deals" className="mt-7">
 
           <div className="flex items-center justify-between mb-3">
 
@@ -226,9 +799,12 @@ export default function Marketplace() {
               </h2>
             </div>
 
-            <button className="text-[10px] font-bold text-yellow-600 dark:text-yellow-400">
+            <Link
+              href="#popular-products"
+              className="text-[10px] font-bold text-yellow-600 dark:text-yellow-400"
+            >
               See all
-            </button>
+            </Link>
 
           </div>
 
@@ -291,7 +867,7 @@ export default function Marketplace() {
 
         {/* PRODUCTS */}
 
-        <section className="mt-7">
+        <section id="popular-products" className="mt-7">
 
           <div className="flex items-center justify-between mb-3">
 
@@ -416,33 +992,40 @@ export default function Marketplace() {
 
         <section className="mt-8">
 
-          <div className="rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4">
+          <Link
+            href="/marketplace/seller"
+            className="block active:scale-[0.99] transition-transform"
+          >
 
-            <div className="flex items-center gap-3">
+            <div className="rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4">
 
-              <div className="w-10 h-10 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg">
-                🏪
+              <div className="flex items-center gap-3">
+
+                <div className="w-10 h-10 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg">
+                  🏪
+                </div>
+
+                <div className="flex-1">
+
+                  <h3 className="text-sm font-black">
+                    Sell on AlphaBot
+                  </h3>
+
+                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
+                    List your products and reach AlphaBot users.
+                  </p>
+
+                </div>
+
+                <span className="text-lg">
+                  →
+                </span>
+
               </div>
-
-              <div className="flex-1">
-
-                <h3 className="text-sm font-black">
-                  Sell on AlphaBot
-                </h3>
-
-                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
-                  List your products and reach AlphaBot users.
-                </p>
-
-              </div>
-
-              <span className="text-lg">
-                →
-              </span>
 
             </div>
 
-          </div>
+          </Link>
 
         </section>
 

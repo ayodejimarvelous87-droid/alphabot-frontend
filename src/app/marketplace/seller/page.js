@@ -7,10 +7,9 @@ export default function SellerProfilePage() {
   const [mounted, setMounted] = useState(false);
 
   const [form, setForm] = useState({
-    name: "",
-    businessName: "",
-    phone: "",
-    bio: "",
+    storeName: "",
+    businessPhone: "",
+    description: "",
   });
 
   const [status, setStatus] = useState("Not a seller");
@@ -19,6 +18,7 @@ export default function SellerProfilePage() {
   const [earnings, setEarnings] = useState(null);
   const [payoutForm, setPayoutForm] = useState({
     bankName: "",
+    bankCode: "",
     accountNumber: "",
     accountName: "",
   });
@@ -43,6 +43,7 @@ export default function SellerProfilePage() {
           setPayout(data.payout);
           setPayoutForm({
             bankName: data.payout.bankName || "",
+            bankCode: data.payout.bankCode || "",
             accountNumber: data.payout.accountNumber || "",
             accountName: data.payout.accountName || "",
           });
@@ -76,10 +77,9 @@ export default function SellerProfilePage() {
       .then((data) => {
         if (data.success && data.seller) {
           setForm({
-            name: data.seller.name || "",
-            businessName: data.seller.businessName || "",
-            phone: data.seller.phone || "",
-            bio: data.seller.bio || "",
+            storeName: data.seller.storeName || "",
+            businessPhone: data.seller.businessPhone || "",
+            description: data.seller.description || "",
           });
 
           setStatus(data.seller.status || "Not a seller");
@@ -102,6 +102,7 @@ export default function SellerProfilePage() {
 
     if (
       !payoutForm.bankName ||
+      !payoutForm.bankCode ||
       !payoutForm.accountNumber ||
       !payoutForm.accountName
     ) {
@@ -142,7 +143,10 @@ export default function SellerProfilePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.businessName || !form.phone) {
+    if (
+      !form.storeName.trim() ||
+      !form.businessPhone.trim()
+    ) {
       alert("Please complete your seller information.");
       return;
     }
@@ -273,27 +277,12 @@ export default function SellerProfilePage() {
 
           <div>
             <label className="text-xs font-black">
-              Your name
-            </label>
-
-            <input
-              value={form.name}
-              onChange={(e) => updateField("name", e.target.value)}
-              placeholder="Enter your name"
-              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-black">
               Business / Store name
             </label>
 
             <input
-              value={form.businessName}
-              onChange={(e) =>
-                updateField("businessName", e.target.value)
-              }
+              value={form.storeName}
+              onChange={(e) => updateField("storeName", e.target.value)}
               placeholder="e.g. Marvelous Gadgets"
               className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
             />
@@ -301,12 +290,12 @@ export default function SellerProfilePage() {
 
           <div>
             <label className="text-xs font-black">
-              Phone number
+              Business phone number
             </label>
 
             <input
-              value={form.phone}
-              onChange={(e) => updateField("phone", e.target.value)}
+              value={form.businessPhone}
+              onChange={(e) => updateField("businessPhone", e.target.value)}
               placeholder="080..."
               inputMode="tel"
               className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
@@ -319,8 +308,8 @@ export default function SellerProfilePage() {
             </label>
 
             <textarea
-              value={form.bio}
-              onChange={(e) => updateField("bio", e.target.value)}
+              value={form.description}
+              onChange={(e) => updateField("description", e.target.value)}
               placeholder="Tell buyers what you sell..."
               rows={4}
               className="mt-2 w-full rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4 text-sm outline-none focus:border-yellow-400 resize-none"
@@ -386,10 +375,7 @@ export default function SellerProfilePage() {
             <div className="mt-3">
               <p className="text-3xl font-black">
                 ₦{Number(
-                  earnings?.totalEarnings ||
-                  earnings?.earnings ||
-                  earnings?.total ||
-                  0
+                  earnings?.earnings?.total || 0
                 ).toLocaleString()}
               </p>
 
@@ -418,7 +404,7 @@ export default function SellerProfilePage() {
                 </h2>
               </div>
 
-              {payout?.isVerified && (
+              {payout?.verified && (
                 <span className="text-[9px] font-black bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-1 rounded-lg">
                   VERIFIED
                 </span>
@@ -437,6 +423,19 @@ export default function SellerProfilePage() {
                   }))
                 }
                 placeholder="Bank name"
+                className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-xs outline-none focus:border-yellow-400"
+              />
+
+              <input
+                value={payoutForm.bankCode}
+                onChange={(e) =>
+                  setPayoutForm((current) => ({
+                    ...current,
+                    bankCode: e.target.value,
+                  }))
+                }
+                placeholder="Bank code"
+                inputMode="numeric"
                 className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-xs outline-none focus:border-yellow-400"
               />
 
