@@ -139,6 +139,13 @@ className="block p-2 hover:bg-[#18181B] rounded"
 📦 Product Review
 </Link>
 
+<Link
+href="/admin/marketplace/buyers"
+className="block p-2 hover:bg-[#18181B] rounded"
+>
+👥 Buyer Management
+</Link>
+
 </div>
 
 )}
