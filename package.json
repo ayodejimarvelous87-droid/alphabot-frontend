@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint",
     "dev:webpack": "next dev --webpack"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "1.20.6",
     "@simplewebauthn/browser": "^13.3.0",
     "firebase": "^12.16.0",
     "html2canvas": "^1.4.1",
