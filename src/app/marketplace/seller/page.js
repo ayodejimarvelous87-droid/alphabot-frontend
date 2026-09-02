@@ -874,6 +874,68 @@ export default function SellerProfilePage() {
           </section>
         )}
 
+        <section className="mt-5">
+
+          <div className="flex items-center justify-between mb-3">
+
+            <div>
+              <p className="text-[9px] font-black tracking-[0.18em] uppercase text-yellow-500">
+                MARKETPLACE SUPPORT
+              </p>
+
+              <h2 className="text-lg font-black">
+                Seller resources
+              </h2>
+            </div>
+
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+
+            <Link
+              href="/notifications"
+              className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+            >
+              <div className="text-lg">
+                🔔
+              </div>
+
+              <p className="text-[10px] font-black mt-2">
+                Notifications
+              </p>
+            </Link>
+
+            <Link
+              href="/marketplace/faq"
+              className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+            >
+              <div className="text-lg">
+                ❓
+              </div>
+
+              <p className="text-[10px] font-black mt-2">
+                FAQ
+              </p>
+            </Link>
+
+            <Link
+              href="/marketplace/help"
+              className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+            >
+              <div className="text-lg">
+                🆘
+              </div>
+
+              <p className="text-[10px] font-black mt-2">
+                Help
+              </p>
+            </Link>
+
+          </div>
+
+        </section>
+
+
         <section className="mt-6 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4">
 
           <p className="text-xs font-black">
