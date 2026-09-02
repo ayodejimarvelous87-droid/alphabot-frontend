@@ -223,6 +223,20 @@ export default function AddProductPage() {
       return;
     }
 
+    const descriptionLength = form.description.trim().length;
+
+    if (descriptionLength < 50) {
+      alert(
+        `Product description must be at least 50 characters. You currently have ${descriptionLength}.`
+      );
+      return;
+    }
+
+    if (descriptionLength > 3000) {
+      alert("Product description cannot exceed 3000 characters.");
+      return;
+    }
+
     if (imagesStillUploading) {
       alert("Please wait for all selected images to finish uploading.");
       return;
@@ -803,13 +817,77 @@ export default function AddProductPage() {
               Product description
             </label>
 
+            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+              Tell buyers what the product is and give them the important
+              information they need before ordering.
+            </p>
+
+            <div className="mt-3 rounded-2xl bg-zinc-50 dark:bg-[#111111] border border-zinc-200 dark:border-zinc-800 p-4">
+              <p className="text-[11px] font-black uppercase tracking-wide text-zinc-700 dark:text-zinc-300">
+                Include these details
+              </p>
+
+              <div className="mt-2 space-y-1 text-xs text-zinc-500 dark:text-zinc-400">
+                <p>• Product overview — What is the product?</p>
+                <p>• Key features — What makes it useful or special?</p>
+                <p>• Uses / benefits — What can buyers use it for?</p>
+                <p>• What's included — What exactly will the buyer receive?</p>
+                <p>• Condition — New, used, refurbished, etc.</p>
+                <p>• Important notes — Anything buyers should know before ordering.</p>
+              </div>
+            </div>
+
             <textarea
               value={form.description}
-              onChange={(e) => updateField("description", e.target.value)}
-              placeholder="Describe your product..."
-              rows={5}
-              className="mt-2 w-full rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4 text-sm outline-none focus:border-yellow-400 resize-none"
+              onChange={(e) =>
+                updateField("description", e.target.value.slice(0, 3000))
+              }
+              placeholder={`Product overview:
+Describe what the product is and what it does.
+
+Key features:
+•
+•
+•
+
+Uses / benefits:
+•
+•
+
+What's included:
+•
+
+Condition:
+New / Used / Refurbished
+
+Important notes:
+Add anything buyers should know before ordering.`}
+              maxLength={3000}
+              rows={10}
+              className="mt-3 w-full rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4 text-sm outline-none focus:border-yellow-400 resize-none"
             />
+
+            <div className="mt-2 flex items-center justify-between text-[11px]">
+              <span
+                className={
+                  form.description.trim().length < 50
+                    ? "text-zinc-400 dark:text-zinc-500"
+                    : "text-green-600 dark:text-green-400"
+                }
+              >
+                Minimum 50 characters
+              </span>
+
+              <span
+                className={
+                  form.description.length >= 3000
+                    ? "font-bold text-red-500"
+                    : "text-zinc-400 dark:text-zinc-500"
+                }
+              >
+                {form.description.length}/3000
+              </span>
+            </div>
           </div>
 
           <button
