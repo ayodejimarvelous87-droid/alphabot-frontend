@@ -23,6 +23,8 @@ const user=JSON.parse(localStorage.getItem("user"));
 
 if(!user){
 
+// No user session means there is nothing to load.
+// eslint-disable-next-line react-hooks/set-state-in-effect
 setMessage("User session expired");
 setLoading(false);
 return;
@@ -158,6 +160,15 @@ if(activeFilter==="all") return true;
 
 if(activeFilter==="unread") return !item.read;
 
+if(activeFilter==="marketplace"){
+return [
+"marketplace_order",
+"marketplace_payment",
+"marketplace_delivery",
+"marketplace_completed"
+].includes(item.type);
+}
+
 return item.type===activeFilter;
 
 });
@@ -175,6 +186,11 @@ wallet:"💳",
 payment:"⚡",
 
 reward:"🏆",
+
+marketplace_order:"🛍️",
+marketplace_payment:"💰",
+marketplace_delivery:"🚚",
+marketplace_completed:"✅",
 
 default:"🔔"
 
@@ -270,7 +286,8 @@ Mark All as Read
 ["unread","Unread"],
 ["wallet","Wallet"],
 ["payment","Payments"],
-["reward","Rewards"]
+["reward","Rewards"],
+["marketplace","Marketplace"]
 
 ].map(tab=>(
 

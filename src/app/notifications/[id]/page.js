@@ -106,7 +106,18 @@ export default function NotificationDetails() {
 
   const transaction = data.transactionId;
 
-  const isMemo = !transaction;
+  const marketplaceTypes = [
+    "marketplace_order",
+    "marketplace_payment",
+    "marketplace_delivery",
+    "marketplace_completed"
+  ];
+
+  const isMarketplace =
+    marketplaceTypes.includes(data.type);
+
+  const isMemo =
+    !transaction && !isMarketplace;
 
   const transactionStatus =
     transaction?.status?.toLowerCase();
@@ -338,6 +349,186 @@ export default function NotificationDetails() {
                 </p>
 
               </div>
+
+            </div>
+
+          </div>
+
+        ) : isMarketplace ? (
+
+          /* ========================= */
+          /* MARKETPLACE NOTIFICATION */
+          /* ========================= */
+
+          <div className="
+            bg-gradient-to-b
+            from-[#18181B]
+            to-[#101012]
+            rounded-3xl
+            border
+            border-zinc-800
+            overflow-hidden
+            shadow-[0_20px_50px_rgba(0,0,0,0.5)]
+          ">
+
+            {/* Marketplace Header */}
+
+            <div className="
+              p-6
+              border-b
+              border-zinc-800
+              text-center
+            ">
+
+              <div className="
+                w-16
+                h-16
+                mx-auto
+                rounded-2xl
+                bg-black
+                border
+                border-zinc-700
+                flex
+                items-center
+                justify-center
+                shadow-inner
+                mb-4
+              ">
+
+                <span className="text-3xl">
+                  {data.type === "marketplace_order"
+                    ? "🛍️"
+                    : data.type === "marketplace_payment"
+                    ? "💰"
+                    : data.type === "marketplace_delivery"
+                    ? "🚚"
+                    : "✅"}
+                </span>
+
+              </div>
+
+              <p className="
+                text-[11px]
+                tracking-[0.25em]
+                text-zinc-500
+                font-bold
+                uppercase
+              ">
+                AlphaBot Marketplace
+              </p>
+
+              <h2 className="
+                text-xl
+                font-black
+                mt-2
+                tracking-tight
+              ">
+                {data.title || "Marketplace Update"}
+              </h2>
+
+              <div className="
+                mt-3
+                inline-flex
+                px-3
+                py-1
+                rounded-full
+                bg-white/5
+                border
+                border-zinc-700
+                text-zinc-300
+                text-[11px]
+                font-bold
+                uppercase
+                tracking-wide
+              ">
+                {data.type === "marketplace_order"
+                  ? "Order Update"
+                  : data.type === "marketplace_payment"
+                  ? "Payment Confirmed"
+                  : data.type === "marketplace_delivery"
+                  ? "Delivery Update"
+                  : "Order Completed"}
+              </div>
+
+            </div>
+
+
+            {/* Marketplace Information */}
+
+            <div className="
+              p-6
+              space-y-4
+            ">
+
+              <DetailRow
+                title="Date"
+                value={new Date(data.createdAt).toLocaleDateString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                  }
+                )}
+              />
+
+              <DetailRow
+                title="Time"
+                value={new Date(data.createdAt).toLocaleTimeString(
+                  "en-GB",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  }
+                )}
+              />
+
+              <div className="
+                mt-5
+                pt-5
+                border-t
+                border-zinc-800
+              ">
+
+                <p className="
+                  text-sm
+                  leading-7
+                  text-zinc-300
+                  whitespace-pre-wrap
+                ">
+                  {data.message}
+                </p>
+
+              </div>
+
+            </div>
+
+
+            {/* Marketplace Footer */}
+
+            <div className="
+              px-6
+              py-5
+              border-t
+              border-zinc-800
+              bg-black/20
+            ">
+
+              <p className="
+                text-xs
+                font-bold
+                text-zinc-300
+              ">
+                AlphaBot Marketplace
+              </p>
+
+              <p className="
+                text-[11px]
+                text-zinc-500
+                mt-1
+              ">
+                Marketplace notification
+              </p>
 
             </div>
 
