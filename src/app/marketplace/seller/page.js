@@ -2,14 +2,51 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { MARKETPLACE_CATEGORY_NAMES } from "@/lib/marketplaceCategories";
 
 export default function SellerProfilePage() {
   const [mounted, setMounted] = useState(false);
 
   const [form, setForm] = useState({
+    // Section 1 — Business Information
     storeName: "",
+    businessType: "",
+    yearEstablished: "",
+    businessAddress: {
+      city: "",
+      state: "",
+      country: "Nigeria",
+    },
+
+    // Section 2 — Contact Information
+    fullName: "",
+    roleInBusiness: "",
     businessPhone: "",
-    description: "",
+    whatsappNumber: "",
+    email: "",
+    alternativePhone: "",
+
+    // Section 3 — Products & Operations
+    primaryCategory: MARKETPLACE_CATEGORY_NAMES[0] || "",
+    stockAvailability: "",
+    stockQuantity: "",
+    productAvailability: "",
+    processingTime: "",
+    returnPolicy: "",
+    returnPolicyDetails: "",
+
+    // Section 4 — Payment Information
+    accountName: "",
+    accountNumber: "",
+    bankName: "",
+    preferredPayoutTiming: "",
+  });
+
+  const [sameWhatsapp, setSameWhatsapp] = useState(false);
+  const [declarations, setDeclarations] = useState({
+    accurateInformation: false,
+    marketplaceRules: false,
+    payoutResponsibility: false,
   });
 
   const [status, setStatus] = useState("Not a seller");
@@ -76,13 +113,50 @@ export default function SellerProfilePage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.seller) {
-          setForm({
-            storeName: data.seller.storeName || "",
-            businessPhone: data.seller.businessPhone || "",
-            description: data.seller.description || "",
-          });
+          const seller = data.seller;
 
-          setStatus(data.seller.status || "Not a seller");
+          setForm((current) => ({
+            ...current,
+            storeName: seller.storeName || current.storeName,
+            businessPhone: seller.businessPhone || current.businessPhone,
+            businessType: seller.businessType || current.businessType,
+            yearEstablished: seller.yearEstablished || current.yearEstablished,
+            businessAddress: {
+              ...current.businessAddress,
+              ...(seller.businessAddress || {}),
+            },
+            fullName: seller.fullName || current.fullName,
+            roleInBusiness: seller.roleInBusiness || current.roleInBusiness,
+            whatsappNumber: seller.whatsappNumber || current.whatsappNumber,
+            email: seller.email || current.email,
+            alternativePhone:
+              seller.alternativePhone || current.alternativePhone,
+            primaryCategory:
+              seller.primaryCategory || current.primaryCategory,
+            stockAvailability:
+              seller.stockAvailability || current.stockAvailability,
+            stockQuantity:
+              seller.stockQuantity ?? current.stockQuantity,
+            productAvailability:
+              seller.productAvailability || current.productAvailability,
+            processingTime:
+              seller.processingTime || current.processingTime,
+            returnPolicy:
+              seller.returnPolicy || current.returnPolicy,
+            returnPolicyDetails:
+              seller.returnPolicyDetails || current.returnPolicyDetails,
+            accountName:
+              seller.payout?.accountName || current.accountName,
+            accountNumber:
+              seller.payout?.accountNumber || current.accountNumber,
+            bankName:
+              seller.payout?.bankName || current.bankName,
+            preferredPayoutTiming:
+              seller.preferredPayoutTiming ||
+              current.preferredPayoutTiming,
+          }));
+
+          setStatus(seller.status || "Not a seller");
         }
       })
       .catch((error) => {
@@ -94,6 +168,42 @@ export default function SellerProfilePage() {
     setForm((current) => ({
       ...current,
       [field]: value,
+    }));
+  };
+
+  const updateAddressField = (field, value) => {
+    setForm((current) => ({
+      ...current,
+      businessAddress: {
+        ...current.businessAddress,
+        [field]: value,
+      },
+    }));
+  };
+
+  const updatePhone = (value) => {
+    setForm((current) => ({
+      ...current,
+      businessPhone: value,
+      ...(sameWhatsapp ? { whatsappNumber: value } : {}),
+    }));
+  };
+
+  const handleSameWhatsapp = (checked) => {
+    setSameWhatsapp(checked);
+
+    if (checked) {
+      setForm((current) => ({
+        ...current,
+        whatsappNumber: current.businessPhone,
+      }));
+    }
+  };
+
+  const updateDeclaration = (field, checked) => {
+    setDeclarations((current) => ({
+      ...current,
+      [field]: checked,
     }));
   };
 
@@ -145,11 +255,58 @@ export default function SellerProfilePage() {
 
     if (
       !form.storeName.trim() ||
-      !form.businessPhone.trim()
+      !form.businessType ||
+      !form.yearEstablished ||
+      !form.businessAddress.city.trim() ||
+      !form.businessAddress.state.trim() ||
+      !form.businessAddress.country.trim() ||
+      !form.fullName.trim() ||
+      !form.roleInBusiness ||
+      !form.businessPhone.trim() ||
+      !form.primaryCategory ||
+      !form.stockAvailability ||
+      (form.stockAvailability === "Limited stock" &&
+        (form.stockQuantity === "" ||
+          Number(form.stockQuantity) < 0 ||
+          !Number.isInteger(Number(form.stockQuantity)))) ||
+      !form.productAvailability ||
+      !form.processingTime ||
+      !form.returnPolicy ||
+      ((form.returnPolicy === "Returns under specific conditions" ||
+        form.returnPolicy === "Custom policy/details") &&
+        !form.returnPolicyDetails.trim()) ||
+      !form.accountName.trim() ||
+      !/^\d{10}$/.test(form.accountNumber) ||
+      !form.bankName.trim() ||
+      !form.preferredPayoutTiming
     ) {
-      alert("Please complete your seller information.");
+      alert("Please complete all required seller information.");
       return;
     }
+
+    if (
+      !declarations.accurateInformation ||
+      !declarations.marketplaceRules ||
+      !declarations.payoutResponsibility
+    ) {
+      alert("Please accept all seller declarations before submitting.");
+      return;
+    }
+
+    const payload = {
+      ...form,
+      yearEstablished: Number(form.yearEstablished),
+      stockQuantity:
+        form.stockAvailability === "Limited stock"
+          ? Number(form.stockQuantity)
+          : null,
+      businessAddress: {
+        ...form.businessAddress,
+        city: form.businessAddress.city.trim(),
+        state: form.businessAddress.state.trim(),
+        country: form.businessAddress.country.trim(),
+      },
+    };
 
     try {
       const token = localStorage.getItem("token");
@@ -162,7 +319,7 @@ export default function SellerProfilePage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify(payload),
         }
       );
 
@@ -273,60 +430,429 @@ export default function SellerProfilePage() {
 
         </section>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
 
-          <div>
-            <label className="text-xs font-black">
-              Business / Store name
-            </label>
+          {/* SECTION 1 */}
+          <section className="rounded-3xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-5">
+            <p className="text-[9px] uppercase tracking-[0.18em] font-black text-yellow-500">
+              SECTION 1
+            </p>
+            <h3 className="text-lg font-black mt-1">🏪 Business Information</h3>
 
-            <input
-              value={form.storeName}
-              onChange={(e) => updateField("storeName", e.target.value)}
-              placeholder="e.g. Marvelous Gadgets"
-              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
-            />
+            <div className="mt-5 space-y-4">
+              <div>
+                <label className="text-xs font-black">Business name</label>
+                <input
+                  value={form.storeName}
+                  onChange={(e) => updateField("storeName", e.target.value)}
+                  required
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-black">Type of business</label>
+                <select
+                  value={form.businessType}
+                  onChange={(e) => updateField("businessType", e.target.value)}
+                  required
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                >
+                  <option value="">Select business type</option>
+                  <option>Individual</option>
+                  <option>Sole Proprietorship</option>
+                  <option>Partnership</option>
+                  <option>Limited Company</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-black">Year established</label>
+                <input
+                  type="number"
+                  min="1800"
+                  max={new Date().getFullYear()}
+                  value={form.yearEstablished}
+                  onChange={(e) => updateField("yearEstablished", e.target.value)}
+                  required
+                  inputMode="numeric"
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-black">Business address</label>
+
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <input
+                    placeholder="City"
+                    value={form.businessAddress.city}
+                    onChange={(e) => updateAddressField("city", e.target.value)}
+                    required
+                    className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                  />
+
+                  <input
+                    placeholder="State"
+                    value={form.businessAddress.state}
+                    onChange={(e) => updateAddressField("state", e.target.value)}
+                    required
+                    className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                  />
+
+                  <input
+                    placeholder="Country"
+                    value={form.businessAddress.country}
+                    onChange={(e) => updateAddressField("country", e.target.value)}
+                    required
+                    className="col-span-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* SECTION 2 */}
+          <section className="rounded-3xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-5">
+            <p className="text-[9px] uppercase tracking-[0.18em] font-black text-yellow-500">
+              SECTION 2
+            </p>
+            <h3 className="text-lg font-black mt-1">📞 Contact Information</h3>
+
+            <div className="mt-5 space-y-4">
+              <div>
+                <label className="text-xs font-black">Full name</label>
+                <input
+                  value={form.fullName}
+                  onChange={(e) => updateField("fullName", e.target.value)}
+                  required
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-black">Role in business</label>
+                <select
+                  value={form.roleInBusiness}
+                  onChange={(e) => updateField("roleInBusiness", e.target.value)}
+                  required
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                >
+                  <option value="">Select role</option>
+                  <option>Owner</option>
+                  <option>Director</option>
+                  <option>Manager</option>
+                  <option>Staff</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-black">Phone number</label>
+                <input
+                  value={form.businessPhone}
+                  onChange={(e) => updatePhone(e.target.value)}
+                  required
+                  inputMode="tel"
+                  placeholder="080..."
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-black">
+                  WhatsApp number
+                  <span className="ml-2 text-[10px] text-zinc-400">Optional</span>
+                </label>
+
+                <input
+                  value={form.whatsappNumber}
+                  onChange={(e) => updateField("whatsappNumber", e.target.value)}
+                  disabled={sameWhatsapp}
+                  inputMode="tel"
+                  placeholder="WhatsApp number"
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm disabled:opacity-50"
+                />
+
+                <label className="mt-3 flex items-center gap-2 text-xs">
+                  <input
+                    type="checkbox"
+                    checked={sameWhatsapp}
+                    onChange={(e) => handleSameWhatsapp(e.target.checked)}
+                    className="accent-yellow-400"
+                  />
+                  Same as phone number
+                </label>
+              </div>
+
+              <div>
+                <label className="text-xs font-black">Email address</label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => updateField("email", e.target.value)}
+                  required
+                  placeholder="you@example.com"
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-black">
+                  Alternative phone
+                  <span className="ml-2 text-[10px] text-zinc-400">Optional</span>
+                </label>
+                <input
+                  value={form.alternativePhone}
+                  onChange={(e) => updateField("alternativePhone", e.target.value)}
+                  inputMode="tel"
+                  placeholder="Alternative phone number"
+                  className="mt-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                />
+              </div>
+            </div>
+          </section>
+
+
+          {/* Section 3 — Products & Operations */}
+          <div className="rounded-2xl border border-gray-200 p-4">
+            <h3 className="text-lg font-semibold">📦 Products & Operations</h3>
+
+            <div className="mt-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium">Primary category</label>
+                <select
+                  value={form.primaryCategory}
+                  onChange={(e) => updateField("primaryCategory", e.target.value)}
+                  className="mt-1 w-full rounded-xl border p-3"
+                  required
+                >
+                  {MARKETPLACE_CATEGORY_NAMES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">Stock availability</label>
+                <select
+                  value={form.stockAvailability}
+                  onChange={(e) => updateField("stockAvailability", e.target.value)}
+                  className="mt-1 w-full rounded-xl border p-3"
+                  required
+                >
+                  <option value="">Select stock availability</option>
+                  <option value="Limited stock">Limited stock</option>
+                  <option value="Unlimited / Made-to-order">
+                    Unlimited / Made-to-order
+                  </option>
+                </select>
+              </div>
+
+              {form.stockAvailability === "Limited stock" && (
+                <div>
+                  <label className="block text-sm font-medium">
+                    Current stock quantity
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={form.stockQuantity}
+                    onChange={(e) => updateField("stockQuantity", e.target.value)}
+                    className="mt-1 w-full rounded-xl border p-3"
+                    required
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium">Product availability</label>
+                <select
+                  value={form.productAvailability}
+                  onChange={(e) => updateField("productAvailability", e.target.value)}
+                  className="mt-1 w-full rounded-xl border p-3"
+                  required
+                >
+                  <option value="">Select availability</option>
+                  <option value="Available now">Available now</option>
+                  <option value="Imported / Coming soon">
+                    Imported / Coming soon
+                  </option>
+                  <option value="Made-to-order">Made-to-order</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">
+                  Order processing time
+                </label>
+                <select
+                  value={form.processingTime}
+                  onChange={(e) => updateField("processingTime", e.target.value)}
+                  className="mt-1 w-full rounded-xl border p-3"
+                  required
+                >
+                  <option value="">Select processing time</option>
+                  <option value="Same day">Same day</option>
+                  <option value="1–2 days">1–2 days</option>
+                  <option value="3–5 days">3–5 days</option>
+                  <option value="1 week+">1 week+</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">Return policy</label>
+                <select
+                  value={form.returnPolicy}
+                  onChange={(e) => updateField("returnPolicy", e.target.value)}
+                  className="mt-1 w-full rounded-xl border p-3"
+                  required
+                >
+                  <option value="">Select return policy</option>
+                  <option value="Accept returns">Accept returns</option>
+                  <option value="No returns">No returns</option>
+                  <option value="Returns under specific conditions">
+                    Returns under specific conditions
+                  </option>
+                  <option value="Custom policy/details">
+                    Custom policy/details
+                  </option>
+                </select>
+              </div>
+
+              {(form.returnPolicy === "Returns under specific conditions" ||
+                form.returnPolicy === "Custom policy/details") && (
+                <div>
+                  <label className="block text-sm font-medium">
+                    Return policy details
+                  </label>
+                  <textarea
+                    value={form.returnPolicyDetails}
+                    onChange={(e) =>
+                      updateField("returnPolicyDetails", e.target.value)
+                    }
+                    className="mt-1 w-full rounded-xl border p-3"
+                    rows={3}
+                    required
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div>
-            <label className="text-xs font-black">
-              Business phone number
-            </label>
+          {/* Section 4 — Payment Information */}
+          <div className="rounded-2xl border border-gray-200 p-4">
+            <h3 className="text-lg font-semibold">💳 Payment Information</h3>
 
-            <input
-              value={form.businessPhone}
-              onChange={(e) => updateField("businessPhone", e.target.value)}
-              placeholder="080..."
-              inputMode="tel"
-              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
-            />
+            <div className="mt-4 space-y-4">
+              <input
+                type="text"
+                placeholder="Account name"
+                value={form.accountName}
+                onChange={(e) => updateField("accountName", e.target.value)}
+                className="w-full rounded-xl border p-3"
+                required
+              />
+
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="Account number"
+                value={form.accountNumber}
+                onChange={(e) =>
+                  updateField(
+                    "accountNumber",
+                    e.target.value.replace(/\D/g, "").slice(0, 10)
+                  )
+                }
+                className="w-full rounded-xl border p-3"
+                required
+              />
+
+              <input
+                type="text"
+                placeholder="Bank name"
+                value={form.bankName}
+                onChange={(e) => updateField("bankName", e.target.value)}
+                className="w-full rounded-xl border p-3"
+                required
+              />
+
+              <div>
+                <label className="block text-sm font-medium">
+                  Preferred payout timing
+                </label>
+                <select
+                  value={form.preferredPayoutTiming}
+                  onChange={(e) =>
+                    updateField("preferredPayoutTiming", e.target.value)
+                  }
+                  className="mt-1 w-full rounded-xl border p-3"
+                  required
+                >
+                  <option value="">Select payout timing</option>
+                  <option value="Immediately after successful transaction">
+                    Immediately after successful transaction
+                  </option>
+                  <option value="After 1 week">After 1 week</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label className="text-xs font-black">
-              About your store
-            </label>
+          {/* Section 5 — Seller Declaration */}
+          <div className="rounded-2xl border border-gray-200 p-4">
+            <h3 className="text-lg font-semibold">📝 Seller Declaration</h3>
 
-            <textarea
-              value={form.description}
-              onChange={(e) => updateField("description", e.target.value)}
-              placeholder="Tell buyers what you sell..."
-              rows={4}
-              className="mt-2 w-full rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4 text-sm outline-none focus:border-yellow-400 resize-none"
-            />
+            <div className="mt-4 space-y-3">
+              <label className="flex gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={declarations.accurateInformation}
+                  onChange={(e) =>
+                    updateDeclaration("accurateInformation", e.target.checked)
+                  }
+                />
+                <span>I confirm that the information provided is accurate.</span>
+              </label>
+
+              <label className="flex gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={declarations.marketplaceRules}
+                  onChange={(e) =>
+                    updateDeclaration("marketplaceRules", e.target.checked)
+                  }
+                />
+                <span>I agree to follow AlphaBot Marketplace rules.</span>
+              </label>
+
+              <label className="flex gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={declarations.payoutResponsibility}
+                  onChange={(e) =>
+                    updateDeclaration("payoutResponsibility", e.target.checked)
+                  }
+                />
+                <span>I accept responsibility for the payout information provided.</span>
+              </label>
+            </div>
           </div>
 
-          {!verified && (
-            <button
-              type="submit"
-              disabled={pending}
-              className="w-full h-12 rounded-2xl bg-yellow-400 text-black text-xs font-black active:scale-[0.98] transition disabled:opacity-50"
-            >
-              {pending ? "Application submitted ✓" : "Submit for verification →"}
-            </button>
-          )}
-
+          <button
+            type="submit"
+            className="w-full rounded-xl bg-black px-4 py-3 font-semibold text-white"
+          >
+            Submit Seller Application
+          </button>
         </form>
+
 
         {verified && (
           <section className="mt-5 grid grid-cols-2 gap-3">

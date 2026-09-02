@@ -18,6 +18,7 @@ export default function AddProductPage() {
     price: "",
     category: MARKETPLACE_CATEGORY_NAMES[0],
     image: "",
+    images: Array(6).fill(null),
     description: "",
     stock: 0,
     deliveryDays: "",
@@ -87,8 +88,128 @@ export default function AddProductPage() {
     }));
   };
 
+  const uploadMarketplaceImage = async (index, file) => {
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Each image must be 5 MB or smaller.");
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+
+    setForm((current) => {
+      const images = [...current.images];
+
+      images[index] = {
+        preview,
+        url: "",
+        publicId: "",
+        uploading: true,
+      };
+
+      return {
+        ...current,
+        images,
+      };
+    });
+
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("Your session has expired. Please log in again.");
+      }
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch(
+        "https://api.alphabothq.com/uploads/marketplace-image",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success || !data.imageUrl || !data.publicId) {
+        throw new Error(data.message || "Image upload failed.");
+      }
+
+      setForm((current) => {
+        const images = [...current.images];
+
+        images[index] = {
+          preview,
+          url: data.imageUrl,
+          publicId: data.publicId,
+          uploading: false,
+        };
+
+        return {
+          ...current,
+          images,
+        };
+      });
+    } catch (error) {
+      console.error("MARKETPLACE IMAGE UPLOAD ERROR:", error);
+
+      URL.revokeObjectURL(preview);
+
+      setForm((current) => {
+        const images = [...current.images];
+        images[index] = null;
+
+        return {
+          ...current,
+          images,
+        };
+      });
+
+      alert(error.message || "Unable to upload image. Please try again.");
+    }
+  };
+
+  const removeMarketplaceImage = (index) => {
+    setForm((current) => {
+      const images = [...current.images];
+      const image = images[index];
+
+      if (image?.preview) {
+        URL.revokeObjectURL(image.preview);
+      }
+
+      images[index] = null;
+
+      return {
+        ...current,
+        images,
+      };
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const uploadedImages = form.images.filter(
+      (image) => image?.url && image?.publicId && !image.uploading
+    );
+
+    const imagesStillUploading = form.images.some(
+      (image) => image?.uploading
+    );
 
     if (
       !form.name ||
@@ -99,6 +220,21 @@ export default function AddProductPage() {
       alert(
         "Please complete the product details and enter at least 1 available unit."
       );
+      return;
+    }
+
+    if (imagesStillUploading) {
+      alert("Please wait for all selected images to finish uploading.");
+      return;
+    }
+
+    if (uploadedImages.length < 3) {
+      alert("Please upload at least 3 product images.");
+      return;
+    }
+
+    if (uploadedImages.length > 6) {
+      alert("You can upload a maximum of 6 product images.");
       return;
     }
 
@@ -117,7 +253,11 @@ export default function AddProductPage() {
             name: form.name.trim(),
             price: Number(form.price),
             category: form.category,
-            image: form.image.trim(),
+            image: uploadedImages[0]?.url || "",
+            images: uploadedImages.map((image) => ({
+              url: image.url,
+              publicId: image.publicId,
+            })),
             description: form.description.trim(),
             stock: Number(form.stock),
             deliveryDays: Number(form.deliveryDays),
@@ -413,21 +553,156 @@ export default function AddProductPage() {
             </div>
           )}
 
-          <div>
-            <label className="text-xs font-black">
-              Product image URL
-            </label>
+          {/* PRODUCT IMAGES */}
 
-            <input
-              value={form.image}
-              onChange={(e) => updateField("image", e.target.value)}
-              placeholder="https://..."
-              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
-            />
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#151515] p-4">
 
-            <p className="text-[9px] text-zinc-500 mt-2">
-              Image upload/storage can be connected later.
+            <div className="flex items-start justify-between gap-4">
+
+              <div>
+                <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                  PRODUCT IMAGES
+                </p>
+
+                <h3 className="text-sm font-black mt-1">
+                  Add your product photos
+                </h3>
+
+                <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-1 leading-4">
+                  Upload at least 3 images. You can add up to 6.
+                  Each image must be 5 MB or smaller.
+                </p>
+              </div>
+
+              <div className="shrink-0 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 text-[10px] font-black">
+                {form.images.filter((image) => image?.url).length}/6
+              </div>
+
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5">
+
+              {form.images.map((image, index) => (
+
+                <div
+                  key={index}
+                  className="relative aspect-square rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
+                >
+
+                  {image?.preview ? (
+                    <>
+                      <img
+                        src={image.preview}
+                        alt={`Product image ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+
+                      {image.uploading && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <div className="text-center text-white">
+                            <div className="w-7 h-7 mx-auto rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            <p className="text-[9px] font-black mt-2">
+                              UPLOADING
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {!image.uploading && (
+                        <button
+                          type="button"
+                          onClick={() => removeMarketplaceImage(index)}
+                          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 text-white flex items-center justify-center text-xs font-black"
+                          aria-label={`Remove image ${index + 1}`}
+                        >
+                          ×
+                        </button>
+                      )}
+
+                      {index < 3 && (
+                        <div className="absolute bottom-2 left-2 px-2 py-1 rounded-lg bg-black/70 text-white text-[8px] font-black">
+                          REQUIRED
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer active:scale-[0.98] transition">
+
+                      <span className="w-11 h-11 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-xl">
+                        +
+                      </span>
+
+                      <span className="text-[9px] font-black mt-2 text-zinc-500 dark:text-zinc-400">
+                        {index < 3 ? "ADD IMAGE" : "OPTIONAL"}
+                      </span>
+
+                      {index < 3 && (
+                        <span className="text-[8px] text-yellow-500 font-black mt-1">
+                          REQUIRED
+                        </span>
+                      )}
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+
+                          if (file) {
+                            uploadMarketplaceImage(index, file);
+                          }
+
+                          e.target.value = "";
+                        }}
+                      />
+
+                    </label>
+                  )}
+
+                  {image?.url && !image.uploading && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const input = document.getElementById(
+                          `marketplace-image-replace-${index}`
+                        );
+
+                        input?.click();
+                      }}
+                      className="absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-black/70 text-white text-[8px] font-black"
+                    >
+                      REPLACE
+                    </button>
+                  )}
+
+                  <input
+                    id={`marketplace-image-replace-${index}`}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+
+                      if (file) {
+                        uploadMarketplaceImage(index, file);
+                      }
+
+                      e.target.value = "";
+                    }}
+                  />
+
+                </div>
+
+              ))}
+
+            </div>
+
+            <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-4 leading-4">
+              The first 3 image slots are required. Clear, well-lit product
+              photos help buyers understand what they are purchasing.
             </p>
+
           </div>
 
           <div>
