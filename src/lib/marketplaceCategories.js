@@ -1,153 +1,43 @@
 export const MARKETPLACE_CATEGORIES = [
   {
-    name: "Vehicles",
-    filters: [
-      "Price",
-      "Make",
-      "Model",
-      "Year",
-      "Mileage",
-      "Condition",
-      "Transmission",
-      "Fuel Type",
-    ],
-  },
-  {
-    name: "Property",
-    filters: [
-      "Price",
-      "Property Type",
-      "Location",
-      "Bedrooms",
-      "Bathrooms",
-      "Furnished",
-      "Listing Type",
-    ],
-  },
-  {
     name: "Phones & Tablets",
-    filters: [
-      "Price",
-      "Brand",
-      "Condition",
-      "Storage",
-      "RAM",
-      "Network",
-      "Operating System",
-    ],
+    filters: ["Price", "Brand", "Condition", "Storage", "RAM", "Network", "Operating System"],
   },
   {
     name: "Electronics",
-    filters: [
-      "Price",
-      "Brand",
-      "Condition",
-      "Type",
-    ],
+    filters: ["Price", "Brand", "Condition", "Type"],
   },
   {
     name: "Home & Furniture",
-    filters: [
-      "Price",
-      "Type",
-      "Material",
-      "Condition",
-      "Colour",
-    ],
+    filters: ["Price", "Type", "Material", "Condition", "Colour"],
   },
   {
     name: "Fashion",
-    filters: [
-      "Price",
-      "Brand",
-      "Size",
-      "Gender",
-      "Condition",
-      "Colour",
-    ],
+    filters: ["Price", "Brand", "Size", "Gender", "Condition", "Colour"],
   },
   {
     name: "Beauty & Personal Care",
-    filters: [
-      "Price",
-      "Brand",
-      "Type",
-      "Gender",
-      "Condition",
-    ],
-  },
-  {
-    name: "Services",
-    filters: [
-      "Price",
-      "Service Type",
-      "Location",
-    ],
-  },
-  {
-    name: "Repair",
-    filters: [
-      "Price",
-      "Repair Type",
-      "Device Type",
-      "Location",
-    ],
+    filters: ["Price", "Brand", "Type", "Gender", "Condition"],
   },
   {
     name: "Commercial Equipment",
-    filters: [
-      "Price",
-      "Equipment Type",
-      "Brand",
-      "Condition",
-    ],
-  },
-  {
-    name: "Leisure & Activities",
-    filters: [
-      "Price",
-      "Activity Type",
-      "Condition",
-      "Location",
-    ],
+    filters: ["Price", "Equipment Type", "Brand", "Condition"],
   },
   {
     name: "Babies & Kids",
-    filters: [
-      "Price",
-      "Age Range",
-      "Gender",
-      "Condition",
-      "Brand",
-    ],
+    filters: ["Price", "Age Range", "Gender", "Condition", "Brand"],
   },
   {
     name: "Food",
-    filters: [
-      "Price",
-      "Food Type",
-      "Location",
-      "Condition",
-    ],
+    filters: ["Price", "Food Type", "Location", "Condition"],
   },
   {
-    name: "Animals & Pets",
-    filters: [
-      "Price",
-      "Animal Type",
-      "Breed",
-      "Age",
-      "Location",
-    ],
+    name: "Medical Supplies",
+    filters: ["Price", "Type", "Brand", "Condition"],
   },
   {
-    name: "Jobs",
-    filters: [
-      "Job Type",
-      "Employment Type",
-      "Location",
-      "Salary",
-    ],
+    name: "Groceries",
+    filters: ["Price", "Type", "Brand", "Condition"],
   },
 ];
 

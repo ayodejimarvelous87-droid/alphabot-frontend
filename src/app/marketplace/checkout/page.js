@@ -58,7 +58,9 @@ export default function CheckoutPage() {
     0
   );
 
-  const total = subtotal + deliveryFee;
+  const protectionFee = subtotal > 2000 ? 500 : 0;
+
+  const total = subtotal + deliveryFee + protectionFee;
 
   const getShippingRates = async () => {
     if (!form.name || !form.phone || !form.address || !form.city) {
@@ -311,7 +313,9 @@ export default function CheckoutPage() {
         0
       );
 
-      const finalTotal = subtotal + finalShippingFee;
+      const finalProtectionFee = subtotal > 2000 ? 500 : 0;
+      const finalTotal =
+        subtotal + finalShippingFee + finalProtectionFee;
 
       const localOrder = {
         id: `AB-${Date.now()}`,
@@ -319,6 +323,7 @@ export default function CheckoutPage() {
         customer: form,
         subtotal,
         deliveryFee: finalShippingFee,
+        protectionFee: finalProtectionFee,
         total: finalTotal,
         createdAt: new Date().toISOString(),
         status: "Pending",
@@ -911,6 +916,18 @@ export default function CheckoutPage() {
                       ₦{deliveryFee.toLocaleString()}
                     </span>
                   </div>
+
+                  {protectionFee > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-zinc-500">
+                        Buyer Protection Fee
+                      </span>
+
+                      <span className="font-bold">
+                        ₦{protectionFee.toLocaleString()}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="h-px bg-zinc-200 dark:bg-zinc-800" />
 

@@ -7,12 +7,31 @@ import {
   getMarketplaceCategory,
 } from "@/lib/marketplaceCategories";
 import { NIGERIA_STATES } from "@/lib/nigeriaStates";
-import { SHIPBUBBLE_PACKAGE_CATEGORIES } from "@/lib/shipbubbleCategories";
+
+const MARKETPLACE_TO_SHIPBUBBLE_CATEGORY = {
+  "Phones & Tablets": 77179563,
+  "Electronics": 77179563,
+  "Home & Furniture": 25590994,
+  "Fashion": 74794423,
+  "Beauty & Personal Care": 99652979,
+  "Commercial Equipment": 67008831,
+  "Babies & Kids": 20754594,
+  "Food": 24032950,
+  "Medical Supplies": 57487393,
+  "Groceries": 2178251,
+};
+
 
 export default function AddProductPage() {
   const [mounted, setMounted] = useState(false);
   const [verified, setVerified] = useState(false);
   const [seller, setSeller] = useState(null);
+
+  const [locationVerification, setLocationVerification] = useState({
+    status: "idle",
+    message: "",
+    data: null,
+  });
 
   const [form, setForm] = useState({
     name: "",
@@ -36,6 +55,93 @@ export default function AddProductPage() {
     },
     attributes: {},
   });
+
+  useEffect(() => {
+    const state = String(form.location?.state || "").trim();
+    const exact = String(form.location?.exact || "").trim();
+
+    if (!state || exact.length < 3) {
+      setLocationVerification({
+        status: "idle",
+        message: "",
+        data: null,
+      });
+      return;
+    }
+
+    setLocationVerification({
+      status: "checking",
+      message: "Checking this location...",
+      data: null,
+    });
+
+    const timer = setTimeout(async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("Authentication token not found.");
+        }
+
+        const response = await fetch(
+          "https://api.alphabothq.com/marketplace/orders/products/validate-location",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              state,
+              exact,
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.data?.addressCode) {
+          setLocationVerification({
+            status: "error",
+            message:
+              data.message ||
+              "We could not verify this location with our shipping provider.",
+            data: null,
+          });
+          return;
+        }
+
+        setLocationVerification({
+          status: "verified",
+          message: "Location verified",
+          data: data.data,
+        });
+
+        setForm((current) => ({
+          ...current,
+          location: {
+            ...current.location,
+            state: data.data.state || state,
+            exact: current.location?.exact || exact,
+            addressCode: data.data.addressCode,
+          },
+        }));
+      } catch (error) {
+        console.error(
+          "LIVE PRODUCT LOCATION VALIDATION ERROR:",
+          error
+        );
+
+        setLocationVerification({
+          status: "error",
+          message: "Unable to verify this location right now.",
+          data: null,
+        });
+      }
+    }, 700);
+
+    return () => clearTimeout(timer);
+  }, [form.location?.state, form.location?.exact]);
 
   const selectedCategoryConfig = getMarketplaceCategory(form.category);
 
@@ -687,34 +793,6 @@ export default function AddProductPage() {
 
             <div>
               <label className="text-xs font-black">
-                Shipping category
-              </label>
-
-              <select
-                value={form.shipping.categoryId}
-                onChange={(e) =>
-                  setForm((current) => ({
-                    ...current,
-                    shipping: {
-                      ...current.shipping,
-                      categoryId: e.target.value,
-                    },
-                  }))
-                }
-                className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
-              >
-                <option value="">Select package category</option>
-
-                {SHIPBUBBLE_PACKAGE_CATEGORIES.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="text-xs font-black">
                 Weight per unit (kg)
               </label>
 
@@ -813,11 +891,17 @@ export default function AddProductPage() {
               value={form.category}
               onChange={(e) => {
                 const category = e.target.value;
+                const shippingCategoryId =
+                  MARKETPLACE_TO_SHIPBUBBLE_CATEGORY[category] || "";
 
                 setForm((current) => ({
                   ...current,
                   category,
                   attributes: {},
+                  shipping: {
+                    ...current.shipping,
+                    categoryId: shippingCategoryId,
+                  },
                 }));
               }}
               className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
@@ -1102,6 +1186,7 @@ export default function AddProductPage() {
                     location: {
                       ...current.location,
                       state: e.target.value,
+                      addressCode: null,
                     },
                   }))
                 }
@@ -1132,12 +1217,54 @@ export default function AddProductPage() {
                     location: {
                       ...current.location,
                       exact: e.target.value,
+                      addressCode: null,
                     },
                   }))
                 }
                 placeholder="e.g. Ikeja, Allen Avenue"
                 className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
               />
+
+              {locationVerification.status === "checking" && (
+                <div className="mt-2 flex items-center gap-2 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-2">
+                  <span className="h-2 w-2 rounded-full bg-yellow-400 animate-pulse" />
+                  <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-300">
+                    Checking this location with our shipping provider...
+                  </span>
+                </div>
+              )}
+
+              {locationVerification.status === "verified" && (
+                <div className="mt-2 rounded-xl border border-green-200 dark:border-green-900/50 bg-green-50 dark:bg-green-950/20 px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-black text-green-600 dark:text-green-400">
+                      ✓ Location verified
+                    </span>
+                  </div>
+
+                  <p className="mt-1 text-xs text-green-700 dark:text-green-300">
+                    {locationVerification.data?.exact ||
+                      "This location was recognised by our shipping provider."}
+                  </p>
+
+                  <p className="mt-1 text-[11px] text-green-700/80 dark:text-green-300/80">
+                    Courier availability for the actual buyer's destination
+                    will be confirmed at checkout.
+                  </p>
+                </div>
+              )}
+
+              {locationVerification.status === "error" && (
+                <div className="mt-2 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 px-3 py-2">
+                  <p className="text-xs font-bold text-red-600 dark:text-red-400">
+                    ⚠ Location could not be verified
+                  </p>
+
+                  <p className="mt-1 text-xs text-red-700 dark:text-red-300">
+                    {locationVerification.message}
+                  </p>
+                </div>
+              )}
 
               {seller?.pickupAddress?.validated &&
                 seller?.pickupAddress?.city && (
