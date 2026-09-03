@@ -39,6 +39,35 @@ export default function AddProductPage() {
 
   const selectedCategoryConfig = getMarketplaceCategory(form.category);
 
+  const calculateMarketplaceFee = (price) => {
+    const amount = Number(price);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return { rate: 0, fee: 0, sellerReceives: 0 };
+    }
+
+    let rate;
+
+    if (amount < 5000) {
+      rate = 15;
+    } else if (amount < 10000) {
+      rate = 12;
+    } else if (amount < 25000) {
+      rate = 10;
+    } else if (amount < 50000) {
+      rate = 8;
+    } else if (amount < 100000) {
+      rate = 7;
+    } else {
+      rate = 5;
+    }
+
+    const fee = Number((amount * rate / 100).toFixed(2));
+    const sellerReceives = Number((amount - fee).toFixed(2));
+
+    return { rate, fee, sellerReceives };
+  };
+
   const categoryFilters =
     selectedCategoryConfig?.filters?.filter(
       (filter) => filter !== "Price"
@@ -83,6 +112,27 @@ export default function AddProductPage() {
         if (seller) {
           setSeller(seller);
           setVerified(seller.status === "approved");
+
+          const pickupState = String(
+            seller.pickupAddress?.state || ""
+          ).trim();
+
+          if (pickupState) {
+            const pickupCity = String(
+              seller.pickupAddress?.city || ""
+            ).trim();
+
+            setForm((current) => ({
+              ...current,
+              location: {
+                ...current.location,
+                state: current.location?.state || pickupState,
+                exact:
+                  current.location?.exact ||
+                  pickupCity,
+              },
+            }));
+          }
         }
       })
       .catch((error) => {
@@ -308,8 +358,46 @@ export default function AddProductPage() {
       return;
     }
 
+    if (!form.location?.state?.trim()) {
+      alert("Please select the product location state.");
+      return;
+    }
+
+    if (!form.location?.exact?.trim()) {
+      alert("Please enter the product area or location.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
+
+      const locationRes = await fetch(
+        "https://api.alphabothq.com/marketplace/orders/products/validate-location",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            state: form.location.state.trim(),
+            exact: form.location.exact.trim(),
+          }),
+        }
+      );
+
+      const locationData = await locationRes.json();
+
+      if (!locationRes.ok || !locationData.success) {
+        alert(
+          locationData.message ||
+            "We could not verify this product location with our shipping provider."
+        );
+        return;
+      }
+
+      const validatedLocation = locationData.data;
+
 
       const res = await fetch(
         "https://api.alphabothq.com/marketplace/products",
@@ -338,7 +426,7 @@ export default function AddProductPage() {
               width: shippingWidth,
               height: shippingHeight,
             },
-            location: form.location,
+            location: validatedLocation,
             attributes: form.attributes,
           }),
         }
@@ -515,6 +603,33 @@ export default function AddProductPage() {
               min="0"
               className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
             />
+
+            {Number(form.price) > 0 && (() => {
+              const { rate, fee, sellerReceives } =
+                calculateMarketplaceFee(form.price);
+
+              return (
+                <div className="mt-2 rounded-2xl bg-zinc-50 dark:bg-[#111111] border border-zinc-200 dark:border-zinc-800 px-4 py-3 space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-zinc-500 dark:text-zinc-400">
+                      AlphaBot fee ({rate}%)
+                    </span>
+                    <span className="font-bold">
+                      ₦{fee.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-xs">
+                    <span className="text-zinc-500 dark:text-zinc-400">
+                      You receive
+                    </span>
+                    <span className="font-black">
+                      ₦{sellerReceives.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           <div>
@@ -943,9 +1058,36 @@ export default function AddProductPage() {
               </h3>
 
               <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-1">
-                Buyers can use the state to find products near them.
+                Tell buyers where the product is stored. Your verified pickup address is used automatically for courier collection.
               </p>
             </div>
+
+            {seller?.pickupAddress?.validated &&
+              seller?.pickupAddress?.state && (
+                <div className="mb-4 rounded-2xl border border-yellow-200 dark:border-yellow-900/40 bg-yellow-50/70 dark:bg-yellow-950/20 px-4 py-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-[0.14em] text-yellow-600 dark:text-yellow-400">
+                        Courier pickup location
+                      </p>
+                      <p className="mt-1 text-xs font-bold">
+                        {seller.pickupAddress.city
+                          ? `${seller.pickupAddress.city}, `
+                          : ""}
+                        {seller.pickupAddress.state}
+                      </p>
+                    </div>
+
+                    <span className="shrink-0 text-[9px] font-black text-green-600 dark:text-green-400">
+                      ✓ VERIFIED
+                    </span>
+                  </div>
+
+                  <p className="mt-1 text-[9px] leading-4 text-zinc-500 dark:text-zinc-400">
+                    Shipbubble will use this verified address when checking courier availability.
+                  </p>
+                </div>
+              )}
 
             <div>
               <label className="text-xs font-black">
@@ -979,7 +1121,7 @@ export default function AddProductPage() {
 
             <div className="mt-4">
               <label className="text-xs font-black">
-                Exact location
+                Area / location
               </label>
 
               <input
@@ -997,8 +1139,39 @@ export default function AddProductPage() {
                 className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
               />
 
+              {seller?.pickupAddress?.validated &&
+                seller?.pickupAddress?.city && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((current) => ({
+                        ...current,
+                        location: {
+                          ...current.location,
+                          state:
+                            current.location?.state ||
+                            seller.pickupAddress.state ||
+                            "",
+                          exact: seller.pickupAddress.city,
+                        },
+                      }))
+                    }
+                    className="mt-2 w-full rounded-xl border border-dashed border-yellow-300 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-950/10 px-3 py-2 text-left"
+                  >
+                    <p className="text-[9px] font-black uppercase tracking-[0.12em] text-yellow-600 dark:text-yellow-400">
+                      Suggested pickup area
+                    </p>
+                    <p className="mt-1 text-xs font-bold">
+                      {seller.pickupAddress.city}
+                    </p>
+                    <p className="mt-1 text-[9px] text-zinc-500 dark:text-zinc-400">
+                      Tap to use your verified courier pickup area
+                    </p>
+                  </button>
+                )}
+
               <p className="text-[9px] text-zinc-500 mt-2">
-                Enter the area, street or other useful location details.
+                Enter the area, neighbourhood or other useful location details buyers can use to identify where the product is located.
               </p>
             </div>
 
