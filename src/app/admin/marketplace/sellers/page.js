@@ -4,27 +4,48 @@ import { useEffect, useState } from "react";
 
 export default function AdminSellerApplications() {
   const [sellers, setSellers] = useState([]);
-  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchSellers = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("Admin authentication token not found.");
+      }
+
+      const response = await fetch(
+        "https://api.alphabothq.com/admin/marketplace/sellers",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "Failed to load seller applications."
+        );
+      }
+
+      setSellers(data.sellers || []);
+    } catch (error) {
+      console.error("ADMIN MARKETPLACE SELLERS ERROR:", error);
+      setError(error.message || "Failed to load seller applications.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) return;
-
-    fetch("https://api.alphabothq.com/admin/marketplace/sellers", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setSellers(data.sellers || []);
-        }
-      })
-      .catch((error) => {
-        console.error("ADMIN MARKETPLACE SELLERS ERROR:", error);
-      });
+    fetchSellers();
   }, []);
 
   const updateSellerStatus = async (sellerId, status) => {
@@ -197,7 +218,7 @@ export default function AdminSellerApplications() {
                         <div>
 
                           <h3 className="font-black text-lg">
-                            {seller.businessName}
+                            {seller.storeName}
                           </h3>
 
                           <p className="text-xs text-zinc-500">
@@ -217,7 +238,7 @@ export default function AdminSellerApplications() {
                           </p>
 
                           <p className="text-sm font-bold mt-1">
-                            {seller.name}
+                            {seller.fullName || seller.user?.name || "—"}
                           </p>
                         </div>
 
@@ -228,7 +249,7 @@ export default function AdminSellerApplications() {
                           </p>
 
                           <p className="text-sm font-bold mt-1">
-                            {seller.phone}
+                            {seller.businessPhone || seller.user?.phone || "—"}
                           </p>
                         </div>
 
@@ -348,11 +369,11 @@ export default function AdminSellerApplications() {
                     <div className="flex-1">
 
                       <h3 className="text-sm font-black">
-                        {seller.businessName}
+                        {seller.storeName}
                       </h3>
 
                       <p className="text-[10px] text-zinc-500">
-                        {seller.name} · {seller.phone}
+                        {seller.fullName || seller.user?.name || "—"} · {seller.businessPhone || seller.user?.phone || "—"}
                       </p>
 
                     </div>
@@ -411,19 +432,56 @@ export default function AdminSellerApplications() {
                   <div>
 
                     <p className="text-sm font-black">
-                      {seller.businessName}
+                      {seller.storeName}
                     </p>
 
                     <p className="text-[10px] text-zinc-500">
-                      {seller.name} · {seller.phone}
+                      {seller.fullName || seller.user?.name || "—"} · {seller.businessPhone || seller.user?.phone || "—"}
                     </p>
 
                   </div>
 
                   <button
-                    onClick={() =>
-                      updateSellerStatus(seller._id, "pending")
-                    }
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem("token");
+
+                        const response = await fetch(
+                          `https://api.alphabothq.com/admin/marketplace/sellers/${seller._id}/review`,
+                          {
+                            method: "PUT",
+                            headers: {
+                              Authorization: `Bearer ${token}`,
+                            },
+                          }
+                        );
+
+                        const data = await response.json();
+
+                        if (!response.ok || !data.success) {
+                          throw new Error(
+                            data.message || "Failed to send seller back for review"
+                          );
+                        }
+
+                        setSellers((current) =>
+                          current.map((item) =>
+                            item._id === seller._id
+                              ? { ...item, status: "pending" }
+                              : item
+                          )
+                        );
+                      } catch (error) {
+                        console.error(
+                          "ADMIN MARKETPLACE SELLER REVIEW ERROR:",
+                          error
+                        );
+                        alert(
+                          error.message ||
+                            "Failed to send seller back for review"
+                        );
+                      }
+                    }}
                     className="px-3 py-2 rounded-xl bg-zinc-800 text-xs font-black"
                   >
                     Review again
