@@ -9,7 +9,7 @@ export default function AdminMarketplaceProducts() {
   useEffect(() => {
     setMounted(true);
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("adminToken");
 
     if (!token) {
       return;
@@ -32,7 +32,7 @@ export default function AdminMarketplaceProducts() {
   }, []);
 
   const updateProductStatus = async (productId, status) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("adminToken");
 
     if (!token) {
       alert("Admin session expired. Please log in again.");
@@ -417,7 +417,7 @@ export default function AdminMarketplaceProducts() {
                           return;
                         }
 
-                        const token = localStorage.getItem("token");
+                        const token = localStorage.getItem("adminToken");
 
                         try {
                           const res = await fetch(
