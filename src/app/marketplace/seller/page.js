@@ -18,6 +18,14 @@ export default function SellerProfilePage() {
       country: "Nigeria",
     },
 
+    // Shipping / logistics pickup address
+    pickupAddress: {
+      address: "",
+      city: "",
+      state: "",
+      country: "Nigeria",
+    },
+
     // Section 2 — Contact Information
     fullName: "",
     roleInBusiness: "",
@@ -50,6 +58,7 @@ export default function SellerProfilePage() {
   });
 
   const [status, setStatus] = useState("Not a seller");
+  const [savingPickupAddress, setSavingPickupAddress] = useState(false);
 
   const [payout, setPayout] = useState(null);
   const [earnings, setEarnings] = useState(null);
@@ -125,6 +134,10 @@ export default function SellerProfilePage() {
               ...current.businessAddress,
               ...(seller.businessAddress || {}),
             },
+            pickupAddress: {
+              ...current.pickupAddress,
+              ...(seller.pickupAddress || {}),
+            },
             fullName: seller.fullName || current.fullName,
             roleInBusiness: seller.roleInBusiness || current.roleInBusiness,
             whatsappNumber: seller.whatsappNumber || current.whatsappNumber,
@@ -176,6 +189,16 @@ export default function SellerProfilePage() {
       ...current,
       businessAddress: {
         ...current.businessAddress,
+        [field]: value,
+      },
+    }));
+  };
+
+  const updatePickupAddressField = (field, value) => {
+    setForm((current) => ({
+      ...current,
+      pickupAddress: {
+        ...current.pickupAddress,
         [field]: value,
       },
     }));
@@ -247,6 +270,85 @@ export default function SellerProfilePage() {
     } catch (error) {
       console.error("SAVE MARKETPLACE PAYOUT ERROR:", error);
       alert("Unable to save payout account.");
+    }
+  };
+
+  const savePickupAddress = async () => {
+    if (!form.pickupAddress.address.trim()) {
+      alert("Please enter your pickup address.");
+      return;
+    }
+
+    if (!form.pickupAddress.city.trim()) {
+      alert("Please enter your pickup city.");
+      return;
+    }
+
+    if (!form.pickupAddress.state.trim()) {
+      alert("Please enter your pickup state.");
+      return;
+    }
+
+    if (!form.pickupAddress.country.trim()) {
+      alert("Please enter your pickup country.");
+      return;
+    }
+
+    try {
+      setSavingPickupAddress(true);
+
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        "https://api.alphabothq.com/marketplace/sellers/settings",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            pickupAddress: {
+              address: form.pickupAddress.address.trim(),
+              city: form.pickupAddress.city.trim(),
+              state: form.pickupAddress.state.trim(),
+              country: form.pickupAddress.country.trim(),
+            },
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(
+          data.message ||
+            "Unable to validate and save pickup address."
+        );
+        return;
+      }
+
+      if (data.seller?.pickupAddress) {
+        setForm((current) => ({
+          ...current,
+          pickupAddress: {
+            ...current.pickupAddress,
+            ...data.seller.pickupAddress,
+          },
+        }));
+      }
+
+      alert("Pickup address verified and saved successfully.");
+    } catch (error) {
+      console.error(
+        "SAVE MARKETPLACE PICKUP ADDRESS ERROR:",
+        error
+      );
+      alert(
+        "Unable to save pickup address. Please try again."
+      );
+    } finally {
+      setSavingPickupAddress(false);
     }
   };
 
@@ -508,6 +610,75 @@ export default function SellerProfilePage() {
                     required
                     className="col-span-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
                   />
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                <label className="text-xs font-black">
+                  Pickup address
+                </label>
+
+                <p className="mt-1 text-[11px] leading-5 text-zinc-500 dark:text-zinc-400">
+                  This is the address where couriers will collect your Marketplace orders. It can be different from your business address.
+                </p>
+
+                <div className="mt-3 space-y-3">
+                  <input
+                    placeholder="Full pickup address"
+                    value={form.pickupAddress.address}
+                    onChange={(e) =>
+                      updatePickupAddressField("address", e.target.value)
+                    }
+                    className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                  />
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      placeholder="City"
+                      value={form.pickupAddress.city}
+                      onChange={(e) =>
+                        updatePickupAddressField("city", e.target.value)
+                      }
+                      className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                    />
+
+                    <input
+                      placeholder="State"
+                      value={form.pickupAddress.state}
+                      onChange={(e) =>
+                        updatePickupAddressField("state", e.target.value)
+                      }
+                      className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                    />
+
+                    <input
+                      placeholder="Country"
+                      value={form.pickupAddress.country}
+                      onChange={(e) =>
+                        updatePickupAddressField("country", e.target.value)
+                      }
+                      className="col-span-2 w-full rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-[#0f0f0f] px-4 py-3 text-sm"
+                    />
+                  </div>
+
+                  <p className="text-[10px] text-zinc-400 dark:text-zinc-500">
+                    AlphaBot will validate this address for delivery and courier pickup.
+                  </p>
+
+                  {verified && (
+                    <div className="pt-1">
+                      <button
+                        type="button"
+                        onClick={savePickupAddress}
+                        disabled={savingPickupAddress}
+                        className="w-full h-11 rounded-xl bg-yellow-400 text-black text-xs font-black active:scale-[0.98] transition disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {savingPickupAddress
+                          ? "Validating pickup address..."
+                          : "Verify & save pickup address →"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
