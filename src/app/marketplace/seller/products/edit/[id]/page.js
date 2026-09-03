@@ -7,6 +7,7 @@ import {
   getMarketplaceCategory,
 } from "@/lib/marketplaceCategories";
 import { NIGERIA_STATES } from "@/lib/nigeriaStates";
+import { SHIPBUBBLE_PACKAGE_CATEGORIES } from "@/lib/shipbubbleCategories";
 
 export default function EditProductPage({ params }) {
   const { id } = use(params);
@@ -22,6 +23,13 @@ export default function EditProductPage({ params }) {
     description: "",
     stock: 0,
     deliveryDays: "",
+    shipping: {
+      categoryId: "",
+      weight: "",
+      length: "",
+      width: "",
+      height: "",
+    },
     location: {
       state: "",
       exact: "",
@@ -88,6 +96,13 @@ export default function EditProductPage({ params }) {
           description: product.description || "",
           stock: product.stock ?? 0,
           deliveryDays: product.deliveryDays ?? "",
+          shipping: {
+            categoryId: product.shipping?.categoryId ?? "",
+            weight: product.shipping?.weight ?? "",
+            length: product.shipping?.length ?? "",
+            width: product.shipping?.width ?? "",
+            height: product.shipping?.height ?? "",
+          },
           location: {
             state: product.location?.state || "",
             exact: product.location?.exact || "",
@@ -137,7 +152,38 @@ export default function EditProductPage({ params }) {
       !Number.isInteger(numericDeliveryDays) ||
       numericDeliveryDays < 1
     ) {
-      alert("Please enter a valid delivery time in whole days.");
+      alert("Please enter a valid preparation time in whole days.");
+      return;
+    }
+
+    const shippingCategoryId = Number(form.shipping.categoryId);
+    const shippingWeight = Number(form.shipping.weight);
+    const shippingLength = Number(form.shipping.length);
+    const shippingWidth = Number(form.shipping.width);
+    const shippingHeight = Number(form.shipping.height);
+
+    if (!Number.isInteger(shippingCategoryId) || shippingCategoryId < 1) {
+      alert("Please select a shipping category.");
+      return;
+    }
+
+    if (!Number.isFinite(shippingWeight) || shippingWeight <= 0) {
+      alert("Please enter a valid product weight greater than 0 kg.");
+      return;
+    }
+
+    if (!Number.isFinite(shippingLength) || shippingLength <= 0) {
+      alert("Please enter a valid package length greater than 0 cm.");
+      return;
+    }
+
+    if (!Number.isFinite(shippingWidth) || shippingWidth <= 0) {
+      alert("Please enter a valid package width greater than 0 cm.");
+      return;
+    }
+
+    if (!Number.isFinite(shippingHeight) || shippingHeight <= 0) {
+      alert("Please enter a valid package height greater than 0 cm.");
       return;
     }
 
@@ -160,6 +206,13 @@ export default function EditProductPage({ params }) {
             description: form.description.trim(),
             stock: Number(form.stock),
             deliveryDays: Number(form.deliveryDays),
+            shipping: {
+              categoryId: shippingCategoryId,
+              weight: shippingWeight,
+              length: shippingLength,
+              width: shippingWidth,
+              height: shippingHeight,
+            },
             location: form.location,
             attributes: form.attributes,
           }),
@@ -436,11 +489,11 @@ export default function EditProductPage({ params }) {
 
           <div>
             <label className="text-xs font-black">
-              Delivery time
+              Preparation time
             </label>
 
             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
-              How many days before you can deliver this product?
+              How many days do you need to prepare this product before handing it to the courier?
             </p>
 
             <input
@@ -455,6 +508,148 @@ export default function EditProductPage({ params }) {
               step="1"
               className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
             />
+          </div>
+
+          {/* SHIPPING */}
+
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#151515] p-4">
+
+            <div className="mb-4">
+              <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                SHIPPING INFORMATION
+              </p>
+
+              <h3 className="text-sm font-black mt-1">
+                Package details
+              </h3>
+
+              <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-1">
+                Enter the actual package details. These are used to calculate live courier delivery fees.
+              </p>
+            </div>
+
+            <div>
+              <label className="text-xs font-black">
+                Shipping category
+              </label>
+
+              <select
+                value={form.shipping.categoryId}
+                onChange={(e) =>
+                  setForm((current) => ({
+                    ...current,
+                    shipping: {
+                      ...current.shipping,
+                      categoryId: e.target.value,
+                    },
+                  }))
+                }
+                className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              >
+                <option value="">
+                  Select shipping category
+                </option>
+
+                {SHIPBUBBLE_PACKAGE_CATEGORIES.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mt-4">
+              <label className="text-xs font-black">
+                Weight per unit (kg)
+              </label>
+
+              <input
+                value={form.shipping.weight}
+                onChange={(e) =>
+                  setForm((current) => ({
+                    ...current,
+                    shipping: {
+                      ...current.shipping,
+                      weight: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="e.g. 1.5"
+                inputMode="decimal"
+                type="number"
+                min="0.01"
+                step="0.01"
+                className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              />
+            </div>
+
+            <div className="mt-4">
+              <label className="text-xs font-black">
+                Package dimensions (cm)
+              </label>
+
+              <div className="grid grid-cols-3 gap-2 mt-2">
+
+                <input
+                  value={form.shipping.length}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      shipping: {
+                        ...current.shipping,
+                        length: e.target.value,
+                      },
+                    }))
+                  }
+                  placeholder="Length"
+                  inputMode="decimal"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                />
+
+                <input
+                  value={form.shipping.width}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      shipping: {
+                        ...current.shipping,
+                        width: e.target.value,
+                      },
+                    }))
+                  }
+                  placeholder="Width"
+                  inputMode="decimal"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                />
+
+                <input
+                  value={form.shipping.height}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      shipping: {
+                        ...current.shipping,
+                        height: e.target.value,
+                      },
+                    }))
+                  }
+                  placeholder="Height"
+                  inputMode="decimal"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                />
+
+              </div>
+            </div>
+
           </div>
 
           {/* LOCATION */}

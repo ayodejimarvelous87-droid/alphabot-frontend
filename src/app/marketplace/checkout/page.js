@@ -16,6 +16,12 @@ export default function CheckoutPage() {
   });
 
   const [placed, setPlaced] = useState(false);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [shippingError, setShippingError] = useState("");
+  const [receiverAddressCode, setReceiverAddressCode] = useState(null);
+  const [shippingQuotes, setShippingQuotes] = useState({});
+  const [selectedCouriers, setSelectedCouriers] = useState({});
+  const [placingOrder, setPlacingOrder] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -32,6 +38,13 @@ export default function CheckoutPage() {
       ...current,
       [field]: value,
     }));
+
+    if (["name", "phone", "address", "city"].includes(field)) {
+      setReceiverAddressCode(null);
+      setShippingQuotes({});
+      setSelectedCouriers({});
+      setShippingError("");
+    }
   };
 
   const subtotal = cart.reduce(
@@ -40,8 +53,155 @@ export default function CheckoutPage() {
     0
   );
 
-  const deliveryFee = 0;
-  const total = subtotal;
+  const deliveryFee = Object.values(selectedCouriers).reduce(
+    (total, courier) => total + Number(courier?.amount || 0),
+    0
+  );
+
+  const total = subtotal + deliveryFee;
+
+  const getShippingRates = async () => {
+    if (!form.name || !form.phone || !form.address || !form.city) {
+      alert("Please complete your delivery details first.");
+      return;
+    }
+
+    if (!cart.length) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    try {
+      setShippingLoading(true);
+      setShippingError("");
+      setReceiverAddressCode(null);
+      setShippingQuotes({});
+      setSelectedCouriers({});
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("Please log in before calculating delivery.");
+      }
+
+      const addressRes = await fetch(
+        "https://api.alphabothq.com/marketplace/orders/shipping/validate-address",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: form.name,
+            phone: form.phone,
+            address: form.address,
+            city: form.city,
+          }),
+        }
+      );
+
+      const addressData = await addressRes.json();
+
+      if (!addressRes.ok || !addressData.data?.addressCode) {
+        throw new Error(
+          addressData.message || "Unable to validate your delivery address."
+        );
+      }
+
+      const addressCode = addressData.data.addressCode;
+      setReceiverAddressCode(addressCode);
+
+      const pickupDate = new Date();
+      pickupDate.setDate(pickupDate.getDate() + 1);
+      const pickupDateString = pickupDate.toISOString().slice(0, 10);
+
+      const quotes = {};
+
+      for (const item of cart) {
+        const quoteRes = await fetch(
+          "https://api.alphabothq.com/marketplace/orders/shipping/quote",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              productId: item.id,
+              quantity: Number(item.quantity || 1),
+              receiverAddressCode: addressCode,
+              pickupDate: pickupDateString,
+            }),
+          }
+        );
+
+        const quoteData = await quoteRes.json();
+
+        if (!quoteRes.ok || !quoteData.data) {
+          throw new Error(
+            quoteData.message ||
+              `Unable to calculate delivery for ${item.name}.`
+          );
+        }
+
+        if (
+          !Array.isArray(quoteData.data.couriers) ||
+          quoteData.data.couriers.length === 0
+        ) {
+          throw new Error(
+            `No delivery options are currently available for ${item.name}.`
+          );
+        }
+
+        quotes[item.id] = quoteData.data;
+      }
+
+      setShippingQuotes(quotes);
+
+      const defaults = {};
+
+      for (const item of cart) {
+        const firstRate = quotes[item.id]?.rates?.[0];
+
+        if (firstRate) {
+          defaults[item.id] = {
+            courierId: firstRate.courierId,
+            serviceCode: firstRate.serviceCode,
+            courierName: firstRate.courierName,
+            amount: Number(firstRate.amount || 0),
+            serviceType: firstRate.serviceType,
+            deliveryEta: firstRate.deliveryEta,
+            pickupEta: firstRate.pickupEta,
+          };
+        }
+      }
+
+      setSelectedCouriers(defaults);
+    } catch (error) {
+      console.error("MARKETPLACE SHIPPING ERROR:", error);
+      setShippingError(
+        error.message || "Unable to calculate delivery options."
+      );
+    } finally {
+      setShippingLoading(false);
+    }
+  };
+
+  const selectCourier = (itemId, rate) => {
+    setSelectedCouriers((current) => ({
+      ...current,
+      [itemId]: {
+        courierId: rate.courierId,
+        serviceCode: rate.serviceCode,
+        courierName: rate.courierName,
+        amount: Number(rate.amount || 0),
+        serviceType: rate.serviceType,
+        deliveryEta: rate.deliveryEta,
+        pickupEta: rate.pickupEta,
+      },
+    }));
+  };
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
@@ -56,7 +216,14 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!receiverAddressCode || Object.keys(selectedCouriers).length !== cart.length) {
+      alert("Please calculate delivery and select a courier for every item.");
+      return;
+    }
+
     try {
+      setPlacingOrder(true);
+
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -66,7 +233,17 @@ export default function CheckoutPage() {
 
       const createdOrders = [];
 
+      const pickupDate = new Date();
+      pickupDate.setDate(pickupDate.getDate() + 1);
+      const pickupDateString = pickupDate.toISOString().slice(0, 10);
+
       for (const item of cart) {
+        const selected = selectedCouriers[item.id];
+
+        if (!selected) {
+          throw new Error(`Please select a courier for ${item.name}.`);
+        }
+
         const res = await fetch(
           "https://api.alphabothq.com/marketplace/orders",
           {
@@ -78,6 +255,17 @@ export default function CheckoutPage() {
             body: JSON.stringify({
               productId: item.id,
               quantity: Number(item.quantity || 1),
+              receiverAddressCode,
+              pickupDate: pickupDateString,
+              courierId: selected.courierId,
+              serviceCode: selected.serviceCode,
+              deliveryAddress: {
+                name: form.name,
+                phone: form.phone,
+                address: form.address,
+                city: form.city,
+                note: form.note || "",
+              },
             }),
           }
         );
@@ -93,7 +281,6 @@ export default function CheckoutPage() {
         createdOrders.push(data.order);
       }
 
-      // Create one payment checkout for the entire cart
       const checkoutRes = await fetch(
         "https://api.alphabothq.com/marketplace/orders/checkout",
         {
@@ -103,9 +290,7 @@ export default function CheckoutPage() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            orderIds: createdOrders.map(
-              (order) => order._id
-            ),
+            orderIds: createdOrders.map((order) => order._id),
           }),
         }
       );
@@ -121,18 +306,23 @@ export default function CheckoutPage() {
 
       const checkout = checkoutData.checkout;
 
+      const finalShippingFee = createdOrders.reduce(
+        (sum, order) => sum + Number(order.shipping?.quote?.amount || 0),
+        0
+      );
+
+      const finalTotal = subtotal + finalShippingFee;
+
       const localOrder = {
         id: `AB-${Date.now()}`,
         items: cart,
         customer: form,
         subtotal,
-        deliveryFee,
-        total,
+        deliveryFee: finalShippingFee,
+        total: finalTotal,
         createdAt: new Date().toISOString(),
         status: "Pending",
-        marketplaceOrders: createdOrders.map(
-          (order) => order._id
-        ),
+        marketplaceOrders: createdOrders.map((order) => order._id),
         checkoutId: checkout._id,
       };
 
@@ -157,7 +347,6 @@ export default function CheckoutPage() {
         JSON.stringify(localOrder)
       );
 
-      // Initialize one Flutterwave payment for the entire cart
       const paymentRes = await fetch(
         `https://api.alphabothq.com/marketplace/orders/checkout/${checkout._id}/pay`,
         {
@@ -178,23 +367,21 @@ export default function CheckoutPage() {
         );
       }
 
-      // Save checkout reference before leaving for Flutterwave
       localStorage.setItem(
         "alphabotMarketplaceActiveCheckout",
         JSON.stringify({
           checkoutId: checkout._id,
           txRef: paymentData.txRef,
-          orderIds: createdOrders.map(
-            (order) => order._id
-          ),
+          orderIds: createdOrders.map((order) => order._id),
         })
       );
 
-      // Redirect buyer to Flutterwave
       window.location.href = paymentData.paymentLink;
     } catch (error) {
       console.error("CREATE MARKETPLACE ORDER ERROR:", error);
       alert(error.message || "Unable to place order. Please try again.");
+    } finally {
+      setPlacingOrder(false);
     }
   };
 
@@ -455,6 +642,182 @@ export default function CheckoutPage() {
               </div>
 
             </div>
+
+
+            {/* SHIPPING OPTIONS */}
+
+            <section className="mt-6">
+
+              <div className="mb-3">
+
+                <p className="text-[9px] font-black tracking-[0.18em] uppercase text-yellow-500">
+                  DELIVERY OPTIONS
+                </p>
+
+                <h2 className="text-lg font-black">
+                  Choose your delivery
+                </h2>
+
+                <p className="text-[10px] text-zinc-500 mt-1">
+                  We’ll compare available couriers for your delivery address.
+                </p>
+
+              </div>
+
+              <div className="rounded-3xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4">
+
+                <button
+                  type="button"
+                  onClick={getShippingRates}
+                  disabled={shippingLoading}
+                  className="w-full h-12 rounded-xl bg-yellow-400 text-black font-black text-xs active:scale-[0.98] transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {shippingLoading
+                    ? "Checking delivery options..."
+                    : receiverAddressCode
+                      ? "Refresh delivery options"
+                      : "Get delivery options"}
+                </button>
+
+                {shippingError && (
+                  <div className="mt-3 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 p-3">
+                    <p className="text-[10px] font-bold text-red-600 dark:text-red-400">
+                      {shippingError}
+                    </p>
+                  </div>
+                )}
+
+                {receiverAddressCode && !shippingLoading && !shippingError && (
+                  <div className="mt-3 rounded-xl bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/40 p-3">
+                    <p className="text-[10px] font-bold text-green-700 dark:text-green-400">
+                      Delivery address verified. Select a courier below.
+                    </p>
+                  </div>
+                )}
+
+                {cart.length > 0 && Object.keys(shippingQuotes).length > 0 && (
+                  <div className="mt-5 space-y-5">
+
+                    {cart.map((item) => {
+                      const quote = shippingQuotes[item.id];
+                      const couriers = quote?.couriers || [];
+                      const selected = selectedCouriers[item.id];
+
+                      return (
+                        <div key={item.id}>
+
+                          <div className="flex items-center justify-between gap-3 mb-3">
+
+                            <div className="min-w-0">
+                              <p className="text-xs font-black truncate">
+                                {item.name}
+                              </p>
+
+                              <p className="text-[9px] text-zinc-500 mt-1">
+                                Qty: {item.quantity || 1}
+                              </p>
+                            </div>
+
+                            {selected && (
+                              <p className="text-[10px] font-black text-yellow-600 dark:text-yellow-400 shrink-0">
+                                ₦{Number(selected.amount || 0).toLocaleString()}
+                              </p>
+                            )}
+
+                          </div>
+
+                          {couriers.length > 0 ? (
+                            <div className="space-y-2">
+
+                              {couriers.map((courier) => {
+
+                                const isSelected =
+                                  selected &&
+                                  String(selected.courierId) === String(courier.courierId) &&
+                                  String(selected.serviceCode) === String(courier.serviceCode);
+
+                                return (
+                                  <button
+                                    key={`${courier.courierId}-${courier.serviceCode}`}
+                                    type="button"
+                                    onClick={() => selectCourier(item.id, courier)}
+                                    className={`w-full text-left rounded-2xl border p-3 transition active:scale-[0.99] ${
+                                      isSelected
+                                        ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-950/20"
+                                        : "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
+                                    }`}
+                                  >
+
+                                    <div className="flex items-center gap-3">
+
+                                      <div className="w-9 h-9 shrink-0 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center overflow-hidden">
+
+                                        {courier.courierImage ? (
+                                          <img
+                                            src={courier.courierImage}
+                                            alt=""
+                                            className="w-full h-full object-contain p-1"
+                                          />
+                                        ) : (
+                                          <span className="text-sm">
+                                            🚚
+                                          </span>
+                                        )}
+
+                                      </div>
+
+                                      <div className="min-w-0 flex-1">
+
+                                        <p className="text-xs font-black truncate">
+                                          {courier.courierName || "Courier"}
+                                        </p>
+
+                                        <p className="text-[9px] text-zinc-500 mt-1">
+                                          {courier.serviceType || "Delivery"}
+                                          {courier.deliveryEta
+                                            ? ` · ${courier.deliveryEta}`
+                                            : ""}
+                                        </p>
+
+                                      </div>
+
+                                      <div className="text-right shrink-0">
+
+                                        <p className="text-xs font-black">
+                                          ₦{Number(courier.amount || 0).toLocaleString()}
+                                        </p>
+
+                                        {isSelected && (
+                                          <p className="text-[8px] font-black text-yellow-600 dark:text-yellow-400 mt-1">
+                                            SELECTED ✓
+                                          </p>
+                                        )}
+
+                                      </div>
+
+                                    </div>
+
+                                  </button>
+                                );
+                              })}
+
+                            </div>
+                          ) : (
+                            <p className="text-[10px] text-zinc-500">
+                              No delivery options are currently available for this product.
+                            </p>
+                          )}
+
+                        </div>
+                      );
+                    })}
+
+                  </div>
+                )}
+
+              </div>
+
+            </section>
 
 
             {/* ORDER SUMMARY */}
