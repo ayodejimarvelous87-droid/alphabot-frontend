@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MARKETPLACE_CATEGORY_NAMES } from "@/lib/marketplaceCategories";
 
@@ -56,6 +57,8 @@ export default function SellerProfilePage() {
     marketplaceRules: false,
     payoutResponsibility: false,
   });
+
+  const router = useRouter();
 
   const [status, setStatus] = useState("Not a seller");
   const [savingPickupAddress, setSavingPickupAddress] = useState(false);
@@ -121,9 +124,9 @@ export default function SellerProfilePage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && data.seller) {
-          const seller = data.seller;
+        const seller = data.seller || (data._id ? data : null);
 
+        if (seller) {
           setForm((current) => ({
             ...current,
             storeName: seller.storeName || current.storeName,
@@ -169,13 +172,19 @@ export default function SellerProfilePage() {
               current.preferredPayoutTiming,
           }));
 
-          setStatus(seller.status || "Not a seller");
+          const sellerStatus = seller.status || "Not a seller";
+          setStatus(sellerStatus);
+
+          if (sellerStatus === "approved") {
+            router.replace("/marketplace/seller/products/new");
+            return;
+          }
         }
       })
       .catch((error) => {
         console.error("MARKETPLACE SELLER PROFILE ERROR:", error);
       });
-  }, []);
+  }, [router]);
 
   const updateField = (field, value) => {
     setForm((current) => ({
@@ -432,10 +441,13 @@ export default function SellerProfilePage() {
         return;
       }
 
-      setStatus(data.seller?.status || "pending");
+      const submittedSeller =
+        data.seller || (data._id ? data : null);
+
+      setStatus(submittedSeller?.status || "pending");
 
       alert(
-        "Seller application submitted successfully. AlphaBot will review it shortly."
+        "Seller application submitted successfully. Your application is now pending review."
       );
     } catch (error) {
       console.error("MARKETPLACE SELLER APPLICATION ERROR:", error);
@@ -449,6 +461,69 @@ export default function SellerProfilePage() {
 
   const verified = status === "approved";
   const pending = status === "pending";
+
+  if (pending) {
+    return (
+      <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white">
+        <header className="sticky top-0 z-40 bg-zinc-50/90 dark:bg-[#0b0b0b]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800">
+          <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
+            <Link
+              href="/marketplace"
+              className="w-9 h-9 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center"
+            >
+              ←
+            </Link>
+
+            <div>
+              <p className="text-[8px] font-black tracking-[0.18em] uppercase text-yellow-500">
+                ALPHABOT
+              </p>
+
+              <h1 className="font-black text-sm">
+                Seller Application
+              </h1>
+            </div>
+          </div>
+        </header>
+
+        <div className="max-w-2xl mx-auto px-4 pt-16">
+          <section className="rounded-[2rem] bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-8 text-center shadow-sm">
+            <div className="mx-auto w-16 h-16 rounded-2xl bg-yellow-400 text-black flex items-center justify-center text-2xl font-black">
+              ✓
+            </div>
+
+            <p className="mt-6 text-[10px] font-black tracking-[0.2em] uppercase text-yellow-500">
+              APPLICATION PENDING
+            </p>
+
+            <h2 className="mt-2 text-2xl font-black">
+              Your application is under review
+            </h2>
+
+            <p className="mt-4 text-sm leading-6 text-zinc-600 dark:text-zinc-400 max-w-md mx-auto">
+              Your seller application has been submitted successfully.
+              Our team will review your information and notify you once a
+              decision has been made.
+            </p>
+
+            <div className="mt-6 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-4">
+              <p className="text-xs font-black">
+                Review can take up to 3 days.
+              </p>
+            </div>
+
+            <p className="mt-5 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+              You do not need to submit another application.
+            </p>
+          </section>
+        </div>
+      </main>
+    );
+  }
+
+  if (verified) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white pb-12">

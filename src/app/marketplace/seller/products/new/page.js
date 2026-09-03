@@ -78,9 +78,11 @@ export default function AddProductPage() {
         return data;
       })
       .then((data) => {
-        if (data.success && data.seller) {
-          setSeller(data.seller);
-          setVerified(data.seller.status === "approved");
+        const seller = data.seller || (data._id ? data : null);
+
+        if (seller) {
+          setSeller(seller);
+          setVerified(seller.status === "approved");
         }
       })
       .catch((error) => {

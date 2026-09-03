@@ -122,8 +122,10 @@ export default function EditProductPage({ params }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && data.seller) {
-          setSeller(data.seller);
+        const seller = data.seller || (data._id ? data : null);
+
+        if (seller) {
+          setSeller(seller);
         }
       })
       .catch((error) => {
