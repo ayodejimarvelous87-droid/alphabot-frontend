@@ -12,7 +12,7 @@ export default function AdminSellerApplications() {
       setLoading(true);
       setError("");
 
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("adminToken");
 
       if (!token) {
         throw new Error("Admin authentication token not found.");
@@ -49,7 +49,7 @@ export default function AdminSellerApplications() {
   }, []);
 
   const updateSellerStatus = async (sellerId, status) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("adminToken");
 
     try {
       const endpoint =
@@ -444,7 +444,7 @@ export default function AdminSellerApplications() {
                   <button
                     onClick={async () => {
                       try {
-                        const token = localStorage.getItem("token");
+                        const token = localStorage.getItem("adminToken");
 
                         const response = await fetch(
                           `https://api.alphabothq.com/admin/marketplace/sellers/${seller._id}/review`,
