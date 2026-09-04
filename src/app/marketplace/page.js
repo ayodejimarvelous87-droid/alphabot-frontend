@@ -17,6 +17,7 @@ export default function Marketplace() {
   const [mounted, setMounted] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showAllCategories, setShowAllCategories] = useState(false);
+  const [showMarketplaceDashboard, setShowMarketplaceDashboard] = useState(false);
   const [draftFilters, setDraftFilters] = useState({});
   const [appliedFilters, setAppliedFilters] = useState({});
 
@@ -230,6 +231,139 @@ export default function Marketplace() {
       <div className="max-w-2xl mx-auto px-4">
 
 
+        {/* MARKETPLACE DASHBOARD */}
+
+        <section className="mt-4">
+
+          <button
+            type="button"
+            onClick={() =>
+              setShowMarketplaceDashboard((current) => !current)
+            }
+            className="w-full flex items-center justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#151515] px-4 py-3 active:scale-[0.99] transition"
+          >
+
+            <div className="flex items-center gap-3">
+
+              <div className="w-9 h-9 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg">
+                ☰
+              </div>
+
+              <div className="text-left">
+                <p className="text-xs font-black">
+                  Marketplace Dashboard
+                </p>
+
+                <p className="text-[9px] text-zinc-500 dark:text-zinc-400">
+                  Quick access to marketplace features
+                </p>
+              </div>
+
+            </div>
+
+            <span
+              className={`text-sm transition-transform ${
+                showMarketplaceDashboard ? "rotate-180" : ""
+              }`}
+            >
+              ▼
+            </span>
+
+          </button>
+
+          {showMarketplaceDashboard && (
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+
+              <Link
+                href="/marketplace/cart"
+                className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+              >
+                <div className="text-lg">🛒</div>
+                <p className="text-[10px] font-black mt-2">My Cart</p>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMarketplaceDashboard(false);
+                  document.getElementById("marketplace-categories")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }}
+                className="text-left rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+              >
+                <div className="text-lg">🏷️</div>
+                <p className="text-[10px] font-black mt-2">Categories</p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMarketplaceDashboard(false);
+                  setShowFilters(true);
+                  setTimeout(() => {
+                    document.getElementById("marketplace-filters")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }, 50);
+                }}
+                className="text-left rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+              >
+                <div className="text-lg">⚙️</div>
+                <p className="text-[10px] font-black mt-2">Filters</p>
+              </button>
+
+              <Link
+                href="/marketplace/seller"
+                className="rounded-2xl bg-yellow-400 text-black p-3 active:scale-[0.98] transition"
+              >
+                <div className="text-lg">🏪</div>
+                <p className="text-[10px] font-black mt-2">Sell on AlphaBot</p>
+              </Link>
+
+              <Link
+                href="/notifications"
+                className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+              >
+                <div className="text-lg">🔔</div>
+                <p className="text-[10px] font-black mt-2">Notifications</p>
+              </Link>
+
+              <Link
+                href="/marketplace/faq"
+                className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+              >
+                <div className="text-lg">❓</div>
+                <p className="text-[10px] font-black mt-2">FAQ</p>
+              </Link>
+
+              <Link
+                href="/marketplace/help"
+                className="col-span-2 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="text-lg">🆘</div>
+                  <div>
+                    <p className="text-[10px] font-black">
+                      Help & Support
+                    </p>
+                    <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-0.5">
+                      Get assistance with your marketplace activity
+                    </p>
+                  </div>
+                </div>
+              </Link>
+
+            </div>
+
+          )}
+
+        </section>
+
+
         {/* HERO */}
 
         <section className="mt-4">
@@ -268,7 +402,7 @@ export default function Marketplace() {
 
         {/* FILTERS */}
 
-        <section className="mt-5">
+        <section id="marketplace-filters" className="mt-5">
 
           <button
             type="button"
@@ -631,7 +765,7 @@ export default function Marketplace() {
 
         {/* CATEGORIES */}
 
-        <section className="mt-6">
+        <section id="marketplace-categories" className="mt-6">
 
           <div className="flex items-center justify-between mb-3">
 
@@ -1030,68 +1164,7 @@ export default function Marketplace() {
         </section>
 
 
-        {/* MARKETPLACE SUPPORT */}
 
-        <section className="mt-5">
-
-          <div className="flex items-center justify-between mb-3">
-
-            <div>
-              <p className="text-[9px] font-black tracking-[0.18em] uppercase text-yellow-500">
-                MARKETPLACE SUPPORT
-              </p>
-
-              <h2 className="text-lg font-black">
-                Need help?
-              </h2>
-            </div>
-
-          </div>
-
-          <div className="grid grid-cols-3 gap-2">
-
-            <Link
-              href="/notifications"
-              className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
-            >
-              <div className="text-lg">
-                🔔
-              </div>
-
-              <p className="text-[10px] font-black mt-2">
-                Notifications
-              </p>
-            </Link>
-
-            <Link
-              href="/marketplace/faq"
-              className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
-            >
-              <div className="text-lg">
-                ❓
-              </div>
-
-              <p className="text-[10px] font-black mt-2">
-                FAQ
-              </p>
-            </Link>
-
-            <Link
-              href="/marketplace/help"
-              className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-3 active:scale-[0.98] transition"
-            >
-              <div className="text-lg">
-                🆘
-              </div>
-
-              <p className="text-[10px] font-black mt-2">
-                Help
-              </p>
-            </Link>
-
-          </div>
-
-        </section>
 
 
       </div>
