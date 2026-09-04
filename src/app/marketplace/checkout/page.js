@@ -13,6 +13,7 @@ export default function CheckoutPage() {
     phone: "",
     address: "",
     city: "",
+    state: "",
     note: "",
   });
 
@@ -40,7 +41,7 @@ export default function CheckoutPage() {
       [field]: value,
     }));
 
-    if (["name", "phone", "address", "city"].includes(field)) {
+    if (["name", "phone", "address", "city", "state"].includes(field)) {
       setReceiverAddressCode(null);
       setShippingQuotes({});
       setSelectedCouriers({});
@@ -64,7 +65,7 @@ export default function CheckoutPage() {
   const total = subtotal + deliveryFee + protectionFee;
 
   const getShippingRates = async () => {
-    if (!form.name || !form.phone || !form.address || !form.city) {
+    if (!form.name || !form.phone || !form.address || !form.city || !form.state) {
       alert("Please complete your delivery details first.");
       return;
     }
@@ -101,6 +102,7 @@ export default function CheckoutPage() {
             phone: form.phone,
             address: form.address,
             city: form.city,
+            state: form.state,
           }),
         }
       );
@@ -210,7 +212,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.phone || !form.address || !form.city) {
+    if (!form.name || !form.phone || !form.address || !form.city || !form.state) {
       alert("Please complete your delivery details.");
       return;
     }
@@ -269,6 +271,7 @@ export default function CheckoutPage() {
                 phone: form.phone,
                 address: form.address,
                 city: form.city,
+                state: form.state,
                 note: form.note || "",
               },
             }),
@@ -624,7 +627,7 @@ export default function CheckoutPage() {
                 <textarea
                   value={form.address}
                   onChange={(e) => updateField("address", e.target.value)}
-                  placeholder="House number, street, landmark..."
+                  placeholder="House number and street address"
                   rows={3}
                   className="mt-2 w-full rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-3 text-sm outline-none focus:border-yellow-400 transition resize-none"
                 />
@@ -649,6 +652,21 @@ export default function CheckoutPage() {
               <div>
 
                 <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wide">
+                  State
+                </label>
+
+                <input
+                  value={form.state}
+                  onChange={(e) => updateField("state", e.target.value)}
+                  placeholder="e.g. Ondo"
+                  className="mt-2 w-full h-12 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400 transition"
+                />
+
+              </div>
+
+              <div>
+
+                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wide">
                   Delivery note
                   <span className="text-zinc-400 font-normal ml-1">
                     Optional
@@ -658,7 +676,7 @@ export default function CheckoutPage() {
                 <textarea
                   value={form.note}
                   onChange={(e) => updateField("note", e.target.value)}
-                  placeholder="Anything the seller should know?"
+                  placeholder="Landmark or delivery instructions (optional)"
                   rows={2}
                   className="mt-2 w-full rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 py-3 text-sm outline-none focus:border-yellow-400 transition resize-none"
                 />
@@ -1020,9 +1038,17 @@ export default function CheckoutPage() {
 
             <button
               type="submit"
-              className="w-full h-14 mt-7 rounded-2xl bg-yellow-400 text-black font-black text-sm active:scale-[0.98] transition shadow-lg shadow-yellow-400/10"
+              disabled={placingOrder}
+              className="w-full h-14 mt-7 rounded-2xl bg-yellow-400 text-black font-black text-sm active:scale-[0.98] transition shadow-lg shadow-yellow-400/10 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Place order · ₦{total.toLocaleString()}
+              {placingOrder ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  Initializing payment...
+                </span>
+              ) : (
+                `Place order · ₦${total.toLocaleString()}`
+              )}
             </button>
 
             <p className="text-[9px] text-center text-zinc-500 mt-3 leading-5">
