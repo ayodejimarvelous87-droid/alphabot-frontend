@@ -60,7 +60,7 @@ export default function CheckoutPage() {
     0
   );
 
-  const protectionFee = subtotal > 2000 ? 500 : 0;
+  const protectionFee = 500;
 
   const total = subtotal + deliveryFee + protectionFee;
 
@@ -75,155 +75,18 @@ export default function CheckoutPage() {
       return;
     }
 
-    try {
-      setShippingLoading(true);
-      setShippingError("");
-      setReceiverAddressCode(null);
-      setShippingQuotes({});
-      setSelectedCouriers({});
-
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        throw new Error("Please log in before calculating delivery.");
-      }
-
-      const addressRes = await fetch(
-        "https://api.alphabothq.com/marketplace/orders/shipping/validate-address",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            name: form.name,
-            email: form.email,
-            phone: form.phone,
-            address: form.address,
-            city: form.city,
-            state: form.state,
-          }),
-        }
+    if (cart.length !== 1) {
+      alert(
+        "Marketplace checkout supports one product at a time. Please checkout one product before continuing."
       );
-
-      const addressData = await addressRes.json();
-
-      if (!addressRes.ok || !addressData.data?.addressCode) {
-        throw new Error(
-          addressData.message || "Unable to validate your delivery address."
-        );
-      }
-
-      const addressCode = addressData.data.addressCode;
-      setReceiverAddressCode(addressCode);
-
-      const pickupDate = new Date();
-      pickupDate.setDate(pickupDate.getDate() + 1);
-      const pickupDateString = pickupDate.toISOString().slice(0, 10);
-
-      const quotes = {};
-
-      for (const item of cart) {
-        const quoteRes = await fetch(
-          "https://api.alphabothq.com/marketplace/orders/shipping/quote",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: item.id,
-              quantity: Number(item.quantity || 1),
-              receiverAddressCode: addressCode,
-              pickupDate: pickupDateString,
-            }),
-          }
-        );
-
-        const quoteData = await quoteRes.json();
-
-        if (!quoteRes.ok || !quoteData.data) {
-          throw new Error(
-            quoteData.message ||
-              `Unable to calculate delivery for ${item.name}.`
-          );
-        }
-
-        if (
-          !Array.isArray(quoteData.data.couriers) ||
-          quoteData.data.couriers.length === 0
-        ) {
-          throw new Error(
-            `No delivery options are currently available for ${item.name}.`
-          );
-        }
-
-        quotes[item.id] = quoteData.data;
-      }
-
-      setShippingQuotes(quotes);
-
-      const defaults = {};
-
-      for (const item of cart) {
-        const firstRate = quotes[item.id]?.rates?.[0];
-
-        if (firstRate) {
-          defaults[item.id] = {
-            courierId: firstRate.courierId,
-            serviceCode: firstRate.serviceCode,
-            courierName: firstRate.courierName,
-            amount: Number(firstRate.amount || 0),
-            serviceType: firstRate.serviceType,
-            deliveryEta: firstRate.deliveryEta,
-            pickupEta: firstRate.pickupEta,
-          };
-        }
-      }
-
-      setSelectedCouriers(defaults);
-    } catch (error) {
-      console.error("MARKETPLACE SHIPPING ERROR:", error);
-      setShippingError(
-        error.message || "Unable to calculate delivery options."
-      );
-    } finally {
-      setShippingLoading(false);
-    }
-  };
-
-  const selectCourier = (itemId, rate) => {
-    setSelectedCouriers((current) => ({
-      ...current,
-      [itemId]: {
-        courierId: rate.courierId,
-        serviceCode: rate.serviceCode,
-        courierName: rate.courierName,
-        amount: Number(rate.amount || 0),
-        serviceType: rate.serviceType,
-        deliveryEta: rate.deliveryEta,
-        pickupEta: rate.pickupEta,
-      },
-    }));
-  };
-
-  const handlePlaceOrder = async (e) => {
-    e.preventDefault();
-
-    if (!form.name || !form.phone || !form.address || !form.city || !form.state) {
-      alert("Please complete your delivery details.");
       return;
     }
 
-    if (!cart.length) {
-      alert("Your cart is empty.");
-      return;
-    }
-
-    if (!receiverAddressCode || Object.keys(selectedCouriers).length !== cart.length) {
-      alert("Please calculate delivery and select a courier for every item.");
+    if (
+      !receiverAddressCode ||
+      Object.keys(selectedCouriers).length !== 1
+    ) {
+      alert("Please calculate delivery and select a courier.");
       return;
     }
 
@@ -237,57 +100,54 @@ export default function CheckoutPage() {
         return;
       }
 
-      const createdOrders = [];
+      const item = cart[0];
+      const selected = selectedCouriers[item.id];
+
+      if (!selected) {
+        throw new Error(`Please select a courier for ${item.name}.`);
+      }
 
       const pickupDate = new Date();
       pickupDate.setDate(pickupDate.getDate() + 1);
       const pickupDateString = pickupDate.toISOString().slice(0, 10);
 
-      for (const item of cart) {
-        const selected = selectedCouriers[item.id];
-
-        if (!selected) {
-          throw new Error(`Please select a courier for ${item.name}.`);
-        }
-
-        const res = await fetch(
-          "https://api.alphabothq.com/marketplace/orders",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "https://api.alphabothq.com/marketplace/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: item.id,
+            quantity: Number(item.quantity || 1),
+            receiverAddressCode,
+            pickupDate: pickupDateString,
+            courierId: selected.courierId,
+            serviceCode: selected.serviceCode,
+            deliveryAddress: {
+              name: form.name,
+              email: form.email,
+              phone: form.phone,
+              address: form.address,
+              city: form.city,
+              state: form.state,
+              note: form.note || "",
             },
-            body: JSON.stringify({
-              productId: item.id,
-              quantity: Number(item.quantity || 1),
-              receiverAddressCode,
-              pickupDate: pickupDateString,
-              courierId: selected.courierId,
-              serviceCode: selected.serviceCode,
-              deliveryAddress: {
-                name: form.name,
-                email: form.email,
-                phone: form.phone,
-                address: form.address,
-                city: form.city,
-                state: form.state,
-                note: form.note || "",
-              },
-            }),
-          }
-        );
-
-        const data = await res.json();
-
-        if (!res.ok || !data.order) {
-          throw new Error(
-            data.message || `Failed to create order for ${item.name}.`
-          );
+          }),
         }
+      );
 
-        createdOrders.push(data.order);
+      const data = await res.json();
+
+      if (!res.ok || !data.order) {
+        throw new Error(
+          data.message || `Failed to create order for ${item.name}.`
+        );
       }
+
+      const createdOrder = data.order;
 
       const checkoutRes = await fetch(
         "https://api.alphabothq.com/marketplace/orders/checkout",
@@ -298,7 +158,7 @@ export default function CheckoutPage() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            orderIds: createdOrders.map((order) => order._id),
+            orderId: createdOrder._id,
           }),
         }
       );
@@ -314,26 +174,26 @@ export default function CheckoutPage() {
 
       const checkout = checkoutData.checkout;
 
-      const finalShippingFee = createdOrders.reduce(
-        (sum, order) => sum + Number(order.shipping?.quote?.amount || 0),
-        0
+      const finalShippingFee = Number(
+        createdOrder.shipping?.quote?.amount || 0
       );
 
-      const finalProtectionFee = subtotal > 2000 ? 500 : 0;
+      const finalProtectionFee = 500;
+      const finalSubtotal = Number(createdOrder.totalAmount || subtotal);
       const finalTotal =
-        subtotal + finalShippingFee + finalProtectionFee;
+        finalSubtotal + finalShippingFee + finalProtectionFee;
 
       const localOrder = {
         id: `AB-${Date.now()}`,
-        items: cart,
+        items: [item],
         customer: form,
-        subtotal,
+        subtotal: finalSubtotal,
         deliveryFee: finalShippingFee,
         protectionFee: finalProtectionFee,
         total: finalTotal,
         createdAt: new Date().toISOString(),
         status: "Pending",
-        marketplaceOrders: createdOrders.map((order) => order._id),
+        marketplaceOrderId: createdOrder._id,
         checkoutId: checkout._id,
       };
 
@@ -383,7 +243,7 @@ export default function CheckoutPage() {
         JSON.stringify({
           checkoutId: checkout._id,
           txRef: paymentData.txRef,
-          orderIds: createdOrders.map((order) => order._id),
+          marketplaceOrderId: createdOrder._id,
         })
       );
 

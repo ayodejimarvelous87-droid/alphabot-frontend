@@ -48,7 +48,6 @@ export default function SellerProfilePage() {
     accountName: "",
     accountNumber: "",
     bankName: "",
-    preferredPayoutTiming: "",
   });
 
   const [sameWhatsapp, setSameWhatsapp] = useState(false);
@@ -167,9 +166,6 @@ export default function SellerProfilePage() {
               seller.payout?.accountNumber || current.accountNumber,
             bankName:
               seller.payout?.bankName || current.bankName,
-            preferredPayoutTiming:
-              seller.preferredPayoutTiming ||
-              current.preferredPayoutTiming,
           }));
 
           const sellerStatus = seller.status || "Not a seller";
@@ -388,8 +384,7 @@ export default function SellerProfilePage() {
         !form.returnPolicyDetails.trim()) ||
       !form.accountName.trim() ||
       !/^\d{10}$/.test(form.accountNumber) ||
-      !form.bankName.trim() ||
-      !form.preferredPayoutTiming
+      !form.bankName.trim()
     ) {
       alert("Please complete all required seller information.");
       return;
@@ -1029,25 +1024,6 @@ export default function SellerProfilePage() {
                 required
               />
 
-              <div>
-                <label className="block text-sm font-medium">
-                  Preferred payout timing
-                </label>
-                <select
-                  value={form.preferredPayoutTiming}
-                  onChange={(e) =>
-                    updateField("preferredPayoutTiming", e.target.value)
-                  }
-                  className="mt-1 w-full rounded-xl border p-3"
-                  required
-                >
-                  <option value="">Select payout timing</option>
-                  <option value="Immediately after successful transaction">
-                    Immediately after successful transaction
-                  </option>
-                  <option value="After 1 week">After 1 week</option>
-                </select>
-              </div>
             </div>
           </div>
 
