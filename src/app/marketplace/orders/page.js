@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState([]);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
+  const [orders, setOrders] = useState(() => {
+    if (typeof window === "undefined") {
+      return [];
+    }
 
     const savedOrders = JSON.parse(
       localStorage.getItem("alphabotMarketplaceOrders") || "[]"
@@ -32,12 +31,8 @@ export default function OrdersPage() {
       );
     }
 
-    setOrders(allOrders);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
+    return allOrders;
+  });
 
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white pb-12">
@@ -202,26 +197,59 @@ export default function OrdersPage() {
                   </div>
 
 
-                  <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                  <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800">
 
-                    <p className="text-[9px] text-zinc-500">
+                    <p className="text-[9px] text-zinc-500 mb-3">
                       {date}
                     </p>
 
-                    <button
-                      onClick={() =>
-                        alert(
-                          `Order ${order.id}\n\nStatus: ${
-                            order.status || "Pending"
-                          }\nTotal: ₦${Number(
-                            order.total || 0
-                          ).toLocaleString()}`
-                        )
-                      }
-                      className="text-[10px] font-black text-yellow-600 dark:text-yellow-400"
-                    >
-                      View details →
-                    </button>
+                    {Array.isArray(order.marketplaceOrders) &&
+                      order.marketplaceOrders.length > 0 && (
+                        <div className="space-y-2">
+
+                          <p className="text-[9px] font-black uppercase tracking-[0.15em] text-zinc-500">
+                            Products
+                          </p>
+
+                          {order.marketplaceOrders.map(
+                            (marketplaceOrderId, index) => {
+
+                              const item = order.items?.[index];
+
+                              return (
+                                <div
+                                  key={marketplaceOrderId}
+                                  className="flex items-center justify-between gap-3 rounded-xl bg-zinc-50 dark:bg-[#0f0f0f] border border-zinc-100 dark:border-zinc-800 px-3 py-2.5"
+                                >
+
+                                  <div className="min-w-0">
+
+                                    <p className="text-xs font-black truncate">
+                                      {item?.name || "Marketplace product"}
+                                    </p>
+
+                                    <p className="text-[9px] text-zinc-500 mt-0.5">
+                                      Qty: {Number(item?.quantity || 1)}
+                                    </p>
+
+                                  </div>
+
+                                  <Link
+                                    href={`/marketplace/orders/${encodeURIComponent(
+                                      marketplaceOrderId
+                                    )}/tracking`}
+                                    className="shrink-0 text-[10px] font-black text-yellow-600 dark:text-yellow-400"
+                                  >
+                                    Track →
+                                  </Link>
+
+                                </div>
+                              );
+                            }
+                          )}
+
+                        </div>
+                      )}
 
                   </div>
 
