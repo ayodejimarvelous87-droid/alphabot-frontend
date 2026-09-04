@@ -928,14 +928,16 @@ width:`${Math.min(
           .replace(/\b\w/g, (char) => char.toUpperCase());
 
         return (
-          <Link
-            href={`/marketplace/orders/${encodeURIComponent(
-              activeOrder._id
-            )}/tracking`}
-            className="group flex items-center gap-3 w-full bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 active:scale-[0.99] transition-transform relative overflow-hidden"
-          >
+          <div className="w-full bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 relative overflow-hidden">
 
             <div className="absolute -right-8 -top-8 w-24 h-24 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none"/>
+
+            <Link
+              href={`/marketplace/orders/${encodeURIComponent(
+                activeOrder._id
+              )}/tracking`}
+              className="group flex items-center gap-3 w-full active:scale-[0.99] transition-transform relative"
+            >
 
             <div className="w-10 h-10 shrink-0 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg relative">
               🚚
@@ -978,7 +980,31 @@ width:`${Math.min(
 
             </div>
 
-          </Link>
+            </Link>
+
+            <div className="flex items-center justify-end gap-3 mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800 relative">
+
+              <Link
+                href="/marketplace/orders"
+                className="text-[10px] font-black text-zinc-500 dark:text-zinc-400 hover:text-yellow-500 transition-colors"
+              >
+                View All Orders
+              </Link>
+
+              <span className="text-zinc-300 dark:text-zinc-700">
+                •
+              </span>
+
+              <Link
+                href="/marketplace"
+                className="text-[10px] font-black text-yellow-600 dark:text-yellow-400"
+              >
+                Marketplace →
+              </Link>
+
+            </div>
+
+          </div>
         );
       }
 
