@@ -387,10 +387,10 @@ export default function Marketplace() {
               </p>
 
               <Link
-                href="#featured-deals"
+                href="/marketplace/seller"
                 className="inline-flex mt-4 bg-yellow-400 text-black px-4 py-2.5 rounded-xl text-xs font-black active:scale-95 transition"
               >
-                Explore deals →
+                Sell on AlphaBot →
               </Link>
 
             </div>
@@ -1122,46 +1122,7 @@ export default function Marketplace() {
         </section>
 
 
-        {/* SELLER CTA */}
 
-        <section className="mt-8">
-
-          <Link
-            href="/marketplace/seller"
-            className="block active:scale-[0.99] transition-transform"
-          >
-
-            <div className="rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4">
-
-              <div className="flex items-center gap-3">
-
-                <div className="w-10 h-10 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg">
-                  🏪
-                </div>
-
-                <div className="flex-1">
-
-                  <h3 className="text-sm font-black">
-                    Sell on AlphaBot
-                  </h3>
-
-                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
-                    List your products and reach AlphaBot users.
-                  </p>
-
-                </div>
-
-                <span className="text-lg">
-                  →
-                </span>
-
-              </div>
-
-            </div>
-
-          </Link>
-
-        </section>
 
 
 
