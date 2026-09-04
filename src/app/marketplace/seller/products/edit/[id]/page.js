@@ -33,6 +33,7 @@ export default function EditProductPage({ params }) {
     location: {
       state: "",
       exact: "",
+      addressCode: null,
     },
     attributes: {},
   });
@@ -106,6 +107,7 @@ export default function EditProductPage({ params }) {
           location: {
             state: product.location?.state || "",
             exact: product.location?.exact || "",
+            addressCode: product.location?.addressCode ?? null,
           },
           attributes: product.attributes || {},
         });
@@ -189,8 +191,49 @@ export default function EditProductPage({ params }) {
       return;
     }
 
+    if (!form.location?.state?.trim()) {
+      alert("Please select the product state.");
+      return;
+    }
+
+    if (!form.location?.exact?.trim()) {
+      alert("Please enter the product area or location.");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
+
+      const locationRes = await fetch(
+        "https://api.alphabothq.com/marketplace/orders/products/validate-location",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            state: form.location.state.trim(),
+            exact: form.location.exact.trim(),
+          }),
+        }
+      );
+
+      const locationData = await locationRes.json();
+
+      if (
+        !locationRes.ok ||
+        !locationData.success ||
+        !locationData.data?.addressCode
+      ) {
+        alert(
+          locationData.message ||
+            "We could not verify this product location with our shipping provider."
+        );
+        return;
+      }
+
+      const validatedLocation = locationData.data;
 
       const res = await fetch(
         `https://api.alphabothq.com/marketplace/products/${id}`,
@@ -215,7 +258,7 @@ export default function EditProductPage({ params }) {
               width: shippingWidth,
               height: shippingHeight,
             },
-            location: form.location,
+            location: validatedLocation,
             attributes: form.attributes,
           }),
         }
@@ -685,6 +728,7 @@ export default function EditProductPage({ params }) {
                     location: {
                       ...current.location,
                       state: e.target.value,
+                      addressCode: null,
                     },
                   }))
                 }
@@ -715,6 +759,7 @@ export default function EditProductPage({ params }) {
                     location: {
                       ...current.location,
                       exact: e.target.value,
+                      addressCode: null,
                     },
                   }))
                 }
