@@ -9,6 +9,7 @@ export default function CheckoutPage() {
 
   const [form, setForm] = useState({
     name: "",
+    email: "",
     phone: "",
     address: "",
     city: "",
@@ -263,6 +264,7 @@ export default function CheckoutPage() {
               serviceCode: selected.serviceCode,
               deliveryAddress: {
                 name: form.name,
+                email: form.email,
                 phone: form.phone,
                 address: form.address,
                 city: form.city,
@@ -575,6 +577,22 @@ export default function CheckoutPage() {
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
                   placeholder="Enter your full name"
+                  className="mt-2 w-full h-12 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400 transition"
+                />
+
+              </div>
+
+              <div>
+
+                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wide">
+                  Email address
+                </label>
+
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => updateField("email", e.target.value)}
+                  placeholder="you@example.com"
                   className="mt-2 w-full h-12 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400 transition"
                 />
 
