@@ -13,6 +13,7 @@ const [user,setUser]=useState(null);
 const [toast,setToast]=useState("");
 const [loading,setLoading]=useState(true);
 const [dashboardReady,setDashboardReady]=useState(false);
+const [marketplaceOrders,setMarketplaceOrders]=useState([]);
 const [showProfileHint,setShowProfileHint]=useState(true);
 
 useEffect(()=>{
@@ -117,6 +118,23 @@ window.location.href="/login";
 return;
 
 }
+
+fetch("https://api.alphabothq.com/marketplace/orders",{
+headers:{
+Authorization:`Bearer ${token}`
+},
+cache:"no-store"
+})
+.then(res=>res.json())
+.then(orderData=>{
+if(orderData && orderData.success && Array.isArray(orderData.orders)){
+setMarketplaceOrders(orderData.orders);
+}
+})
+.catch(error=>{
+console.error("MARKETPLACE ORDERS DASHBOARD ERROR:",error);
+})
+;
 
 
 if(saved){
@@ -884,46 +902,132 @@ width:`${Math.min(
 
   <section className="mt-3">
 
-    <Link
-      href="/marketplace"
-      className="group flex items-center gap-3 w-full bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 active:scale-[0.99] transition-transform relative overflow-hidden"
-    >
+    {(() => {
+      const activeOrder = marketplaceOrders.find((order) => {
+        const status = String(
+          order?.tracking?.status ||
+          order?.status ||
+          ""
+        ).toLowerCase();
 
-      <div className="absolute -right-8 -top-8 w-24 h-24 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none"/>
+        return ![
+          "completed",
+          "cancelled",
+          "refunded"
+        ].includes(status);
+      });
 
-      <div className="w-10 h-10 shrink-0 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg relative">
-        🛍️
-      </div>
+      if (activeOrder) {
+        const trackingStatus =
+          activeOrder?.tracking?.status ||
+          activeOrder?.status ||
+          "processing";
 
-      <div className="min-w-0 flex-1 relative">
+        const trackingLabel = String(trackingStatus)
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (char) => char.toUpperCase());
 
-        <div className="flex items-center gap-2">
-          <p className="text-[9px] font-black tracking-[0.16em] text-yellow-500 uppercase">
-            ALPHABOT
-          </p>
+        return (
+          <Link
+            href={`/marketplace/orders/${encodeURIComponent(
+              activeOrder._id
+            )}/tracking`}
+            className="group flex items-center gap-3 w-full bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 active:scale-[0.99] transition-transform relative overflow-hidden"
+          >
 
-          <span className="text-[8px] text-zinc-500">
-            NEW
-          </span>
-        </div>
+            <div className="absolute -right-8 -top-8 w-24 h-24 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none"/>
 
-        <h2 className="text-sm font-black truncate mt-0.5">
-          Marketplace
-        </h2>
+            <div className="w-10 h-10 shrink-0 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg relative">
+              🚚
+            </div>
 
-        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
-          Discover products, deals and more
-        </p>
+            <div className="min-w-0 flex-1 relative">
 
-      </div>
+              <div className="flex items-center gap-2">
+                <p className="text-[9px] font-black tracking-[0.16em] text-yellow-500 uppercase">
+                  MARKETPLACE
+                </p>
 
-      <div className="shrink-0 w-7 h-7 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-sm group-active:translate-x-0.5 transition-transform relative">
-        →
-      </div>
+                <span className="text-[8px] text-zinc-500">
+                  ORDER
+                </span>
+              </div>
 
-    </Link>
+              <h2 className="text-sm font-black truncate mt-0.5">
+                {activeOrder.productName}
+              </h2>
+
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
+                {trackingLabel}
+                {activeOrder.quantity
+                  ? ` • Qty ${activeOrder.quantity}`
+                  : ""}
+              </p>
+
+            </div>
+
+            <div className="shrink-0 flex items-center gap-1">
+
+              <span className="text-[10px] font-black text-yellow-600 dark:text-yellow-400">
+                Track
+              </span>
+
+              <div className="w-7 h-7 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-sm group-active:translate-x-0.5 transition-transform relative">
+                →
+              </div>
+
+            </div>
+
+          </Link>
+        );
+      }
+
+      return (
+        <Link
+          href="/marketplace"
+          className="group flex items-center gap-3 w-full bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 active:scale-[0.99] transition-transform relative overflow-hidden"
+        >
+
+          <div className="absolute -right-8 -top-8 w-24 h-24 bg-yellow-400/10 blur-3xl rounded-full pointer-events-none"/>
+
+          <div className="w-10 h-10 shrink-0 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-lg relative">
+            🛍️
+          </div>
+
+          <div className="min-w-0 flex-1 relative">
+
+            <div className="flex items-center gap-2">
+              <p className="text-[9px] font-black tracking-[0.16em] text-yellow-500 uppercase">
+                ALPHABOT
+              </p>
+
+              <span className="text-[8px] text-zinc-500">
+                NEW
+              </span>
+            </div>
+
+            <h2 className="text-sm font-black truncate mt-0.5">
+              Marketplace
+            </h2>
+
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
+              Discover products, deals and more
+            </p>
+
+          </div>
+
+          <div className="shrink-0 w-7 h-7 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-sm group-active:translate-x-0.5 transition-transform relative">
+            →
+          </div>
+
+        </Link>
+      );
+
+    })()}
 
   </section>
+
+
 
 {/* COMPETITIONS */}
 
