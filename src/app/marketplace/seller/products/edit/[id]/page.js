@@ -17,7 +17,8 @@ export default function EditProductPage({ params }) {
 
   const [form, setForm] = useState({
     name: "",
-    price: "",
+    originalPrice: "",
+    discountPrice: "",
     category: MARKETPLACE_CATEGORY_NAMES[0],
     image: "",
     description: "",
@@ -91,7 +92,8 @@ export default function EditProductPage({ params }) {
 
         setForm({
           name: product.name || "",
-          price: product.price ?? "",
+          originalPrice: product.originalPrice ?? product.price ?? "",
+          discountPrice: product.discountPrice ?? "",
           category: product.category || MARKETPLACE_CATEGORY_NAMES[0],
           image: product.image || "",
           description: product.description || "",
@@ -145,8 +147,43 @@ export default function EditProductPage({ params }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.price || !form.description) {
+    if (!form.name || !form.originalPrice || !form.description) {
       alert("Please complete the product details.");
+      return;
+    }
+
+    const numericOriginalPrice = Number(form.originalPrice);
+    const hasDiscountPrice =
+      form.discountPrice !== undefined &&
+      form.discountPrice !== null &&
+      String(form.discountPrice).trim() !== "";
+
+    const numericDiscountPrice = hasDiscountPrice
+      ? Number(form.discountPrice)
+      : null;
+
+    if (
+      !Number.isFinite(numericOriginalPrice) ||
+      numericOriginalPrice <= 0
+    ) {
+      alert("Please enter a valid original price greater than 0.");
+      return;
+    }
+
+    if (
+      hasDiscountPrice &&
+      (!Number.isFinite(numericDiscountPrice) ||
+        numericDiscountPrice <= 0)
+    ) {
+      alert("Please enter a valid discount price greater than 0.");
+      return;
+    }
+
+    if (
+      hasDiscountPrice &&
+      numericDiscountPrice >= numericOriginalPrice
+    ) {
+      alert("Discount price must be lower than the original price.");
       return;
     }
 
@@ -245,7 +282,10 @@ export default function EditProductPage({ params }) {
           },
           body: JSON.stringify({
             name: form.name.trim(),
-            price: Number(form.price),
+            originalPrice: numericOriginalPrice,
+            discountPrice: hasDiscountPrice
+              ? numericDiscountPrice
+              : null,
             category: form.category,
             image: form.image.trim(),
             description: form.description.trim(),
@@ -423,18 +463,56 @@ export default function EditProductPage({ params }) {
 
           <div>
             <label className="text-xs font-black">
-              Price
+              Original price
             </label>
 
             <input
-              value={form.price}
-              onChange={(e) => updateField("price", e.target.value)}
+              value={form.originalPrice}
+              onChange={(e) => updateField("originalPrice", e.target.value)}
+              placeholder="10000"
+              inputMode="numeric"
+              type="number"
+              min="1"
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-black">
+              Discount price <span className="opacity-50">(Optional)</span>
+            </label>
+
+            <input
+              value={form.discountPrice}
+              onChange={(e) => updateField("discountPrice", e.target.value)}
               placeholder="8500"
               inputMode="numeric"
               type="number"
-              min="0"
+              min="1"
               className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
             />
+
+            <p className="text-[10px] opacity-50 mt-2">
+              Leave this empty if you are not offering a discount. AlphaBot calculates the discount percentage automatically.
+            </p>
+
+            {Number(form.originalPrice) > 0 &&
+              Number(form.discountPrice) > 0 &&
+              Number(form.discountPrice) < Number(form.originalPrice) && (
+                <div className="mt-3 p-3 rounded-2xl bg-yellow-400/10 border border-yellow-400/20">
+                  <p className="text-xs font-black text-yellow-600 dark:text-yellow-400">
+                    -{Math.round(
+                      ((Number(form.originalPrice) -
+                        Number(form.discountPrice)) /
+                        Number(form.originalPrice)) *
+                        100
+                    )}% discount
+                  </p>
+                  <p className="text-[10px] opacity-60 mt-1">
+                    Customer pays ₦{Number(form.discountPrice).toLocaleString()}
+                  </p>
+                </div>
+              )}
           </div>
 
           <div>

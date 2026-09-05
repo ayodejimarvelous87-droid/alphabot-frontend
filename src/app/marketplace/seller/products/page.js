@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function SellerProductsPage() {
   const [mounted, setMounted] = useState(false);
   const [products, setProducts] = useState([]);
-  const [verified, setVerified] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState("loading");
 
   useEffect(() => {
     setMounted(true);
@@ -14,6 +14,7 @@ export default function SellerProductsPage() {
     const token = localStorage.getItem("token");
 
     if (!token) {
+      setVerificationStatus("unauthenticated");
       return;
     }
 
@@ -33,13 +34,13 @@ export default function SellerProductsPage() {
       })
       .then((data) => {
         if (data.products) {
-          setVerified(true);
+          setVerificationStatus("verified");
           setProducts(data.products);
         }
       })
       .catch((error) => {
         console.error("MARKETPLACE SELLER PRODUCTS ERROR:", error);
-        setVerified(false);
+        setVerificationStatus("error");
       });
   }, []);
 
@@ -87,8 +88,79 @@ export default function SellerProductsPage() {
     return null;
   }
 
-  if (!verified) {
+  if (verificationStatus === "loading") {
     return (
+      <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white flex items-center justify-center px-5">
+        <div className="text-center max-w-sm">
+          <div className="text-4xl">⏳</div>
+          <p className="text-[9px] font-black tracking-[0.2em] uppercase text-yellow-500 mt-5">
+            SELLER ACCESS
+          </p>
+          <h1 className="text-xl font-black mt-2">
+            Checking seller verification...
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-5">
+            Please wait while we verify your seller account.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (verificationStatus === "unauthenticated") {
+    return (
+      <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white flex items-center justify-center px-5">
+        <div className="text-center max-w-sm">
+          <div className="text-5xl">🔐</div>
+          <p className="text-[9px] font-black tracking-[0.2em] uppercase text-yellow-500 mt-5">
+            SELLER ACCESS
+          </p>
+          <h1 className="text-xl font-black mt-2">
+            Sign in required
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-5">
+            Please sign in to manage your marketplace products.
+          </p>
+          <Link
+            href="/login"
+            className="inline-flex mt-6 bg-yellow-400 text-black px-5 py-3 rounded-xl text-xs font-black"
+          >
+            Sign In
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (verificationStatus === "error") {
+    return (
+      <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white flex items-center justify-center px-5">
+        <div className="text-center max-w-sm">
+          <div className="text-5xl">⚠️</div>
+          <p className="text-[9px] font-black tracking-[0.2em] uppercase text-yellow-500 mt-5">
+            SELLER ACCESS
+          </p>
+          <h1 className="text-xl font-black mt-2">
+            Unable to verify seller account
+          </h1>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-5">
+            We could not confirm your seller status right now. Please try again.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="inline-flex mt-6 bg-yellow-400 text-black px-5 py-3 rounded-xl text-xs font-black"
+          >
+            Try Again
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  if (verificationStatus !== "verified") {
+    return (
+
       <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white flex items-center justify-center px-5">
 
         <div className="text-center max-w-sm">
@@ -291,9 +363,27 @@ export default function SellerProductsPage() {
                         {product.category}
                       </p>
 
-                      <p className="text-base font-black mt-2">
-                        ₦{Number(product.price || 0).toLocaleString()}
-                      </p>
+                      {Number(product.discountPercent || 0) > 0 &&
+                        Number(product.originalPrice || 0) >
+                          Number(product.price || 0) ? (
+                        <div className="flex items-center gap-2 flex-wrap mt-2">
+                          <span className="text-[10px] text-zinc-500 line-through">
+                            ₦{Number(product.originalPrice || 0).toLocaleString()}
+                          </span>
+
+                          <span className="text-base font-black">
+                            ₦{Number(product.price || 0).toLocaleString()}
+                          </span>
+
+                          <span className="px-1.5 py-0.5 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 text-[8px] font-black">
+                            -{Math.round(Number(product.discountPercent))}%
+                          </span>
+                        </div>
+                      ) : (
+                        <p className="text-base font-black mt-2">
+                          ₦{Number(product.price || 0).toLocaleString()}
+                        </p>
+                      )}
 
                     </div>
 

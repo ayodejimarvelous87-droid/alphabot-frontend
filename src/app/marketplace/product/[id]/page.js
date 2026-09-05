@@ -313,9 +313,26 @@ export default function ProductPage({ params }) {
             {product.name}
           </h1>
 
-          <p className="text-2xl font-black mt-3">
-            ₦{Number(product.price || 0).toLocaleString()}
-          </p>
+          {Number(product.discountPercent || 0) > 0 &&
+            Number(product.originalPrice || 0) > Number(product.price || 0) ? (
+              <div className="flex items-center gap-3 flex-wrap mt-3">
+                <span className="text-sm text-zinc-500 line-through">
+                  ₦{Number(product.originalPrice || 0).toLocaleString()}
+                </span>
+
+                <span className="text-2xl font-black">
+                  ₦{Number(product.price || 0).toLocaleString()}
+                </span>
+
+                <span className="px-2 py-1 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 text-[10px] font-black">
+                  -{Math.round(Number(product.discountPercent))}%
+                </span>
+              </div>
+            ) : (
+              <p className="text-2xl font-black mt-3">
+                ₦{Number(product.price || 0).toLocaleString()}
+              </p>
+            )}
 
           <div className="flex items-center gap-2 mt-2">
             {ratingSummary.ratingCount > 0 ? (

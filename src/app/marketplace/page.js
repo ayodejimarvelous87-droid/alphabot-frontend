@@ -54,6 +54,39 @@ function formatPrice(value) {
   })}`;
 }
 
+function ProductPrice({ product, className = "" }) {
+  const discountPercent = Number(product?.discountPercent || 0);
+  const hasDiscount =
+    discountPercent > 0 &&
+    Number(product?.originalPrice || 0) > Number(product?.price || 0);
+
+  if (!hasDiscount) {
+    return (
+      <p className={`text-sm font-black mt-2 ${className}`}>
+        {formatPrice(product?.price)}
+      </p>
+    );
+  }
+
+  return (
+    <div className={`mt-2 ${className}`}>
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-[10px] text-zinc-500 line-through">
+          {formatPrice(product.originalPrice)}
+        </span>
+
+        <span className="text-sm font-black">
+          {formatPrice(product.price)}
+        </span>
+
+        <span className="px-1.5 py-0.5 rounded-md bg-green-500/10 text-green-600 dark:text-green-400 text-[8px] font-black">
+          -{Math.round(discountPercent)}%
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function getProductImage(product) {
   return (
     product?.image ||
@@ -342,8 +375,12 @@ export default function Marketplace() {
       <header className="sticky top-0 z-40 bg-zinc-50/90 dark:bg-[#0b0b0b]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-3">
-            <Link href="/" className="px-3 py-2 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-[9px] font-black">
-              ← HOME
+            <Link
+              href="/"
+              aria-label="Go to AlphaBot Home"
+              className="w-10 h-10 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-lg active:scale-95 transition"
+            >
+              🏠
             </Link>
             <div className="text-center">
               <p className="text-[8px] font-black tracking-[0.2em] text-yellow-500">ALPHABOT</p>
@@ -378,9 +415,12 @@ export default function Marketplace() {
           </button>
 
           {showMarketplaceDashboard && (
-            <div className="grid grid-cols-2 gap-2 mt-2">
+            <div className="grid grid-cols-1 gap-2 mt-2">
               <Link href="/marketplace/cart" className="p-3 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-[10px] font-black">
                 🛒 My Cart
+              </Link>
+              <Link href="/marketplace/orders" className="p-3 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-[10px] font-black">
+                📦 My Orders
               </Link>
               <button
                 onClick={() => {
@@ -409,7 +449,7 @@ export default function Marketplace() {
               <Link href="/marketplace/faq" className="p-3 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-[10px] font-black">
                 ❓ FAQ
               </Link>
-              <Link href="/marketplace/help" className="col-span-2 p-3 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-[10px] font-black">
+              <Link href="/marketplace/help" className="p-3 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-[10px] font-black">
                 🆘 Help & Support
               </Link>
             </div>
@@ -507,8 +547,15 @@ export default function Marketplace() {
                   {filteredLocations.map((location) => (
                     <button
                       key={location.state}
-                      onClick={() => updateDraftFilter("Location", location.state)}
-                      className="w-full flex justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 text-left"
+                      onClick={() => {
+                        updateDraftFilter("Location", location.state);
+                        setLocationSearch(location.state);
+                      }}
+                      className={`w-full flex justify-between p-3 rounded-xl text-left border ${
+                        draftFilters.Location === location.state
+                          ? "bg-yellow-400 border-yellow-400 text-black"
+                          : "bg-zinc-50 dark:bg-zinc-900 border-transparent"
+                      }`}
                     >
                       <span className="text-xs font-bold">{location.state}</span>
                       <span className="text-[9px] text-zinc-500">{location.count} products</span>
@@ -622,7 +669,7 @@ export default function Marketplace() {
                   <img src={getProductImage(product)} alt={product.name} className="w-full h-32 object-cover" />
                   <div className="p-3">
                     <p className="text-xs font-bold truncate">{product.name}</p>
-                    <p className="text-sm font-black mt-2">{formatPrice(product.price)}</p>
+                    <ProductPrice product={product} />
                   </div>
                 </Link>
               ))}
@@ -658,7 +705,7 @@ export default function Marketplace() {
                     </div>
                     <div className="p-3">
                       <p className="text-xs font-bold truncate">{product.name}</p>
-                      <p className="text-sm font-black mt-2">{formatPrice(product.price)}</p>
+                      <ProductPrice product={product} />
                       <p className="text-[9px] text-zinc-500 mt-1">
                         {rating.count > 0 ? `★ ${rating.average.toFixed(1)} (${rating.count})` : "No ratings yet"}
                       </p>
@@ -698,7 +745,7 @@ export default function Marketplace() {
                     </div>
                     <div className="p-3">
                       <p className="text-xs font-bold truncate">{product.name}</p>
-                      <p className="text-sm font-black mt-2">{formatPrice(product.price)}</p>
+                      <ProductPrice product={product} />
                       <p className="text-[9px] text-zinc-500 mt-1">
                         {rating.count} {rating.count === 1 ? "rating" : "ratings"}
                       </p>
@@ -774,9 +821,7 @@ export default function Marketplace() {
                               {product.name}
                             </h4>
 
-                            <p className="text-sm font-black mt-2">
-                              {formatPrice(product.price)}
-                            </p>
+                            <ProductPrice product={product} />
 
                             <p className="text-[9px] text-zinc-500 mt-1">
                               {rating.count > 0

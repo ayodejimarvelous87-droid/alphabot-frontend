@@ -22,6 +22,12 @@ const MARKETPLACE_TO_SHIPBUBBLE_CATEGORY = {
 };
 
 
+const ATTRIBUTE_SUGGESTIONS = {
+  Condition: ["New", "Used", "Refurbished", "Open Box"],
+  Gender: ["Male", "Female"],
+};
+
+
 export default function AddProductPage() {
   const [mounted, setMounted] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -35,7 +41,8 @@ export default function AddProductPage() {
 
   const [form, setForm] = useState({
     name: "",
-    price: "",
+    originalPrice: "",
+    discountPrice: "",
     category: MARKETPLACE_CATEGORY_NAMES[0],
     image: "",
     images: Array(6).fill(null),
@@ -379,7 +386,7 @@ export default function AddProductPage() {
 
     if (
       !form.name ||
-      !form.price ||
+      !form.originalPrice ||
       !form.description ||
       Number(form.stock) < 1
     ) {
@@ -410,6 +417,41 @@ export default function AddProductPage() {
 
     if (uploadedImages.length < 3) {
       alert("Please upload at least 3 product images.");
+      return;
+    }
+
+    const numericOriginalPrice = Number(form.originalPrice);
+    const hasDiscountPrice =
+      form.discountPrice !== undefined &&
+      form.discountPrice !== null &&
+      String(form.discountPrice).trim() !== "";
+
+    const numericDiscountPrice = hasDiscountPrice
+      ? Number(form.discountPrice)
+      : null;
+
+    if (
+      !Number.isFinite(numericOriginalPrice) ||
+      numericOriginalPrice <= 0
+    ) {
+      alert("Please enter a valid original price greater than 0.");
+      return;
+    }
+
+    if (
+      hasDiscountPrice &&
+      (!Number.isFinite(numericDiscountPrice) ||
+        numericDiscountPrice <= 0)
+    ) {
+      alert("Please enter a valid discount price greater than 0.");
+      return;
+    }
+
+    if (
+      hasDiscountPrice &&
+      numericDiscountPrice >= numericOriginalPrice
+    ) {
+      alert("Discount price must be lower than the original price.");
       return;
     }
 
@@ -515,7 +557,10 @@ export default function AddProductPage() {
           },
           body: JSON.stringify({
             name: form.name.trim(),
-            price: Number(form.price),
+            originalPrice: numericOriginalPrice,
+            discountPrice: hasDiscountPrice
+              ? numericDiscountPrice
+              : null,
             category: form.category,
             image: uploadedImages[0]?.url || "",
             images: uploadedImages.map((image) => ({
@@ -695,27 +740,86 @@ export default function AddProductPage() {
             />
           </div>
 
-          <div>
-            <label className="text-xs font-black">
-              Price
-            </label>
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs font-black">
+                Original price
+              </label>
 
-            <input
-              value={form.price}
-              onChange={(e) => updateField("price", e.target.value)}
-              placeholder="8500"
-              inputMode="numeric"
-              type="number"
-              min="0"
-              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
-            />
+              <input
+                value={form.originalPrice}
+                onChange={(e) =>
+                  updateField("originalPrice", e.target.value)
+                }
+                placeholder="30000"
+                inputMode="numeric"
+                type="number"
+                min="0"
+                className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              />
+            </div>
 
-            {Number(form.price) > 0 && (() => {
+            <div>
+              <label className="text-xs font-black">
+                Discount price
+                <span className="ml-1 text-zinc-400 font-medium">
+                  (Optional)
+                </span>
+              </label>
+
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
+                Leave this empty if you are not offering a discount.
+              </p>
+
+              <input
+                value={form.discountPrice}
+                onChange={(e) =>
+                  updateField("discountPrice", e.target.value)
+                }
+                placeholder="25000"
+                inputMode="numeric"
+                type="number"
+                min="0"
+                className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              />
+            </div>
+
+            {Number(form.originalPrice) > 0 &&
+              Number(form.discountPrice) > 0 &&
+              Number(form.discountPrice) < Number(form.originalPrice) && (
+                <div className="rounded-2xl bg-yellow-50 dark:bg-yellow-400/10 border border-yellow-200 dark:border-yellow-400/20 px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Customer discount
+                    </span>
+                    <span className="text-sm font-black text-yellow-600 dark:text-yellow-400">
+                      -{Math.round(
+                        ((Number(form.originalPrice) -
+                          Number(form.discountPrice)) /
+                          Number(form.originalPrice)) *
+                          100
+                      )}%
+                    </span>
+                  </div>
+                </div>
+              )}
+
+            {(() => {
+              const effectivePrice =
+                Number(form.discountPrice) > 0 &&
+                Number(form.discountPrice) < Number(form.originalPrice)
+                  ? Number(form.discountPrice)
+                  : Number(form.originalPrice);
+
+              if (!Number.isFinite(effectivePrice) || effectivePrice <= 0) {
+                return null;
+              }
+
               const { rate, fee, sellerReceives } =
-                calculateMarketplaceFee(form.price);
+                calculateMarketplaceFee(effectivePrice);
 
               return (
-                <div className="mt-2 rounded-2xl bg-zinc-50 dark:bg-[#111111] border border-zinc-200 dark:border-zinc-800 px-4 py-3 space-y-1">
+                <div className="rounded-2xl bg-zinc-50 dark:bg-[#111111] border border-zinc-200 dark:border-zinc-800 px-4 py-3 space-y-1">
                   <div className="flex justify-between text-xs">
                     <span className="text-zinc-500 dark:text-zinc-400">
                       AlphaBot fee ({rate}%)
@@ -935,24 +1039,54 @@ export default function AddProductPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                {categoryFilters.map((filterName) => (
-                  <div key={filterName}>
+                {categoryFilters.map((filterName) => {
+                  const suggestions = ATTRIBUTE_SUGGESTIONS[filterName];
 
-                    <label className="text-xs font-black">
-                      {filterName}
-                    </label>
+                  return (
+                    <div key={filterName}>
 
-                    <input
-                      value={form.attributes?.[filterName] || ""}
-                      onChange={(e) =>
-                        updateAttribute(filterName, e.target.value)
-                      }
-                      placeholder={`Enter ${filterName.toLowerCase()}`}
-                      className="mt-2 w-full h-11 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
-                    />
+                      <label className="text-xs font-black">
+                        {filterName}
+                      </label>
 
-                  </div>
-                ))}
+                      {suggestions ? (
+                        <div className="mt-2 grid grid-cols-2 gap-2">
+                          {suggestions.map((option) => {
+                            const selected =
+                              form.attributes?.[filterName] === option;
+
+                            return (
+                              <button
+                                key={option}
+                                type="button"
+                                onClick={() =>
+                                  updateAttribute(filterName, option)
+                                }
+                                className={`h-11 rounded-xl border px-3 text-xs font-bold text-left transition active:scale-[0.98] ${
+                                  selected
+                                    ? "bg-yellow-400 border-yellow-400 text-black"
+                                    : "bg-white dark:bg-[#151515] border-zinc-200 dark:border-zinc-800"
+                                }`}
+                              >
+                                {option}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <input
+                          value={form.attributes?.[filterName] || ""}
+                          onChange={(e) =>
+                            updateAttribute(filterName, e.target.value)
+                          }
+                          placeholder={`Enter ${filterName.toLowerCase()}`}
+                          className="mt-2 w-full h-11 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                        />
+                      )}
+
+                    </div>
+                  );
+                })}
 
               </div>
 
