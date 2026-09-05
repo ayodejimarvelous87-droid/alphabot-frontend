@@ -22,6 +22,10 @@ const categoryIcons = {
   Food: "🍔",
   "Medical Supplies": "🩺",
   Groceries: "🛒",
+  "Kitchen & Dining": "🍳",
+  "Auto & Mobility": "🚗",
+  "Work, Gaming & Lifestyle": "🎮",
+  "Sports, Fitness & Outdoors": "🏃",
 };
 
 const promoCards = [

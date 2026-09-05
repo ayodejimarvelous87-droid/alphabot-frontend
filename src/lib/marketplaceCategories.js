@@ -39,6 +39,22 @@ export const MARKETPLACE_CATEGORIES = [
     name: "Groceries",
     filters: ["Price", "Type", "Brand", "Condition"],
   },
+  {
+    name: "Kitchen & Dining",
+    filters: ["Price", "Type", "Material", "Brand", "Condition"],
+  },
+  {
+    name: "Auto & Mobility",
+    filters: ["Price", "Type", "Brand", "Condition"],
+  },
+  {
+    name: "Work, Gaming & Lifestyle",
+    filters: ["Price", "Type", "Brand", "Condition"],
+  },
+  {
+    name: "Sports, Fitness & Outdoors",
+    filters: ["Price", "Type", "Brand", "Condition"],
+  },
 ];
 
 export const MARKETPLACE_CATEGORY_NAMES =
