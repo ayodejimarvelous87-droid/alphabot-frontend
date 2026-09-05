@@ -404,7 +404,14 @@ export default function AdminMarketplaceProducts() {
 
                   </div>
 
-                  <div className="border-t border-zinc-800 p-3">
+                  <div className="border-t border-zinc-800 p-3 flex flex-col gap-2">
+
+                    <Link
+                      href={`/admin/marketplace/products/edit/${product._id}`}
+                      className="w-full h-10 rounded-xl bg-yellow-400 text-black flex items-center justify-center text-xs font-black active:scale-95 transition"
+                    >
+                      Edit product
+                    </Link>
 
                     <button
                       type="button"

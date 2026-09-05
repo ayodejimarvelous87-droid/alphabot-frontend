@@ -1,0 +1,846 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  MARKETPLACE_CATEGORY_NAMES,
+  getMarketplaceCategory,
+} from "@/lib/marketplaceCategories";
+import { NIGERIA_STATES } from "@/lib/nigeriaStates";
+import { SHIPBUBBLE_PACKAGE_CATEGORIES } from "@/lib/shipbubbleCategories";
+
+export default function EditProductPage({ params }) {
+  const { id } = use(params);
+  const [mounted, setMounted] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    name: "",
+    originalPrice: "",
+    discountPrice: "",
+    category: MARKETPLACE_CATEGORY_NAMES[0],
+    image: "",
+    description: "",
+    stock: 0,
+    deliveryDays: "",
+    shipping: {
+      categoryId: "",
+      weight: "",
+      length: "",
+      width: "",
+      height: "",
+    },
+    location: {
+      state: "",
+      exact: "",
+      addressCode: null,
+    },
+    attributes: {},
+  });
+
+  const selectedCategoryConfig = getMarketplaceCategory(form.category);
+
+  const categoryFilters =
+    selectedCategoryConfig?.filters?.filter(
+      (filter) => filter !== "Price"
+    ) || [];
+
+  const updateAttribute = (name, value) => {
+    setForm((current) => ({
+      ...current,
+      attributes: {
+        ...current.attributes,
+        [name]: value,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    setMounted(true);
+
+    const token = localStorage.getItem("adminToken");
+
+    if (!token) {
+      return;
+    }
+
+    fetch("https://api.alphabothq.com/admin/marketplace/products", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(
+            data.message || "Unable to load marketplace products."
+          );
+        }
+
+        return data;
+      })
+      .then((data) => {
+        const product = (data.products || []).find(
+          (item) => String(item._id) === String(id)
+        );
+
+        if (!product) {
+          throw new Error("Product not found.");
+        }
+
+        setForm({
+          name: product.name || "",
+          originalPrice: product.originalPrice ?? product.price ?? "",
+          discountPrice: product.discountPrice ?? "",
+          category: product.category || MARKETPLACE_CATEGORY_NAMES[0],
+          image: product.image || "",
+          description: product.description || "",
+          stock: product.stock ?? 0,
+          deliveryDays: product.deliveryDays ?? "",
+          shipping: {
+            categoryId: product.shipping?.categoryId ?? "",
+            weight: product.shipping?.weight ?? "",
+            length: product.shipping?.length ?? "",
+            width: product.shipping?.width ?? "",
+            height: product.shipping?.height ?? "",
+          },
+          location: {
+            state: product.location?.state || "",
+            exact: product.location?.exact || "",
+            addressCode: product.location?.addressCode ?? null,
+          },
+          attributes: product.attributes || {},
+        });
+
+        setLoaded(true);
+      })
+      .catch((error) => {
+        console.error("LOAD ADMIN MARKETPLACE EDIT PRODUCT ERROR:", error);
+        setLoaded(false);
+      });
+  }, [id]);
+
+
+  const updateField = (field, value) => {
+    setForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.name || !form.originalPrice || !form.description) {
+      alert("Please complete the product details.");
+      return;
+    }
+
+    const numericOriginalPrice = Number(form.originalPrice);
+    const hasDiscountPrice =
+      form.discountPrice !== undefined &&
+      form.discountPrice !== null &&
+      String(form.discountPrice).trim() !== "";
+
+    const numericDiscountPrice = hasDiscountPrice
+      ? Number(form.discountPrice)
+      : null;
+
+    if (
+      !Number.isFinite(numericOriginalPrice) ||
+      numericOriginalPrice <= 0
+    ) {
+      alert("Please enter a valid original price greater than 0.");
+      return;
+    }
+
+    if (
+      hasDiscountPrice &&
+      (!Number.isFinite(numericDiscountPrice) ||
+        numericDiscountPrice <= 0)
+    ) {
+      alert("Please enter a valid discount price greater than 0.");
+      return;
+    }
+
+    if (
+      hasDiscountPrice &&
+      numericDiscountPrice >= numericOriginalPrice
+    ) {
+      alert("Discount price must be lower than the original price.");
+      return;
+    }
+
+    const numericDeliveryDays = Number(form.deliveryDays);
+
+    if (
+      !Number.isInteger(numericDeliveryDays) ||
+      numericDeliveryDays < 1
+    ) {
+      alert("Please enter a valid preparation time in whole days.");
+      return;
+    }
+
+    const shippingCategoryId = Number(form.shipping.categoryId);
+    const shippingWeight = Number(form.shipping.weight);
+    const shippingLength = Number(form.shipping.length);
+    const shippingWidth = Number(form.shipping.width);
+    const shippingHeight = Number(form.shipping.height);
+
+    if (!Number.isInteger(shippingCategoryId) || shippingCategoryId < 1) {
+      alert("Please select a shipping category.");
+      return;
+    }
+
+    if (!Number.isFinite(shippingWeight) || shippingWeight <= 0) {
+      alert("Please enter a valid product weight greater than 0 kg.");
+      return;
+    }
+
+    if (!Number.isFinite(shippingLength) || shippingLength <= 0) {
+      alert("Please enter a valid package length greater than 0 cm.");
+      return;
+    }
+
+    if (!Number.isFinite(shippingWidth) || shippingWidth <= 0) {
+      alert("Please enter a valid package width greater than 0 cm.");
+      return;
+    }
+
+    if (!Number.isFinite(shippingHeight) || shippingHeight <= 0) {
+      alert("Please enter a valid package height greater than 0 cm.");
+      return;
+    }
+
+    if (!form.location?.state?.trim()) {
+      alert("Please select the product state.");
+      return;
+    }
+
+    if (!form.location?.exact?.trim()) {
+      alert("Please enter the product area or location.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      const token = localStorage.getItem("adminToken");
+
+      if (!token) {
+        alert("Admin session expired. Please log in again.");
+        return;
+      }
+
+      const res = await fetch(
+        `https://api.alphabothq.com/admin/marketplace/products/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            originalPrice: numericOriginalPrice,
+            discountPrice: hasDiscountPrice
+              ? numericDiscountPrice
+              : null,
+            category: form.category,
+            image: form.image.trim(),
+            description: form.description.trim(),
+            stock: Number(form.stock),
+            deliveryDays: Number(form.deliveryDays),
+            shipping: {
+              categoryId: shippingCategoryId,
+              weight: shippingWeight,
+              length: shippingLength,
+              width: shippingWidth,
+              height: shippingHeight,
+            },
+            location: {
+              state: form.location.state.trim(),
+              exact: form.location.exact.trim(),
+              addressCode: Number(form.location.addressCode),
+            },
+            attributes: form.attributes,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        alert(data.message || "Failed to update product.");
+        return;
+      }
+
+      alert("Product updated successfully. The product remains LIVE.");
+
+      window.location.href = "/admin/marketplace/products";
+    } catch (error) {
+      console.error("ADMIN UPDATE MARKETPLACE PRODUCT ERROR:", error);
+      alert("Unable to update product. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+
+  };
+
+  if (!mounted) {
+    return null;
+  }
+
+  if (!loaded) {
+    return (
+      <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white flex items-center justify-center px-5">
+        <div className="text-center max-w-sm">
+          <div className="text-5xl">📦</div>
+
+          <p className="text-[9px] font-black tracking-[0.2em] uppercase text-yellow-500 mt-5">
+            ADMIN MARKETPLACE
+          </p>
+
+          <h1 className="text-xl font-black mt-2">
+            Product unavailable
+          </h1>
+
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-5">
+            We could not load this marketplace product.
+          </p>
+
+          <Link
+            href="/admin/marketplace/products"
+            className="inline-flex mt-5 bg-yellow-400 text-black px-5 py-3 rounded-xl text-xs font-black active:scale-[0.98] transition"
+          >
+            Back to Products
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+
+  return (
+    <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white pb-12">
+
+      <header className="sticky top-0 z-40 bg-zinc-50/90 dark:bg-[#0b0b0b]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800">
+
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
+
+          <Link
+            href="/admin/marketplace/products"
+            className="w-9 h-9 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 flex items-center justify-center active:scale-95 transition"
+          >
+            ←
+          </Link>
+
+          <div className="flex-1">
+
+            <p className="text-[8px] font-black tracking-[0.18em] uppercase text-yellow-500">
+              ADMIN • MARKETPLACE
+            </p>
+
+            <h1 className="font-black text-sm">
+              Edit Live Product
+            </h1>
+
+          </div>
+
+          <Link
+            href="/admin/marketplace/products"
+            className="text-[10px] font-black text-zinc-500"
+          >
+            All products
+          </Link>
+
+        </div>
+
+      </header>
+
+      <div className="max-w-2xl mx-auto px-4">
+
+        {/* ADMIN STATUS */}
+
+        <section className="mt-5 rounded-3xl bg-zinc-950 dark:bg-white text-white dark:text-black p-5">
+
+          <div className="flex items-center justify-between gap-3">
+
+            <div>
+
+              <p className="text-[9px] font-black tracking-[0.18em] uppercase text-yellow-400 dark:text-yellow-600">
+                ADMIN PRODUCT MANAGEMENT
+              </p>
+
+              <h2 className="text-xl font-black mt-2">
+                Live marketplace listing
+              </h2>
+
+            </div>
+
+            <div className="w-11 h-11 rounded-2xl bg-green-500 text-white flex items-center justify-center text-xl">
+              ✓
+            </div>
+
+          </div>
+
+          <p className="text-xs opacity-60 mt-2 leading-5">
+            You are editing this product as an administrator. Saving changes keeps the product approved and live.
+          </p>
+
+        </section>
+
+        {/* PRODUCT FORM */}
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+
+          <div>
+            <label className="text-xs font-black">
+              Product name
+            </label>
+
+            <input
+              value={form.name}
+              onChange={(e) => updateField("name", e.target.value)}
+              placeholder="e.g. Wireless Headphones"
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-black">
+              Original price
+            </label>
+
+            <input
+              value={form.originalPrice}
+              onChange={(e) => updateField("originalPrice", e.target.value)}
+              placeholder="10000"
+              inputMode="numeric"
+              type="number"
+              min="1"
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-black">
+              Discount price <span className="opacity-50">(Optional)</span>
+            </label>
+
+            <input
+              value={form.discountPrice}
+              onChange={(e) => updateField("discountPrice", e.target.value)}
+              placeholder="8500"
+              inputMode="numeric"
+              type="number"
+              min="1"
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+
+            <p className="text-[10px] opacity-50 mt-2">
+              Leave this empty if you are not offering a discount. AlphaBot calculates the discount percentage automatically.
+            </p>
+
+            {Number(form.originalPrice) > 0 &&
+              Number(form.discountPrice) > 0 &&
+              Number(form.discountPrice) < Number(form.originalPrice) && (
+                <div className="mt-3 p-3 rounded-2xl bg-yellow-400/10 border border-yellow-400/20">
+                  <p className="text-xs font-black text-yellow-600 dark:text-yellow-400">
+                    -{Math.round(
+                      ((Number(form.originalPrice) -
+                        Number(form.discountPrice)) /
+                        Number(form.originalPrice)) *
+                        100
+                    )}% discount
+                  </p>
+                  <p className="text-[10px] opacity-60 mt-1">
+                    Customer pays ₦{Number(form.discountPrice).toLocaleString()}
+                  </p>
+                </div>
+              )}
+          </div>
+
+          <div>
+            <label className="text-xs font-black">
+              Category
+            </label>
+
+            <select
+              value={form.category}
+              onChange={(e) => updateField("category", e.target.value)}
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            >
+              {MARKETPLACE_CATEGORY_NAMES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {categoryFilters.length > 0 && (
+            <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#111111] p-4">
+
+              <div className="mb-4">
+                <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                  PRODUCT DETAILS
+                </p>
+
+                <h3 className="text-sm font-black mt-1">
+                  {form.category} details
+                </h3>
+
+                <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-1">
+                  Update details to help buyers find your product.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                {categoryFilters.map((filterName) => (
+                  <div key={filterName}>
+
+                    <label className="text-xs font-black">
+                      {filterName}
+                    </label>
+
+                    <input
+                      value={form.attributes?.[filterName] || ""}
+                      onChange={(e) =>
+                        updateAttribute(filterName, e.target.value)
+                      }
+                      placeholder={`Enter ${filterName.toLowerCase()}`}
+                      className="mt-2 w-full h-11 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                    />
+
+                  </div>
+                ))}
+
+              </div>
+
+            </div>
+          )}
+
+          <div>
+            <label className="text-xs font-black">
+              Product image URL
+            </label>
+
+            <input
+              value={form.image}
+              onChange={(e) => updateField("image", e.target.value)}
+              placeholder="https://..."
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+
+            <p className="text-[9px] text-zinc-500 mt-2">
+              Image upload/storage can be connected later.
+            </p>
+          </div>
+
+          <div>
+            <label className="text-xs font-black">
+              Stock
+            </label>
+
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={form.stock}
+              onChange={(e) => updateField("stock", e.target.value)}
+              placeholder="Enter available stock"
+              inputMode="numeric"
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-black">
+              Preparation time
+            </label>
+
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
+              How many days do you need to prepare this product before handing it to the courier?
+            </p>
+
+            <input
+              value={form.deliveryDays}
+              onChange={(e) =>
+                updateField("deliveryDays", e.target.value)
+              }
+              placeholder="e.g. 2"
+              inputMode="numeric"
+              type="number"
+              min="1"
+              step="1"
+              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+            />
+          </div>
+
+          {/* SHIPPING */}
+
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#151515] p-4">
+
+            <div className="mb-4">
+              <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                SHIPPING INFORMATION
+              </p>
+
+              <h3 className="text-sm font-black mt-1">
+                Package details
+              </h3>
+
+              <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-1">
+                Enter the actual package details. These are used to calculate live courier delivery fees.
+              </p>
+            </div>
+
+            <div>
+              <label className="text-xs font-black">
+                Shipping category
+              </label>
+
+              <select
+                value={form.shipping.categoryId}
+                onChange={(e) =>
+                  setForm((current) => ({
+                    ...current,
+                    shipping: {
+                      ...current.shipping,
+                      categoryId: e.target.value,
+                    },
+                  }))
+                }
+                className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              >
+                <option value="">
+                  Select shipping category
+                </option>
+
+                {SHIPBUBBLE_PACKAGE_CATEGORIES.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mt-4">
+              <label className="text-xs font-black">
+                Weight per unit (kg)
+              </label>
+
+              <input
+                value={form.shipping.weight}
+                onChange={(e) =>
+                  setForm((current) => ({
+                    ...current,
+                    shipping: {
+                      ...current.shipping,
+                      weight: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="e.g. 1.5"
+                inputMode="decimal"
+                type="number"
+                min="0.01"
+                step="0.01"
+                className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              />
+            </div>
+
+            <div className="mt-4">
+              <label className="text-xs font-black">
+                Package dimensions (cm)
+              </label>
+
+              <div className="grid grid-cols-3 gap-2 mt-2">
+
+                <input
+                  value={form.shipping.length}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      shipping: {
+                        ...current.shipping,
+                        length: e.target.value,
+                      },
+                    }))
+                  }
+                  placeholder="Length"
+                  inputMode="decimal"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                />
+
+                <input
+                  value={form.shipping.width}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      shipping: {
+                        ...current.shipping,
+                        width: e.target.value,
+                      },
+                    }))
+                  }
+                  placeholder="Width"
+                  inputMode="decimal"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                />
+
+                <input
+                  value={form.shipping.height}
+                  onChange={(e) =>
+                    setForm((current) => ({
+                      ...current,
+                      shipping: {
+                        ...current.shipping,
+                        height: e.target.value,
+                      },
+                    }))
+                  }
+                  placeholder="Height"
+                  inputMode="decimal"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  className="w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-xs outline-none focus:border-yellow-400"
+                />
+
+              </div>
+            </div>
+
+          </div>
+
+          {/* LOCATION */}
+
+          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#151515] p-4">
+
+            <div className="mb-4">
+              <p className="text-[9px] font-black tracking-[0.16em] uppercase text-yellow-500">
+                LOCATION
+              </p>
+
+              <h3 className="text-sm font-black mt-1">
+                Where is this product located?
+              </h3>
+
+              <p className="text-[9px] text-zinc-500 dark:text-zinc-400 mt-1">
+                Buyers can use the state to find products near them.
+              </p>
+            </div>
+
+            <div>
+              <label className="text-xs font-black">
+                State
+              </label>
+
+              <select
+                value={form.location?.state || ""}
+                onChange={(e) =>
+                  setForm((current) => ({
+                    ...current,
+                    location: {
+                      ...current.location,
+                      state: e.target.value,
+                      addressCode: null,
+                    },
+                  }))
+                }
+                className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              >
+                <option value="">
+                  Select state
+                </option>
+
+                {NIGERIA_STATES.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mt-4">
+              <label className="text-xs font-black">
+                Exact location
+              </label>
+
+              <input
+                value={form.location?.exact || ""}
+                onChange={(e) =>
+                  setForm((current) => ({
+                    ...current,
+                    location: {
+                      ...current.location,
+                      exact: e.target.value,
+                      addressCode: null,
+                    },
+                  }))
+                }
+                placeholder="e.g. Ikeja, Allen Avenue"
+                className="mt-2 w-full h-12 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+              />
+
+              <p className="text-[9px] text-zinc-500 mt-2">
+                Enter the area, street or other useful location details.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div>
+            <label className="text-xs font-black">
+              Product description
+            </label>
+
+            <textarea
+              value={form.description}
+              onChange={(e) => updateField("description", e.target.value)}
+              placeholder="Describe your product..."
+              rows={5}
+              className="mt-2 w-full rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4 text-sm outline-none focus:border-yellow-400 resize-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full h-12 rounded-2xl bg-yellow-400 text-black text-xs font-black active:scale-[0.98] transition disabled:opacity-50"
+            disabled={saving}
+          >
+            {saving ? "Saving changes..." : "Save changes →"}
+          </button>
+
+        </form>
+
+        {/* ADMIN NOTICE */}
+
+        <section className="mt-6 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4">
+
+          <p className="text-xs font-black">
+            🛡️ Admin control
+          </p>
+
+          <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 leading-5">
+            Changes made here are saved directly to the marketplace product. Approved products remain live unless an administrator removes or rejects them.
+          </p>
+
+        </section>
+
+      </div>
+
+    </main>
+  );
+}
