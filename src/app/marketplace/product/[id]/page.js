@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
+import MarketplaceWishlistButton from "@/components/MarketplaceWishlistButton";
 
 export default function ProductPage({ params }) {
   const { id } = use(params);
@@ -464,7 +465,12 @@ export default function ProductPage({ params }) {
 
         {/* ACTIONS */}
 
-        <section className="mt-6 grid grid-cols-2 gap-3">
+        <section className="mt-6 grid grid-cols-[auto_1fr_1fr] gap-3">
+
+          <MarketplaceWishlistButton
+            productId={product?._id}
+            className="h-12 w-12"
+          />
 
           <button
             onClick={addToCart}

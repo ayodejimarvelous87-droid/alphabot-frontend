@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import MarketplaceWishlistButton from "@/components/MarketplaceWishlistButton";
 import {
   MARKETPLACE_CATEGORIES,
   getMarketplaceCategory,
@@ -114,6 +115,7 @@ export default function Marketplace() {
   const [popularProducts, setPopularProducts] = useState([]);
   const [topRatedProducts, setTopRatedProducts] = useState([]);
   const [recentlyViewedProducts, setRecentlyViewedProducts] = useState([]);
+  const [wishlistProductIds, setWishlistProductIds] = useState(new Set());
 
   const [mounted, setMounted] = useState(false);
 
@@ -138,6 +140,37 @@ export default function Marketplace() {
     const loadMarketplace = async () => {
       try {
         const token = localStorage.getItem("token");
+
+        if (token) {
+          try {
+            const response = await fetch(
+              `${API_BASE}/marketplace/wishlist`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (response.ok) {
+              const data = await response.json().catch(() => ({}));
+
+              setWishlistProductIds(
+                new Set(
+                  Array.isArray(data.products)
+                    ? data.products
+                        .map((item) => item.product?._id)
+                        .filter(Boolean)
+                    : []
+                )
+              );
+            }
+          } catch (error) {
+            console.error("MARKETPLACE WISHLIST LOAD ERROR:", error);
+          }
+        } else {
+          setWishlistProductIds(new Set());
+        }
 
         const requests = [
           fetch(`${API_BASE}/marketplace`),
@@ -422,6 +455,9 @@ export default function Marketplace() {
               <Link href="/marketplace/orders" className="p-3 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-[10px] font-black">
                 📦 My Orders
               </Link>
+              <Link href="/marketplace/wishlist" className="p-3 rounded-xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 text-[10px] font-black">
+                ❤️ Wishlist
+              </Link>
               <button
                 onClick={() => {
                   document.getElementById("marketplace-categories")?.scrollIntoView({ behavior: "smooth" });
@@ -667,6 +703,21 @@ export default function Marketplace() {
                   className="min-w-[165px] rounded-2xl overflow-hidden bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800"
                 >
                   <img src={getProductImage(product)} alt={product.name} className="w-full h-32 object-cover" />
+          <div className="absolute top-2 right-2">
+            <MarketplaceWishlistButton
+              productId={product._id}
+              initialWishlisted={wishlistProductIds.has(product._id)}
+              className="w-9 h-9"
+              onChange={(next) => {
+                setWishlistProductIds((current) => {
+                  const updated = new Set(current);
+                  if (next) updated.add(product._id);
+                  else updated.delete(product._id);
+                  return updated;
+                });
+              }}
+            />
+          </div>
                   <div className="p-3">
                     <p className="text-xs font-bold truncate">{product.name}</p>
                     <ProductPrice product={product} />
