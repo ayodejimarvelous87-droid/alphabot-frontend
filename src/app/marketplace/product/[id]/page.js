@@ -9,6 +9,7 @@ export default function ProductPage({ params }) {
 
   const [mounted, setMounted] = useState(false);
   const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState("");
   const [ratingSummary, setRatingSummary] = useState({
     averageRating: 0,
     ratingCount: 0,
@@ -27,6 +28,13 @@ export default function ProductPage({ params }) {
       .then((data) => {
         if (data.success && data.product) {
           setProduct(data.product);
+
+          const firstImage =
+            data.product.image ||
+            data.product.images?.[0]?.url ||
+            "";
+
+          setSelectedImage(firstImage);
         }
       })
       .catch((error) => {
@@ -249,7 +257,7 @@ export default function ProductPage({ params }) {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white pb-10">
+    <main className="min-h-screen overflow-x-hidden bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white pb-10">
 
       {/* HEADER */}
 
@@ -285,11 +293,11 @@ export default function ProductPage({ params }) {
 
           <div className="h-72 rounded-3xl bg-zinc-100 dark:bg-zinc-900 overflow-hidden flex items-center justify-center">
 
-            {product.image ? (
+            {selectedImage ? (
               <img
-                src={product.image}
+                src={selectedImage}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             ) : (
               <span className="text-8xl">
@@ -298,6 +306,44 @@ export default function ProductPage({ params }) {
             )}
 
           </div>
+
+          {Array.isArray(product.images) &&
+            product.images.length > 1 && (
+              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                {product.images.map((image, index) => {
+                  const imageUrl =
+                    typeof image === "string"
+                      ? image
+                      : image?.url;
+
+                  if (!imageUrl) {
+                    return null;
+                  }
+
+                  const active =
+                    selectedImage === imageUrl;
+
+                  return (
+                    <button
+                      key={`${imageUrl}-${index}`}
+                      type="button"
+                      onClick={() => setSelectedImage(imageUrl)}
+                      className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 ${
+                        active
+                          ? "border-yellow-400"
+                          : "border-zinc-200 dark:border-zinc-800"
+                      }`}
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`${product.name} ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
         </section>
 
@@ -310,7 +356,7 @@ export default function ProductPage({ params }) {
             {product.category}
           </p>
 
-          <h1 className="text-2xl font-black mt-2">
+          <h1 className="text-2xl font-black mt-2 break-words [overflow-wrap:anywhere]">
             {product.name}
           </h1>
 
@@ -384,7 +430,7 @@ export default function ProductPage({ params }) {
             Description
           </h2>
 
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-6 mt-2">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-6 mt-2 break-words [overflow-wrap:anywhere]">
             {product.description || "No description provided."}
           </p>
 
