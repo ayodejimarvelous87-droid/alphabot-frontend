@@ -8,6 +8,15 @@ export default function ProductPage({ params }) {
 
   const [mounted, setMounted] = useState(false);
   const [product, setProduct] = useState(null);
+  const [ratingSummary, setRatingSummary] = useState({
+    averageRating: 0,
+    ratingCount: 0,
+  });
+  const [followSummary, setFollowSummary] = useState({
+    followerCount: 0,
+    isFollowing: false,
+  });
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -22,7 +31,130 @@ export default function ProductPage({ params }) {
       .catch((error) => {
         console.error("Marketplace product error:", error);
       });
+
+    fetch(`https://api.alphabothq.com/marketplace/ratings/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setRatingSummary({
+            averageRating: Number(data.averageRating || 0),
+            ratingCount: Number(data.ratingCount || 0),
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Marketplace product rating error:", error);
+      });
   }, [id]);
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+
+    const viewKey = `marketplace-view-${id}`;
+    const lastViewed = Number(sessionStorage.getItem(viewKey) || 0);
+
+    if (Date.now() - lastViewed < 30000) {
+      return;
+    }
+
+    sessionStorage.setItem(viewKey, String(Date.now()));
+
+    const token = localStorage.getItem("token");
+
+    fetch(`https://api.alphabothq.com/marketplace/views/${encodeURIComponent(id)}`, {
+      method: "POST",
+      headers: token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : undefined,
+      cache: "no-store",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.success) {
+          console.error("Marketplace product view tracking failed:", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Marketplace product view error:", error);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    const sellerId = product?.seller?._id;
+
+    if (!sellerId) {
+      return;
+    }
+
+    fetch(
+      `https://api.alphabothq.com/marketplace/follows/seller/${sellerId}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setFollowSummary({
+            followerCount: Number(data.followerCount || 0),
+            isFollowing: Boolean(data.isFollowing),
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Marketplace seller follow error:", error);
+      });
+  }, [product?.seller?._id]);
+
+  const toggleFollow = async () => {
+    const sellerId = product?.seller?._id;
+
+    if (!sellerId || followLoading) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please log in to follow this seller.");
+      return;
+    }
+
+    try {
+      setFollowLoading(true);
+
+      const method = followSummary.isFollowing ? "DELETE" : "POST";
+
+      const response = await fetch(
+        `https://api.alphabothq.com/marketplace/follows/seller/${sellerId}`,
+        {
+          method,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "Unable to update seller follow status."
+        );
+      }
+
+      setFollowSummary({
+        followerCount: Number(data.followerCount || 0),
+        isFollowing: Boolean(data.isFollowing),
+      });
+    } catch (error) {
+      console.error("SELLER FOLLOW ERROR:", error);
+      alert(error.message || "Unable to update seller follow status.");
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   const addToCart = () => {
     try {
@@ -185,6 +317,35 @@ export default function ProductPage({ params }) {
             ₦{Number(product.price || 0).toLocaleString()}
           </p>
 
+          <div className="flex items-center gap-2 mt-2">
+            {ratingSummary.ratingCount > 0 ? (
+              <>
+                <span className="text-yellow-500 text-sm">
+                  {"★".repeat(Math.round(ratingSummary.averageRating))}
+                  {"☆".repeat(
+                    Math.max(
+                      0,
+                      5 - Math.round(ratingSummary.averageRating)
+                    )
+                  )}
+                </span>
+
+                <span className="text-sm font-black">
+                  {ratingSummary.averageRating.toFixed(1)}
+                </span>
+
+                <span className="text-[10px] text-zinc-500">
+                  ({ratingSummary.ratingCount}{" "}
+                  {ratingSummary.ratingCount === 1 ? "rating" : "ratings"})
+                </span>
+              </>
+            ) : (
+              <span className="text-[10px] text-zinc-500">
+                No ratings yet
+              </span>
+            )}
+          </div>
+
           {Number.isInteger(Number(product.deliveryDays)) &&
             Number(product.deliveryDays) >= 1 && (
               <div className="mt-4 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4">
@@ -230,7 +391,7 @@ export default function ProductPage({ params }) {
                   .toUpperCase()}
               </div>
 
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
 
                 <p className="text-sm font-black truncate">
                   {product.seller?.storeName ||
@@ -238,23 +399,38 @@ export default function ProductPage({ params }) {
                     "AlphaBot Seller"}
                 </p>
 
-                {product.seller?.businessPhone && (
-                  <a
-                    href={`tel:${product.seller.businessPhone}`}
-                    className="text-xs text-zinc-600 dark:text-zinc-300 font-bold mt-1 inline-flex items-center gap-1"
-                  >
-                    📞 {product.seller.businessPhone}
-                  </a>
+                {product.seller?.status === "approved" && (
+                  <p className="text-[10px] text-green-600 dark:text-green-400 font-bold mt-1">
+                    ✓ Verified seller
+                  </p>
                 )}
 
-                {product.seller?.status === "approved" &&
-                  product.seller?.businessPhone && (
-                    <p className="text-[10px] text-green-600 dark:text-green-400 font-bold mt-1">
-                      ✓ Verified seller
-                    </p>
-                  )}
+                <p className="text-[10px] text-zinc-500 mt-1">
+                  {followSummary.followerCount}{" "}
+                  {followSummary.followerCount === 1
+                    ? "follower"
+                    : "followers"}
+                </p>
 
               </div>
+
+              {product.seller?._id && (
+                <button
+                  onClick={toggleFollow}
+                  disabled={followLoading}
+                  className={`shrink-0 px-3 py-2 rounded-xl text-[10px] font-black active:scale-95 transition ${
+                    followSummary.isFollowing
+                      ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700"
+                      : "bg-yellow-400 text-black"
+                  }`}
+                >
+                  {followLoading
+                    ? "..."
+                    : followSummary.isFollowing
+                    ? "♥ Following"
+                    : "♡ Follow"}
+                </button>
+              )}
 
             </div>
 
