@@ -95,7 +95,7 @@ function ProductPrice({ product, className = "" }) {
 function getProductImage(product) {
   return (
     product?.image ||
-    product?.images?.[0] ||
+    product?.images?.[0]?.url ||
     product?.imageUrl ||
     "/placeholder-product.png"
   );
