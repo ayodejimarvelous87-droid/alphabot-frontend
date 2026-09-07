@@ -88,6 +88,43 @@ const getShippingAmount = (rate) =>
     "deliveryFee",
   ]);
 
+const formatDeliveryRange = (estimate) => {
+  if (!estimate?.expectedFrom || !estimate?.expectedTo) {
+    return null;
+  }
+
+  const from = new Date(estimate.expectedFrom);
+  const to = new Date(estimate.expectedTo);
+
+  if (
+    Number.isNaN(from.getTime()) ||
+    Number.isNaN(to.getTime())
+  ) {
+    return null;
+  }
+
+  const sameYear =
+    from.getFullYear() === to.getFullYear();
+
+  const options = sameYear
+    ? { day: "numeric", month: "long" }
+    : { day: "numeric", month: "long", year: "numeric" };
+
+  const fromText = from.toLocaleDateString(
+    "en-NG",
+    options
+  );
+
+  const toText = to.toLocaleDateString(
+    "en-NG",
+    options
+  );
+
+  return fromText === toText
+    ? fromText
+    : `${fromText} – ${toText}`;
+};
+
 export default function ABMarketplaceCheckoutPage() {
   const [cart] = useState(() => {
     try {
@@ -271,6 +308,7 @@ export default function ABMarketplaceCheckoutPage() {
         courierName: getCourierName(rate),
         serviceType: getServiceName(rate),
         amount: getShippingAmount(rate),
+        deliveryEstimate: rate?.deliveryEstimate || null,
       },
     }));
   };
@@ -621,6 +659,10 @@ export default function ABMarketplaceCheckoutPage() {
                   const courierId = getCourierId(rate);
                   const serviceCode = getServiceCode(rate);
                   const amount = getShippingAmount(rate);
+                  const deliveryEstimate =
+                    rate?.deliveryEstimate || null;
+                  const expectedDelivery =
+                    formatDeliveryRange(deliveryEstimate);
 
                   const key = `${courierId || "courier"}-${serviceCode || index}`;
 
@@ -648,6 +690,18 @@ export default function ABMarketplaceCheckoutPage() {
                           <p className="text-[11px] text-zinc-500 mt-1">
                             {getServiceName(rate)}
                           </p>
+
+                          {expectedDelivery && (
+                            <p className="text-[10px] font-bold text-zinc-700 dark:text-zinc-300 mt-2">
+                              Expected delivery: {expectedDelivery}
+                            </p>
+                          )}
+
+                          {deliveryEstimate?.shipbubbleEta && (
+                            <p className="text-[9px] text-zinc-400 mt-1">
+                              Courier ETA: {deliveryEstimate.shipbubbleEta}
+                            </p>
+                          )}
                         </div>
 
                         <p className="text-sm font-black">

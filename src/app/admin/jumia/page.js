@@ -45,7 +45,9 @@ export default function JumiaSourcingPage() {
     category: "",
     length: "",
     width: "",
-    height: ""
+    height: "",
+    deliveryDaysFrom: "1",
+    deliveryDaysTo: "1"
   });
 
   const updateForm = (key, value) => {
@@ -194,6 +196,21 @@ export default function JumiaSourcingPage() {
         throw new Error("Package dimensions must all be greater than 0 cm.");
       }
 
+      const deliveryFrom = Number(form.deliveryDaysFrom);
+      const deliveryTo = Number(form.deliveryDaysTo);
+
+      if (
+        !Number.isInteger(deliveryFrom) ||
+        !Number.isInteger(deliveryTo) ||
+        deliveryFrom < 1 ||
+        deliveryTo < 1 ||
+        deliveryTo < deliveryFrom
+      ) {
+        throw new Error(
+          "Delivery period must use whole numbers, at least 1 day, and the 'To' value cannot be less than 'From'."
+        );
+      }
+
       const shipping = {
         categoryId: Number(selectedCategory.shipbubbleCategoryId),
         weight: Number(form.weight),
@@ -219,6 +236,8 @@ export default function JumiaSourcingPage() {
           sourceStock: Number(product.sourceStock || 0),
           sourceDeliveryFee: Number(product.sourceDeliveryFee || 0),
           markup: Number(form.markup || 0),
+          deliveryDaysFrom: deliveryFrom,
+          deliveryDaysTo: deliveryTo,
           shipping,
           category: selectedCategory.name,
           attributes: {}
@@ -363,6 +382,46 @@ export default function JumiaSourcingPage() {
                   ))}
                 </div>
               </section>
+
+              <section className="border border-zinc-800 bg-[#111113] rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold">Delivery Period</h2>
+                  <span className="text-[11px] text-zinc-500">AlphaBot estimate</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] text-zinc-500">From (days)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={form.deliveryDaysFrom}
+                      onChange={(e) => updateForm("deliveryDaysFrom", e.target.value)}
+                      placeholder="e.g. 3"
+                      className="w-full mt-1 bg-[#09090B] border border-zinc-700 rounded-lg px-2.5 py-2 text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] text-zinc-500">To (days)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={form.deliveryDaysTo}
+                      onChange={(e) => updateForm("deliveryDaysTo", e.target.value)}
+                      placeholder="e.g. 5"
+                      className="w-full mt-1 bg-[#09090B] border border-zinc-700 rounded-lg px-2.5 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+
+                <p className="mt-2 text-[11px] text-zinc-500">
+                  Example: 3–5 days means AlphaBot expects to prepare the item within that period before courier delivery is added at checkout.
+                </p>
+              </section>
+
               <section className="border border-zinc-800 bg-[#111113] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-sm font-semibold">Images</h2>
