@@ -14,6 +14,7 @@ const [finance,setFinance] = useState(false);
 const [services,setServices] = useState(false);
 const [marketplace,setMarketplace] = useState(false);
 const [chinaMarketplace,setChinaMarketplace] = useState(false);
+const [jumiaSourcing,setJumiaSourcing] = useState(false);
 
 
 const active=(path)=>
@@ -157,6 +158,26 @@ className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
 >
 🇨🇳 China Marketplace {chinaMarketplace?"▼":"▶"}
 </button>
+
+<button
+onClick={()=>setJumiaSourcing(!jumiaSourcing)}
+className="w-full text-left mt-4 px-3 py-2 rounded-lg hover:bg-[#18181B]"
+>
+🛒 Jumia Sourcing {jumiaSourcing?"▼":"▶"}
+</button>
+
+{jumiaSourcing && (
+<div className="ml-3 mt-2 space-y-2">
+
+<Link
+href="/admin/jumia"
+className={`block p-2 rounded ${active("/admin/jumia")}`}
+>
+🛒 Product Catalogue
+</Link>
+
+</div>
+)}
 
 {chinaMarketplace && (
 
