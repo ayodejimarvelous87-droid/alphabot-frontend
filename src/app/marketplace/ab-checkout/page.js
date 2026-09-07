@@ -204,8 +204,8 @@ export default function ABMarketplaceCheckoutPage() {
       setShowLocationSuggestions(true);
     }
 
-    setShippingData({});
-    setSelectedCouriers({});
+    setShippingData(null);
+    setSelectedCourier(null);
     setShippingError("");
   };
 
@@ -292,8 +292,8 @@ export default function ABMarketplaceCheckoutPage() {
 
     setLocationSuggestions([]);
     setShowLocationSuggestions(false);
-    setShippingData({});
-    setSelectedCouriers({});
+    setShippingData(null);
+    setSelectedCourier(null);
     setShippingError("");
   };
 
@@ -350,7 +350,9 @@ export default function ABMarketplaceCheckoutPage() {
         );
       }
 
-      const rates = getRateCards(data.shipping);
+      const rates = Array.isArray(data?.shipping?.couriers)
+        ? data.shipping.couriers
+        : getRateCards(data.shipping);
 
       if (!rates.length) {
         throw new Error(
@@ -359,8 +361,14 @@ export default function ABMarketplaceCheckoutPage() {
       }
 
       setShippingData({
-        receiverAddressCode: data.receiverAddressCode,
-        pickupAddressCode: data.pickupAddressCode,
+        receiverAddressCode:
+          data.receiverAddressCode ||
+          data.shipping?.receiverAddressCode ||
+          null,
+        pickupAddressCode:
+          data.pickupAddressCode ||
+          data.shipping?.pickupAddressCode ||
+          null,
         products: data.products || [],
         rates,
       });
@@ -403,7 +411,7 @@ export default function ABMarketplaceCheckoutPage() {
 
   const placeOrder = async () => {
     try {
-      setSubmitting(true);
+      setPlacingOrder(true);
       setError("");
 
       const token = localStorage.getItem("token");
@@ -568,7 +576,7 @@ export default function ABMarketplaceCheckoutPage() {
           "Unable to place your AB Marketplace order."
       );
     } finally {
-      setSubmitting(false);
+      setPlacingOrder(false);
     }
   };
 
@@ -812,7 +820,10 @@ export default function ABMarketplaceCheckoutPage() {
             </div>
 
             <div className="mt-4 space-y-2">
-              {shippingData.rates.map((rate, index) => {
+              {(Array.isArray(shippingData?.rates)
+                ? shippingData.rates
+                : []
+              ).map((rate, index) => {
                 const courierId = getCourierId(rate);
                 const serviceCode = getServiceCode(rate);
                 const amount = getShippingAmount(rate);

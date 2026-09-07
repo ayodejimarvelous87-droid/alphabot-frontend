@@ -92,7 +92,13 @@ export default function CheckoutPage() {
   const total = subtotal + deliveryFee + protectionFee;
 
   const getShippingRates = async () => {
-    if (!form.name || !form.phone || !form.address || !form.city || !form.state) {
+    if (
+      !form.name ||
+      !form.phone ||
+      !form.address ||
+      !form.city ||
+      !form.state
+    ) {
       alert("Please complete your delivery details first.");
       return;
     }
@@ -109,11 +115,145 @@ export default function CheckoutPage() {
       return;
     }
 
+    try {
+      setShippingLoading(true);
+      setShippingError("");
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("Please log in before checking delivery options.");
+      }
+
+      const item = cart[0];
+
+      if (!receiverAddressCode) {
+        throw new Error(
+          "Please validate your delivery address before checking delivery options."
+        );
+      }
+
+      const pickupDate = new Date();
+      pickupDate.setDate(pickupDate.getDate() + 1);
+      const pickupDateString = pickupDate.toISOString().slice(0, 10);
+
+      const res = await fetch(
+        "https://api.alphabothq.com/marketplace/orders/shipping/quote",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: item.id,
+            quantity: Number(item.quantity || 1),
+            receiverAddressCode,
+            pickupDate: pickupDateString,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(
+          data.message || "Unable to calculate delivery options."
+        );
+      }
+
+      const quote = data.data || {};
+      const couriers = Array.isArray(quote.couriers)
+        ? quote.couriers
+        : [];
+
+      setShippingQuotes({
+        [item.id]: {
+          productId: quote.productId || item.id,
+          sellerId: quote.sellerId || null,
+          quantity: quote.quantity || Number(item.quantity || 1),
+          requestToken: quote.requestToken || null,
+          couriers,
+        },
+      });
+
+      setSelectedCouriers({});
+
+      if (!couriers.length) {
+        setShippingError(
+          "No delivery options are currently available for this product."
+        );
+      }
+    } catch (error) {
+      console.error("MARKETPLACE SHIPPING QUOTE ERROR:", error);
+      setShippingError(
+        error.message || "Unable to calculate delivery options."
+      );
+      setShippingQuotes({});
+      setSelectedCouriers({});
+    } finally {
+      setShippingLoading(false);
+    }
+  };
+
+  const selectCourier = (productId, courier) => {
+    setSelectedCouriers((current) => ({
+      ...current,
+      [productId]: {
+        courierId: courier.courierId,
+        courierName: courier.courierName,
+        courierImage: courier.courierImage,
+        serviceCode: courier.serviceCode,
+        serviceType: courier.serviceType,
+        amount: Number(courier.amount || 0),
+        currency: courier.currency || "NGN",
+        pickupEta: courier.pickupEta || null,
+        pickupEtaTime: courier.pickupEtaTime || null,
+        deliveryEta: courier.deliveryEta || null,
+        deliveryEtaTime: courier.deliveryEtaTime || null,
+        deliveryEstimate: courier.deliveryEstimate || null,
+        requestToken:
+          shippingQuotes[productId]?.requestToken || null,
+      },
+    }));
+  };
+
+  const handlePlaceOrder = async (e) => {
+    e.preventDefault();
+
     if (
-      !receiverAddressCode ||
-      Object.keys(selectedCouriers).length !== 1
+      !form.name ||
+      !form.phone ||
+      !form.address ||
+      !form.city ||
+      !form.state
     ) {
-      alert("Please calculate delivery and select a courier.");
+      alert("Please complete your delivery details first.");
+      return;
+    }
+
+    if (!cart.length) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    if (cart.length !== 1) {
+      alert(
+        "Marketplace checkout supports one product at a time. Please checkout one product before continuing."
+      );
+      return;
+    }
+
+    if (!receiverAddressCode) {
+      alert("Please calculate delivery options first.");
+      return;
+    }
+
+    const item = cart[0];
+    const selected = selectedCouriers[item.id];
+
+    if (!selected) {
+      alert("Please select a courier before placing your order.");
       return;
     }
 
@@ -127,11 +267,12 @@ export default function CheckoutPage() {
         return;
       }
 
-      const item = cart[0];
-      const selected = selectedCouriers[item.id];
+      const quote = shippingQuotes[item.id];
 
-      if (!selected) {
-        throw new Error(`Please select a courier for ${item.name}.`);
+      if (!quote?.requestToken) {
+        throw new Error(
+          "Delivery quote has expired or is unavailable. Please refresh delivery options."
+        );
       }
 
       const pickupDate = new Date();
@@ -202,11 +343,14 @@ export default function CheckoutPage() {
       const checkout = checkoutData.checkout;
 
       const finalShippingFee = Number(
-        createdOrder.shipping?.quote?.amount || 0
+        createdOrder.shipping?.quote?.amount || selected.amount || 0
       );
 
       const finalProtectionFee = 500;
-      const finalSubtotal = Number(createdOrder.totalAmount || subtotal);
+      const finalSubtotal = Number(
+        createdOrder.totalAmount || subtotal
+      );
+
       const finalTotal =
         finalSubtotal + finalShippingFee + finalProtectionFee;
 
@@ -277,7 +421,9 @@ export default function CheckoutPage() {
       window.location.href = paymentData.paymentLink;
     } catch (error) {
       console.error("CREATE MARKETPLACE ORDER ERROR:", error);
-      alert(error.message || "Unable to place order. Please try again.");
+      alert(
+        error.message || "Unable to place order. Please try again."
+      );
     } finally {
       setPlacingOrder(false);
     }
