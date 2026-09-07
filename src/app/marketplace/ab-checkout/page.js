@@ -159,8 +159,8 @@ export default function ABMarketplaceCheckoutPage() {
   const [locationLoading, setLocationLoading] = useState(false);
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
 
-  const [shippingData, setShippingData] = useState({});
-  const [selectedCouriers, setSelectedCouriers] = useState({});
+  const [shippingData, setShippingData] = useState(null);
+  const [selectedCourier, setSelectedCourier] = useState(null);
   const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingError, setShippingError] = useState("");
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -178,13 +178,8 @@ export default function ABMarketplaceCheckoutPage() {
     [cart]
   );
 
-  const deliveryFee = useMemo(
-    () =>
-      cart.reduce((sum, item) => {
-        const selected = selectedCouriers[item.id];
-        return sum + Number(selected?.amount || 0);
-      }, 0),
-    [cart, selectedCouriers]
+  const deliveryFee = Number(
+    selectedCourier?.amount || 0
   );
 
   const total = subtotal + deliveryFee;
@@ -303,224 +298,199 @@ export default function ABMarketplaceCheckoutPage() {
   };
 
   const getShippingRates = async () => {
-    if (!cart.length) {
-      setShippingError(
-        "There are no AB Marketplace products in your cart."
-      );
-      return;
-    }
-
-    const requiredFields = [
-      "name",
-      "email",
-      "phone",
-      "address",
-      "city",
-      "state",
-    ];
-
-    const missing = requiredFields.find(
-      (field) => !String(form[field] || "").trim()
-    );
-
-    if (missing) {
-      setShippingError(
-        "Please complete your delivery address first."
-      );
-      return;
-    }
-
     try {
       setShippingLoading(true);
       setShippingError("");
-      setShippingData({});
-      setSelectedCouriers({});
 
       const token = localStorage.getItem("token");
 
       if (!token) {
-        throw new Error(
-          "Please log in before calculating delivery."
-        );
+        throw new Error("Please log in again.");
       }
 
-      const results = {};
-
-      for (const item of cart) {
-        const res = await fetch(
-          `${API}/marketplace/ab/shipping/quote`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
+      const res = await fetch(
+        `${API}/marketplace/ab/shipping/quote`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            items: cart.map((item) => ({
               productId: item.id,
               quantity: Number(item.quantity || 1),
-              deliveryAddress: {
-                name: form.name.trim(),
-                phone: form.phone.trim(),
-                email: form.email.trim(),
-                address: form.address.trim(),
-                city: form.city.trim(),
-                state: form.state.trim(),
-                postalCode: form.postalCode.trim(),
-                latitude: form.latitude
-                  ? Number(form.latitude)
-                  : null,
-                longitude: form.longitude
-                  ? Number(form.longitude)
-                  : null,
-                country: "NG",
-              },
-            }),
-          }
+            })),
+            deliveryAddress: {
+              name: form.name.trim(),
+              phone: form.phone.trim(),
+              email: form.email.trim(),
+              address: form.address.trim(),
+              city: form.city.trim(),
+              state: form.state.trim(),
+              postalCode: form.postalCode.trim(),
+              latitude: form.latitude
+                ? Number(form.latitude)
+                : null,
+              longitude: form.longitude
+                ? Number(form.longitude)
+                : null,
+              country: "NG",
+            },
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(
+          data.message ||
+            "Unable to calculate combined delivery."
         );
-
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-          throw new Error(
-            data.message ||
-              `Unable to calculate delivery for ${item.name}.`
-          );
-        }
-
-        const rates = getRateCards(data.shipping);
-
-        if (!rates.length) {
-          throw new Error(
-            `No delivery options were returned for ${item.name}.`
-          );
-        }
-
-        results[item.id] = {
-          receiverAddressCode: data.receiverAddressCode,
-          pickupAddressCode: data.pickupAddressCode,
-          rates,
-        };
       }
 
-      setShippingData(results);
+      const rates = getRateCards(data.shipping);
+
+      if (!rates.length) {
+        throw new Error(
+          "No combined delivery options were returned."
+        );
+      }
+
+      setShippingData({
+        receiverAddressCode: data.receiverAddressCode,
+        pickupAddressCode: data.pickupAddressCode,
+        products: data.products || [],
+        rates,
+      });
+
+      setSelectedCourier(null);
     } catch (error) {
-      console.error("AB SHIPPING ERROR:", error);
+      console.error("AB COMBINED SHIPPING ERROR:", error);
+      setShippingData(null);
+      setSelectedCourier(null);
       setShippingError(
         error.message ||
-          "Unable to calculate delivery."
+          "Unable to calculate combined delivery."
       );
     } finally {
       setShippingLoading(false);
     }
   };
 
-  const selectCourier = (itemId, rate) => {
-    setSelectedCouriers((current) => ({
-      ...current,
-      [itemId]: {
-        courierId: getCourierId(rate),
-        serviceCode: getServiceCode(rate),
-        courierName: getCourierName(rate),
-        serviceType: getServiceName(rate),
-        amount: getShippingAmount(rate),
-        deliveryEstimate: rate?.deliveryEstimate || null,
-      },
-    }));
+  const selectCourier = (rate) => {
+    setSelectedCourier({
+      courierId: getCourierId(rate),
+      serviceCode: getServiceCode(rate),
+      courierName: getCourierName(rate),
+      serviceType: getServiceName(rate),
+      amount: getShippingAmount(rate),
+      deliveryEta:
+        rate?.delivery_eta ||
+        rate?.deliveryEta ||
+        null,
+      deliveryEstimate:
+        rate?.deliveryEstimate || null,
+      requestToken:
+        rate?.request_token ||
+        rate?.requestToken ||
+        null,
+      currency: rate?.currency || "NGN",
+      pickupEta: rate?.pickup_eta || null,
+    });
   };
 
   const placeOrder = async () => {
-    if (!cart.length) {
-      alert(
-        "There are no AB Marketplace products to checkout."
-      );
-      return;
-    }
-
-    if (
-      Object.keys(selectedCouriers).length !== cart.length
-    ) {
-      alert(
-        "Please calculate delivery and select a courier for every product."
-      );
-      return;
-    }
-
     try {
-      setPlacingOrder(true);
+      setSubmitting(true);
+      setError("");
 
       const token = localStorage.getItem("token");
 
       if (!token) {
+        throw new Error("Please log in again.");
+      }
+
+      if (!selectedCourier) {
+        throw new Error("Please select a delivery option.");
+      }
+
+      if (!shippingData?.receiverAddressCode) {
+        throw new Error("Please calculate delivery first.");
+      }
+
+      const items = cart.map((item) => ({
+        productId: item.id,
+        quantity: Number(item.quantity || 1),
+      }));
+
+      const deliveryAddress = {
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        address: form.address.trim(),
+        city: form.city.trim(),
+        state: form.state.trim(),
+        postalCode: form.postalCode.trim(),
+        latitude: form.latitude
+          ? Number(form.latitude)
+          : null,
+        longitude: form.longitude
+          ? Number(form.longitude)
+          : null,
+        country: "NG",
+      };
+
+      const shippingQuote = {
+        amount: Number(selectedCourier.amount || 0),
+        currency: selectedCourier.currency || "NGN",
+        courierId: selectedCourier.courierId,
+        courierName: selectedCourier.courierName,
+        serviceCode: selectedCourier.serviceCode,
+        serviceType: selectedCourier.serviceType,
+        requestToken: selectedCourier.requestToken,
+        pickupAddressCode: shippingData.pickupAddressCode,
+        receiverAddressCode: shippingData.receiverAddressCode,
+        deliveryEta: selectedCourier.deliveryEta,
+        pickupEta: selectedCourier.pickupEta,
+        deliveryEstimate: selectedCourier.deliveryEstimate,
+      };
+
+      const orderRes = await fetch(
+        `${API}/marketplace/ab/orders`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            items,
+            pickupDate: new Date().toISOString().slice(0, 10),
+            courierId: selectedCourier.courierId,
+            serviceCode: selectedCourier.serviceCode,
+            deliveryAddress,
+            shippingQuote,
+          }),
+        }
+      );
+
+      const orderData = await orderRes.json();
+
+      if (!orderRes.ok || !orderData.success) {
         throw new Error(
-          "Please log in before placing your order."
+          orderData.message ||
+            "Unable to create AB Marketplace order."
         );
       }
 
-      const pickupDate = new Date();
-      pickupDate.setDate(pickupDate.getDate() + 1);
+      const orderIds = (orderData.orders || []).map(
+        (order) => order._id
+      );
 
-      const pickupDateString = pickupDate
-        .toISOString()
-        .slice(0, 10);
-
-      const createdOrderIds = [];
-
-      for (const item of cart) {
-        const selected = selectedCouriers[item.id];
-
-        if (
-          !selected?.courierId ||
-          !selected?.serviceCode
-        ) {
-          throw new Error(
-            `Please select a valid courier for ${item.name}.`
-          );
-        }
-
-        const res = await fetch(
-          `${API}/marketplace/ab/orders`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: item.id,
-              quantity: Number(item.quantity || 1),
-              pickupDate: pickupDateString,
-              courierId: selected.courierId,
-              serviceCode: selected.serviceCode,
-              deliveryAddress: {
-                name: form.name.trim(),
-                phone: form.phone.trim(),
-                email: form.email.trim(),
-                address: form.address.trim(),
-                city: form.city.trim(),
-                state: form.state.trim(),
-                postalCode: form.postalCode.trim(),
-                latitude: form.latitude
-                  ? Number(form.latitude)
-                  : null,
-                longitude: form.longitude
-                  ? Number(form.longitude)
-                  : null,
-                country: "NG",
-              },
-            }),
-          }
-        );
-
-        const data = await res.json();
-
-        if (!res.ok || !data.order?._id) {
-          throw new Error(
-            data.message ||
-              `Failed to create AB Marketplace order for ${item.name}.`
-          );
-        }
-
-        createdOrderIds.push(data.order._id);
+      if (!orderIds.length) {
+        throw new Error("No AB Marketplace orders were created.");
       }
 
       const checkoutRes = await fetch(
@@ -532,20 +502,35 @@ export default function ABMarketplaceCheckoutPage() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            orderIds: createdOrderIds,
+            orderIds,
+            shipping: {
+              amount: shippingQuote.amount,
+              currency: shippingQuote.currency,
+              courierId: shippingQuote.courierId,
+              courierName: shippingQuote.courierName,
+              serviceCode: shippingQuote.serviceCode,
+              serviceType: shippingQuote.serviceType,
+              requestToken: shippingQuote.requestToken,
+              pickupAddress: {
+                addressCode: shippingData.pickupAddressCode,
+              },
+              deliveryAddress: {
+                ...deliveryAddress,
+                addressCode: shippingData.receiverAddressCode,
+              },
+              deliveryPeriod:
+                shippingQuote.deliveryEstimate || {},
+            },
           }),
         }
       );
 
       const checkoutData = await checkoutRes.json();
 
-      if (
-        !checkoutRes.ok ||
-        !checkoutData.checkout?._id
-      ) {
+      if (!checkoutRes.ok || !checkoutData.success) {
         throw new Error(
           checkoutData.message ||
-            "Failed to create AB Marketplace payment checkout."
+            "Unable to create AB Marketplace checkout."
         );
       }
 
@@ -556,7 +541,6 @@ export default function ABMarketplaceCheckoutPage() {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
@@ -564,67 +548,30 @@ export default function ABMarketplaceCheckoutPage() {
 
       const paymentData = await paymentRes.json();
 
-      if (!paymentRes.ok || !paymentData.paymentLink) {
+      if (!paymentRes.ok || !paymentData.success) {
         throw new Error(
           paymentData.message ||
-            "Failed to initialize AB Marketplace payment."
+            "Unable to initialize payment."
         );
       }
 
       localStorage.setItem(
-        "alphabotMarketplaceActiveCheckout",
-        JSON.stringify({
-          checkoutId: checkout._id,
-          txRef: paymentData.txRef,
-          checkoutType: "ab-marketplace",
-          orderIds: createdOrderIds,
-        })
+        "alphabotActiveMarketplaceCheckout",
+        JSON.stringify(checkout)
       );
 
       window.location.href = paymentData.paymentLink;
     } catch (error) {
-      console.error(
-        "AB MARKETPLACE CHECKOUT ERROR:",
-        error
-      );
-
-      alert(
+      console.error("AB MARKETPLACE ORDER ERROR:", error);
+      setError(
         error.message ||
-          "Unable to place AB Marketplace order. Please try again."
+          "Unable to place your AB Marketplace order."
       );
     } finally {
-      setPlacingOrder(false);
+      setSubmitting(false);
     }
   };
 
-  if (!cart.length) {
-    return (
-      <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white px-4 py-10">
-        <div className="max-w-2xl mx-auto pt-12 text-center">
-          <div className="text-5xl mb-5">🛍️</div>
-
-          <p className="text-[9px] font-black tracking-[0.2em] uppercase text-yellow-500">
-            AB MARKETPLACE
-          </p>
-
-          <h1 className="text-2xl font-black mt-2">
-            No AB Marketplace products
-          </h1>
-
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-3">
-            Add an AB Marketplace product to your cart before checking out.
-          </p>
-
-          <Link
-            href="/marketplace/cart"
-            className="mt-7 inline-flex h-12 px-6 rounded-2xl bg-yellow-400 text-black items-center justify-center text-xs font-black"
-          >
-            Back to cart
-          </Link>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white px-4 py-8">
@@ -842,102 +789,95 @@ export default function ABMarketplaceCheckoutPage() {
           </button>
         </section>
 
-        {cart.map((item) => {
-          const itemShipping = shippingData[item.id];
-          const rates = itemShipping?.rates || [];
+        {shippingData && (
+          <section className="mt-4 bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.15em] text-yellow-500">
+                  Delivery option
+                </p>
 
-          if (!rates.length) {
-            return null;
-          }
+                <h2 className="text-sm font-black mt-1">
+                  Combined AB Marketplace delivery
+                </h2>
 
-          return (
-            <section
-              key={`shipping-${item.id}`}
-              className="mt-4 bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-[0.15em] text-yellow-500">
-                    Delivery option
-                  </p>
-
-                  <h2 className="text-sm font-black mt-1">
-                    {item.name}
-                  </h2>
-                </div>
-
-                <span className="text-[9px] font-black uppercase px-2 py-1 rounded-full bg-yellow-400 text-black">
-                  AB
-                </span>
+                <p className="text-[10px] text-zinc-500 mt-1">
+                  One shipment for {cart.length} product{cart.length === 1 ? "" : "s"}
+                </p>
               </div>
 
-              <div className="mt-4 space-y-2">
-                {rates.map((rate, index) => {
-                  const courierId = getCourierId(rate);
-                  const serviceCode = getServiceCode(rate);
-                  const amount = getShippingAmount(rate);
-                  const deliveryEstimate =
-                    rate?.deliveryEstimate || null;
-                  const expectedDelivery =
-                    formatDeliveryRange(deliveryEstimate);
+              <span className="text-[9px] font-black uppercase px-2 py-1 rounded-full bg-yellow-400 text-black">
+                AB
+              </span>
+            </div>
 
-                  const key = `${courierId || "courier"}-${serviceCode || index}`;
+            <div className="mt-4 space-y-2">
+              {shippingData.rates.map((rate, index) => {
+                const courierId = getCourierId(rate);
+                const serviceCode = getServiceCode(rate);
+                const amount = getShippingAmount(rate);
+                const deliveryEstimate =
+                  rate?.deliveryEstimate || null;
+                const expectedDelivery =
+                  formatDeliveryRange(deliveryEstimate);
 
-                  const selected =
-                    selectedCouriers[item.id]?.courierId === courierId &&
-                    selectedCouriers[item.id]?.serviceCode === serviceCode;
+                const key =
+                  `${courierId || "courier"}-${serviceCode || index}`;
 
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => selectCourier(item.id, rate)}
-                      className={`w-full text-left rounded-2xl border p-4 transition ${
-                        selected
-                          ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-950/20"
-                          : "border-zinc-200 dark:border-zinc-800"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-xs font-black">
-                            {getCourierName(rate)}
-                          </p>
+                const selected =
+                  selectedCourier?.courierId === courierId &&
+                  selectedCourier?.serviceCode === serviceCode;
 
-                          <p className="text-[11px] text-zinc-500 mt-1">
-                            {getServiceName(rate)}
-                          </p>
-
-                          {expectedDelivery && (
-                            <p className="text-[10px] font-bold text-zinc-700 dark:text-zinc-300 mt-2">
-                              Expected delivery: {expectedDelivery}
-                            </p>
-                          )}
-
-                          {deliveryEstimate?.shipbubbleEta && (
-                            <p className="text-[9px] text-zinc-400 mt-1">
-                              Courier ETA: {deliveryEstimate.shipbubbleEta}
-                            </p>
-                          )}
-                        </div>
-
-                        <p className="text-sm font-black">
-                          {formatMoney(amount)}
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => selectCourier(rate)}
+                    className={`w-full text-left rounded-2xl border p-4 transition ${
+                      selected
+                        ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-950/20"
+                        : "border-zinc-200 dark:border-zinc-800"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-black">
+                          {getCourierName(rate)}
                         </p>
+
+                        <p className="text-[11px] text-zinc-500 mt-1">
+                          {getServiceName(rate)}
+                        </p>
+
+                        {expectedDelivery && (
+                          <p className="text-[10px] font-bold text-zinc-700 dark:text-zinc-300 mt-2">
+                            Expected delivery: {expectedDelivery}
+                          </p>
+                        )}
+
+                        {deliveryEstimate?.shipbubbleEta && (
+                          <p className="text-[9px] text-zinc-400 mt-1">
+                            Courier ETA: {deliveryEstimate.shipbubbleEta}
+                          </p>
+                        )}
                       </div>
 
-                      {selected && (
-                        <p className="text-[9px] font-black uppercase tracking-wide text-yellow-600 dark:text-yellow-400 mt-2">
-                          Selected
-                        </p>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
-          );
-        })}
+                      <p className="text-sm font-black">
+                        {formatMoney(amount)}
+                      </p>
+                    </div>
+
+                    {selected && (
+                      <p className="text-[9px] font-black uppercase tracking-wide text-yellow-600 dark:text-yellow-400 mt-2">
+                        Selected
+                      </p>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         <section className="mt-4 bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5">
           <h2 className="text-sm font-black uppercase tracking-wide">
@@ -970,7 +910,7 @@ export default function ABMarketplaceCheckoutPage() {
             disabled={
               placingOrder ||
               shippingLoading ||
-              Object.keys(selectedCouriers).length !== cart.length
+              !selectedCourier
             }
             className="mt-5 w-full h-13 rounded-2xl bg-yellow-400 text-black text-sm font-black disabled:opacity-50 active:scale-[0.99] transition"
           >
