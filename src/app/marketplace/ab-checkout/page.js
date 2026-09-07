@@ -150,7 +150,14 @@ export default function ABMarketplaceCheckoutPage() {
     address: "",
     city: "",
     state: "",
+    postalCode: "",
+    latitude: "",
+    longitude: "",
   });
+
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
 
   const [shippingData, setShippingData] = useState({});
   const [selectedCouriers, setSelectedCouriers] = useState({});
@@ -180,15 +187,116 @@ export default function ABMarketplaceCheckoutPage() {
     [cart, selectedCouriers]
   );
 
-  const protectionFee = 500;
-  const total = subtotal + deliveryFee + protectionFee;
+  const total = subtotal + deliveryFee;
 
   const updateForm = (field, value) => {
     setForm((current) => ({
       ...current,
       [field]: value,
+      ...(field === "address"
+        ? {
+            city: "",
+            state: "",
+            postalCode: "",
+            latitude: "",
+            longitude: "",
+          }
+        : {}),
     }));
 
+    if (field === "address") {
+      setLocationSuggestions([]);
+      setShowLocationSuggestions(true);
+    }
+
+    setShippingData({});
+    setSelectedCouriers({});
+    setShippingError("");
+  };
+
+  useEffect(() => {
+    const query = String(form.address || "").trim();
+
+    if (query.length < 3) {
+      return;
+    }
+
+    if (
+      form.latitude &&
+      form.longitude
+    ) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const timer = setTimeout(async () => {
+      try {
+        setLocationLoading(true);
+
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          setLocationSuggestions([]);
+          return;
+        }
+
+        const response = await fetch(
+          `${API}/marketplace/ab/address/search?q=${encodeURIComponent(query)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            signal: controller.signal,
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data?.message || "Unable to search locations."
+          );
+        }
+
+        setLocationSuggestions(
+          Array.isArray(data?.suggestions)
+            ? data.suggestions
+            : []
+        );
+        setShowLocationSuggestions(true);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error(
+            "AB LOCATION SEARCH ERROR:",
+            error
+          );
+          setLocationSuggestions([]);
+        }
+      } finally {
+        setLocationLoading(false);
+      }
+    }, 450);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [form.address, form.latitude, form.longitude]);
+
+  const selectLocation = (location) => {
+    setForm((current) => ({
+      ...current,
+      address: location.displayName || current.address,
+      city: location.address?.city || "",
+      state: location.address?.state || "",
+      postalCode: location.address?.postalCode || "",
+      latitude: String(location.latitude || ""),
+      longitude: String(location.longitude || ""),
+    }));
+
+    setLocationSuggestions([]);
+    setShowLocationSuggestions(false);
     setShippingData({});
     setSelectedCouriers({});
     setShippingError("");
@@ -257,6 +365,13 @@ export default function ABMarketplaceCheckoutPage() {
                 address: form.address.trim(),
                 city: form.city.trim(),
                 state: form.state.trim(),
+                postalCode: form.postalCode.trim(),
+                latitude: form.latitude
+                  ? Number(form.latitude)
+                  : null,
+                longitude: form.longitude
+                  ? Number(form.longitude)
+                  : null,
                 country: "NG",
               },
             }),
@@ -383,6 +498,13 @@ export default function ABMarketplaceCheckoutPage() {
                 address: form.address.trim(),
                 city: form.city.trim(),
                 state: form.state.trim(),
+                postalCode: form.postalCode.trim(),
+                latitude: form.latitude
+                  ? Number(form.latitude)
+                  : null,
+                longitude: form.longitude
+                  ? Number(form.longitude)
+                  : null,
                 country: "NG",
               },
             }),
@@ -582,14 +704,8 @@ export default function ABMarketplaceCheckoutPage() {
               ["name", "Full name"],
               ["email", "Email"],
               ["phone", "Phone number"],
-              ["address", "Delivery address"],
-              ["city", "City"],
-              ["state", "State"],
             ].map(([field, label]) => (
-              <div
-                key={field}
-                className={field === "address" ? "sm:col-span-2" : ""}
-              >
+              <div key={field}>
                 <label className="text-[10px] font-black uppercase tracking-wide text-zinc-500">
                   {label}
                 </label>
@@ -605,6 +721,107 @@ export default function ABMarketplaceCheckoutPage() {
                 />
               </div>
             ))}
+
+            <div className="sm:col-span-2 relative">
+              <label className="text-[10px] font-black uppercase tracking-wide text-zinc-500">
+                Delivery location
+              </label>
+
+              <input
+                value={form.address}
+                onChange={(event) =>
+                  updateForm("address", event.target.value)
+                }
+                onFocus={() => {
+                  if (locationSuggestions.length) {
+                    setShowLocationSuggestions(true);
+                  }
+                }}
+                onBlur={() => {
+                  setTimeout(
+                    () => setShowLocationSuggestions(false),
+                    180
+                  );
+                }}
+                type="text"
+                placeholder="Search your delivery location"
+                autoComplete="off"
+                className="mt-1 w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-sm outline-none focus:border-yellow-400"
+              />
+
+              {showLocationSuggestions &&
+                (locationLoading ||
+                  locationSuggestions.length > 0) && (
+                  <div className="absolute z-30 left-0 right-0 mt-2 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl">
+                    {locationLoading && (
+                      <div className="px-4 py-3 text-xs font-bold text-zinc-500">
+                        Searching locations...
+                      </div>
+                    )}
+
+                    {!locationLoading &&
+                      locationSuggestions.map((location, index) => (
+                        <button
+                          key={`${location.latitude}-${location.longitude}-${index}`}
+                          type="button"
+                          onMouseDown={(event) =>
+                            event.preventDefault()
+                          }
+                          onClick={() =>
+                            selectLocation(location)
+                          }
+                          className="w-full text-left px-4 py-3 border-b last:border-b-0 border-zinc-100 dark:border-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-900"
+                        >
+                          <p className="text-xs font-black">
+                            {location.displayName}
+                          </p>
+
+                          <p className="mt-1 text-[10px] text-zinc-500">
+                            {[
+                              location.address?.city,
+                              location.address?.state,
+                              location.address?.postalCode,
+                            ]
+                              .filter(Boolean)
+                              .join(" • ")}
+                          </p>
+                        </button>
+                      ))}
+                  </div>
+                )}
+            </div>
+
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-wide text-zinc-500">
+                City
+              </label>
+
+              <input
+                value={form.city}
+                onChange={(event) =>
+                  updateForm("city", event.target.value)
+                }
+                type="text"
+                placeholder="City"
+                className="mt-1 w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-sm outline-none focus:border-yellow-400"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-wide text-zinc-500">
+                State
+              </label>
+
+              <input
+                value={form.state}
+                onChange={(event) =>
+                  updateForm("state", event.target.value)
+                }
+                type="text"
+                placeholder="State"
+                className="mt-1 w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-sm outline-none focus:border-yellow-400"
+              />
+            </div>
           </div>
 
           {shippingError && (
@@ -736,13 +953,6 @@ export default function ABMarketplaceCheckoutPage() {
             <div className="flex justify-between">
               <span className="text-zinc-500">Delivery</span>
               <span className="font-bold">{formatMoney(deliveryFee)}</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-zinc-500">Buyer protection</span>
-              <span className="font-bold">
-                {formatMoney(protectionFee)}
-              </span>
             </div>
 
             <div className="border-t border-zinc-200 dark:border-zinc-800 pt-3 flex justify-between">
