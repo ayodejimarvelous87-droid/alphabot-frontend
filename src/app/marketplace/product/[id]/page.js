@@ -23,7 +23,7 @@ export default function ProductPage({ params }) {
   useEffect(() => {
     setMounted(true);
 
-    fetch(`https://api.alphabothq.com/marketplace/${id}`)
+    fetch(`https://api.alphabothq.com/marketplace/product/${id}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.product) {
@@ -93,7 +93,32 @@ export default function ProductPage({ params }) {
   }, [id]);
 
   useEffect(() => {
-    const sellerId = product?.seller?._id;
+    if (!product) {
+      return;
+    }
+
+    const isABMarketplace = product.sourceType === "jumia";
+    const sellerId = product.seller?._id;
+
+    if (isABMarketplace) {
+      fetch(
+        "https://api.alphabothq.com/marketplace/follows/ab-marketplace"
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setFollowSummary({
+              followerCount: Number(data.followerCount || 0),
+              isFollowing: Boolean(data.isFollowing),
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("AB Marketplace follow error:", error);
+        });
+
+      return;
+    }
 
     if (!sellerId) {
       return;
@@ -114,19 +139,20 @@ export default function ProductPage({ params }) {
       .catch((error) => {
         console.error("Marketplace seller follow error:", error);
       });
-  }, [product?.seller?._id]);
+  }, [product]);
 
   const toggleFollow = async () => {
+    const isABMarketplace = product?.sourceType === "jumia";
     const sellerId = product?.seller?._id;
 
-    if (!sellerId || followLoading) {
+    if ((!isABMarketplace && !sellerId) || followLoading) {
       return;
     }
 
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("Please log in to follow this seller.");
+      alert("Please log in to follow this store.");
       return;
     }
 
@@ -135,21 +161,22 @@ export default function ProductPage({ params }) {
 
       const method = followSummary.isFollowing ? "DELETE" : "POST";
 
-      const response = await fetch(
-        `https://api.alphabothq.com/marketplace/follows/seller/${sellerId}`,
-        {
-          method,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const endpoint = isABMarketplace
+        ? "https://api.alphabothq.com/marketplace/follows/ab-marketplace"
+        : `https://api.alphabothq.com/marketplace/follows/seller/${sellerId}`;
+
+      const response = await fetch(endpoint, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
         throw new Error(
-          data.message || "Unable to update seller follow status."
+          data.message || "Unable to update follow status."
         );
       }
 
@@ -158,8 +185,8 @@ export default function ProductPage({ params }) {
         isFollowing: Boolean(data.isFollowing),
       });
     } catch (error) {
-      console.error("SELLER FOLLOW ERROR:", error);
-      alert(error.message || "Unable to update seller follow status.");
+      console.error("MARKETPLACE FOLLOW ERROR:", error);
+      alert(error.message || "Unable to update follow status.");
     } finally {
       setFollowLoading(false);
     }
@@ -437,20 +464,22 @@ export default function ProductPage({ params }) {
         </section>
 
 
-        {/* SELLER */}
+        {/* STORE */}
 
         <section className="mt-6">
 
           <div className="rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4">
 
             <p className="text-[9px] uppercase tracking-[0.16em] font-black text-yellow-500">
-              SELLER
+              STORE
             </p>
 
             <div className="flex items-center gap-3 mt-3">
 
               <div className="w-10 h-10 rounded-full bg-yellow-400 text-black flex items-center justify-center font-black">
-                {(product.seller?.storeName || product.sellerName || "A")
+                {(product.sourceType === "jumia"
+                  ? "AB Marketplace"
+                  : product.seller?.storeName || product.sellerName || "A")
                   .charAt(0)
                   .toUpperCase()}
               </div>
@@ -458,16 +487,22 @@ export default function ProductPage({ params }) {
               <div className="min-w-0 flex-1">
 
                 <p className="text-sm font-black truncate">
-                  {product.seller?.storeName ||
-                    product.sellerName ||
-                    "AlphaBot Seller"}
+                  {product.sourceType === "jumia"
+                    ? "AB Marketplace"
+                    : product.seller?.storeName ||
+                      product.sellerName ||
+                      "AlphaBot Seller"}
                 </p>
 
-                {product.seller?.status === "approved" && (
+                {product.sourceType === "jumia" ? (
+                  <p className="text-[10px] text-green-600 dark:text-green-400 font-bold mt-1">
+                    ✓ Official Marketplace
+                  </p>
+                ) : product.seller?.status === "approved" ? (
                   <p className="text-[10px] text-green-600 dark:text-green-400 font-bold mt-1">
                     ✓ Verified seller
                   </p>
-                )}
+                ) : null}
 
                 <p className="text-[10px] text-zinc-500 mt-1">
                   {followSummary.followerCount}{" "}
@@ -478,7 +513,7 @@ export default function ProductPage({ params }) {
 
               </div>
 
-              {product.seller?._id && (
+              {(product.sourceType === "jumia" || product.seller?._id) && (
                 <button
                   onClick={toggleFollow}
                   disabled={followLoading}
@@ -498,7 +533,7 @@ export default function ProductPage({ params }) {
 
             </div>
 
-            {product.seller?.description && (
+            {product.sourceType !== "jumia" && product.seller?.description && (
               <p className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-5 mt-3">
                 {product.seller.description}
               </p>
