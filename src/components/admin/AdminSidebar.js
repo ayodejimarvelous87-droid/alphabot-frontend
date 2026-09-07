@@ -148,6 +148,13 @@ className="block p-2 hover:bg-[#18181B] rounded"
 👥 Buyer Management
 </Link>
 
+<Link
+href="/admin/marketplace/ab-marketplace"
+className="block p-2 hover:bg-[#18181B] rounded"
+>
+⚙️ AB Marketplace
+</Link>
+
 </div>
 
 )}
