@@ -42,19 +42,23 @@ export default function MarketplacePaymentResultPage() {
           );
         }
 
-        const res = await fetch(
-          `https://api.alphabothq.com/marketplace/orders/checkout/${activeCheckout.checkoutId}/verify`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              transactionId,
-            }),
-          }
-        );
+        const isABMarketplace =
+          activeCheckout.checkoutType === "ab-marketplace";
+
+        const verifyEndpoint = isABMarketplace
+          ? `https://api.alphabothq.com/marketplace/ab/checkout/${activeCheckout.checkoutId}/verify`
+          : `https://api.alphabothq.com/marketplace/orders/checkout/${activeCheckout.checkoutId}/verify`;
+
+        const res = await fetch(verifyEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            transactionId,
+          }),
+        });
 
         const data = await res.json();
 
@@ -63,6 +67,32 @@ export default function MarketplacePaymentResultPage() {
             data.message ||
               "We could not verify your Marketplace payment."
           );
+        }
+
+        if (isABMarketplace) {
+          try {
+            const savedCart = JSON.parse(
+              localStorage.getItem(
+                "alphabotMarketplaceCart"
+              ) || "[]"
+            );
+
+            const remainingCart = Array.isArray(savedCart)
+              ? savedCart.filter(
+                  (item) => item.sourceType !== "jumia"
+                )
+              : [];
+
+            localStorage.setItem(
+              "alphabotMarketplaceCart",
+              JSON.stringify(remainingCart)
+            );
+          } catch (cartError) {
+            console.error(
+              "AB MARKETPLACE CART CLEANUP ERROR:",
+              cartError
+            );
+          }
         }
 
         localStorage.removeItem(

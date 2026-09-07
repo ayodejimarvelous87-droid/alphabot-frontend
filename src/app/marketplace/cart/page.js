@@ -79,6 +79,19 @@ export default function MarketplaceCart() {
     );
   }
 
+  const hasABProducts = cart.some(
+    (item) => item.sourceType === "jumia"
+  );
+
+  const hasLocalProducts = cart.some(
+    (item) => item.sourceType !== "jumia"
+  );
+
+  const checkoutHref =
+    hasABProducts && !hasLocalProducts
+      ? "/marketplace/ab-checkout"
+      : "/marketplace/checkout";
+
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white pb-10">
 
@@ -290,12 +303,30 @@ export default function MarketplaceCart() {
 
                 </div>
 
-                <Link
-                  href="/marketplace/checkout"
-                  className="w-full mt-5 h-12 rounded-2xl bg-yellow-400 text-black font-black text-xs active:scale-[0.98] transition flex items-center justify-center"
-                >
-                  Proceed to checkout →
-                </Link>
+                {hasABProducts && hasLocalProducts ? (
+                  <div className="mt-5 space-y-3">
+                    <Link
+                      href="/marketplace/ab-checkout"
+                      className="w-full h-12 rounded-2xl bg-yellow-400 text-black font-black text-xs active:scale-[0.98] transition flex items-center justify-center"
+                    >
+                      Checkout AB Marketplace →
+                    </Link>
+
+                    <Link
+                      href="/marketplace/checkout"
+                      className="w-full h-12 rounded-2xl border border-zinc-300 dark:border-zinc-700 font-black text-xs active:scale-[0.98] transition flex items-center justify-center"
+                    >
+                      Checkout Local Seller →
+                    </Link>
+                  </div>
+                ) : (
+                  <Link
+                    href={checkoutHref}
+                    className="w-full mt-5 h-12 rounded-2xl bg-yellow-400 text-black font-black text-xs active:scale-[0.98] transition flex items-center justify-center"
+                  >
+                    Proceed to checkout →
+                  </Link>
+                )}
 
               </div>
 

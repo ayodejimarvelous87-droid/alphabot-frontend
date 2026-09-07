@@ -226,6 +226,7 @@ export default function ProductPage({ params }) {
                   quantity: Number(item.quantity || 1) + 1,
                   stock: product.stock,
                   sellerId: product.seller?._id || item.sellerId || null,
+                  sourceType: product.sourceType || item.sourceType || "local",
                 }
               : item
           )
@@ -239,6 +240,7 @@ export default function ProductPage({ params }) {
               stock: product.stock,
               quantity: 1,
               sellerId: product.seller?._id || null,
+              sourceType: product.sourceType || "local",
             },
           ];
 
