@@ -174,6 +174,8 @@ href="/admin/jumia"
 className={`block p-2 rounded ${active("/admin/jumia")}`}
 >
 🛒 Product Catalogue
+
+<Link href="/admin/jumia/products" className="block p-2 rounded">📦 Manage Products</Link>
 </Link>
 
 </div>

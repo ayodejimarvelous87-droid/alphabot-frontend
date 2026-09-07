@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { MARKETPLACE_CATEGORIES } from "@/lib/marketplaceCategories";
 
 const API = "https://api.alphabothq.com";
 
@@ -157,8 +158,44 @@ export default function JumiaSourcingPage() {
       if (!token) throw new Error("Admin authentication token not found.");
       if (!product) throw new Error("Fetch a Jumia product first.");
 
+      const selectedCategory = MARKETPLACE_CATEGORIES.find(
+        (category) => category.name === form.category
+      );
+
+      if (!selectedCategory?.shipbubbleCategoryId) {
+        throw new Error("Please select a valid AlphaBot category.");
+      }
+
+      if (!product.name?.trim()) {
+        throw new Error("Product name is required.");
+      }
+
+      if (!product.image && (!Array.isArray(product.images) || product.images.length === 0)) {
+        throw new Error("At least one product image is required.");
+      }
+
+      if (Number(product.sourcePrice || 0) <= 0) {
+        throw new Error("Jumia source price must be greater than 0.");
+      }
+
+      if (Number(product.sourceDeliveryFee || 0) < 0) {
+        throw new Error("Jumia delivery fee cannot be negative.");
+      }
+
+      if (Number(product.sourceStock || 0) < 0) {
+        throw new Error("Jumia stock cannot be negative.");
+      }
+
+      if (Number(form.weight) <= 0) {
+        throw new Error("Product weight must be greater than 0 kg.");
+      }
+
+      if (Number(form.length) <= 0 || Number(form.width) <= 0 || Number(form.height) <= 0) {
+        throw new Error("Package dimensions must all be greater than 0 cm.");
+      }
+
       const shipping = {
-        categoryId: Number(form.categoryId),
+        categoryId: Number(selectedCategory.shipbubbleCategoryId),
         weight: Number(form.weight),
         length: Number(form.length),
         width: Number(form.width),
@@ -173,26 +210,31 @@ export default function JumiaSourcingPage() {
         },
         body: JSON.stringify({
           sourceUrl: product.sourceUrl,
-          name: product.name,
-          description: product.description,
-          image: product.image,
-          images: product.images,
+          name: product.name.trim(),
+          description: product.description || "",
+          image: product.image || product.images?.[0] || "",
+          images: Array.isArray(product.images) ? product.images : [],
           sourcePrice: Number(product.sourcePrice || 0),
           sourceOldPrice: product.sourceOldPrice == null || product.sourceOldPrice === "" ? null : Number(product.sourceOldPrice),
           sourceStock: Number(product.sourceStock || 0),
           sourceDeliveryFee: Number(product.sourceDeliveryFee || 0),
           markup: Number(form.markup || 0),
           shipping,
-          category: form.category,
+          category: selectedCategory.name,
           attributes: {}
         })
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to save Jumia product.");
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to save Jumia product.");
+      }
 
       setMessage("🔥 Jumia product added successfully!");
       setProduct(data.product);
+      updateForm("category", data.product?.category || selectedCategory.name);
+      updateForm("categoryId", data.product?.shipping?.categoryId || selectedCategory.shipbubbleCategoryId);
     } catch (err) {
       console.error(err);
       setError(err?.message || "Failed to save product.");
@@ -200,6 +242,7 @@ export default function JumiaSourcingPage() {
       setSaving(false);
     }
   };
+
   return (
     <main className="min-h-screen bg-[#09090B] text-white p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
@@ -424,31 +467,38 @@ export default function JumiaSourcingPage() {
               <section className="border border-zinc-800 bg-[#111113] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-sm font-semibold">AlphaBot Category</h2>
-                  <span className="text-[11px] text-zinc-500">Optional label</span>
+                  <span className="text-[11px] text-zinc-500">Shipping mapped automatically</span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[11px] text-zinc-500">Category</label>
-                    <input
-                      value={form.category}
-                      onChange={(e) => updateForm("category", e.target.value)}
-                      placeholder="e.g. Electronics"
-                      className="w-full mt-1 bg-[#09090B] border border-zinc-700 rounded-lg px-2.5 py-2 text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[11px] text-zinc-500">Shipbubble category ID</label>
-                    <input
-                      type="number"
-                      value={form.categoryId}
-                      onChange={(e) => updateForm("categoryId", e.target.value)}
-                      placeholder="Required"
-                      className={`w-full mt-1 bg-[#09090B] border rounded-lg px-2.5 py-2 text-sm ${!form.categoryId ? "border-amber-700" : "border-zinc-700"}`}
-                    />
-                  </div>
+                <div>
+                  <label className="text-[11px] text-zinc-500">Category</label>
+                  <select
+                    value={form.category}
+                    onChange={(e) => {
+                      const category = MARKETPLACE_CATEGORIES.find((item) => item.name === e.target.value);
+                      updateForm("category", category?.name || "");
+                      updateForm("categoryId", category?.shipbubbleCategoryId || "");
+                    }}
+                    className={`w-full mt-1 bg-[#09090B] border rounded-lg px-2.5 py-2 text-sm ${!form.categoryId ? "border-amber-700" : "border-zinc-700"}`}
+                  >
+                    <option value="">Select category</option>
+                    {MARKETPLACE_CATEGORIES.map((category) => (
+                      <option key={category.name} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
+                {form.categoryId ? (
+                  <div className="mt-2 text-[11px] text-zinc-500">
+                    Shipbubble category ID: <span className="text-zinc-300">{form.categoryId}</span>
+                  </div>
+                ) : (
+                  <p className="mt-2 text-[11px] text-amber-500">
+                    Select a category to enable shipping.
+                  </p>
+                )}
               </section>
             </div>
 
