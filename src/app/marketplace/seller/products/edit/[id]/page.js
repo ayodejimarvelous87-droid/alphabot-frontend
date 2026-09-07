@@ -11,7 +11,7 @@ import { SHIPBUBBLE_PACKAGE_CATEGORIES } from "@/lib/shipbubbleCategories";
 
 export default function EditProductPage({ params }) {
   const { id } = use(params);
-  const [mounted, setMounted] = useState(false);
+  const [mounted] = useState(true);
   const [verified, setVerified] = useState(false);
   const [seller, setSeller] = useState(null);
 
@@ -23,7 +23,8 @@ export default function EditProductPage({ params }) {
     image: "",
     description: "",
     stock: 0,
-    deliveryDays: "",
+    deliveryDaysFrom: "",
+    deliveryDaysTo: "",
     shipping: {
       categoryId: "",
       weight: "",
@@ -57,8 +58,6 @@ export default function EditProductPage({ params }) {
   };
 
   useEffect(() => {
-    setMounted(true);
-
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -98,7 +97,17 @@ export default function EditProductPage({ params }) {
           image: product.image || "",
           description: product.description || "",
           stock: product.stock ?? 0,
-          deliveryDays: product.deliveryDays ?? "",
+          deliveryDaysFrom:
+            product.deliveryDaysFrom ??
+            product.deliveryDays?.from ??
+            product.deliveryDays ??
+            "",
+          deliveryDaysTo:
+            product.deliveryDaysTo ??
+            product.deliveryDays?.to ??
+            product.deliveryDays?.from ??
+            product.deliveryDays ??
+            "",
           shipping: {
             categoryId: product.shipping?.categoryId ?? "",
             weight: product.shipping?.weight ?? "",
@@ -187,13 +196,21 @@ export default function EditProductPage({ params }) {
       return;
     }
 
-    const numericDeliveryDays = Number(form.deliveryDays);
+    const numericDeliveryDaysFrom = Number(form.deliveryDaysFrom);
+    const numericDeliveryDaysTo = Number(form.deliveryDaysTo);
 
     if (
-      !Number.isInteger(numericDeliveryDays) ||
-      numericDeliveryDays < 1
+      !Number.isInteger(numericDeliveryDaysFrom) ||
+      numericDeliveryDaysFrom < 1 ||
+      !Number.isInteger(numericDeliveryDaysTo) ||
+      numericDeliveryDaysTo < 1
     ) {
-      alert("Please enter a valid preparation time in whole days.");
+      alert("Please enter valid preparation times in whole days.");
+      return;
+    }
+
+    if (numericDeliveryDaysTo < numericDeliveryDaysFrom) {
+      alert("The maximum preparation time cannot be less than the minimum.");
       return;
     }
 
@@ -290,7 +307,8 @@ export default function EditProductPage({ params }) {
             image: form.image.trim(),
             description: form.description.trim(),
             stock: Number(form.stock),
-            deliveryDays: Number(form.deliveryDays),
+            deliveryDaysFrom: numericDeliveryDaysFrom,
+            deliveryDaysTo: numericDeliveryDaysTo,
             shipping: {
               categoryId: shippingCategoryId,
               weight: shippingWeight,
@@ -619,18 +637,49 @@ export default function EditProductPage({ params }) {
               How many days do you need to prepare this product before handing it to the courier?
             </p>
 
-            <input
-              value={form.deliveryDays}
-              onChange={(e) =>
-                updateField("deliveryDays", e.target.value)
-              }
-              placeholder="e.g. 2"
-              inputMode="numeric"
-              type="number"
-              min="1"
-              step="1"
-              className="mt-2 w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
-            />
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              <div>
+                <span className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-400 mb-1">
+                  From
+                </span>
+
+                <input
+                  value={form.deliveryDaysFrom}
+                  onChange={(e) =>
+                    updateField("deliveryDaysFrom", e.target.value)
+                  }
+                  placeholder="e.g. 1"
+                  inputMode="numeric"
+                  type="number"
+                  min="1"
+                  step="1"
+                  className="w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+
+              <div>
+                <span className="block text-[10px] font-bold text-zinc-500 dark:text-zinc-400 mb-1">
+                  To
+                </span>
+
+                <input
+                  value={form.deliveryDaysTo}
+                  onChange={(e) =>
+                    updateField("deliveryDaysTo", e.target.value)
+                  }
+                  placeholder="e.g. 3"
+                  inputMode="numeric"
+                  type="number"
+                  min="1"
+                  step="1"
+                  className="w-full h-12 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400"
+                />
+              </div>
+            </div>
+
+            <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2">
+              Example: 1–3 days means you may need between 1 and 3 days to prepare the order.
+            </p>
           </div>
 
           {/* SHIPPING */}

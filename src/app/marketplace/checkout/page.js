@@ -1,11 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
+const formatDeliveryWindow = (estimate) => {
+  if (!estimate?.expectedFrom || !estimate?.expectedTo) {
+    return null;
+  }
+
+  const from = new Date(estimate.expectedFrom);
+  const to = new Date(estimate.expectedTo);
+
+  if (
+    Number.isNaN(from.getTime()) ||
+    Number.isNaN(to.getTime())
+  ) {
+    return null;
+  }
+
+  const options = {
+    day: "numeric",
+    month: "short"
+  };
+
+  return `${from.toLocaleDateString("en-NG", options)} – ${to.toLocaleDateString("en-NG", options)}`;
+};
+
 export default function CheckoutPage() {
-  const [cart, setCart] = useState([]);
-  const [mounted, setMounted] = useState(false);
+  const [cart] = useState(() => {
+    if (typeof window === "undefined") {
+      return [];
+    }
+
+    try {
+      return JSON.parse(
+        localStorage.getItem("alphabotMarketplaceCart") || "[]"
+      );
+    } catch {
+      return [];
+    }
+  });
+  const [mounted] = useState(
+    () => typeof window !== "undefined"
+  );
 
   const [form, setForm] = useState({
     name: "",
@@ -24,16 +61,6 @@ export default function CheckoutPage() {
   const [shippingQuotes, setShippingQuotes] = useState({});
   const [selectedCouriers, setSelectedCouriers] = useState({});
   const [placingOrder, setPlacingOrder] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-
-    const savedCart = JSON.parse(
-      localStorage.getItem("alphabotMarketplaceCart") || "[]"
-    );
-
-    setCart(savedCart);
-  }, []);
 
   const updateField = (field, value) => {
     setForm((current) => ({
@@ -680,6 +707,26 @@ export default function CheckoutPage() {
                                             ? ` · ${courier.deliveryEta}`
                                             : ""}
                                         </p>
+
+                                        {courier.deliveryEstimate && (
+                                          <div className="mt-2 space-y-0.5">
+                                            <p className="text-[9px] font-bold text-zinc-600 dark:text-zinc-300">
+                                              Preparation:{" "}
+                                              {courier.deliveryEstimate.alphaBotFromDays}–{courier.deliveryEstimate.alphaBotToDays} days
+                                            </p>
+
+                                            {formatDeliveryWindow(
+                                              courier.deliveryEstimate
+                                            ) && (
+                                              <p className="text-[10px] font-black text-yellow-600 dark:text-yellow-400">
+                                                Estimated delivery:{" "}
+                                                {formatDeliveryWindow(
+                                                  courier.deliveryEstimate
+                                                )}
+                                              </p>
+                                            )}
+                                          </div>
+                                        )}
 
                                       </div>
 
