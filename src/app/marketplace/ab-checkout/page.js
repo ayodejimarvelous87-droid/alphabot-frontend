@@ -564,8 +564,12 @@ export default function ABMarketplaceCheckoutPage() {
       }
 
       localStorage.setItem(
-        "alphabotActiveMarketplaceCheckout",
-        JSON.stringify(checkout)
+        "alphabotMarketplaceActiveCheckout",
+        JSON.stringify({
+          ...checkout,
+          checkoutType: "ab-marketplace",
+          orderIds,
+        })
       );
 
       window.location.href = paymentData.paymentLink;

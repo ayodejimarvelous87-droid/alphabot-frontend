@@ -45,7 +45,8 @@ export default function CheckoutPage() {
   );
 
   const [form, setForm] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
     address: "",
@@ -68,7 +69,11 @@ export default function CheckoutPage() {
       [field]: value,
     }));
 
-    if (["name", "phone", "address", "city", "state"].includes(field)) {
+    if (
+      ["firstName", "lastName", "phone", "address", "city", "state"].includes(
+        field
+      )
+    ) {
       setReceiverAddressCode(null);
       setShippingQuotes({});
       setSelectedCouriers({});
@@ -93,7 +98,8 @@ export default function CheckoutPage() {
 
   const getShippingRates = async () => {
     if (
-      !form.name ||
+      !form.firstName.trim() ||
+      !form.lastName.trim() ||
       !form.phone ||
       !form.address ||
       !form.city ||
@@ -222,7 +228,8 @@ export default function CheckoutPage() {
     e.preventDefault();
 
     if (
-      !form.name ||
+      !form.firstName.trim() ||
+      !form.lastName.trim() ||
       !form.phone ||
       !form.address ||
       !form.city ||
@@ -295,7 +302,7 @@ export default function CheckoutPage() {
             courierId: selected.courierId,
             serviceCode: selected.serviceCode,
             deliveryAddress: {
-              name: form.name,
+              name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
               email: form.email,
               phone: form.phone,
               address: form.address,
@@ -604,18 +611,39 @@ export default function CheckoutPage() {
 
             <div className="rounded-3xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4 space-y-4">
 
-              <div>
+              <div className="grid grid-cols-2 gap-3">
 
-                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wide">
-                  Full name
-                </label>
+                <div>
 
-                <input
-                  value={form.name}
-                  onChange={(e) => updateField("name", e.target.value)}
-                  placeholder="Enter your full name"
-                  className="mt-2 w-full h-12 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400 transition"
-                />
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wide">
+                    First name
+                  </label>
+
+                  <input
+                    value={form.firstName}
+                    onChange={(e) => updateField("firstName", e.target.value)}
+                    placeholder="First name"
+                    autoComplete="given-name"
+                    className="mt-2 w-full h-12 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400 transition"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-wide">
+                    Last name
+                  </label>
+
+                  <input
+                    value={form.lastName}
+                    onChange={(e) => updateField("lastName", e.target.value)}
+                    placeholder="Last name"
+                    autoComplete="family-name"
+                    className="mt-2 w-full h-12 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-4 text-sm outline-none focus:border-yellow-400 transition"
+                  />
+
+                </div>
 
               </div>
 

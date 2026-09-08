@@ -2,7 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import {
+  useParams,
+  useSearchParams,
+} from "next/navigation";
 
 const formatStatus = (status) => {
   if (!status) return "Pending";
@@ -57,13 +60,21 @@ const getStatusIcon = (status, index, historyLength) => {
 
 export default function MarketplaceOrderTrackingPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
 
   const orderId = String(params?.id || "").trim();
+
+  const isABMarketplace =
+    searchParams.get("type") === "ab";
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
+  const [confirmingReceipt, setConfirmingReceipt] =
+    useState(false);
+  const [confirmReceiptError, setConfirmReceiptError] =
+    useState("");
 
   const [selectedRating, setSelectedRating] = useState(0);
   const [review, setReview] = useState("");
@@ -83,17 +94,20 @@ export default function MarketplaceOrderTrackingPage() {
       throw new Error("Order ID was not found.");
     }
 
-    const res = await fetch(
-      `https://api.alphabothq.com/marketplace/orders/${encodeURIComponent(
-        orderId
-      )}/tracking`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        cache: "no-store",
-      }
-    );
+    const trackingEndpoint = isABMarketplace
+      ? `https://api.alphabothq.com/marketplace/ab/orders/${encodeURIComponent(
+          orderId
+        )}/tracking`
+      : `https://api.alphabothq.com/marketplace/orders/${encodeURIComponent(
+          orderId
+        )}/tracking`;
+
+    const res = await fetch(trackingEndpoint, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
 
     const result = await res.json();
 
@@ -105,7 +119,7 @@ export default function MarketplaceOrderTrackingPage() {
     }
 
     return result.data;
-  }, [orderId]);
+  }, [orderId, searchParams]);
 
   const refreshTracking = async () => {
     try {
@@ -165,6 +179,70 @@ export default function MarketplaceOrderTrackingPage() {
       cancelled = true;
     };
   }, [fetchTracking]);
+
+  const confirmReceived = async () => {
+    if (
+      !data?.orderId ||
+      confirmingReceipt ||
+      String(data?.orderStatus || "").toLowerCase() !==
+        "delivered"
+    ) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setConfirmReceiptError(
+        "Please log in again to confirm receipt."
+      );
+      return;
+    }
+
+    try {
+      setConfirmingReceipt(true);
+      setConfirmReceiptError("");
+
+      const confirmEndpoint = isABMarketplace
+        ? `https://api.alphabothq.com/marketplace/ab/orders/${encodeURIComponent(
+            data.orderId
+          )}/confirm-received`
+        : `https://api.alphabothq.com/marketplace/orders/${encodeURIComponent(
+            data.orderId
+          )}/confirm-received`;
+
+      const response = await fetch(confirmEndpoint, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message ||
+            "Unable to confirm receipt of this order."
+        );
+      }
+
+      const refreshed = await fetchTracking();
+      setData(refreshed);
+    } catch (err) {
+      console.error(
+        "MARKETPLACE CONFIRM RECEIVED ERROR:",
+        err
+      );
+
+      setConfirmReceiptError(
+        err.message ||
+          "Unable to confirm receipt of this order."
+      );
+    } finally {
+      setConfirmingReceipt(false);
+    }
+  };
 
   const submitRating = async () => {
     if (
@@ -375,12 +453,22 @@ export default function MarketplaceOrderTrackingPage() {
     tracking.status || data?.orderStatus
   );
 
+  const normalizedOrderStatus =
+    String(data?.orderStatus || "").toLowerCase();
+
   const isDelivered =
     String(tracking.status || "")
       .toLowerCase()
       .includes("deliver") ||
-    String(data?.orderStatus || "")
-      .toLowerCase() === "delivered";
+    normalizedOrderStatus === "delivered" ||
+    normalizedOrderStatus === "completed";
+
+  const isCompleted =
+    normalizedOrderStatus === "completed";
+
+  const buyerConfirmed =
+    Boolean(data?.buyerConfirmedAt) ||
+    isCompleted;
 
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-[#0b0b0b] text-zinc-950 dark:text-white pb-14">
@@ -683,9 +771,86 @@ export default function MarketplaceOrderTrackingPage() {
         </section>
 
 
+        {/* CONFIRM RECEIVED */}
+
+        {isDelivered && !buyerConfirmed && (
+          <section className="mt-4 rounded-3xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-5">
+
+            <div className="flex items-start gap-3">
+
+              <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center text-xl shrink-0">
+                📦
+              </div>
+
+              <div className="flex-1">
+
+                <p className="text-[9px] font-black tracking-[0.15em] uppercase text-emerald-600 dark:text-emerald-400">
+                  ORDER DELIVERED
+                </p>
+
+                <h2 className="text-lg font-black mt-1">
+                  Did you receive your order?
+                </h2>
+
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-2 leading-5">
+                  Confirm receipt once you have received and checked your order. This will mark the order as completed.
+                </p>
+
+                {confirmReceiptError && (
+                  <div className="mt-3 rounded-2xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-3 text-[10px] font-bold text-red-600 dark:text-red-400">
+                    {confirmReceiptError}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={confirmReceived}
+                  disabled={confirmingReceipt}
+                  className="mt-4 w-full h-12 rounded-2xl bg-emerald-500 text-white text-xs font-black active:scale-[0.98] transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {confirmingReceipt
+                    ? "Confirming..."
+                    : "✓ Confirm Received"}
+                </button>
+
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
+        {buyerConfirmed && (
+          <section className="mt-4 rounded-3xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-5">
+
+            <div className="flex items-center gap-3">
+
+              <div className="w-11 h-11 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xl">
+                ✓
+              </div>
+
+              <div>
+                <p className="text-[9px] font-black tracking-[0.15em] uppercase text-emerald-600 dark:text-emerald-400">
+                  ORDER COMPLETED
+                </p>
+
+                <h2 className="text-base font-black mt-1">
+                  Receipt confirmed successfully
+                </h2>
+
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
+                  You confirmed that you received this order.
+                </p>
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
         {/* PRODUCT RATING */}
 
-        {String(data?.orderStatus || "").toLowerCase() ===
+        {normalizedOrderStatus ===
           "completed" && (
           <section className="mt-4 rounded-3xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-5">
 

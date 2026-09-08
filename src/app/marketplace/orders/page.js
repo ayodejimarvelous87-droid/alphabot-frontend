@@ -62,29 +62,66 @@ export default function OrdersPage() {
       try {
         setRefreshError("");
 
-        const response = await fetch(
-          `${API_BASE}/marketplace/orders`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            cache: "no-store",
-          }
-        );
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
 
-        const data = await response.json().catch(() => ({}));
+        const [marketplaceResponse, abResponse] =
+          await Promise.all([
+            fetch(`${API_BASE}/marketplace/orders`, {
+              headers,
+              cache: "no-store",
+            }),
+            fetch(`${API_BASE}/marketplace/ab/orders`, {
+              headers,
+              cache: "no-store",
+            }),
+          ]);
 
-        if (!response.ok) {
+        const marketplaceData =
+          await marketplaceResponse.json().catch(() => ({}));
+
+        const abData =
+          await abResponse.json().catch(() => ({}));
+
+        if (!marketplaceResponse.ok) {
           throw new Error(
-            data.message || "Failed to load Marketplace orders."
+            marketplaceData.message ||
+              "Failed to load Marketplace orders."
           );
         }
 
-        const backendOrders = Array.isArray(data.orders)
-          ? data.orders
-          : [];
+        if (!abResponse.ok) {
+          throw new Error(
+            abData.message ||
+              "Failed to load AB Products orders."
+          );
+        }
 
-        setOrders(backendOrders);
+        const marketplaceOrders =
+          Array.isArray(marketplaceData.orders)
+            ? marketplaceData.orders
+            : [];
+
+        const abOrders =
+          Array.isArray(abData.orders)
+            ? abData.orders.map((order) => ({
+                ...order,
+                isABMarketplace: true,
+                orderType: "ab-marketplace",
+              }))
+            : [];
+
+        const combinedOrders = [
+          ...marketplaceOrders,
+          ...abOrders,
+        ].sort(
+          (a, b) =>
+            new Date(b.createdAt || 0) -
+            new Date(a.createdAt || 0)
+        );
+
+        setOrders(combinedOrders);
       } catch (error) {
         console.error(
           "MARKETPLACE ORDERS LOAD ERROR:",
@@ -176,6 +213,16 @@ export default function OrdersPage() {
 
     if (!token) {
       alert("Please sign in to cancel this order.");
+      return;
+    }
+
+    const selectedOrder = orders.find(
+      (item) =>
+        String(item._id) === String(marketplaceOrderId)
+    );
+
+    if (selectedOrder?.isABMarketplace) {
+      alert("AB Products orders cannot be cancelled here yet.");
       return;
     }
 
@@ -471,7 +518,11 @@ export default function OrdersPage() {
                       <Link
                         href={`/marketplace/orders/${encodeURIComponent(
                           marketplaceOrderId
-                        )}/tracking`}
+                        )}/tracking${
+                          order.isABMarketplace
+                            ? "?type=ab"
+                            : ""
+                        }`}
                         className="text-[10px] font-black text-yellow-600 dark:text-yellow-400"
                       >
                         Track order →
