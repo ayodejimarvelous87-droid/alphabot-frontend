@@ -575,9 +575,48 @@ export default function Marketplace() {
 
         {/* SPONSORED FLIERS */}
 
+        <section className="mt-5">
+          <div className="rounded-3xl border border-yellow-400/20 bg-gradient-to-r from-yellow-400/10 via-white dark:via-[#101012] to-white dark:to-[#101012] p-5">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-[9px] font-black tracking-[0.18em] uppercase text-yellow-500">
+                  📣 PROMOTE YOUR PRODUCT
+                </p>
+
+                <h2 className="text-lg md:text-xl font-black mt-1">
+                  Get Featured at the Top
+                </h2>
+
+                <p className="text-xs text-zinc-500 mt-1">
+                  Put your product or offer in front of Marketplace customers.
+                </p>
+              </div>
+
+              <a
+                href="https://wa.me/2349037120624?text=Hello%20AlphaBot%2C%20I%20want%20to%20promote%20my%20product%20for%20%E2%82%A63%2C000%20%2F%207%20days."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2.5 text-[10px] font-black uppercase tracking-wide text-black hover:bg-yellow-300 transition"
+              >
+                DM FOR PROMOTIONS →
+              </a>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between border-t border-yellow-400/10 pt-3">
+              <span className="text-xs font-black text-yellow-500">
+                ₦3,000 / 7 DAYS
+              </span>
+
+              <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">
+                Fixed promotional rate
+              </span>
+            </div>
+          </div>
+        </section>
+
         {!promotionsLoading &&
           marketplacePromotions.length > 0 && (
-            <section className="mt-5">
+            <section className="mt-4">
               <div className="flex items-end justify-between gap-4 mb-3">
                 <div>
                   <p className="text-[9px] font-black tracking-[0.18em] uppercase text-yellow-500">
