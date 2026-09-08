@@ -132,8 +132,43 @@ export default function Marketplace() {
   const [locationSearch, setLocationSearch] = useState("");
   const [locationsLoading, setLocationsLoading] = useState(false);
 
+  const [marketplacePromotions, setMarketplacePromotions] = useState([]);
+  const [promotionsLoading, setPromotionsLoading] = useState(true);
+
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const loadMarketplacePromotions = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE}/marketplace/promotions`,
+          {
+            cache: "no-store",
+          }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (response.ok && data.success) {
+          setMarketplacePromotions(
+            Array.isArray(data.promotions)
+              ? data.promotions
+              : []
+          );
+        }
+      } catch (error) {
+        console.error(
+          "MARKETPLACE PROMOTIONS LOAD ERROR:",
+          error
+        );
+      } finally {
+        setPromotionsLoading(false);
+      }
+    };
+
+    loadMarketplacePromotions();
   }, []);
 
   useEffect(() => {
@@ -502,6 +537,135 @@ export default function Marketplace() {
             <span className="w-11 h-11 rounded-2xl bg-black text-yellow-400 flex items-center justify-center font-black">→</span>
           </Link>
         </section>
+
+        {/* WHATSAPP ORDER */}
+
+        <section className="mt-5">
+          <a
+            href="https://wa.me/2349037120624?text=Hello%20AlphaBot%2C%20I%20want%20to%20order%20a%20product%20from%20the%20Marketplace."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block rounded-3xl border border-green-500/20 bg-gradient-to-r from-green-500/10 via-white dark:via-[#101012] to-white dark:to-[#101012] p-5 hover:border-green-500/40 transition"
+          >
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 shrink-0 rounded-2xl bg-green-500/15 flex items-center justify-center text-2xl">
+                📲
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-[9px] font-black tracking-[0.18em] uppercase text-green-500">
+                  NEED HELP ORDERING?
+                </p>
+
+                <h2 className="text-base md:text-lg font-black mt-1">
+                  DM ON WHATSAPP TO ORDER
+                </h2>
+
+                <p className="text-sm font-black text-green-500 mt-1">
+                  09037120624
+                </p>
+              </div>
+
+              <span className="shrink-0 rounded-xl bg-green-500 px-3 py-2 text-[10px] font-black text-white">
+                CHAT →
+              </span>
+            </div>
+          </a>
+        </section>
+
+        {/* SPONSORED FLIERS */}
+
+        {!promotionsLoading &&
+          marketplacePromotions.length > 0 && (
+            <section className="mt-5">
+              <div className="flex items-end justify-between gap-4 mb-3">
+                <div>
+                  <p className="text-[9px] font-black tracking-[0.18em] uppercase text-yellow-500">
+                    SPONSORED
+                  </p>
+
+                  <h2 className="text-lg md:text-xl font-black mt-1">
+                    Featured Promotions
+                  </h2>
+
+                  <p className="text-xs text-zinc-500 mt-1">
+                    Special offers from selected Marketplace sellers.
+                  </p>
+                </div>
+
+                <span className="shrink-0 text-[9px] font-black uppercase tracking-wider text-zinc-500">
+                  SWIPE →
+                </span>
+              </div>
+
+              <div
+                className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                }}
+              >
+                {marketplacePromotions.map((promotion) => {
+                  const content = (
+                    <div className="w-[86vw] sm:w-[420px] md:w-[520px] shrink-0 snap-center rounded-3xl border border-zinc-800 bg-[#101012] overflow-hidden hover:border-yellow-400/40 transition">
+                      <div className="aspect-[16/9] bg-zinc-100 dark:bg-[#18181B] overflow-hidden">
+                        <img
+                          src={promotion.imageUrl}
+                          alt={
+                            promotion.title ||
+                            "Sponsored Marketplace promotion"
+                          }
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      {promotion.title && (
+                        <div className="px-4 py-3">
+                          <p className="text-sm font-black">
+                            {promotion.title}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+
+                  if (promotion.link) {
+                    return (
+                      <a
+                        key={promotion._id}
+                        href={promotion.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0"
+                      >
+                        {content}
+                      </a>
+                    );
+                  }
+
+                  return (
+                    <div
+                      key={promotion._id}
+                      className="shrink-0"
+                    >
+                      {content}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {marketplacePromotions.length > 1 && (
+                <div className="flex justify-center gap-1.5 mt-1">
+                  {marketplacePromotions.map((promotion, index) => (
+                    <span
+                      key={promotion._id || index}
+                      className="h-1.5 w-1.5 rounded-full bg-zinc-600"
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
         <section className="mt-5">
           <div className="flex justify-between mb-3">

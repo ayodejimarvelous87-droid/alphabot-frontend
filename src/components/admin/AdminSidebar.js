@@ -155,6 +155,13 @@ className="block p-2 hover:bg-[#18181B] rounded"
 ⚙️ AB Marketplace
 </Link>
 
+<Link
+href="/admin/marketplace/promotions"
+className="block p-2 hover:bg-[#18181B] rounded"
+>
+📣 Promotions
+</Link>
+
 </div>
 
 )}
