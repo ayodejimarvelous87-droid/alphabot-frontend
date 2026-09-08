@@ -72,7 +72,6 @@ export default function PartnerDashboard() {
     ["📱", "Airtime", "/partner/services/airtime"],
     ["📺", "TV", "/partner/services/tv"],
     ["⚡", "Electricity", "/partner/services/electricity"],
-    ["🎫", "ePIN", "/partner/services/epin"],
   ];
 
   return (

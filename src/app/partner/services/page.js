@@ -32,9 +32,6 @@ export default function ResellerServices() {
     },
     {
       icon: "🎫",
-      name: "ePIN",
-      description: "Set your selling prices for ePIN products.",
-      path: "/partner/services/epin",
     },
   ];
 

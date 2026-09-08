@@ -23,7 +23,7 @@ export default function PartnerTVPrices() {
     const load = async () => {
       try {
         const res = await fetch(
-          "https://api.alphabothq.com/reseller-prices",
+          "https://api.alphabothq.com/reseller-prices/tv",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -40,18 +40,13 @@ export default function PartnerTVPrices() {
           return;
         }
 
-        const tvProducts = data.filter(
-          (item) =>
-            String(item.category || "").toLowerCase() ===
-            "tv"
-        );
-
-        setProducts(tvProducts);
+        setProducts(data);
 
         const initialPrices = {};
 
-        tvProducts.forEach((item) => {
-          initialPrices[item.productId] = item.sellingPrice;
+        data.forEach((item) => {
+          initialPrices[item.productId] =
+            item.sellingPrice ?? item.basePrice;
         });
 
         setPrices(initialPrices);
@@ -83,7 +78,7 @@ export default function PartnerTVPrices() {
 
     try {
       const res = await fetch(
-        "https://api.alphabothq.com/reseller-prices",
+        "https://api.alphabothq.com/reseller-prices/tv",
         {
           method: "PUT",
           headers: {

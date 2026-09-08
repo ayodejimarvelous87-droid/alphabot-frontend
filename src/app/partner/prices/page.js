@@ -27,12 +27,6 @@ const categories = [
     path: "/partner/services/electricity",
     description: "Set electricity service prices",
   },
-  {
-    name: "ePIN",
-    icon: "🎫",
-    path: "/partner/services/epin",
-    description: "Set prices for ePIN products",
-  },
 ];
 
 export default function PartnerPrices() {

@@ -22,7 +22,7 @@ export default function PartnerElectricityPrices() {
     const load = async () => {
       try {
         const res = await fetch(
-          "https://api.alphabothq.com/reseller-prices",
+          "https://api.alphabothq.com/reseller-prices/electricity",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -39,18 +39,13 @@ export default function PartnerElectricityPrices() {
           return;
         }
 
-        const electricityProducts = data.filter(
-          (item) =>
-            String(item.category || "").toLowerCase() ===
-            "electricity"
-        );
-
-        setProducts(electricityProducts);
+        setProducts(data);
 
         const initialPrices = {};
 
-        electricityProducts.forEach((item) => {
-          initialPrices[item.productId] = item.sellingPrice;
+        data.forEach((item) => {
+          initialPrices[item.productId] =
+            item.sellingPrice ?? item.basePrice;
         });
 
         setPrices(initialPrices);
@@ -82,7 +77,7 @@ export default function PartnerElectricityPrices() {
 
     try {
       const res = await fetch(
-        "https://api.alphabothq.com/reseller-prices",
+        "https://api.alphabothq.com/reseller-prices/electricity",
         {
           method: "PUT",
           headers: {
@@ -139,8 +134,8 @@ export default function PartnerElectricityPrices() {
           </h1>
 
           <p className="text-zinc-400 mt-2">
-            Set your selling prices for electricity bill
-            payments.
+            Set the service fees your customers will pay for electricity
+            bill payments.
           </p>
         </div>
 
@@ -222,12 +217,11 @@ export default function PartnerElectricityPrices() {
 
                     <div>
                       <p className="text-xl font-bold">
-                        {product.name}
+                        {product.disco}
                       </p>
 
                       <p className="text-zinc-500 text-sm mt-1">
-                        {product.description ||
-                          "Electricity bill payment"}
+                        Electricity bill payment
                       </p>
                     </div>
 
@@ -241,7 +235,7 @@ export default function PartnerElectricityPrices() {
 
                       <div>
                         <p className="text-xs text-zinc-500">
-                          Base price
+                          AlphaBot fee
                         </p>
 
                         <p className="font-semibold mt-1">
@@ -269,7 +263,7 @@ export default function PartnerElectricityPrices() {
 
                       <div>
                         <p className="text-xs text-zinc-500 mb-1">
-                          Customer price
+                          Customer fee
                         </p>
 
                         <div className="flex items-center">

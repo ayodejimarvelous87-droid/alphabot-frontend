@@ -37,7 +37,6 @@ const serviceStats = [
   { name: "Airtime", icon: "📱", sales: 18, profit: 900 },
   { name: "TV", icon: "📺", sales: 7, profit: 1200 },
   { name: "Electricity", icon: "⚡", sales: 5, profit: 450 },
-  { name: "ePIN", icon: "🎫", sales: 3, profit: 300 },
 ];
 
 export default function PartnerTransactions() {
