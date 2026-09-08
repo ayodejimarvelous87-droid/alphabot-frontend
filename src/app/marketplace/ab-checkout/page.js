@@ -144,7 +144,8 @@ export default function ABMarketplaceCheckoutPage() {
   });
 
   const [form, setForm] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
     address: "",
@@ -202,6 +203,13 @@ export default function ABMarketplaceCheckoutPage() {
     if (field === "address") {
       setLocationSuggestions([]);
       setShowLocationSuggestions(true);
+    }
+
+    if (field === "firstName" || field === "lastName") {
+      setShippingData(null);
+      setSelectedCourier(null);
+      setShippingError("");
+      return;
     }
 
     setShippingData(null);
@@ -322,7 +330,7 @@ export default function ABMarketplaceCheckoutPage() {
               quantity: Number(item.quantity || 1),
             })),
             deliveryAddress: {
-              name: form.name.trim(),
+              name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
               phone: form.phone.trim(),
               email: form.email.trim(),
               address: form.address.trim(),
@@ -434,7 +442,7 @@ export default function ABMarketplaceCheckoutPage() {
       }));
 
       const deliveryAddress = {
-        name: form.name.trim(),
+        name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
         phone: form.phone.trim(),
         email: form.email.trim(),
         address: form.address.trim(),
@@ -659,8 +667,35 @@ export default function ABMarketplaceCheckoutPage() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            <div className="grid grid-cols-2 gap-3 sm:col-span-2">
+              {[
+                ["firstName", "First name"],
+                ["lastName", "Last name"],
+              ].map(([field, label]) => (
+                <div key={field}>
+                  <label className="text-[10px] font-black uppercase tracking-wide text-zinc-500">
+                    {label}
+                  </label>
+
+                  <input
+                    value={form[field]}
+                    onChange={(event) =>
+                      updateForm(field, event.target.value)
+                    }
+                    type="text"
+                    placeholder={label}
+                    autoComplete={
+                      field === "firstName"
+                        ? "given-name"
+                        : "family-name"
+                    }
+                    className="mt-1 w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-sm outline-none focus:border-yellow-400"
+                  />
+                </div>
+              ))}
+            </div>
+
             {[
-              ["name", "Full name"],
               ["email", "Email"],
               ["phone", "Phone number"],
             ].map(([field, label]) => (
@@ -676,6 +711,11 @@ export default function ABMarketplaceCheckoutPage() {
                   }
                   type={field === "email" ? "email" : "text"}
                   placeholder={label}
+                  autoComplete={
+                    field === "email"
+                      ? "email"
+                      : "tel"
+                  }
                   className="mt-1 w-full h-11 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 text-sm outline-none focus:border-yellow-400"
                 />
               </div>
