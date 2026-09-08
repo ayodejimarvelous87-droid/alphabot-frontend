@@ -439,6 +439,12 @@ export default function ProductPage({ params }) {
             )}
           </div>
 
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-[10px] font-black text-zinc-600 dark:text-zinc-300">
+              📦 {Number(product?.stock || 0).toLocaleString()} available
+            </span>
+          </div>
+
           {Number.isInteger(Number(product.deliveryDays)) &&
             Number(product.deliveryDays) >= 1 && (
               <div className="mt-4 rounded-2xl bg-white dark:bg-[#151515] border border-zinc-200 dark:border-zinc-800 p-4">

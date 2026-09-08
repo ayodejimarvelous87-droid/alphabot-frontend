@@ -924,6 +924,9 @@ export default function Marketplace() {
                   <div className="p-3">
                     <p className="text-xs font-bold truncate">{product.name}</p>
                     <ProductPrice product={product} />
+                    <p className="text-[9px] text-zinc-500 mt-1">
+                      📦 {Number(product?.stock || 0).toLocaleString()} available
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -960,6 +963,9 @@ export default function Marketplace() {
                     <div className="p-3">
                       <p className="text-xs font-bold truncate">{product.name}</p>
                       <ProductPrice product={product} />
+                      <p className="text-[9px] text-zinc-500 mt-1">
+                        📦 {Number(product?.stock || 0).toLocaleString()} available
+                      </p>
                       <p className="text-[9px] text-zinc-500 mt-1">
                         {rating.count > 0 ? `★ ${rating.average.toFixed(1)} (${rating.count})` : "No ratings yet"}
                       </p>
@@ -1076,6 +1082,10 @@ export default function Marketplace() {
                             </h4>
 
                             <ProductPrice product={product} />
+
+                            <p className="text-[9px] text-zinc-500 mt-1">
+                              📦 {Number(product?.stock || 0).toLocaleString()} available
+                            </p>
 
                             <p className="text-[9px] text-zinc-500 mt-1">
                               {rating.count > 0
