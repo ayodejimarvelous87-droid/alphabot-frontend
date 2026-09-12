@@ -4,6 +4,10 @@ const API = "https://api.alphabothq.com";
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import {
+  authenticateWithBiometric,
+  clearBiometricToken
+} from "@/lib/biometric";
 
 export default function EnterPin() {
   const router = useRouter();
@@ -14,6 +18,8 @@ export default function EnterPin() {
 
   const [pin, setPin] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [biometricLoading, setBiometricLoading] = useState(false);
+  const [biometricError, setBiometricError] = useState("");
 
   const press = (value) => {
     if (pin.length < 4) {
@@ -23,6 +29,212 @@ export default function EnterPin() {
 
   const backspace = () => {
     setPin((prev) => prev.slice(0, -1));
+  };
+
+  const handleBiometric = async () => {
+    if (service !== "data" || processing || biometricLoading) return;
+
+    setBiometricLoading(true);
+    setBiometricError("");
+
+    try {
+      await authenticateWithBiometric();
+
+      const biometricToken =
+        localStorage.getItem("biometricToken");
+
+      if (!biometricToken) {
+        throw new Error("Biometric authorization failed.");
+      }
+
+      await enterDataPurchase("", biometricToken);
+
+    } catch (error) {
+      console.error("BIOMETRIC AUTH ERROR:", error);
+
+      clearBiometricToken();
+
+      setBiometricError(
+        error?.message ||
+        "Fingerprint authentication failed."
+      );
+    } finally {
+      setBiometricLoading(false);
+    }
+  };
+
+  const enterDataPurchase = async (
+    transactionPin = "",
+    biometricToken = ""
+  ) => {
+    if (processing) return;
+
+    setProcessing(true);
+
+    try {
+      const savedState =
+        sessionStorage.getItem("alphaBotDataPurchaseState");
+
+      if (!savedState) {
+        sessionStorage.setItem(
+          "alphaBotTransactionResult",
+          JSON.stringify({
+            status: "failed",
+            message: "Data purchase information was not found.",
+            returnPath: "/data"
+          })
+        );
+
+        router.push("/transaction-result");
+        return;
+      }
+
+      const state = JSON.parse(savedState);
+
+      const plansRes = await fetch(
+        "https://api.alphabothq.com/data/plans"
+      );
+
+      if (!plansRes.ok) {
+        throw new Error("Unable to load data plans.");
+      }
+
+      const plansData = await plansRes.json();
+      const providers = plansData.providers || {};
+
+      const networkPlans =
+        state.network &&
+        providers[state.network] &&
+        typeof providers[state.network] === "object"
+          ? providers[state.network]
+          : {};
+
+      const categoryPlans =
+        state.category &&
+        Array.isArray(networkPlans[state.category])
+          ? networkPlans[state.category]
+          : [];
+
+      const searchText =
+        String(state.search || "").toLowerCase();
+
+      const filteredPlans = categoryPlans.filter((plan) => {
+        const text = (
+          plan.data_plan ||
+          plan.name ||
+          plan.size ||
+          plan.datasize ||
+          ""
+        ).toLowerCase();
+
+        return text.includes(searchText);
+      });
+
+      const selected =
+        filteredPlans[Number(state.selectedPlan)];
+
+      if (!selected) {
+        sessionStorage.setItem(
+          "alphaBotTransactionResult",
+          JSON.stringify({
+            status: "failed",
+            message: "Selected data plan was not found.",
+            returnPath: "/data"
+          })
+        );
+
+        sessionStorage.removeItem(
+          "alphaBotDataPurchaseState"
+        );
+
+        router.push("/transaction-result");
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        "https://api.alphabothq.com/data/buy",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "Idempotency-Key":
+              typeof crypto !== "undefined" &&
+              crypto.randomUUID
+                ? crypto.randomUUID()
+                : `${Date.now()}-${Math.random()}`
+          },
+          body: JSON.stringify({
+            phone: state.phone,
+            network:
+              selected.network ||
+              selected.service_name ||
+              "",
+            plan:
+              selected.data_plan ||
+              selected.name ||
+              selected.datasize,
+            amount: Number(
+              selected.display_price ||
+              selected.reseller_price ||
+              selected.price
+            ),
+            pin: transactionPin || undefined,
+            biometricToken:
+              biometricToken || undefined,
+            provider: selected.provider,
+            variation_id: selected.variation_id
+          })
+        }
+      );
+
+      const result = await res.json();
+
+      sessionStorage.setItem(
+        "alphaBotTransactionResult",
+        JSON.stringify({
+          ...result,
+          status:
+            result.status ||
+            result.transaction?.status ||
+            (res.ok ? "success" : "failed"),
+          returnPath: "/data"
+        })
+      );
+
+      sessionStorage.removeItem(
+        "alphaBotDataPurchaseState"
+      );
+
+      clearBiometricToken();
+
+      router.push("/transaction-result");
+
+    } catch (error) {
+      console.error("DATA PURCHASE ERROR:", error);
+
+      clearBiometricToken();
+
+      sessionStorage.setItem(
+        "alphaBotTransactionResult",
+        JSON.stringify({
+          status: "failed",
+          message: error?.message || "Connection error",
+          returnPath: "/data"
+        })
+      );
+
+      sessionStorage.removeItem(
+        "alphaBotDataPurchaseState"
+      );
+
+      router.push("/transaction-result");
+
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const enterPin = async () => {
@@ -216,160 +428,9 @@ export default function EnterPin() {
     }
 
     if (service === "data") {
-      if (processing) return;
+      if (pin.length !== 4) return;
 
-      setProcessing(true);
-
-      try {
-        const savedState =
-          sessionStorage.getItem("alphaBotDataPurchaseState");
-
-        if (!savedState) {
-          sessionStorage.setItem(
-            "alphaBotTransactionResult",
-            JSON.stringify({
-              status: "failed",
-              message: "Data purchase information was not found.",
-              returnPath: "/data"
-            })
-          );
-
-          router.push("/transaction-result");
-          return;
-        }
-
-        const state = JSON.parse(savedState);
-
-        const plansRes = await fetch(
-          "https://api.alphabothq.com/data/plans"
-        );
-
-        if (!plansRes.ok) {
-          throw new Error("Unable to load data plans.");
-        }
-
-        const plansData = await plansRes.json();
-        const providers = plansData.providers || {};
-
-        const networkPlans =
-          state.network &&
-          providers[state.network] &&
-          typeof providers[state.network] === "object"
-            ? providers[state.network]
-            : {};
-
-        const categoryPlans =
-          state.category &&
-          Array.isArray(networkPlans[state.category])
-            ? networkPlans[state.category]
-            : [];
-
-        const searchText =
-          String(state.search || "").toLowerCase();
-
-        const filteredPlans = categoryPlans.filter((plan) => {
-          const text = (
-            plan.data_plan ||
-            plan.name ||
-            plan.size ||
-            plan.datasize ||
-            ""
-          ).toLowerCase();
-
-          return text.includes(searchText);
-        });
-
-        const selected =
-          filteredPlans[Number(state.selectedPlan)];
-
-        if (!selected) {
-          sessionStorage.setItem(
-            "alphaBotTransactionResult",
-            JSON.stringify({
-              status: "failed",
-              message: "Selected data plan was not found.",
-              returnPath: "/data"
-            })
-          );
-
-          sessionStorage.removeItem(
-            "alphaBotDataPurchaseState"
-          );
-
-          router.push("/transaction-result");
-          return;
-        }
-
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(
-          "https://api.alphabothq.com/data/buy",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-              "Idempotency-Key": crypto.randomUUID()
-            },
-            body: JSON.stringify({
-              phone: state.phone,
-              network:
-                selected.network ||
-                selected.service_name ||
-                "",
-              plan:
-                selected.data_plan ||
-                selected.name ||
-                selected.datasize,
-              amount: Number(
-                selected.display_price ||
-                selected.reseller_price ||
-                selected.price
-              ),
-              pin,
-              provider: selected.provider,
-              variation_id: selected.variation_id
-            })
-          }
-        );
-
-        const result = await res.json();
-
-        sessionStorage.setItem(
-          "alphaBotTransactionResult",
-          JSON.stringify({
-            ...result,
-            status:
-              result.status ||
-              result.transaction?.status ||
-              (res.ok ? "success" : "failed"),
-            returnPath: "/data"
-          })
-        );
-
-        sessionStorage.removeItem(
-          "alphaBotDataPurchaseState"
-        );
-
-        router.push("/transaction-result");
-
-      } catch (error) {
-        sessionStorage.setItem(
-          "alphaBotTransactionResult",
-          JSON.stringify({
-            status: "failed",
-            message: "Connection error",
-            returnPath: "/data"
-          })
-        );
-
-        sessionStorage.removeItem(
-          "alphaBotDataPurchaseState"
-        );
-
-        router.push("/transaction-result");
-      }
-
+      await enterDataPurchase(pin, "");
       return;
     }
 
@@ -858,13 +919,13 @@ export default function EnterPin() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
+    <main className="min-h-screen bg-zinc-50 text-zinc-950 dark:bg-black dark:text-white flex flex-col">
 
       <div className="px-5 pt-6">
         <button
           type="button"
           onClick={() => router.back()}
-          className="text-zinc-400 text-sm font-bold"
+          className="text-zinc-500 dark:text-zinc-400 text-sm font-bold"
         >
           ← Back
         </button>
@@ -875,18 +936,18 @@ export default function EnterPin() {
         <div className="text-center mb-8">
 
           {(service === "airtime" || service === "data" || service === "electricity" || service === "tv" || service === "betting" || service === "exam-pin" || service === "recharge-pin") && processing && (
-            <div className="mb-5 text-sm font-bold text-blue-400">
+            <div className="mb-5 text-sm font-bold text-blue-600 dark:text-blue-400">
               Processing transaction...
             </div>
           )}
 
           <div className="text-4xl mb-4">🔐</div>
 
-          <h1 className="text-2xl font-black">
+          <h1 className="text-2xl font-black text-zinc-950 dark:text-white">
             Enter Transaction PIN
           </h1>
 
-          <p className="text-sm text-zinc-500 mt-2">
+          <p className="text-sm text-zinc-500 dark:text-zinc-500 mt-2">
             Enter your 4-digit PIN to continue
           </p>
         </div>
@@ -897,8 +958,8 @@ export default function EnterPin() {
               key={index}
               className={`w-4 h-4 rounded-full border ${
                 pin.length > index
-                  ? "bg-white border-white"
-                  : "border-zinc-600"
+                  ? "bg-zinc-950 border-zinc-950 dark:bg-white dark:border-white"
+                  : "border-zinc-300 dark:border-zinc-600"
               }`}
             />
           ))}
@@ -912,7 +973,7 @@ export default function EnterPin() {
                 key={number}
                 type="button"
                 onClick={() => press(number)}
-                className="h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-2xl font-bold active:scale-95 transition"
+                className="h-16 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white text-2xl font-bold shadow-sm dark:shadow-none active:scale-95 transition"
               >
                 {number}
               </button>
@@ -922,7 +983,7 @@ export default function EnterPin() {
           <button
             type="button"
             onClick={backspace}
-            className="h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-sm font-bold active:scale-95 transition"
+            className="h-16 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white text-sm font-bold shadow-sm dark:shadow-none active:scale-95 transition"
           >
             ← Back
           </button>
@@ -930,7 +991,7 @@ export default function EnterPin() {
           <button
             type="button"
             onClick={() => press("0")}
-            className="h-16 rounded-2xl bg-zinc-900 border border-zinc-800 text-2xl font-bold active:scale-95 transition"
+            className="h-16 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white text-2xl font-bold shadow-sm dark:shadow-none active:scale-95 transition"
           >
             0
           </button>
@@ -945,6 +1006,27 @@ export default function EnterPin() {
           </button>
 
         </div>
+
+        {service === "data" && (
+          <div className="w-full max-w-xs mt-5">
+            <button
+              type="button"
+              onClick={handleBiometric}
+              disabled={processing || biometricLoading}
+              className="w-full h-14 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white font-black shadow-sm dark:shadow-none active:scale-95 transition disabled:opacity-40"
+            >
+              {biometricLoading
+                ? "Verifying fingerprint..."
+                : "🔐 Use fingerprint instead"}
+            </button>
+
+            {biometricError && (
+              <p className="text-center text-red-600 dark:text-red-400 text-xs font-bold mt-3">
+                {biometricError}
+              </p>
+            )}
+          </div>
+        )}
 
       </div>
 

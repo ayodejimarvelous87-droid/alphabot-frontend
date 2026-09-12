@@ -2,82 +2,60 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-const ThemeContext = createContext();
+const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
+  const [dark, setDark] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-const [dark,setDark] = useState(false);
-const [loaded,setLoaded] = useState(false);
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
 
+    if (saved === "dark" || saved === "light") {
+      const isDark = saved === "dark";
 
-useEffect(()=>{
+      setDark(isDark);
+      document.documentElement.classList.toggle("dark", isDark);
+    } else {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
 
-const saved = localStorage.getItem("theme");
+      setDark(prefersDark);
+      document.documentElement.classList.toggle("dark", prefersDark);
+    }
 
+    setLoaded(true);
+  }, []);
 
-if(saved){
+  const toggleTheme = () => {
+    setDark((current) => {
+      const newMode = !current;
 
-const isDark = saved === "dark";
+      localStorage.setItem("theme", newMode ? "dark" : "light");
+      document.documentElement.classList.toggle("dark", newMode);
 
-setDark(isDark);
+      return newMode;
+    });
+  };
 
-document.documentElement.classList.toggle("dark",isDark);
+  if (!loaded) {
+    return null;
+  }
 
-}else{
-
-const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-setDark(prefersDark);
-
-document.documentElement.classList.toggle("dark",prefersDark);
-
+  return (
+    <ThemeContext.Provider value={{ dark, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
+export function useTheme() {
+  const context = useContext(ThemeContext);
 
-setLoaded(true);
+  if (!context) {
+    throw new Error("useTheme must be used inside ThemeProvider");
+  }
 
-
-},[]);
-
-
-
-const toggleTheme=()=>{
-
-const newMode=!dark;
-
-setDark(newMode);
-
-localStorage.setItem(
-"theme",
-newMode ? "dark" : "light"
-);
-
-document.documentElement.classList.toggle(
-"dark",
-newMode
-);
-
-};
-
-
-
-if(!loaded){
-return null;
-}
-
-
-return(
-<ThemeContext.Provider value={{dark,toggleTheme}}>
-{children}
-</ThemeContext.Provider>
-);
-
-
-}
-
-
-export function useTheme(){
-
-return useContext(ThemeContext);
-
+  return context;
 }

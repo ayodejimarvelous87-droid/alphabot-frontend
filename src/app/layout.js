@@ -13,11 +13,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  themeColor: "#facc15",
+};
+
 export const metadata = {
   title: "AlphaBot — Powering Possibilities.",
   description: "AlphaBot — Powering Possibilities. Fast, affordable and convenient digital services.",
   manifest: "/manifest.json",
-  themeColor: "#facc15",
   icons: {
     icon: "/icons/icon-192.png",
     apple: "/icons/icon-192.png",
