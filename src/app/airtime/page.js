@@ -21,7 +21,11 @@ const [message,setMessage]=useState("");
 const [loading,setLoading]=useState(false);
 const [showSuccess,setShowSuccess]=useState(false);
 const [beneficiaries,setBeneficiaries]=useState([]);
+const [beneficiaryPickerOpen,setBeneficiaryPickerOpen]=useState(false);
 const [purchaseStateRestored,setPurchaseStateRestored]=useState(false);
+const [showConfirmation,setShowConfirmation]=useState(false);
+const [walletBalance,setWalletBalance]=useState(null);
+const [walletBalanceLoading,setWalletBalanceLoading]=useState(false);
 
 useEffect(()=>{
 
@@ -64,6 +68,48 @@ setPurchaseStateRestored(true);
 },[searchParams]);
 
 
+useEffect(() => {
+  const loadWalletBalance = async () => {
+    try {
+      setWalletBalanceLoading(true);
+
+      const user = JSON.parse(
+        localStorage.getItem("user") || "null"
+      );
+      const token = localStorage.getItem("token");
+
+      if (!user?.phone || !token) {
+        setWalletBalance(null);
+        return;
+      }
+
+      const res = await fetch(
+        `https://api.alphabothq.com/wallet/balance/${user.phone}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok && data.balance !== undefined) {
+        setWalletBalance(Number(data.balance));
+      } else {
+        setWalletBalance(null);
+      }
+    } catch (error) {
+      console.error("Wallet balance error:", error);
+      setWalletBalance(null);
+    } finally {
+      setWalletBalanceLoading(false);
+    }
+  };
+
+  loadWalletBalance();
+}, []);
+
 useEffect(()=>{
 const savedPhone = searchParams.get("phone");
 
@@ -91,6 +137,62 @@ loadBeneficiaries();
 
 },[]);
 
+
+const confirmAirtimePurchase = () => {
+  const purchaseAmount = Number(amount);
+
+  if (!phone) {
+    setShowConfirmation(false);
+    setMessage("Enter a phone number.");
+    return;
+  }
+
+  if (!Number.isFinite(purchaseAmount) || purchaseAmount <= 0) {
+    setShowConfirmation(false);
+    setMessage("Enter a valid airtime amount.");
+    return;
+  }
+
+  if (walletBalance === null || walletBalance === undefined) {
+    setMessage("Unable to verify your wallet balance.");
+    return;
+  }
+
+  if (walletBalance < purchaseAmount) {
+    setShowConfirmation(false);
+    setMessage(
+      `Insufficient wallet balance. You need ₦${purchaseAmount.toLocaleString()} but only have ₦${Number(walletBalance).toLocaleString()}.`
+    );
+    return;
+  }
+
+  sessionStorage.setItem(
+    "alphaBotAirtimePurchaseState",
+    JSON.stringify({
+      phone: (() => {
+        let digits = String(phone || "").replace(/\D/g, "");
+
+        if (digits.startsWith("234")) {
+          digits = digits.slice(3);
+        }
+
+        if (digits.startsWith("0")) {
+          digits = digits.slice(1);
+        }
+
+        return digits
+          ? "+234" + digits.slice(0, 10)
+          : "";
+      })(),
+      network,
+      amount: String(purchaseAmount)
+    })
+  );
+
+  setShowConfirmation(false);
+
+  router.push("/enter-pin?service=airtime&return=/airtime");
+};
 
 const buyAirtime = async()=>{
 
@@ -265,12 +367,130 @@ message="🎉 Airtime purchase successful!"
               onChange={setPhone}
               beneficiaries={beneficiaries}
               service="airtime"
+              showContactPicker
             />
 
           </div>
 
         </div>
 
+
+        {/* BENEFICIARIES */}
+
+        <button
+          type="button"
+          onClick={() => setBeneficiaryPickerOpen(true)}
+          className="w-full flex items-center justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111113] px-4 py-3 active:scale-[0.99] transition"
+        >
+          <div className="text-left">
+            <p className="text-[10px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500">
+              Buy for beneficiary
+            </p>
+            <p className="text-[10px] text-zinc-400 mt-1">
+              Choose from your recent numbers
+            </p>
+          </div>
+
+          <span className="text-lg text-zinc-400">›</span>
+        </button>
+
+        {beneficiaryPickerOpen && (
+          <div className="fixed inset-0 z-[100]">
+            <button
+              type="button"
+              aria-label="Close beneficiary picker"
+              onClick={() => setBeneficiaryPickerOpen(false)}
+              className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
+            />
+
+            <div className="absolute bottom-0 left-0 right-0 max-h-[58vh] rounded-t-[28px] bg-white dark:bg-[#111113] border-t border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden">
+
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+              </div>
+
+              <div className="px-5 pb-3 flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-black">
+                    Buy for beneficiary
+                  </h3>
+                  <p className="text-[10px] text-zinc-500 mt-1">
+                    Select a recent number
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setBeneficiaryPickerOpen(false)}
+                  className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-500 text-lg"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="px-4 pb-6 overflow-y-auto max-h-[45vh]">
+
+                {beneficiaries.filter(
+                  item => item.service === "airtime"
+                ).length > 0 ? (
+
+                  <div className="space-y-2">
+                    {beneficiaries
+                      .filter(item => item.service === "airtime")
+                      .map((item, index) => {
+
+                        const value =
+                          item.beneficiary_phone?.startsWith("+234")
+                            ? item.beneficiary_phone
+                            : item.beneficiary_phone?.startsWith("0")
+                              ? "+234" + item.beneficiary_phone.slice(1)
+                              : "+234" + item.beneficiary_phone;
+
+                        return (
+                          <button
+                            key={`${item.beneficiary_phone}-${index}`}
+                            type="button"
+                            onClick={() => {
+                              setPhone(value);
+                              setBeneficiaryPickerOpen(false);
+                            }}
+                            className="w-full flex items-center gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#080809] px-3 py-3 text-left active:scale-[0.99] transition"
+                          >
+                            <div className="w-11 h-11 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+                              📱
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-black truncate">
+                                {item.beneficiary_phone}
+                              </p>
+
+                              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">
+                                {item.name || "Beneficiary"}
+                              </p>
+                            </div>
+
+                            <span className="text-zinc-400 text-lg">›</span>
+                          </button>
+                        );
+                      })}
+                  </div>
+
+                ) : (
+                  <div className="py-8 text-center">
+                    <p className="text-sm font-bold text-zinc-500">
+                      No recent purchases yet
+                    </p>
+                    <p className="text-[10px] text-zinc-400 mt-1">
+                      Your recent airtime beneficiaries will appear here
+                    </p>
+                  </div>
+                )}
+
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* AMOUNT */}
         <div>
@@ -327,33 +547,25 @@ message="🎉 Airtime purchase successful!"
         <div>
 
           <p className="text-[9px] font-black uppercase tracking-wider text-zinc-600 dark:text-zinc-500 mb-2">
-            Transaction PIN
+            Confirm Purchase
           </p>
 
           <button
             type="button"
             onClick={() => {
-              sessionStorage.setItem(
-                "alphaBotAirtimePurchaseState",
-                JSON.stringify({
-                  phone,
-                  network,
-                  amount
-                })
-              );
-
-              router.push("/enter-pin?return=/airtime&service=airtime");
+              setMessage("");
+              setShowConfirmation(true);
             }}
             className="w-full flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-4 text-left dark:border-zinc-800 dark:bg-[#080809] active:scale-[0.98] transition"
           >
 
             <div>
               <p className="text-sm font-bold">
-                Enter transaction PIN
+                Confirm Purchase
               </p>
 
               <p className="text-[9px] text-zinc-500 dark:text-zinc-500 mt-0.5">
-                Required before purchase
+                Choose PIN or fingerprint to confirm
               </p>
             </div>
 
@@ -368,51 +580,150 @@ message="🎉 Airtime purchase successful!"
       </div>
 
 
-      {/* FINGERPRINT CTA */}
-      <button
-        onClick={async()=>{
-          try{
+      {/* PURCHASE CONFIRMATION */}
 
-            setBiometricLoading(true);
-            setMessage("Touch your fingerprint...");
+      {showConfirmation && (() => {
+        const purchaseAmount = Number(amount);
+        const afterBalance =
+          walletBalance !== null
+            ? Number(walletBalance) - purchaseAmount
+            : null;
 
-            await authenticateWithBiometric();
+        return (
+          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm px-4 pb-4">
 
-            setMessage("Fingerprint verified.");
-            await buyAirtime();
+            <div className="w-full max-w-md rounded-3xl bg-white dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 shadow-2xl p-5">
 
-          }catch(error){
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                    Confirm purchase
+                  </p>
 
-            localStorage.removeItem("biometricToken");
-            setMessage("❌ " + error.message);
+                  <h3 className="text-2xl font-black mt-1">
+                    Review your order
+                  </h3>
+                </div>
 
-          }finally{
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmation(false)}
+                  className="w-9 h-9 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-500 text-lg"
+                >
+                  ×
+                </button>
+              </div>
 
-            setBiometricLoading(false);
+              <div className="mt-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-800 p-4">
 
-          }
-        }}
-        disabled={loading || biometricLoading}
-        className="relative w-full overflow-hidden rounded-2xl bg-yellow-400 text-black py-4 font-black text-base active:scale-[0.98] transition disabled:opacity-60"
-      >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-lg font-black">
+                      Airtime
+                    </p>
 
-        <span className="relative z-10 flex items-center justify-center gap-2">
+                    <p className="text-xs text-zinc-500 mt-1">
+                      {network}
+                    </p>
+                  </div>
 
-          {biometricLoading ? (
-            <>
-              <span className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
-              Touch fingerprint...
-            </>
-          ) : (
-            <>
-              👆
-              Confirm with Fingerprint
-            </>
-          )}
+                  <p className="text-xl font-black text-yellow-500 whitespace-nowrap">
+                    ₦{purchaseAmount.toLocaleString()}
+                  </p>
+                </div>
 
-        </span>
+                <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-zinc-500">
+                    Recipient
+                  </p>
 
-      </button>
+                  <p className="font-bold mt-1">
+                    {phone || "Not provided"}
+                  </p>
+                </div>
+
+              </div>
+
+              <div className="mt-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+
+                <div className="flex items-center justify-between px-4 py-3">
+                  <span className="text-xs text-zinc-500">
+                    Wallet balance
+                  </span>
+
+                  {walletBalanceLoading ? (
+                    <span className="text-xs font-bold text-zinc-500">
+                      Checking...
+                    </span>
+                  ) : (
+                    <span className="font-black">
+                      {walletBalance === null
+                        ? "Unavailable"
+                        : `₦${Number(walletBalance).toLocaleString()}`}
+                    </span>
+                  )}
+                </div>
+
+                <div className="border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 py-3">
+                  <span className="text-xs text-zinc-500">
+                    After purchase
+                  </span>
+
+                  <span
+                    className={`font-black ${
+                      afterBalance !== null && afterBalance < 0
+                        ? "text-red-500"
+                        : "text-green-500"
+                    }`}
+                  >
+                    {afterBalance === null
+                      ? "—"
+                      : `₦${afterBalance.toLocaleString()}`}
+                  </span>
+                </div>
+
+              </div>
+
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center mt-4 leading-5">
+                Confirming will take you to your transaction PIN.
+                Your wallet will only be charged after the PIN is verified.
+              </p>
+
+              <div className="grid grid-cols-2 gap-3 mt-5">
+
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmation(false)}
+                  className="rounded-2xl py-4 font-black bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 active:scale-95 transition"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  onClick={confirmAirtimePurchase}
+                  disabled={
+                    walletBalanceLoading ||
+                    walletBalance === null ||
+                    walletBalance < purchaseAmount ||
+                    !phone ||
+                    !Number.isFinite(purchaseAmount) ||
+                    purchaseAmount <= 0
+                  }
+                  className="rounded-2xl py-4 font-black bg-yellow-400 text-black active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Confirm & continue
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+        );
+      })()}
+
+        
 
 
       {/* STATUS */}

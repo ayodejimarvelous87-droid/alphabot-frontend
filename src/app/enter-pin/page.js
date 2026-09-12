@@ -32,7 +32,7 @@ export default function EnterPin() {
   };
 
   const handleBiometric = async () => {
-    if (service !== "data" || processing || biometricLoading) return;
+    if ((service !== "data" && service !== "airtime") || processing || biometricLoading) return;
 
     setBiometricLoading(true);
     setBiometricError("");
@@ -47,7 +47,11 @@ export default function EnterPin() {
         throw new Error("Biometric authorization failed.");
       }
 
-      await enterDataPurchase("", biometricToken);
+      if (service === "airtime") {
+        await enterAirtimePurchase("", biometricToken);
+      } else {
+        await enterDataPurchase("", biometricToken);
+      }
 
     } catch (error) {
       console.error("BIOMETRIC AUTH ERROR:", error);
@@ -60,6 +64,102 @@ export default function EnterPin() {
       );
     } finally {
       setBiometricLoading(false);
+    }
+  };
+
+  const enterAirtimePurchase = async (
+    transactionPin = "",
+    biometricToken = ""
+  ) => {
+    if (processing) return;
+
+    setProcessing(true);
+
+    try {
+      const savedState =
+        sessionStorage.getItem("alphaBotAirtimePurchaseState");
+
+      if (!savedState) {
+        sessionStorage.setItem(
+          "alphaBotTransactionResult",
+          JSON.stringify({
+            status: "failed",
+            message: "Airtime purchase information was not found.",
+            returnPath: "/airtime"
+          })
+        );
+
+        router.push("/transaction-result");
+        return;
+      }
+
+      const state = JSON.parse(savedState);
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        "https://api.alphabothq.com/airtime/buy",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "Idempotency-Key":
+              typeof crypto !== "undefined" &&
+              crypto.randomUUID
+                ? crypto.randomUUID()
+                : `${Date.now()}-${Math.random()}`
+          },
+          body: JSON.stringify({
+            phone: state.phone,
+            network: state.network,
+            amount: Number(state.amount),
+            pin: transactionPin || undefined,
+            biometricToken:
+              biometricToken || undefined
+          })
+        }
+      );
+
+      const result = await res.json();
+
+      sessionStorage.setItem(
+        "alphaBotTransactionResult",
+        JSON.stringify({
+          ...result,
+          status:
+            result.status ||
+            result.transaction?.status ||
+            (res.ok ? "success" : "failed"),
+          returnPath: "/airtime"
+        })
+      );
+
+      sessionStorage.removeItem(
+        "alphaBotAirtimePurchaseState"
+      );
+
+      clearBiometricToken();
+
+      router.push("/transaction-result");
+
+    } catch (error) {
+      console.error("AIRTIME PURCHASE ERROR:", error);
+      clearBiometricToken();
+
+      sessionStorage.setItem(
+        "alphaBotTransactionResult",
+        JSON.stringify({
+          status: "failed",
+          message: "Connection error",
+          returnPath: "/airtime"
+        })
+      );
+
+      sessionStorage.removeItem(
+        "alphaBotAirtimePurchaseState"
+      );
+
+      router.push("/transaction-result");
     }
   };
 
@@ -431,6 +531,13 @@ export default function EnterPin() {
       if (pin.length !== 4) return;
 
       await enterDataPurchase(pin, "");
+      return;
+    }
+
+    if (service === "airtime") {
+      if (pin.length !== 4) return;
+
+      await enterAirtimePurchase(pin, "");
       return;
     }
 
@@ -1007,7 +1114,7 @@ export default function EnterPin() {
 
         </div>
 
-        {service === "data" && (
+        {(service === "data" || service === "airtime") && (
           <div className="w-full max-w-xs mt-5">
             <button
               type="button"
