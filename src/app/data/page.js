@@ -504,6 +504,7 @@ const filteredPlans = activeCategoryPlans.filter((plan) => {
 });
 
 const confirmDataPurchase = () => {
+
   const selected = filteredPlans[Number(selectedPlan)];
 
   if (!selected) {
@@ -561,7 +562,13 @@ const confirmDataPurchase = () => {
         "",
       category,
       search,
-      selectedPlan
+      selectedPlan,
+      selectedProvider: selected.provider || "",
+      selectedVariationId:
+        selected.variation_id ||
+        selected.providerPlanId ||
+        selected.id ||
+        ""
     })
   );
 

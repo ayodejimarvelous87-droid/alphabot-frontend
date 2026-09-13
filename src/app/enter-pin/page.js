@@ -213,7 +213,9 @@ export default function EnterPin() {
         state.category &&
         Array.isArray(networkPlans[state.category])
           ? networkPlans[state.category]
-          : [];
+          : Object.values(networkPlans)
+              .filter(Array.isArray)
+              .flat();
 
       const searchText =
         String(state.search || "").toLowerCase();
@@ -231,6 +233,17 @@ export default function EnterPin() {
       });
 
       const selected =
+        filteredPlans.find((plan) =>
+          String(plan.provider || "").toLowerCase() ===
+            String(state.selectedProvider || "").toLowerCase() &&
+          String(
+            plan.variation_id ||
+            plan.providerPlanId ||
+            plan.id ||
+            ""
+          ) ===
+            String(state.selectedVariationId || "")
+        ) ||
         filteredPlans[Number(state.selectedPlan)];
 
       if (!selected) {
