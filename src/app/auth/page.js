@@ -261,7 +261,7 @@ export default function Auth() {
       return;
     }
 
-    if (!/^\\d{4}$/.test(form.transactionPin)) {
+    if (!/^\d{4}$/.test(form.transactionPin)) {
       setMessage("Transaction PIN must be exactly 4 digits.");
       return;
     }
