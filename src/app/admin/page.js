@@ -245,6 +245,13 @@ return(
   </p>
   </div>
 
+  <div className="bg-[#18181B] border border-zinc-800 rounded-3xl p-6">
+  <h2 className="text-zinc-400 text-sm">🟤 DirectCoupon Wallet</h2>
+  <p className="text-3xl font-black mt-3">
+  ₦{Number(data.masterWallet?.directcoupon || 0).toFixed(2)}
+  </p>
+  </div>
+
   </div>
 
 <div className="grid gap-6 mt-6">
