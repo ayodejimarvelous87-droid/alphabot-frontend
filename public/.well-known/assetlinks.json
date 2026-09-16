@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.alphabothq.app",
+      "sha256_cert_fingerprints": [
+        "63:66:6A:B7:61:8E:A1:95:AB:97:85:28:EF:8D:07:EA:DB:90:23:77:F2:C9:D7:50:CC:F3:2F:28:20:22:CA:59"
+      ]
+    }
+  }
+]
